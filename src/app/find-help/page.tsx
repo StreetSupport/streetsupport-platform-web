@@ -1,37 +1,69 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+interface Category {
+  id: number;
+  name: string;
+  slug?: string;
+}
 
 export default function FindHelpPage() {
-  const [location, setLocation] = useState<string | null>(null);
   const [postcode, setPostcode] = useState('');
+  const [location, setLocation] = useState<{ lat: number; lon: number } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
 
-  const handleGeolocation = () => {
+  // Fetch categories from API on mount
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const res = await fetch('/api/get-categories');
+        const data = await res.json();
+        // Sort alphabetically by category name
+        const sorted = data.sort((a: Category, b: Category) => a.name.localeCompare(b.name));
+        setCategories(sorted);
+      } catch {
+        setError('Failed to load categories');
+      }
+    }
+    fetchCategories();
+  }, []);
+
+  // Try geolocation on mount
+  useEffect(() => {
     if (!navigator.geolocation) {
-      alert('Geolocation is not supported by your browser.');
+      setError('Geolocation not supported');
       return;
     }
-
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setLocation(`Lat: ${latitude}, Lon: ${longitude}`);
+      (pos) => {
+        setLocation({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+        setError(null);
       },
       () => {
-        alert('Unable to retrieve your location.');
+        setError('Unable to get your location');
       }
     );
-  };
+  }, []);
+
+  // Handle form submit (for now just log the inputs)
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    console.log('Search with:', { postcode, location, selectedCategory });
+    alert(`Searching for category "${selectedCategory}" near postcode "${postcode || 'using geolocation'}"`);
+  }
 
   return (
     <main>
       <h1>Find Help Near You</h1>
 
-      <section>
-        <button onClick={handleGeolocation}>Use My Current Location</button>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
 
+      <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="postcode">Or enter a postcode:</label>
+          <label htmlFor="postcode">Enter postcode (if not using location):</label>
           <input
             id="postcode"
             type="text"
@@ -40,18 +72,27 @@ export default function FindHelpPage() {
             placeholder="Enter postcode"
           />
         </div>
-      </section>
 
-      <section>
-        <h2>Filter by Category</h2>
-        <p>[Category filter will go here]</p>
-      </section>
+        <div>
+          <label htmlFor="category">Select a service category:</label>
+          <select
+            id="category"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option value="">-- Select category --</option>
+            {categories.map((cat, index) => (
+              <option key={cat.slug ?? cat.id ?? index} value={cat.slug ?? ''}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      <section>
-        <h2>Results</h2>
-        <p>{location ? `Showing results for ${location}` : 'No location selected yet.'}</p>
-        <p>[Service results will appear here]</p>
-      </section>
+        <button type="submit" disabled={!selectedCategory && !postcode && !location}>
+          Search
+        </button>
+      </form>
     </main>
   );
 }
