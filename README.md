@@ -1,40 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Street Support Network - Website Rebuild
 
-## Getting Started
+This is the future-proofed rebuild of the Street Support Network website.  
+It provides a modular, maintainable platform to help people experiencing or at risk of homelessness find the support they need.
 
-First, run the development server:
+## 🗂️ Branch Strategy
+
+- **main**  
+  Production-ready, deployable code only.
+
+- **staging**  
+  Active development branch. All new features and fixes should branch from here and be merged back into staging first.
+
+## 🚀 Getting Started Locally
+
+### 1. Fork This Repository
+Start by forking this repository to your own GitHub account using the **Fork** button on GitHub.
+
+### 2. Clone Your Fork
+Clone **your fork**, not the original:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/<your-username>/streetsupport-platform-web.git
+cd streetsupport-platform-web
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Set Up Upstream Remote
+To keep your fork up to date with the main repository:
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+```bash
+git remote add upstream https://github.com/streetsupport/streetsupport-platform-web.git
+```
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+### 4. Install Dependencies
+```bash
+npm install
+```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+### 5. Run the Development Server
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open your browser to:
+```
+http://localhost:3000
+```
 
-## Learn More
+## 🔄 Keeping Your Fork Up to Date
 
-To learn more about Next.js, take a look at the following resources:
+Fetch the latest changes from the original repository:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+```bash
+git fetch upstream
+git checkout staging
+git merge upstream/staging
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Push the updates to your fork:
 
-## Deploy on Vercel
+```bash
+git push origin staging
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ✅ Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+Automatic deployments will be configured for:
+- **staging branch** → Staging environment
+- **main branch** → Production environment
+
+## ⚙️ Contribution Workflow
+
+1. **Create a Feature Branch**  
+   From your fork's `staging` branch:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+2. **Commit Changes**  
+   Follow clear, descriptive commit messages:
+   ```
+   feat: add search filter component
+   fix: correct map loading issue
+   docs: update README with contribution guidelines
+   ```
+
+3. **Push to Your Fork**
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+4. **Open a Pull Request**
+   - Target **streetsupport/streetsupport-platform-web - staging branch**
+   - Provide a clear description of what your change does
+
+5. **Code Review & Merge**
+   - Changes will be reviewed before merging into `staging`
+
+## 🛠️ Tech Stack
+
+- Next.js with TypeScript
+- React
+- Node.js
+- Azure Static Web Apps (planned)
+
+## 🧑‍💻 Maintainers
+
+- [James Cross](https://github.com/James-Cross)
+
+## 📄 License
+
+MIT
