@@ -6,17 +6,27 @@ export async function GET() {
       cache: 'no-store',
     });
 
-    const text = await response.text();  // Read as text first
-    console.log('Raw Response:', text);  // Log the raw output
+    const contentType = response.headers.get('content-type');
+    const text = await response.text();
 
-    if (!response.ok) {
-      return NextResponse.json({ error: 'Failed to fetch locations', details: text }, { status: response.status });
+    if (!response.ok || !text) {
+      return NextResponse.json(
+        { error: 'Failed to fetch locations', details: text || 'No response body' },
+        { status: response.status || 500 }
+      );
     }
 
-    const data = JSON.parse(text);  // Safely parse after reading as text
+    if (!contentType?.includes('application/json')) {
+      return NextResponse.json(
+        { error: 'Expected JSON but got something else', details: text },
+        { status: 500 }
+      );
+    }
+
+    const data = JSON.parse(text);
     return NextResponse.json(data);
   } catch (error) {
-    console.error(error);
+    console.error('Error in get-locations route:', error);
     return NextResponse.json({ error: 'Error fetching locations' }, { status: 500 });
   }
 }
