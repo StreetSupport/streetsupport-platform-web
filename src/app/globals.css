@@ -1,0 +1,10 @@
+/* Optional if you want to pull in your JS config */
+/* @config "../tailwind.config.js" */
+
+/* Core import for Tailwind v4 */
+@import "tailwindcss";
+
+/* Your test style */
+.btn-test {
+  @apply px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700;
+}
