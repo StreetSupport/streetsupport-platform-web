@@ -7,7 +7,7 @@ export async function GET() {
     });
 
     const text = await response.text();  // Read as text first
-    console.log('Raw Response:', text);  // Log the raw output
+    // console.log('Raw Response:', text);  // Log the raw output
 
     if (!response.ok) {
       return NextResponse.json({ error: 'Failed to fetch locations', details: text }, { status: response.status });

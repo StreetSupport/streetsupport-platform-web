@@ -1,6 +1,8 @@
-// import './globals.css'; // Uncomment when you add global styles
-import { ReactNode } from 'react';
-import Nav from './components/Nav';
+// app/layout.tsx
+import './globals.css'    // now resolves to src/app/globals.css
+
+import { ReactNode } from 'react'
+import Nav from './components/Nav'
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -10,5 +12,5 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {children}
       </body>
     </html>
-  );
+  )
 }
