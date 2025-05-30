@@ -2,7 +2,7 @@
 import './globals.css'    // now resolves to src/app/globals.css
 
 import { ReactNode } from 'react'
-import Nav from './components/Nav'
+import Nav from '../components/Nav/Nav'
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
