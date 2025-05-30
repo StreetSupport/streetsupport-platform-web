@@ -2,6 +2,7 @@
 
 import React from 'react';
 import clsx from 'clsx';
+import Image from 'next/image';
 
 interface NewsPost {
   id: string;
@@ -29,11 +30,15 @@ export default function NewsSection({ posts, className }: NewsSectionProps) {
             )}
           >
             {imageUrl ? (
-              <img
-                src={imageUrl}
-                alt=""
-                className="float-left w-[90px] max-h-[90px] mr-2 sm:float-none sm:w-full sm:aspect-[2/1] sm:object-cover sm:mb-2 border border-brand-h"
-              />
+              <div className="relative float-left w-[90px] max-h-[90px] mr-2 sm:float-none sm:w-full sm:aspect-[2/1] sm:mb-2 border border-brand-h">
+                <Image
+                  src={imageUrl}
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 100vw, 90px"
+                />
+              </div>
             ) : (
               <div className="float-left w-[90px] h-[90px] mr-2 bg-brand-b sm:float-none sm:w-full sm:aspect-[2/1] sm:mb-2" />
             )}

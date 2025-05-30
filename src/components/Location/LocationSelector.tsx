@@ -14,17 +14,9 @@ export default function LocationSelector({ hideLegend = false }: { hideLegend?: 
   useEffect(() => {
     async function fetchLocations() {
       const res = await fetch('/api/get-locations');
-<<<<<<< HEAD
-      const data = await res.json();
-      setLocations(
-      data.sort((a, b) => a.name.localeCompare(b.name))
-);
-
-=======
       const data: Location[] = await res.json();
       const sorted = data.sort((a, b) => a.name.localeCompare(b.name));
       setLocations(sorted);
->>>>>>> feature/tailwind-migration
     }
 
     fetchLocations();
