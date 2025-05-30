@@ -1,5 +1,6 @@
 
 # Street Support Network – Website Rebuild
+![Build Status](https://github.com/streetsupport/streetsupport-platform-web/actions/workflows/main.yml/badge.svg)
 
 This is the future-proof rebuild of the Street Support Network website.
 
