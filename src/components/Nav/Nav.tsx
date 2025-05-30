@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
@@ -18,7 +19,11 @@ export default function Nav() {
       try {
         const response = await fetch('/api/get-locations');
         const data = await response.json();
-        // Sort alphabetically
+
+        if (!Array.isArray(data)) {
+          throw new Error('Expected an array but received: ' + JSON.stringify(data));
+        }
+
         const sorted = data.sort((a: Location, b: Location) => a.name.localeCompare(b.name));
         setLocations(sorted);
       } catch (error) {
@@ -44,12 +49,18 @@ export default function Nav() {
             value={selectedLocation}
             onChange={(e) => setSelectedLocation(e.target.value)}
           >
-            <option value="">Select a location</option>
-            {locations.map((loc) => (
-              <option key={loc.id} value={loc.slug}>
-                {loc.name}
-              </option>
-            ))}
+            {locations.length === 0 ? (
+              <option disabled>Loading locations...</option>
+            ) : (
+              <>
+                <option value="">Select a location</option>
+                {locations.map((loc) => (
+                  <option key={loc.id} value={loc.slug}>
+                    {loc.name}
+                  </option>
+                ))}
+              </>
+            )}
           </select>
           {selectedLocation && (
             <Link href={`/location/${selectedLocation}`}>
