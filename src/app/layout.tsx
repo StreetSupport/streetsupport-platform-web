@@ -1,8 +1,9 @@
-// app/layout.tsx
+import React from 'react';
+
 import './globals.css'    // now resolves to src/app/globals.css
 
 import { ReactNode } from 'react'
-import Nav from '../components/Nav/Nav'
+import Nav from '../components/partials/Nav'
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
