@@ -1,60 +1,45 @@
-'use client';
-
-import React from 'react';
-import LocationSelector from '@/components/Location/LocationSelector';
-import PrimaryButton from '@/components/Button/PrimaryButton';
-
-export default function HomePage() {
+// src/app/page.tsx
+export default function Home() {
   return (
-    <>
-      {/* Yellow header bar */}
-      <div className="w-full h-4 bg-brand-e" />
-
-      {/* Hero section with background */}
-      <section
-        className="pt-10 pb-10 m:pt-20 m:pb-20"
-        style={{
-          backgroundImage: 'url(/assets/img/bg/cityscape.png)',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: 'cover',
-        }}
-      >
-        <div className="px-6 lg:px-12 max-w-screen-xl mx-auto text-left">
-          <h1 className="text-[35px] leading-[1.3] mb-5 font-headline">
-            Working Together to Tackle Homelessness
-          </h1>
-          <h2 className="text-[20px] leading-[1.3] mb-5 font-headline text-brand-d">
-            Find support services near you.
-          </h2>
-          <PrimaryButton href="/find-help" variant="cta">
-            Find Help
-          </PrimaryButton>
+    <main className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-8">
+      {/* Hero */}
+      <section className="text-center mb-12">
+        <h1 className="text-5xl font-bold text-blue-600 mb-4">
+          Street Support Network
+        </h1>
+        <p className="text-lg text-gray-700 max-w-prose mx-auto">
+          A platform to empower communities with real-time support and resources.
+        </p>
+        <div className="mt-6 flex space-x-4 justify-center">
+          <button className="btn-test">
+            Get Started
+          </button>
+          <button className="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700">
+            Learn More
+          </button>
         </div>
       </section>
 
-      {/* Where we are section */}
-      <section className="pt-10 pb-10 m:pt-20 m:pb-20">
-        <div className="px-6 lg:px-12 max-w-screen-xl mx-auto">
-          <div className="flex flex-col m:flex-row gap-6">
-            <div className="flex-1 space-y-4">
-              <h2 className="text-[20px] leading-[1.3] mb-5 font-headline">Where we are</h2>
-              <p className="leading-[1.5]">
-                Street Support Network is currently active in several locations across the UK.
-              </p>
-              <p className="text-[16px] leading-[1.3] mb-5 font-headline">
-                Want to see what is happening near you? Select one…
-              </p>
-
-              <LocationSelector hideLegend={true} />
-            </div>
-
-            <div className="flex-1">
-              <div className="w-full h-96 bg-gray-200 js-map"></div>
-            </div>
+      {/* Features */}
+      <section className="w-full max-w-4xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[
+          { title: 'Instant Updates', desc: 'Stay informed with live alerts and notifications.' },
+          { title: 'Community Map',   desc: 'Visualise nearby resources and support hubs.' },
+          { title: 'Volunteer Hub',   desc: 'Connect with volunteers in your area.' }
+        ].map((feature) => (
+          <div
+            key={feature.title}
+            className="p-6 bg-white border rounded-2xl shadow-sm hover:shadow-md transition-shadow"
+          >
+            <h2 className="text-2xl font-semibold mb-2 text-gray-800">
+              {feature.title}
+            </h2>
+            <p className="text-gray-600">
+              {feature.desc}
+            </p>
           </div>
-        </div>
+        ))}
       </section>
-    </>
-  );
+    </main>
+  )
 }

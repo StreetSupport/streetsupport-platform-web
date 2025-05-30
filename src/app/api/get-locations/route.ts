@@ -6,8 +6,8 @@ export async function GET() {
       cache: 'no-store',
     });
 
-    const contentType = response.headers.get('content-type');
-    const text = await response.text();
+    const text = await response.text();  // Read as text first
+    // console.log('Raw Response:', text);  // Log the raw output
 
     if (!response.ok || !text) {
       return NextResponse.json(
