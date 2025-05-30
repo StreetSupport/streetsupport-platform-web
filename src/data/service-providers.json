@@ -1,0 +1,1022 @@
+[
+  {
+    "id": "0",
+    "name": "Torres-Lawrence",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.20725853709687,
+    "longitude": -0.5325365198057821,
+    "verified": true,
+    "services": [
+      {
+        "id": "0-s1",
+        "name": "Support Help Service",
+        "category": "support",
+        "subCategory": "counselling",
+        "description": "A local service offering counselling under the support category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "1",
+    "name": "Garza-Grant",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.20995344134325,
+    "longitude": -0.5451468338746984,
+    "verified": true,
+    "services": [
+      {
+        "id": "1-s1",
+        "name": "Foodbank Help Service",
+        "category": "foodbank",
+        "subCategory": "meals",
+        "description": "A local service offering meals under the foodbank category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "name": "Mayer Inc",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.196042314914116,
+    "longitude": -0.5302223965913178,
+    "verified": true,
+    "services": [
+      {
+        "id": "2-s1",
+        "name": "Health Help Service",
+        "category": "health",
+        "subCategory": "dentist",
+        "description": "A local service offering dentist under the health category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "3",
+    "name": "Page, Doyle and Skinner",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.20397597275382,
+    "longitude": -0.5318950462140064,
+    "verified": true,
+    "services": [
+      {
+        "id": "3-s1",
+        "name": "Legal Help Service",
+        "category": "legal",
+        "subCategory": "advice",
+        "description": "A local service offering advice under the legal category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "4",
+    "name": "Berry LLC",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.20299126090218,
+    "longitude": -0.5432346838172487,
+    "verified": true,
+    "services": [
+      {
+        "id": "4-s1",
+        "name": "Health Help Service",
+        "category": "health",
+        "subCategory": "dentist",
+        "description": "A local service offering dentist under the health category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "5",
+    "name": "Winters-Medina",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.19358780329046,
+    "longitude": -0.533883481428306,
+    "verified": true,
+    "services": [
+      {
+        "id": "5-s1",
+        "name": "Health Help Service",
+        "category": "health",
+        "subCategory": "dentist",
+        "description": "A local service offering dentist under the health category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "6",
+    "name": "Brown, Bailey and Rowland",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.21042491543267,
+    "longitude": -0.5357213994677843,
+    "verified": true,
+    "services": [
+      {
+        "id": "6-s1",
+        "name": "Education Help Service",
+        "category": "education",
+        "subCategory": "training",
+        "description": "A local service offering training under the education category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "7",
+    "name": "Rojas Ltd",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.19900734469189,
+    "longitude": -0.5433702882834593,
+    "verified": true,
+    "services": [
+      {
+        "id": "7-s1",
+        "name": "Money Help Service",
+        "category": "money",
+        "subCategory": "debt-advice",
+        "description": "A local service offering debt-advice under the money category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "8",
+    "name": "Woods-Kim",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.20963297755603,
+    "longitude": -0.5441447560740255,
+    "verified": true,
+    "services": [
+      {
+        "id": "8-s1",
+        "name": "Employment Help Service",
+        "category": "employment",
+        "subCategory": "job-centre",
+        "description": "A local service offering job-centre under the employment category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "9",
+    "name": "Young, Frye and Baker",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.19771040559675,
+    "longitude": -0.5284542839965706,
+    "verified": true,
+    "services": [
+      {
+        "id": "9-s1",
+        "name": "Faith Help Service",
+        "category": "faith",
+        "subCategory": "chaplaincy",
+        "description": "A local service offering chaplaincy under the faith category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "10",
+    "name": "Pennington-Brown",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.20343267535162,
+    "longitude": -0.543077610573996,
+    "verified": true,
+    "services": [
+      {
+        "id": "10-s1",
+        "name": "Housing Help Service",
+        "category": "housing",
+        "subCategory": "shelter",
+        "description": "A local service offering shelter under the housing category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "11",
+    "name": "Bishop-Hall",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.19843550857693,
+    "longitude": -0.5305185231545333,
+    "verified": true,
+    "services": [
+      {
+        "id": "11-s1",
+        "name": "Education Help Service",
+        "category": "education",
+        "subCategory": "training",
+        "description": "A local service offering training under the education category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "12",
+    "name": "Roberts Ltd",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.21158807378955,
+    "longitude": -0.538221719972318,
+    "verified": true,
+    "services": [
+      {
+        "id": "12-s1",
+        "name": "Support Help Service",
+        "category": "support",
+        "subCategory": "counselling",
+        "description": "A local service offering counselling under the support category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "13",
+    "name": "Chen, Jenkins and Barrett",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.20885752008468,
+    "longitude": -0.5372559569817696,
+    "verified": true,
+    "services": [
+      {
+        "id": "13-s1",
+        "name": "Addiction Help Service",
+        "category": "addiction",
+        "subCategory": "rehab",
+        "description": "A local service offering rehab under the addiction category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "14",
+    "name": "Owens, Savage and Thomas",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.20858520107397,
+    "longitude": -0.5389598952589066,
+    "verified": true,
+    "services": [
+      {
+        "id": "14-s1",
+        "name": "Employment Help Service",
+        "category": "employment",
+        "subCategory": "job-centre",
+        "description": "A local service offering job-centre under the employment category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "15",
+    "name": "George, Barnes and Martin",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.20578674985836,
+    "longitude": -0.5334498144638379,
+    "verified": true,
+    "services": [
+      {
+        "id": "15-s1",
+        "name": "Foodbank Help Service",
+        "category": "foodbank",
+        "subCategory": "meals",
+        "description": "A local service offering meals under the foodbank category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "16",
+    "name": "Benson-Manning",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.193678784290455,
+    "longitude": -0.5352062156777508,
+    "verified": true,
+    "services": [
+      {
+        "id": "16-s1",
+        "name": "Addiction Help Service",
+        "category": "addiction",
+        "subCategory": "rehab",
+        "description": "A local service offering rehab under the addiction category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "17",
+    "name": "Tran-Roth",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.19350083600152,
+    "longitude": -0.5382947473127195,
+    "verified": true,
+    "services": [
+      {
+        "id": "17-s1",
+        "name": "Faith Help Service",
+        "category": "faith",
+        "subCategory": "chaplaincy",
+        "description": "A local service offering chaplaincy under the faith category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "18",
+    "name": "Clark, Johnston and Mcdonald",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.19783365240729,
+    "longitude": -0.5357546664071927,
+    "verified": true,
+    "services": [
+      {
+        "id": "18-s1",
+        "name": "Health Help Service",
+        "category": "health",
+        "subCategory": "dentist",
+        "description": "A local service offering dentist under the health category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "19",
+    "name": "Robertson, Larson and Ferguson",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.192392483272506,
+    "longitude": -0.534002568994892,
+    "verified": true,
+    "services": [
+      {
+        "id": "19-s1",
+        "name": "Housing Help Service",
+        "category": "housing",
+        "subCategory": "shelter",
+        "description": "A local service offering shelter under the housing category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "20",
+    "name": "Jackson, Smith and Elliott",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.19485542373414,
+    "longitude": -0.5375369608319545,
+    "verified": true,
+    "services": [
+      {
+        "id": "20-s1",
+        "name": "Addiction Help Service",
+        "category": "addiction",
+        "subCategory": "rehab",
+        "description": "A local service offering rehab under the addiction category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "21",
+    "name": "Levine and Sons",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.193200264640886,
+    "longitude": -0.5283727130780933,
+    "verified": true,
+    "services": [
+      {
+        "id": "21-s1",
+        "name": "Employment Help Service",
+        "category": "employment",
+        "subCategory": "job-centre",
+        "description": "A local service offering job-centre under the employment category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "22",
+    "name": "Li, Blair and Fuller",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.19244406441293,
+    "longitude": -0.5316525998034762,
+    "verified": true,
+    "services": [
+      {
+        "id": "22-s1",
+        "name": "Faith Help Service",
+        "category": "faith",
+        "subCategory": "chaplaincy",
+        "description": "A local service offering chaplaincy under the faith category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "23",
+    "name": "Higgins, Miller and Wilson",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.203097276960115,
+    "longitude": -0.5387536961766746,
+    "verified": true,
+    "services": [
+      {
+        "id": "23-s1",
+        "name": "Education Help Service",
+        "category": "education",
+        "subCategory": "training",
+        "description": "A local service offering training under the education category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "24",
+    "name": "Wells-Kirby",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.19825329061865,
+    "longitude": -0.5308531942144249,
+    "verified": true,
+    "services": [
+      {
+        "id": "24-s1",
+        "name": "Legal Help Service",
+        "category": "legal",
+        "subCategory": "advice",
+        "description": "A local service offering advice under the legal category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "25",
+    "name": "Smith-Jones",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.20360099985963,
+    "longitude": -0.5343075097338186,
+    "verified": true,
+    "services": [
+      {
+        "id": "25-s1",
+        "name": "Addiction Help Service",
+        "category": "addiction",
+        "subCategory": "rehab",
+        "description": "A local service offering rehab under the addiction category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "26",
+    "name": "Barry-Coleman",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.197008539361214,
+    "longitude": -0.5271632172694526,
+    "verified": true,
+    "services": [
+      {
+        "id": "26-s1",
+        "name": "Education Help Service",
+        "category": "education",
+        "subCategory": "training",
+        "description": "A local service offering training under the education category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "27",
+    "name": "Walker-Edwards",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.19770537818495,
+    "longitude": -0.5359366239143217,
+    "verified": true,
+    "services": [
+      {
+        "id": "27-s1",
+        "name": "Faith Help Service",
+        "category": "faith",
+        "subCategory": "chaplaincy",
+        "description": "A local service offering chaplaincy under the faith category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "28",
+    "name": "Serrano Inc",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.20177616781379,
+    "longitude": -0.5410672845731844,
+    "verified": true,
+    "services": [
+      {
+        "id": "28-s1",
+        "name": "Addiction Help Service",
+        "category": "addiction",
+        "subCategory": "rehab",
+        "description": "A local service offering rehab under the addiction category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "29",
+    "name": "Maldonado, Warren and Miller",
+    "locationId": "lincoln",
+    "postcode": "LN4 2LE",
+    "latitude": 53.1934076583173,
+    "longitude": -0.545005152103603,
+    "verified": true,
+    "services": [
+      {
+        "id": "29-s1",
+        "name": "Faith Help Service",
+        "category": "faith",
+        "subCategory": "chaplaincy",
+        "description": "A local service offering chaplaincy under the faith category.",
+        "openTimes": [
+          {
+            "day": "Monday",
+            "start": "09:00",
+            "end": "17:00"
+          },
+          {
+            "day": "Wednesday",
+            "start": "09:00",
+            "end": "17:00"
+          }
+        ],
+        "clientGroups": [
+          "age-18+",
+          "rough-sleepers"
+        ]
+      }
+    ]
+  }
+]
