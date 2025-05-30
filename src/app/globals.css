@@ -1,6 +1,8 @@
-@config "../../tailwind.config.js";
-@import "tailwindcss";
+/* Optional if you want to pull in your JS config */
+/* @config "../tailwind.config.js" */
 
+/* Core import for Tailwind v4 */
+@import "tailwindcss";
 
 /* Your test style */
 .btn-test {
