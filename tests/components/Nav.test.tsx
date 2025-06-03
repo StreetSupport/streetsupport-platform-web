@@ -29,21 +29,15 @@ describe('Nav', () => {
     const toggle = screen.getByLabelText('Toggle menu');
     await userEvent.click(toggle);
     const buttons = screen.getAllByRole('button', { name: 'Locations' });
-    // Mobile nav Locations toggle is after the menu toggle, so likely index 1
     await userEvent.click(buttons[1]);
   });
 
   it('shows mobile Locations list when clicked', async () => {
     render(<Nav />);
     await userEvent.click(screen.getByLabelText('Toggle menu'));
-
     const buttons = screen.getAllByRole('button', { name: 'Locations' });
     expect(buttons[1]).toBeInTheDocument();
-
-    // ✅ Click the second Locations button (mobile)
     await userEvent.click(buttons[1]);
-
-    // ✅ Now wait for the location items
     expect(await screen.findByText('Birmingham')).toBeVisible();
     expect(await screen.findByText('Manchester')).toBeVisible();
   });

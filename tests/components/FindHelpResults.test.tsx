@@ -2,7 +2,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import * as locationHook from '@/contexts/LocationContext';
 import FindHelpResults from '@/components/FindHelp/FindHelpResults';
 
-// Mock service providers (simplified)
 jest.mock('@/data/service-providers.json', () => [
   {
     id: '1',
