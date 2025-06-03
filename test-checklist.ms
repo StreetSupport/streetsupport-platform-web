@@ -27,3 +27,17 @@ This document tracks key test coverage across the Street Support Network rebuild
 - Test-driven development (TDD) applied where possible
 - Components are tested in isolation
 - API routes will be tested using integration suites where applicable
+
+### ✅ Find Help – End-to-End (Playwright)
+
+**Coverage:**
+- Page loads and fallback UI appears if geolocation is blocked
+- Manual postcode entry sets location
+- Category and subcategory filters function correctly
+- Map toggle button reveals map interface
+- Services display correctly based on geolocation and filters
+
+**File:** `e2e/find-help.spec.ts`  
+**Status:** ✅ All tests passing  
+**Date:** 2025-06-03  
+**Notes:** Mocks used for category API; geolocation stubbed for result validation
