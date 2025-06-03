@@ -3,11 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from '@/contexts/LocationContext';
 import rawProviders from '@/data/service-providers.json';
-import ServiceCard from './ServiceCard';
-import FilterPanel from './FilterPanel';
+import ServiceCard from '@/components/FindHelp/ServiceCard';
+import FilterPanel from '@/components/FindHelp/FilterPanel';
 import dynamic from 'next/dynamic';
-const MapView = dynamic(() => import('./MapView'), { ssr: false });
-
+const MapView = dynamic(() => import('@/components/FindHelp/MapView'), { ssr: false });
 
 interface RawService {
   id: string;
@@ -86,9 +85,7 @@ export default function FindHelpResults() {
         const postcodeMatch = orgPC === match;
         const categoryMatch = !selectedCategory || s.category === selectedCategory;
         const subCategoryMatch = !selectedSubCategory || s.subCategory === selectedSubCategory;
-
-        const keep = postcodeMatch && categoryMatch && subCategoryMatch;
-        return keep;
+        return postcodeMatch && categoryMatch && subCategoryMatch;
       });
 
       logs.push(`✅ Matched count: ${matched.length}`);
