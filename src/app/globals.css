@@ -3,6 +3,7 @@
 
 /* Core import for Tailwind v4 */
 @import "tailwindcss";
+@import 'leaflet/dist/leaflet.css';
 
 /* Your test style */
 .btn-test {

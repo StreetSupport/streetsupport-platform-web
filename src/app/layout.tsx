@@ -1,17 +1,19 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
-import './globals.css'    // now resolves to src/app/globals.css
+import './globals.css'; // now resolves to src/app/globals.css
 
-import { ReactNode } from 'react'
-import Nav from '../components/partials/Nav'
+import Nav from '../components/partials/Nav';
+import { LocationProvider } from '../contexts/LocationContext';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <Nav />
-        {children}
+        <LocationProvider>
+          <Nav />
+          {children}
+        </LocationProvider>
       </body>
     </html>
-  )
+  );
 }
