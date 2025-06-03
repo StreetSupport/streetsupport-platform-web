@@ -1,4 +1,3 @@
-// src/components/FindHelpEntry.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -35,13 +34,11 @@ export default function FindHelpEntry() {
   return (
     <section className="p-4 max-w-xl mx-auto">
       <h1 className="text-xl font-bold mb-4">Find Help Near You</h1>
-
       {location && (
         <p className="text-green-700 mb-4">
           Location set: {location.postcode || `${location.lat}, ${location.lng}`}
         </p>
       )}
-
       {fallbackVisible && (
         <form onSubmit={handlePostcodeSubmit} className="flex flex-col gap-2">
           <label htmlFor="postcode" className="text-sm font-medium">

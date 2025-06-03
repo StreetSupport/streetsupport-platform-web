@@ -39,11 +39,9 @@ describe('FindHelpResults', () => {
     expect(screen.getByText(/Health Clinic/i)).toBeInTheDocument();
   });
 
-  it('renders "Show map" button and toggles map', () => {
+  it('toggles map view when "Show map" is clicked', () => {
     render(<FindHelpResults />);
     const toggle = screen.getByRole('button', { name: /show map/i });
-    expect(toggle).toBeInTheDocument();
-
     fireEvent.click(toggle);
     expect(screen.getByText(/Debug Log/i)).toBeInTheDocument();
   });
