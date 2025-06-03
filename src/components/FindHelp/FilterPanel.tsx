@@ -78,7 +78,7 @@ export default function FilterPanel({ onFilterChange }: Props) {
         </select>
       </div>
 
-      {category && currentCategory && currentCategory.subCategories?.length > 0 && (
+        {category && Array.isArray(currentCategory?.subCategories) && currentCategory.subCategories.length > 0 && (
         <div>
           <label htmlFor="subCategory" className="block text-sm font-medium text-gray-700 mb-1">
             Subcategory

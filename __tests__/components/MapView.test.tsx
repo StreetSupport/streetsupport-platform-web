@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import MapView from '@/components/FindHelp/MapView';
 import { LocationProvider } from '@/contexts/LocationContext';
 
-// ✅ Mock Leaflet and React-Leaflet
 jest.mock('leaflet');
 jest.mock('leaflet/dist/leaflet.css', () => {});
 jest.mock('react-leaflet', () => ({
