@@ -2,7 +2,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import * as locationHook from '@/contexts/LocationContext';
 import FindHelpResults from '@/components/FindHelp/FindHelpResults';
 
-// Mock service providers (simplified)
 jest.mock('@/data/service-providers.json', () => [
   {
     id: '1',
@@ -40,11 +39,9 @@ describe('FindHelpResults', () => {
     expect(screen.getByText(/Health Clinic/i)).toBeInTheDocument();
   });
 
-  it('renders "Show map" button and toggles map', () => {
+  it('toggles map view when "Show map" is clicked', () => {
     render(<FindHelpResults />);
     const toggle = screen.getByRole('button', { name: /show map/i });
-    expect(toggle).toBeInTheDocument();
-
     fireEvent.click(toggle);
     expect(screen.getByText(/Debug Log/i)).toBeInTheDocument();
   });

@@ -17,12 +17,12 @@ describe('FindHelpEntry', () => {
     expect(screen.getByLabelText(/enter your postcode/i)).toBeInTheDocument();
   });
 
-  it('renders "Use My Location" button', () => {
+  it('renders continue button', () => {
     renderWithContext(<FindHelpEntry />);
     expect(screen.getByRole('button', { name: /continue/i })).toBeInTheDocument();
   });
 
-  it('renders nothing for location status initially', () => {
+  it('does not show location status initially', () => {
     renderWithContext(<FindHelpEntry />);
     expect(screen.queryByText(/Location set:/i)).not.toBeInTheDocument();
   });

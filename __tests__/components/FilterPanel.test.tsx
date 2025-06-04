@@ -1,23 +1,17 @@
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import FilterPanel from '@/components/FindHelp/FilterPanel';
 
-// Suppress "not wrapped in act" warnings
 const originalError = console.error;
 beforeAll(() => {
   jest.spyOn(console, 'error').mockImplementation((msg, ...args) => {
-    if (
-      typeof msg === 'string' &&
-      msg.includes('not wrapped in act')
-    ) return;
+    if (typeof msg === 'string' && msg.includes('not wrapped in act')) return;
     originalError(msg, ...args);
   });
 });
-
 afterAll(() => {
   (console.error as jest.Mock).mockRestore();
 });
 
-// Mock API fetch
 global.fetch = jest.fn(() =>
   Promise.resolve({
     json: () =>
@@ -58,31 +52,23 @@ describe('FilterPanel', () => {
     render(<FilterPanel onFilterChange={mockFilterChange} />);
 
     const categorySelect = await screen.findByLabelText(/category/i);
-
-    // Wait for fetch to complete
     await screen.findByRole('option', { name: /Foodbank/i });
 
     fireEvent.change(categorySelect, { target: { value: 'foodbank' } });
 
     await waitFor(() => {
       const lastCall = mockFilterChange.mock.calls.at(-1)?.[0];
-      expect(lastCall).toEqual({
-        category: 'foodbank',
-        subCategory: ''
-      });
+      expect(lastCall).toEqual({ category: 'foodbank', subCategory: '' });
     });
   });
 
   it('shows subcategory options when a category is selected', async () => {
     render(<FilterPanel onFilterChange={() => {}} />);
     const categorySelect = await screen.findByLabelText(/category/i);
-
-    // Wait for fetch and dropdown to stabilise
     await screen.findByRole('option', { name: /Foodbank/i });
 
     fireEvent.change(categorySelect, { target: { value: 'foodbank' } });
 
-    // Wait for subcategory options to render
     expect(await screen.findByRole('option', { name: /Meals/i })).toBeInTheDocument();
     expect(await screen.findByRole('option', { name: /Parcels/i })).toBeInTheDocument();
   });

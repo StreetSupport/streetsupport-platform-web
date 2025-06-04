@@ -45,13 +45,16 @@ export default function FilterPanel({ onFilterChange }: Props) {
   }, []);
 
   useEffect(() => {
-    setSubCategory('');
-    onFilterChange({ category, subCategory: '' });
-  }, [category, onFilterChange]);
+    const current = categories.find((c) => c.key === category);
+    const validSub = current?.subCategories.some((sub) => sub.key === subCategory);
 
-  useEffect(() => {
-    onFilterChange({ category, subCategory });
-  }, [subCategory, category, onFilterChange]);
+    if (!validSub) {
+      setSubCategory('');
+      onFilterChange({ category, subCategory: '' });
+    } else {
+      onFilterChange({ category, subCategory });
+    }
+  }, [category, subCategory, categories, onFilterChange]);
 
   const currentCategory = category
     ? categories.find((c) => c.key === category)
@@ -78,7 +81,7 @@ export default function FilterPanel({ onFilterChange }: Props) {
         </select>
       </div>
 
-      {category && currentCategory && currentCategory.subCategories?.length > 0 && (
+        {category && currentCategory?.subCategories?.length && (
         <div>
           <label htmlFor="subCategory" className="block text-sm font-medium text-gray-700 mb-1">
             Subcategory
