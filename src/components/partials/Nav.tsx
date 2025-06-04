@@ -55,8 +55,6 @@ export default function Nav() {
 
           <div className="hidden md:flex space-x-6 items-center">
             <Link href="/find-help" className="text-neutral-800 hover:text-blue-600">Find Help</Link>
-            <Link href="/about" className="text-neutral-800 hover:text-blue-600">About</Link>
-            <Link href="/contact" className="text-neutral-800 hover:text-blue-600">Contact</Link>
 
             <div
               className="relative"
@@ -68,7 +66,7 @@ export default function Nav() {
               </button>
 
               {isLocationsOpen && (
-                <div className="absolute z-50 mt-2 w-[600px] bg-white border border-neutral-200 rounded shadow-md p-4">
+                <div className="absolute left-1/2 -translate-x-1/2 z-50 mt-2 w-[600px] bg-white border border-neutral-200 rounded shadow-md p-4">
                   <ul className="columns-1 sm:columns-2 md:columns-3 gap-4 space-y-1">
                     {locations
                       .sort((a, b) => a.name.localeCompare(b.name))
@@ -86,6 +84,9 @@ export default function Nav() {
                 </div>
               )}
             </div>
+
+            <Link href="/about" className="text-neutral-800 hover:text-blue-600">About</Link>
+            <Link href="/contact" className="text-neutral-800 hover:text-blue-600">Contact</Link>
           </div>
         </div>
       </div>
@@ -93,14 +94,12 @@ export default function Nav() {
       {menuOpen && (
         <div className="md:hidden px-4 pb-4 space-y-2">
           <Link href="/find-help" className="block text-neutral-800 hover:text-blue-600">Find Help</Link>
-          <Link href="/about" className="block text-neutral-800 hover:text-blue-600">About</Link>
-          <Link href="/contact" className="block text-neutral-800 hover:text-blue-600">Contact</Link>
 
           <button
             onClick={() => setMobileLocationsOpen(prev => !prev)}
             className="w-full text-left text-neutral-800 hover:text-blue-600 text-sm font-semibold mt-2"
           >
-            {mobileLocationsOpen ? 'Locations' : 'Locations'}
+            Locations
           </button>
 
           {mobileLocationsOpen && (
@@ -119,6 +118,9 @@ export default function Nav() {
                 ))}
             </ul>
           )}
+
+          <Link href="/about" className="block text-neutral-800 hover:text-blue-600">About</Link>
+          <Link href="/contact" className="block text-neutral-800 hover:text-blue-600">Contact</Link>
         </div>
       )}
     </nav>
