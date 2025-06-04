@@ -1,7 +1,7 @@
 // jest.setup.ts
 import '@testing-library/jest-dom';
 
-// Provide a global fetch mock for components using fetch
+// Mock global fetch
 global.fetch = jest.fn(() =>
   Promise.resolve({
     json: () => Promise.resolve([
@@ -25,10 +25,13 @@ global.fetch = jest.fn(() =>
   })
 ) as jest.Mock;
 
-// Suppress React act(...) warnings globally (Jest syntax)
+// Suppress React act(...) warnings globally
+const originalError = console.error;
+
 beforeAll(() => {
-  jest.spyOn(console, 'error').mockImplementation((msg) => {
+  jest.spyOn(console, 'error').mockImplementation((...args) => {
+    const [msg] = args;
     if (typeof msg === 'string' && msg.includes('not wrapped in act')) return;
-    console.error(msg);
+    originalError(...args);
   });
 });
