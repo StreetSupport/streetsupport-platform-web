@@ -1,16 +1,29 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: '.env.local' });
 
 export default defineConfig({
   testDir: './e2e',
-  testIgnore: ['__tests__/**', 'tests/**'],
+  fullyParallel: true,
+  retries: 0,
+  reporter: 'list',
   use: {
     baseURL: 'http://localhost:3000',
-    headless: true,
-    viewport: { width: 1280, height: 720 },
+    trace: 'on-first-retry',
   },
+
   webServer: {
     command: 'npm run dev',
     port: 3000,
-    reuseExistingServer: true,
+    timeout: 120 * 1000,
+    reuseExistingServer: !process.env.CI,
   },
+
+  projects: [
+    {
+      name: 'Desktop Chrome',
+      use: { ...devices['Desktop Chrome'] },
+    },
+  ],
 });
