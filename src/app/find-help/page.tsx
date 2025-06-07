@@ -3,15 +3,16 @@
 import { LocationProvider } from '@/contexts/LocationContext';
 import FindHelpEntry from '@/components/FindHelp/FindHelpEntry';
 import FindHelpResults from '@/components/FindHelp/FindHelpResults';
+import rawProviders from '@/data/service-providers.json';
 
 export default function FindHelpPage() {
-  console.log('[FindHelpPage] Rendering...');
+  const providers = rawProviders as any[];
 
   return (
     <LocationProvider>
       <div>
         <FindHelpEntry />
-        <FindHelpResults />
+        <FindHelpResults providers={providers} />
       </div>
     </LocationProvider>
   );

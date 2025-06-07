@@ -1,138 +1,193 @@
+// FindHelpResults.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useLocation } from '@/contexts/LocationContext';
-import rawProviders from '@/data/service-providers.json';
-import ServiceCard from '@/components/FindHelp/ServiceCard';
-import FilterPanel from '@/components/FindHelp/FilterPanel';
-import dynamic from 'next/dynamic';
-const MapView = dynamic(() => import('@/components/FindHelp/MapView'), { ssr: false });
+import ServiceCard from './ServiceCard';
+import FilterPanel from './FilterPanel';
+import GoogleMap from '@/components/MapComponent/GoogleMap';
+import type { ServiceProvider, FlattenedService } from '@/types';
 
-interface RawService {
-  id: string;
-  name: string;
-  category: string;
-  subCategory: string;
-  description: string;
-  openTimes: { day: string; start: string; end: string }[];
-  clientGroups: string[];
+interface Props {
+  providers: ServiceProvider[];
 }
 
-interface Organisation {
-  id: string;
-  name: string;
-  postcode: string;
-  latitude: number;
-  longitude: number;
-  verified: boolean;
-  services: RawService[];
-}
-
-interface FlattenedService extends RawService {
-  organisation: string;
-  orgPostcode: string;
-  latitude: number;
-  longitude: number;
-}
-
-const allProviders = rawProviders as Organisation[];
-
-export default function FindHelpResults() {
+export default function FindHelpResults({ providers }: Props) {
   const { location } = useLocation();
-  const [filtered, setFiltered] = useState<FlattenedService[]>([]);
+  const [showMap, setShowMap] = useState(false);
+  const [radius, setRadius] = useState(10);
+  const [sortOrder, setSortOrder] = useState<'distance' | 'alpha'>('distance');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubCategory, setSelectedSubCategory] = useState('');
-  const [showMap, setShowMap] = useState(false);
-  const [log, setLog] = useState<string>('🪵 Initialising...');
 
-  function handleFilterChange(filters: { category: string; subCategory: string }) {
-    setSelectedCategory(filters.category);
-    setSelectedSubCategory(filters.subCategory);
+  const flattenedServices: FlattenedService[] = useMemo(() => {
+    if (!providers || providers.length === 0) return [];
+
+    return providers.flatMap((org) => {
+      if (!org.services || !Array.isArray(org.services)) return [];
+
+      return org.services.map((service) => {
+        if (!service.latitude || !service.longitude) return null;
+        return {
+          id: service.id,
+          name: service.name,
+          description: service.description,
+          category: service.category,
+          subCategory: service.subCategory,
+          organisation: org.name,
+          organisationSlug: org.slug,
+          lat: service.latitude,
+          lng: service.longitude,
+          clientGroups: service.clientGroups || [],
+          openTimes: service.openTimes || [],
+        };
+      }).filter(Boolean) as FlattenedService[];
+    });
+  }, [providers]);
+
+  const filteredServicesWithDistance = useMemo(() => {
+    if (!location) return [];
+
+    return flattenedServices
+      .map((service) => {
+        const distance = getDistanceFromLatLonInKm(location.lat, location.lng, service.lat, service.lng);
+        return { ...service, distance };
+      })
+      .filter((service) => {
+        const distanceMatch = service.distance <= radius;
+        const categoryMatch = selectedCategory ? service.category === selectedCategory : true;
+        const subCategoryMatch = selectedSubCategory ? service.subCategory === selectedSubCategory : true;
+        return distanceMatch && categoryMatch && subCategoryMatch;
+      });
+  }, [flattenedServices, location, radius, selectedCategory, selectedSubCategory]);
+
+  const sortedServices = useMemo(() => {
+    if (sortOrder === 'alpha') {
+      return [...filteredServicesWithDistance].sort((a, b) => a.name.localeCompare(b.name));
+    }
+    return [...filteredServicesWithDistance].sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0));
+  }, [filteredServicesWithDistance, sortOrder]);
+
+  function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+    const R = 6371;
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
   }
 
-  useEffect(() => {
-    const logs: string[] = [];
-    logs.push('📍 useEffect ran');
-    logs.push(`🧭 LOCATION: ${JSON.stringify(location, null, 2)}`);
-    logs.push(`🔽 CATEGORY: ${selectedCategory}, SUBCATEGORY: ${selectedSubCategory}`);
+  function deg2rad(deg: number) {
+    return deg * (Math.PI / 180);
+  }
 
-    if (!location) {
-      logs.push('⛔ No location found');
-      setLog(logs.join('\n'));
-      return;
-    }
-
-    const flattened: FlattenedService[] = allProviders.flatMap((org) =>
-      org.services.map((service) => ({
-        ...service,
-        organisation: org.name,
-        orgPostcode: org.postcode,
-        latitude: org.latitude,
-        longitude: org.longitude,
-      }))
-    );
-
-    logs.push(`📦 Flattened services count: ${flattened.length}`);
-
-    let matched: FlattenedService[] = [];
-
-    if (location.postcode) {
-      const match = location.postcode.trim().toLowerCase();
-      logs.push(`🔍 Matching postcode: "${match}"`);
-
-      matched = flattened.filter((s) => {
-        const orgPC = s.orgPostcode?.trim().toLowerCase();
-        const postcodeMatch = orgPC === match;
-        const categoryMatch = !selectedCategory || s.category === selectedCategory;
-        const subCategoryMatch = !selectedSubCategory || s.subCategory === selectedSubCategory;
-        return postcodeMatch && categoryMatch && subCategoryMatch;
+  const combinedMarkers = useMemo(() => {
+    const markers = filteredServicesWithDistance.map((s) => ({
+      id: s.id,
+      lat: s.lat,
+      lng: s.lng,
+      title: s.name,
+      organisation: s.organisation,
+      link: `/organisation/${s.organisationSlug}`,
+      serviceName: s.name,
+      distanceKm: s.distance,
+    }));
+    if (location) {
+      markers.unshift({
+        id: 'user-location',
+        lat: location.lat,
+        lng: location.lng,
+        title: 'You are here',
+        icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
       });
-
-      logs.push(`✅ Matched count: ${matched.length}`);
-    } else if (location.lat && location.lng) {
-      logs.push('📌 No postcode, using lat/lng match (fallback)');
-      matched = flattened.filter((s) => {
-        const categoryMatch = !selectedCategory || s.category === selectedCategory;
-        const subCategoryMatch = !selectedSubCategory || s.subCategory === selectedSubCategory;
-        return categoryMatch && subCategoryMatch;
-      });
-
-      logs.push(`✅ Matched count (lat/lng): ${matched.length}`);
-    } else {
-      logs.push('⚠️ No valid location data for filtering');
     }
-
-    setFiltered(matched);
-    setLog(logs.join('\n'));
-  }, [location, selectedCategory, selectedSubCategory]);
+    return markers;
+  }, [filteredServicesWithDistance, location]);
 
   return (
-    <section className="p-4 space-y-4">
-      <h1 className="text-xl font-bold mb-2">Services near you</h1>
+    <section className="flex flex-col lg:flex-row items-start px-4 sm:px-6 md:px-8 py-6 gap-6 max-w-7xl mx-auto h-auto lg:h-[calc(100vh-4rem)]">
+      <div className={`w-full ${showMap ? 'lg:w-1/2' : 'lg:w-full'} flex flex-col h-auto lg:h-full`}>
+        <div className="mb-4">
+          <h1 className="text-xl font-bold mb-2">Services near you</h1>
+          <FilterPanel
+            selectedCategory={selectedCategory}
+            selectedSubCategory={selectedSubCategory}
+            setSelectedCategory={setSelectedCategory}
+            setSelectedSubCategory={setSelectedSubCategory}
+          />
+          <div className="flex items-center flex-wrap gap-4 mt-4">
+            <div className="flex items-center gap-2">
+              <label htmlFor="radius" className="text-sm font-medium">Distance radius:</label>
+              <select
+                id="radius"
+                className="border px-2 py-1 rounded"
+                value={radius}
+                onChange={(e) => setRadius(Number(e.target.value))}
+              >
+                {[1, 3, 5, 10, 25].map((r) => (
+                  <option key={r} value={r}>{r} km</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-2">
+              <label htmlFor="sortOrder" className="text-sm font-medium">Sort by:</label>
+              <select
+                id="sortOrder"
+                className="border px-2 py-1 rounded"
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value as 'distance' | 'alpha')}
+              >
+                <option value="distance">Distance</option>
+                <option value="alpha">Alphabetical</option>
+              </select>
+            </div>
+            <button
+              onClick={() => setShowMap(!showMap)}
+              className="text-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 ml-auto"
+            >
+              {showMap ? 'Hide map' : 'Show map'}
+            </button>
+          </div>
+        </div>
 
-      <FilterPanel onFilterChange={handleFilterChange} />
+        {showMap && (
+          <div className="block lg:hidden w-full mb-4" data-testid="map-container">
+            <GoogleMap center={location} markers={combinedMarkers} />
+          </div>
+        )}
 
-      <button
-        className="text-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
-        onClick={() => setShowMap(!showMap)}
-      >
-        {showMap ? 'Hide map' : 'Show map'}
-      </button>
+        <div className="flex-1 overflow-y-visible lg:overflow-y-auto pr-2">
+          {sortedServices.length === 0 ? (
+            <p>No services found within {radius} km of your location.</p>
+          ) : (
+            <div
+              className={`gap-4 ${showMap ? 'flex flex-col' : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}
+            >
+              {sortedServices.map((service) => (
+                <div
+                  key={service.id}
+                  className="border border-gray-300 rounded-md p-4 bg-white flex flex-col"
+                >
+                  <ServiceCard service={service} />
+                  {service.distance !== undefined && (
+                    <p className="text-sm text-gray-500 mt-auto pt-4">
+                      Approx. {service.distance.toFixed(1)} km away
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
 
-      {showMap && <p className="text-green-600">🗺️ Map is toggled ON</p>}
-      {showMap && <MapView services={filtered} />}
-
-      <details className="mb-4">
-        <summary className="cursor-pointer text-sm text-gray-600">Debug Log</summary>
-        <pre className="text-xs bg-gray-100 p-2 rounded whitespace-pre-wrap">{log}</pre>
-      </details>
-
-      {filtered.length === 0 ? (
-        <p>No services found near your location.</p>
-      ) : (
-        filtered.map((service) => (
-          <ServiceCard key={service.id} service={service} />
-        ))
+      {showMap && (
+        <div className="hidden lg:block w-full lg:w-1/2 mt-8 lg:mt-0 lg:sticky lg:top-[6.5rem] min-h-[400px]" data-testid="map-container">
+          <GoogleMap center={location} markers={combinedMarkers} />
+        </div>
       )}
     </section>
   );

@@ -1,6 +1,12 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useCallback,
+} from 'react';
 
 export interface LocationState {
   lat?: number;
@@ -11,17 +17,52 @@ export interface LocationState {
 interface LocationContextType {
   location: LocationState | null;
   setLocation: (location: LocationState) => void;
+  requestLocation: () => void;
 }
 
 const LocationContext = createContext<LocationContextType | undefined>(undefined);
 
 export function LocationProvider({ children }: { children: ReactNode }) {
-  console.log('[LocationProvider] Initialising...'); // ✅ Diagnostic log
-
   const [location, setLocation] = useState<LocationState | null>(null);
 
+  const requestLocation = useCallback(() => {
+    if (!navigator.geolocation) {
+      console.error('⛔ Geolocation not supported in this browser');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+        console.log('✅ Geolocation success:', position.coords);
+      },
+      (err) => {
+        try {
+          console.error('⛔ Geolocation error:', {
+            code: err?.code,
+            message: err?.message,
+            raw: JSON.stringify(err, Object.getOwnPropertyNames(err)),
+            PERMISSION_DENIED: err?.code === 1,
+            POSITION_UNAVAILABLE: err?.code === 2,
+            TIMEOUT: err?.code === 3,
+          });
+        } catch (e) {
+          console.error('⛔ Geolocation error: Could not serialize error:', err);
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
+  }, []);
+
   return (
-    <LocationContext.Provider value={{ location, setLocation }}>
+    <LocationContext.Provider value={{ location, setLocation, requestLocation }}>
       {children}
     </LocationContext.Provider>
   );
@@ -35,6 +76,4 @@ export function useLocation() {
   return context;
 }
 
-if (process.env.NODE_ENV !== 'test') {
-  console.log('[LocationProvider] Initialising...');
-}
+export { LocationContext };

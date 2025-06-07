@@ -1,78 +1,56 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import rawCategories from '@/data/service-categories.json';
 
 interface Category {
   key: string;
   name: string;
-  subCategories: {
-    key: string;
-    name: string;
-  }[];
+  subCategories: { key: string; name: string }[];
 }
 
 interface Props {
-  onFilterChange: (filters: { category: string; subCategory: string }) => void;
+  selectedCategory: string;
+  selectedSubCategory: string;
+  setSelectedCategory: (category: string) => void;
+  setSelectedSubCategory: (subCategory: string) => void;
 }
 
-export default function FilterPanel({ onFilterChange }: Props) {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [category, setCategory] = useState('');
-  const [subCategory, setSubCategory] = useState('');
+const categories = (rawCategories as Category[]).sort((a, b) => a.name.localeCompare(b.name));
+
+export default function FilterPanel({
+  selectedCategory,
+  selectedSubCategory,
+  setSelectedCategory,
+  setSelectedSubCategory,
+}: Props) {
+  const [subCategories, setSubCategories] = useState<{ key: string; name: string }[]>([]);
 
   useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const res = await fetch('/api/get-categories');
-        const data: Category[] = await res.json();
-
-        const sorted = data
-          .map((cat) => ({
-            ...cat,
-            subCategories: cat.subCategories.sort((a, b) =>
-              a.name.localeCompare(b.name)
-            ),
-          }))
-          .sort((a, b) => a.name.localeCompare(b.name));
-
-        setCategories(sorted);
-      } catch (error) {
-        console.error('Failed to load categories:', error);
-      }
-    }
-
-    fetchCategories();
-  }, []);
-
-  useEffect(() => {
-    const current = categories.find((c) => c.key === category);
-    const validSub = current?.subCategories.some((sub) => sub.key === subCategory);
-
-    if (!validSub) {
-      setSubCategory('');
-      onFilterChange({ category, subCategory: '' });
+    const matched = categories.find((cat) => cat.key === selectedCategory);
+    if (matched && matched.subCategories) {
+      setSubCategories([...matched.subCategories].sort((a, b) => a.name.localeCompare(b.name)));
     } else {
-      onFilterChange({ category, subCategory });
+      setSubCategories([]);
     }
-  }, [category, subCategory, categories, onFilterChange]);
-
-  const currentCategory = category
-    ? categories.find((c) => c.key === category)
-    : undefined;
+  }, [selectedCategory]);
 
   return (
-    <div className="p-4 bg-white rounded shadow mb-4 space-y-4">
-      <div>
-        <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
-          Category
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-2">
+        <label htmlFor="category" className="text-sm font-medium">
+          Category:
         </label>
         <select
           id="category"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+          className="border px-2 py-1 rounded"
+          value={selectedCategory}
+          onChange={(e) => {
+            setSelectedCategory(e.target.value);
+            setSelectedSubCategory(''); // reset subcategory when changing category
+          }}
         >
-          <option value="">All categories</option>
+          <option value="">All</option>
           {categories.map((cat) => (
             <option key={cat.key} value={cat.key}>
               {cat.name}
@@ -80,27 +58,25 @@ export default function FilterPanel({ onFilterChange }: Props) {
           ))}
         </select>
       </div>
-
-        {category && currentCategory?.subCategories?.length && (
-        <div>
-          <label htmlFor="subCategory" className="block text-sm font-medium text-gray-700 mb-1">
-            Subcategory
-          </label>
-          <select
-            id="subCategory"
-            value={subCategory}
-            onChange={(e) => setSubCategory(e.target.value)}
-            className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-          >
-            <option value="">All subcategories</option>
-            {currentCategory.subCategories.map((sub) => (
-              <option key={sub.key} value={sub.key}>
-                {sub.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+      <div className="flex items-center gap-2">
+        <label htmlFor="subCategory" className="text-sm font-medium">
+          Subcategory:
+        </label>
+        <select
+          id="subCategory"
+          className="border px-2 py-1 rounded"
+          value={selectedSubCategory}
+          onChange={(e) => setSelectedSubCategory(e.target.value)}
+          disabled={!selectedCategory}
+        >
+          <option value="">All</option>
+          {subCategories.map((sub) => (
+            <option key={sub.key} value={sub.key}>
+              {sub.name}
+            </option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 }
