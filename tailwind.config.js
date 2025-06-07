@@ -52,6 +52,9 @@ module.exports = {
         'header-subnav-height': '5.3125rem',
         'header-subnav-margin': '5.3125rem',
       },
+      height: {
+        'screen-header': 'calc(100vh - 4rem)',
+      },
     },
   },
   plugins: [],

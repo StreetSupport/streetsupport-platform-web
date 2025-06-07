@@ -7,6 +7,7 @@ export default function FindHelpEntry() {
   const { location, setLocation } = useLocation();
   const [fallbackVisible, setFallbackVisible] = useState(false);
   const [postcodeInput, setPostcodeInput] = useState('');
+  const [isGeocoding, setIsGeocoding] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'geolocation' in navigator) {
@@ -24,10 +25,33 @@ export default function FindHelpEntry() {
     }
   }, [setLocation]);
 
-  function handlePostcodeSubmit(e: React.FormEvent) {
+  async function handlePostcodeSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (postcodeInput.trim()) {
-      setLocation({ postcode: postcodeInput.trim() });
+    if (!postcodeInput.trim()) return;
+
+    setIsGeocoding(true);
+
+    try {
+      const response = await fetch(`/api/geocode?postcode=${encodeURIComponent(postcodeInput.trim())}`);
+      if (!response.ok) {
+        throw new Error('Geocoding request failed');
+      }
+
+      const data = await response.json();
+
+      if (data.location?.lat && data.location?.lng) {
+        const { lat, lng } = data.location;
+        setLocation({ lat, lng, postcode: postcodeInput.trim() });
+      } else {
+        console.error('Geocode failed: invalid response', data);
+        alert(data.error || 'Sorry, we couldn’t find that postcode.');
+      }
+
+    } catch (err) {
+      console.error('Geocode error:', err);
+      alert('Something went wrong when trying to find your location.');
+    } finally {
+      setIsGeocoding(false);
     }
   }
 
@@ -52,8 +76,12 @@ export default function FindHelpEntry() {
             onChange={(e) => setPostcodeInput(e.target.value)}
             required
           />
-          <button type="submit" className="bg-blue-600 text-white py-2 rounded">
-            Continue
+          <button
+            type="submit"
+            className="bg-blue-600 text-white py-2 rounded disabled:opacity-50"
+            disabled={isGeocoding}
+          >
+            {isGeocoding ? 'Locating...' : 'Continue'}
           </button>
         </form>
       )}

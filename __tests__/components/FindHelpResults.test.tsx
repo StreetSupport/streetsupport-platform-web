@@ -1,58 +1,60 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import * as locationHook from '@/contexts/LocationContext';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import FindHelpResults from '@/components/FindHelp/FindHelpResults';
+import { LocationProvider } from '@/contexts/LocationContext';
+import { FilterContextProvider } from '@/contexts/FilterContext';
+import { act as reactAct } from 'react';
 
-jest.mock('@/data/service-providers.json', () => [
-  {
-    id: '1',
-    name: 'Test Org',
-    postcode: 'LN4 2LE',
-    latitude: 53.0,
-    longitude: -0.5,
-    verified: true,
-    services: [
-      {
-        id: 's1',
-        name: 'Health Clinic',
-        category: 'health',
-        subCategory: 'dentist',
-        description: 'A dentist service.',
-        openTimes: [],
-        clientGroups: []
-      }
-    ]
-  }
-]);
+// ✅ Use the manual mock located in __mocks__
+jest.mock('@/components/FindHelp/FilterPanel', () =>
+  require('../../__mocks__/FilterPanel.tsx')
+);
+
+function renderWithProviders(ui: React.ReactElement) {
+  return render(
+    <LocationProvider>
+      <FilterContextProvider>{ui}</FilterContextProvider>
+    </LocationProvider>
+  );
+}
 
 describe('FindHelpResults', () => {
-  const mockLocation = {
-    location: { postcode: 'LN4 2LE' },
-    setLocation: jest.fn()
-  };
-
   beforeEach(() => {
-    jest.spyOn(locationHook, 'useLocation').mockReturnValue(mockLocation);
+    (globalThis as any).capturedFilterChange = undefined;
   });
 
-  it('renders filtered service based on postcode', () => {
-    render(<FindHelpResults />);
-    expect(screen.getByText(/Health Clinic/i)).toBeInTheDocument();
-  });
+  it('renders filtered service based on location', async () => {
+    renderWithProviders(<FindHelpResults />);
 
-  it('toggles map view when "Show map" is clicked', () => {
-    render(<FindHelpResults />);
-    const toggle = screen.getByRole('button', { name: /show map/i });
-    fireEvent.click(toggle);
-    expect(screen.getByText(/Debug Log/i)).toBeInTheDocument();
-  });
-
-  it('renders "No services found" if location has no match', () => {
-    jest.spyOn(locationHook, 'useLocation').mockReturnValue({
-      location: { postcode: 'ZZ1 1ZZ' },
-      setLocation: jest.fn()
+    await waitFor(() => {
+      expect(typeof (globalThis as any).capturedFilterChange).toBe('function');
     });
 
-    render(<FindHelpResults />);
-    expect(screen.getByText(/No services found/i)).toBeInTheDocument();
+    const capturedFilterChange = (globalThis as any).capturedFilterChange;
+
+    reactAct(() => {
+      capturedFilterChange({
+        category: 'health',
+        subCategory: 'gp',
+      });
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/Services near you/i)).toBeInTheDocument();
+    });
+  });
+
+  it('toggles map view when "Show map" is clicked', async () => {
+    renderWithProviders(<FindHelpResults />);
+    const button = screen.getByRole('button', { name: /show map/i });
+    expect(button).toBeInTheDocument();
+    fireEvent.click(button);
+    expect(screen.getByText(/Hide map/i)).toBeInTheDocument();
+  });
+
+  it('renders "No services found" if location has no match', async () => {
+    renderWithProviders(<FindHelpResults />);
+    await waitFor(() => {
+      expect(screen.getByText(/No services found within/i)).toBeInTheDocument();
+    });
   });
 });
