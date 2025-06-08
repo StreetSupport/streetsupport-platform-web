@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": "src",
-    "typeRoots": ["./types", "./node_modules/@types"],
+    "typeRoots": ["src/types", "./node_modules/@types"],
     "target": "ES2017",
     "lib": [
       "dom",
@@ -20,7 +20,8 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "@/*": ["*"]
+      "@/*": ["*"],
+      "@/types": ["types/index.ts"]
     },
     "plugins": [
       {
@@ -32,8 +33,10 @@
     "**/*.ts",
     "**/*.tsx",
     "next-env.d.ts",
-    ".next/types/**/*.ts"
-, "jest.config.cjs", "__mocks__/leaflet.js"  ],
+    ".next/types/**/*.ts",
+    "jest.config.cjs",
+    "__mocks__/leaflet.js"
+  ],
   "exclude": [
     "node_modules"
   ]

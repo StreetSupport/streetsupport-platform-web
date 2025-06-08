@@ -1,7 +1,7 @@
 // FindHelpResults.tsx
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { useLocation } from '@/contexts/LocationContext';
 import ServiceCard from './ServiceCard';
 import FilterPanel from './FilterPanel';
@@ -12,6 +12,26 @@ interface Props {
   providers: ServiceProvider[];
 }
 
+interface FlattenedServiceWithExtras extends FlattenedService {
+  organisation: string;
+  organisationSlug: string;
+  lat: number;
+  lng: number;
+  distance?: number;
+}
+
+interface MapMarker {
+  id: string;
+  lat: number;
+  lng: number;
+  title: string;
+  organisation?: string;
+  link?: string;
+  serviceName?: string;
+  distanceKm?: number;
+  icon?: string;
+}
+
 export default function FindHelpResults({ providers }: Props) {
   const { location } = useLocation();
   const [showMap, setShowMap] = useState(false);
@@ -20,55 +40,7 @@ export default function FindHelpResults({ providers }: Props) {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubCategory, setSelectedSubCategory] = useState('');
 
-  const flattenedServices: FlattenedService[] = useMemo(() => {
-    if (!providers || providers.length === 0) return [];
-
-    return providers.flatMap((org) => {
-      if (!org.services || !Array.isArray(org.services)) return [];
-
-      return org.services.map((service) => {
-        if (!service.latitude || !service.longitude) return null;
-        return {
-          id: service.id,
-          name: service.name,
-          description: service.description,
-          category: service.category,
-          subCategory: service.subCategory,
-          organisation: org.name,
-          organisationSlug: org.slug,
-          lat: service.latitude,
-          lng: service.longitude,
-          clientGroups: service.clientGroups || [],
-          openTimes: service.openTimes || [],
-        };
-      }).filter(Boolean) as FlattenedService[];
-    });
-  }, [providers]);
-
-  const filteredServicesWithDistance = useMemo(() => {
-    if (!location) return [];
-
-    return flattenedServices
-      .map((service) => {
-        const distance = getDistanceFromLatLonInKm(location.lat, location.lng, service.lat, service.lng);
-        return { ...service, distance };
-      })
-      .filter((service) => {
-        const distanceMatch = service.distance <= radius;
-        const categoryMatch = selectedCategory ? service.category === selectedCategory : true;
-        const subCategoryMatch = selectedSubCategory ? service.subCategory === selectedSubCategory : true;
-        return distanceMatch && categoryMatch && subCategoryMatch;
-      });
-  }, [flattenedServices, location, radius, selectedCategory, selectedSubCategory]);
-
-  const sortedServices = useMemo(() => {
-    if (sortOrder === 'alpha') {
-      return [...filteredServicesWithDistance].sort((a, b) => a.name.localeCompare(b.name));
-    }
-    return [...filteredServicesWithDistance].sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0));
-  }, [filteredServicesWithDistance, sortOrder]);
-
-  function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const getDistanceFromLatLonInKm = useCallback((lat1: number, lon1: number, lat2: number, lon2: number) => {
     const R = 6371;
     const dLat = deg2rad(lat2 - lat1);
     const dLon = deg2rad(lon2 - lon1);
@@ -78,14 +50,70 @@ export default function FindHelpResults({ providers }: Props) {
       Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
-  }
+  }, []);
 
   function deg2rad(deg: number) {
     return deg * (Math.PI / 180);
   }
 
-  const combinedMarkers = useMemo(() => {
-    const markers = filteredServicesWithDistance.map((s) => ({
+  const flattenedServices: FlattenedServiceWithExtras[] = useMemo(() => {
+    if (!providers || providers.length === 0) return [];
+
+    return providers.flatMap((org) => {
+      if (!org.services || !Array.isArray(org.services)) return [];
+
+      return org.services.flatMap((service) => {
+        if (
+          typeof service.latitude !== 'number' ||
+          typeof service.longitude !== 'number'
+        ) {
+          return [];
+        }
+
+        return [{
+          id: service.id,
+          name: service.name,
+          description: service.description,
+          category: service.category,
+          subCategory: service.subCategory,
+          lat: service.latitude,
+          lng: service.longitude,
+          latitude: service.latitude,
+          longitude: service.longitude,
+          organisation: org.name,
+          organisationSlug: org.slug,
+          clientGroups: service.clientGroups || [],
+          openTimes: service.openTimes || [],
+        }];
+      });
+    });
+  }, [providers]);
+
+  const filteredServicesWithDistance = useMemo(() => {
+    if (!location || location.lat == null || location.lng == null) return [];
+
+    return flattenedServices
+      .map((service) => ({
+        ...service,
+        distance: getDistanceFromLatLonInKm(location.lat!, location.lng!, service.lat, service.lng),
+      }))
+      .filter((service) => {
+        const distanceMatch = service.distance! <= radius;
+        const categoryMatch = selectedCategory ? service.category === selectedCategory : true;
+        const subCategoryMatch = selectedSubCategory ? service.subCategory === selectedSubCategory : true;
+        return distanceMatch && categoryMatch && subCategoryMatch;
+      });
+  }, [flattenedServices, location, radius, selectedCategory, selectedSubCategory, getDistanceFromLatLonInKm]);
+
+  const sortedServices = useMemo(() => {
+    if (sortOrder === 'alpha') {
+      return [...filteredServicesWithDistance].sort((a, b) => a.name.localeCompare(b.name));
+    }
+    return [...filteredServicesWithDistance].sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0));
+  }, [filteredServicesWithDistance, sortOrder]);
+
+  const combinedMarkers: MapMarker[] = useMemo(() => {
+    const markers: MapMarker[] = filteredServicesWithDistance.map((s) => ({
       id: s.id,
       lat: s.lat,
       lng: s.lng,
@@ -95,7 +123,8 @@ export default function FindHelpResults({ providers }: Props) {
       serviceName: s.name,
       distanceKm: s.distance,
     }));
-    if (location) {
+
+    if (location && location.lat != null && location.lng != null) {
       markers.unshift({
         id: 'user-location',
         lat: location.lat,
@@ -104,6 +133,7 @@ export default function FindHelpResults({ providers }: Props) {
         icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
       });
     }
+
     return markers;
   }, [filteredServicesWithDistance, location]);
 
@@ -155,7 +185,7 @@ export default function FindHelpResults({ providers }: Props) {
 
         {showMap && (
           <div className="block lg:hidden w-full mb-4" data-testid="map-container">
-            <GoogleMap center={location} markers={combinedMarkers} />
+            <GoogleMap center={(location && location.lat != null && location.lng != null) ? { lat: location.lat, lng: location.lng } : null} markers={combinedMarkers} />
           </div>
         )}
 
@@ -163,9 +193,7 @@ export default function FindHelpResults({ providers }: Props) {
           {sortedServices.length === 0 ? (
             <p>No services found within {radius} km of your location.</p>
           ) : (
-            <div
-              className={`gap-4 ${showMap ? 'flex flex-col' : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}
-            >
+            <div className={`gap-4 ${showMap ? 'flex flex-col' : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
               {sortedServices.map((service) => (
                 <div
                   key={service.id}
@@ -186,7 +214,14 @@ export default function FindHelpResults({ providers }: Props) {
 
       {showMap && (
         <div className="hidden lg:block w-full lg:w-1/2 mt-8 lg:mt-0 lg:sticky lg:top-[6.5rem] min-h-[400px]" data-testid="map-container">
-          <GoogleMap center={location} markers={combinedMarkers} />
+          <GoogleMap
+            center={
+              location && location.lat != null && location.lng != null
+                ? { lat: location.lat, lng: location.lng }
+                : null
+            }
+            markers={combinedMarkers}
+          />
         </div>
       )}
     </section>

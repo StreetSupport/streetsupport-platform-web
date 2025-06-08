@@ -49,7 +49,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
             POSITION_UNAVAILABLE: err?.code === 2,
             TIMEOUT: err?.code === 3,
           });
-        } catch (e) {
+        } catch {
           console.error('⛔ Geolocation error: Could not serialize error:', err);
         }
       },

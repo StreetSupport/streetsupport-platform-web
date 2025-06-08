@@ -11,7 +11,6 @@ export function GET() {
       postcode: provider.postcode,
       latitude: provider.latitude,
       longitude: provider.longitude,
-      locationId: provider.locationId,
       verified: provider.verified
     }));
   });
