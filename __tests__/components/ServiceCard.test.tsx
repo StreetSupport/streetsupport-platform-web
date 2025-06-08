@@ -30,11 +30,11 @@ describe('ServiceCard', () => {
     expect(screen.getByText(/Subcategory: dentist/i)).toBeInTheDocument();
   });
 
-  // it('renders client group tags and opening times', () => {
-  //   render(<ServiceCard service={mockService} />);
-  //   expect(screen.getByText('age-18+')).toBeInTheDocument();
-  //   expect(screen.getByText('rough-sleepers')).toBeInTheDocument();
-  //   expect(screen.getByText('Monday: 09:00 - 17:00')).toBeInTheDocument();
-  //   expect(screen.getByText('Wednesday: 09:00 - 17:00')).toBeInTheDocument();
-  // });
+  it('renders client group tags and opening times', () => {
+    render(<ServiceCard service={mockService} />);
+    expect(screen.getByText('age-18+')).toBeInTheDocument();
+    expect(screen.getByText('rough-sleepers')).toBeInTheDocument();
+    expect(screen.getByText('Monday: 09:00 – 17:00')).toBeInTheDocument();
+    expect(screen.getByText('Wednesday: 09:00 – 17:00')).toBeInTheDocument();
+  });
 });
