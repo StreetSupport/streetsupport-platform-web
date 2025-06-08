@@ -71,4 +71,12 @@ See the project instructions for the full GitHub workflow. In short:
 
 ---
 
+## ⚠️ TypeScript & Linting Workaround
+
+Some temporary TypeScript and ESLint suppressions are in place—particularly in `FindHelpResults.tsx`—to avoid breaking builds while types are refined. This includes type assertions (`as any`, `!`) and relaxed location typing.
+
+These will be addressed post-MVP once shared types (e.g. for services and location context) are finalised. All suppressions are tracked in Trello under `Linting Suppression and Deferred Resolution Strategy` - https://trello.com/c/bISJ2l1L.
+
+---
+
 For full developer instructions and context, see the `rebuild-docs.docx` or ask for clarification before making assumptions.

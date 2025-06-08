@@ -4,9 +4,10 @@ import { LocationProvider } from '@/contexts/LocationContext';
 import FindHelpEntry from '@/components/FindHelp/FindHelpEntry';
 import FindHelpResults from '@/components/FindHelp/FindHelpResults';
 import rawProviders from '@/data/service-providers.json';
+import type { ServiceProvider } from '@/types';
 
 export default function FindHelpPage() {
-  const providers = rawProviders as any[];
+  const providers = rawProviders as ServiceProvider[];
 
   return (
     <LocationProvider>
