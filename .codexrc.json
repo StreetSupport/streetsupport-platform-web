@@ -1,0 +1,34 @@
+{
+  "name": "streetsupport-platform-web",
+  "description": "Public-facing website for Street Support Network. Helps users find support services and allows partners to manage their listings.",
+  "language": "TypeScript",
+  "framework": "Next.js",
+  "reactVersion": "18.3.1",
+  "nextVersion": "15.3.2",
+  "tailwind": true,
+  "testing": {
+    "unit": "jest",
+    "e2e": "playwright",
+    "mocks": ["__mocks__/leaflet.js", "__mocks__/react-leaflet.tsx"]
+  },
+  "ci": {
+    "provider": "github-actions",
+    "workflows": ["unit.yml", "e2e.yml"]
+  },
+  "env": {
+    "GOOGLE_MAPS_API_KEY": "required",
+    "NEXT_PUBLIC_ENV": "optional"
+  },
+  "features": {
+    "geolocation": true,
+    "map-view": true,
+    "cms-integration": "in progress",
+    "virtual-assistant": "planned"
+  },
+  "paths": {
+    "components": "src/components",
+    "data": "src/data",
+    "pages": "src/pages",
+    "types": "src/types"
+  }
+}
