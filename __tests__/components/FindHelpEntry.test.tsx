@@ -49,7 +49,7 @@ describe('FindHelpEntry', () => {
   });
 
   it('shows alert on invalid postcode response', async () => {
-    jest.spyOn(window, 'alert').mockImplementation(() => {});
+    const alertSpy = jest.spyOn(window, 'alert');
     global.fetch = jest.fn(() =>
       Promise.resolve({
         json: () => Promise.resolve({ error: 'Invalid postcode' }),
@@ -61,7 +61,7 @@ describe('FindHelpEntry', () => {
     fireEvent.click(screen.getByRole('button', { name: /continue/i }));
 
     await waitFor(() => {
-      expect(window.alert).toHaveBeenCalledWith(expect.stringMatching(/something went wrong/i));
+      expect(alertSpy).toHaveBeenCalledWith(expect.stringMatching(/something went wrong/i));
     });
   });
 });
