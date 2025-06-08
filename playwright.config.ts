@@ -18,6 +18,9 @@ export default defineConfig({
     port: 3000,
     timeout: 120 * 1000,
     reuseExistingServer: !process.env.CI,
+    env: {
+      NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+    },
   },
 
   projects: [
