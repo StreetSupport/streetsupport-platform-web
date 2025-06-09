@@ -6,8 +6,11 @@ import OrganisationContactBlock from '@/components/OrganisationPage/Organisation
 import OrganisationFooter from '@/components/OrganisationPage/OrganisationFooter';
 import { notFound } from 'next/navigation';
 
-export default function OrganisationPage({ params }: { params: { slug: string } }) {
-  const organisation = getOrganisationBySlug(params.slug);
+export const dynamic = 'force-dynamic';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function OrganisationPage({ params }: { params: { slug: string } }) {
+  const organisation = await getOrganisationBySlug(params.slug);
 
   if (!organisation) return notFound();
 
