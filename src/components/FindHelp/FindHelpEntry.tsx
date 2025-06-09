@@ -43,12 +43,10 @@ export default function FindHelpEntry() {
         const { lat, lng } = data.location;
         setLocation({ lat, lng, postcode: postcodeInput.trim() });
       } else {
-        console.error('Geocode failed: invalid response', data);
         alert(data.error || 'Sorry, we couldn’t find that postcode.');
       }
 
-    } catch (err) {
-      console.error('Geocode error:', err);
+    } catch {
       alert('Something went wrong when trying to find your location.');
     } finally {
       setIsGeocoding(false);

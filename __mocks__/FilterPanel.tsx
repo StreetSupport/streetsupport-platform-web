@@ -1,4 +1,3 @@
-// __mocks__/FilterPanel.tsx
 import React, { useEffect } from 'react';
 
 interface Props {
@@ -8,10 +7,7 @@ interface Props {
 const FilterPanel = ({ onFilterChange = () => {} }: Props) => {
   useEffect(() => {
     if (typeof onFilterChange === 'function') {
-      console.log('✅ assigned capturedFilterChange from __mocks__/@/components/FindHelp/FilterPanel.tsx');
       (globalThis as any).capturedFilterChange = onFilterChange;
-    } else {
-      console.log('❌ onFilterChange was not a function');
     }
   }, [onFilterChange]);
 
