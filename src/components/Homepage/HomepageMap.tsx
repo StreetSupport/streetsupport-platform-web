@@ -24,6 +24,7 @@ export default function HomepageMap() {
         title: loc.name,
         icon: '/assets/img/map-pin.png',
         link: `/${loc.key}`,
+        organisationSlug: `homepage-${loc.key}`
       }));
   }, []);
 
