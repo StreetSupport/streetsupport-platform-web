@@ -1,5 +1,3 @@
-// /src/app/api/geocode/route.ts
-
 import { NextRequest } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -13,10 +11,8 @@ export async function GET(req: NextRequest) {
   }
 
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-  console.log('Loaded server API key:', apiKey);
 
   if (!apiKey) {
-    console.error('Missing GOOGLE_MAPS_API_KEY in environment');
     return new Response(
       JSON.stringify({ error: 'Missing server API key' }),
       { status: 500 }
@@ -38,14 +34,12 @@ export async function GET(req: NextRequest) {
         headers: { 'Content-Type': 'application/json' },
       });
     } else {
-      console.error('Geocoding failed:', data.status, data.error_message);
       return new Response(
         JSON.stringify({ error: 'Geocoding failed', details: data }),
         { status: 400 }
       );
     }
-  } catch (error) {
-    console.error('Error fetching geocode:', error);
+  } catch {
     return new Response(
       JSON.stringify({ error: 'Internal Server Error' }),
       { status: 500 }

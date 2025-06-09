@@ -27,7 +27,6 @@ export function LocationProvider({ children }: { children: ReactNode }) {
 
   const requestLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      console.error('⛔ Geolocation not supported in this browser');
       return;
     }
 
@@ -37,21 +36,9 @@ export function LocationProvider({ children }: { children: ReactNode }) {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         });
-        console.log('✅ Geolocation success:', position.coords);
       },
-      (err) => {
-        try {
-          console.error('⛔ Geolocation error:', {
-            code: err?.code,
-            message: err?.message,
-            raw: JSON.stringify(err, Object.getOwnPropertyNames(err)),
-            PERMISSION_DENIED: err?.code === 1,
-            POSITION_UNAVAILABLE: err?.code === 2,
-            TIMEOUT: err?.code === 3,
-          });
-        } catch {
-          console.error('⛔ Geolocation error: Could not serialize error:', err);
-        }
+      () => {
+        // quietly ignore location errors
       },
       {
         enableHighAccuracy: true,

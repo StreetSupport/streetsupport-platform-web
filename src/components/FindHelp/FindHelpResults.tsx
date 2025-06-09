@@ -1,4 +1,3 @@
-// FindHelpResults.tsx
 'use client';
 
 import { useMemo, useState, useCallback } from 'react';
