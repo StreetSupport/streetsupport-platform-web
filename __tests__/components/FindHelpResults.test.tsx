@@ -4,7 +4,6 @@ import { LocationProvider } from '@/contexts/LocationContext';
 import { FilterContextProvider } from '@/contexts/FilterContext';
 import { act as reactAct } from 'react';
 
-// ✅ Use the manual mock located in __mocks__
 jest.mock('@/components/FindHelp/FilterPanel', () =>
   require('../../__mocks__/FilterPanel.tsx')
 );
