@@ -1,4 +1,3 @@
-// src/contexts/FilterContext.tsx
 'use client';
 
 import { createContext, useContext } from 'react';

@@ -1,10 +1,8 @@
-// src/app/locations/page.tsx
 export default function LocationsPage() {
   const locations = [
     { name: "Birmingham", slug: "birmingham" },
     { name: "Manchester", slug: "manchester" },
     { name: "London", slug: "london" },
-    // add more as needed
   ];
 
   return (
