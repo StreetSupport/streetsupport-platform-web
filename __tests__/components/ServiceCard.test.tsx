@@ -13,6 +13,7 @@ const mockService = {
   ],
   clientGroups: ['age-18+', 'rough-sleepers'],
   organisation: 'Mayer Inc',
+  organisationSlug: 'mayer-inc',
   orgPostcode: 'LN4 2LE',
 };
 
@@ -36,5 +37,11 @@ describe('ServiceCard', () => {
     expect(screen.getByText('rough-sleepers')).toBeInTheDocument();
     expect(screen.getByText('Monday: 09:00 – 17:00')).toBeInTheDocument();
     expect(screen.getByText('Wednesday: 09:00 – 17:00')).toBeInTheDocument();
+  });
+
+  it('links to the organisation page when slug provided', () => {
+    render(<ServiceCard service={mockService} />);
+    const link = screen.getByRole('link', { name: /view details for/i });
+    expect(link).toHaveAttribute('href', '/find-help/organisation/mayer-inc');
   });
 });

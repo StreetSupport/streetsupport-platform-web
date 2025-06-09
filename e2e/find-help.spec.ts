@@ -6,7 +6,7 @@ async function enterPostcode(page) {
   await page.goto('/find-help');
   await page.getByLabel(/postcode/i).fill(postcode);
   await page.locator('button:has-text("Continue")').click();
-  await page.waitForTimeout(500); // allow location context update
+  await page.waitForTimeout(500);
 }
 
 test.describe('Find Help Page', () => {
@@ -29,7 +29,7 @@ test.describe('Find Help Page', () => {
   });
 
   test('should toggle map visibility', async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 812 }); // Simulate mobile
+    await page.setViewportSize({ width: 375, height: 812 });
     await enterPostcode(page);
 
     const toggleBtn = page.getByRole('button', { name: /show map/i });
@@ -41,7 +41,7 @@ test.describe('Find Help Page', () => {
     await enterPostcode(page);
 
     await expect(page.getByText(/services near you/i)).toBeVisible();
-    await expect(page.locator('#category')).toBeVisible(); // changed from ambiguous getByLabel
+    await expect(page.locator('#category')).toBeVisible();
     await expect(page.getByRole('button', { name: /show map/i })).toBeVisible();
   });
 });

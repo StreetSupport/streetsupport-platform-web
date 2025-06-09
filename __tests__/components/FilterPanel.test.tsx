@@ -20,7 +20,6 @@ describe('FilterPanel', () => {
     setup();
     const select = screen.getByLabelText('Category:');
     expect(select).toBeInTheDocument();
-    // Check a known category from the data file
     expect(screen.getByRole('option', { name: /Food/i })).toBeInTheDocument();
   });
 
