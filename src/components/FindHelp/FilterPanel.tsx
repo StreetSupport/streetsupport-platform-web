@@ -47,7 +47,7 @@ export default function FilterPanel({
           value={selectedCategory}
           onChange={(e) => {
             setSelectedCategory(e.target.value);
-            setSelectedSubCategory(''); // reset subcategory when changing category
+            setSelectedSubCategory('');
           }}
         >
           <option value="">All</option>

@@ -38,7 +38,6 @@ export function LocationProvider({ children }: { children: ReactNode }) {
         });
       },
       () => {
-        // quietly ignore location errors
       },
       {
         enableHighAccuracy: true,

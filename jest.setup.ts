@@ -36,5 +36,4 @@ beforeAll(() => {
   });
 });
 
-// ✅ Define global alert as jest mock to avoid jsdom crash
 global.alert = jest.fn();

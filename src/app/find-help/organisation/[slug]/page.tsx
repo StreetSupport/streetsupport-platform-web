@@ -6,11 +6,8 @@ import OrganisationContactBlock from '@/components/OrganisationPage/Organisation
 import OrganisationFooter from '@/components/OrganisationPage/OrganisationFooter';
 import { notFound } from 'next/navigation';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default async function OrganisationPage(props: any) {
-  const { params }: { params: { slug: string } } = props;
-
-  const organisation = await getOrganisationBySlug(params.slug);
+export default function OrganisationPage({ params }: { params: { slug: string } }) {
+  const organisation = getOrganisationBySlug(params.slug);
 
   if (!organisation) return notFound();
 
