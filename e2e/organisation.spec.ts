@@ -12,6 +12,7 @@ async function enterPostcode(page) {
       body: JSON.stringify({ location: { lat: 53, lng: -2 } }),
     });
   });
+
   await page.goto('/find-help');
   await page.getByLabel(/postcode/i).fill('LN4 2LE');
   await page.locator('button:has-text("Continue")').click();
@@ -25,7 +26,9 @@ async function enterPostcode(page) {
 
   test('service card links to organisation page', async ({ page }) => {
     await enterPostcode(page);
+
     const link = page.locator('a[href^="/find-help/organisation/"]').first();
     await expect(link).toBeVisible();
+
   });
 });
