@@ -1,4 +1,5 @@
 import React from 'react';
+import HomepageMap from '@/components/Homepage/HomepageMap';
 
 export default function Home() {
   return (
@@ -41,6 +42,9 @@ export default function Home() {
           </div>
         ))}
       </section>
+
+      {/* Homepage Map */}
+      <HomepageMap />
     </main>
   )
 }

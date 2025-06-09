@@ -118,7 +118,6 @@ export default function FindHelpResults({ providers }: Props) {
       lng: s.lng,
       title: s.name,
       organisation: s.organisation,
-      link: `/organisation/${s.organisationSlug}`,
       serviceName: s.name,
       distanceKm: s.distance,
     }));
