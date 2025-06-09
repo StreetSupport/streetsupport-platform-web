@@ -25,7 +25,7 @@ interface MapMarker {
   lng: number;
   title: string;
   organisation?: string;
-  link?: string;
+  organisationSlug: string;
   serviceName?: string;
   distanceKm?: number;
   icon?: string;
@@ -118,6 +118,7 @@ export default function FindHelpResults({ providers }: Props) {
       lng: s.lng,
       title: s.name,
       organisation: s.organisation,
+      organisationSlug: s.organisationSlug,
       serviceName: s.name,
       distanceKm: s.distance,
     }));
@@ -128,6 +129,7 @@ export default function FindHelpResults({ providers }: Props) {
         lat: location.lat,
         lng: location.lng,
         title: 'You are here',
+        organisationSlug: 'user-location',
         icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
       });
     }

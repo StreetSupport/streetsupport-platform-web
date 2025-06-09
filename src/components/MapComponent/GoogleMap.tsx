@@ -7,11 +7,11 @@ interface Marker {
   lat: number;
   lng: number;
   title: string;
+  organisationSlug: string; // ✅ must match field used in ServiceCard
   icon?: string;
   organisation?: string;
   serviceName?: string;
   distanceKm?: number;
-  link?: string;
 }
 
 interface Props {
@@ -52,7 +52,17 @@ export default function GoogleMap({ center, markers, zoom }: Props) {
     const newMarkers: google.maps.Marker[] = [];
 
     markers.forEach((markerData) => {
-      const { lat, lng, title, icon, organisation, serviceName, distanceKm, link } = markerData;
+      const {
+        id,
+        lat,
+        lng,
+        title,
+        icon,
+        organisation,
+        serviceName,
+        distanceKm,
+        organisationSlug, // ✅ corrected
+      } = markerData;
 
       const gMarker = new google.maps.Marker({
         position: { lat, lng },
@@ -61,29 +71,39 @@ export default function GoogleMap({ center, markers, zoom }: Props) {
         icon: icon || undefined,
       });
 
-      if (link) {
-        gMarker.addListener('click', () => {
-          window.location.href = link;
-        });
-      } else {
-        const htmlContent = `
-          <div style="font-size:14px;max-width:220px;">
-            <strong>${organisation ? `<a href="/organisation-slug" target="_blank" rel="noopener noreferrer">${organisation}</a>` : 'Unknown Organisation'}</strong><br/>
-            ${serviceName ?? 'Unnamed service'}<br/>
-            ${distanceKm?.toFixed(1) ?? '?'} km away
-          </div>
-        `;
+      const destination = `/find-help/organisation/${organisationSlug}`;
+      const infoId = `info-${id}`;
 
-        const infoWindow = new google.maps.InfoWindow({ content: htmlContent });
+      const htmlContent = `
+        <div
+          id="${infoId}"
+          style="font-size:14px;max-width:220px;cursor:pointer;padding:4px;"
+        >
+          <strong style="color:#0b9b75;">${organisation ?? 'Unknown Organisation'}</strong><br/>
+          ${serviceName ?? 'Unnamed service'}<br/>
+          ${distanceKm?.toFixed(1) ?? '?'} km away
+        </div>
+      `;
 
-        gMarker.addListener('click', () => {
-          if (infoWindowRef.current) {
-            infoWindowRef.current.close();
+      const infoWindow = new google.maps.InfoWindow({ content: htmlContent });
+
+      gMarker.addListener('click', () => {
+        if (infoWindowRef.current) {
+          infoWindowRef.current.close();
+        }
+
+        infoWindowRef.current = infoWindow;
+        infoWindow.open(map, gMarker);
+
+        google.maps.event.addListenerOnce(infoWindow, 'domready', () => {
+          const el = document.getElementById(infoId);
+          if (el) {
+            el.addEventListener('click', () => {
+              window.location.href = destination;
+            });
           }
-          infoWindowRef.current = infoWindow;
-          infoWindow.open(map, gMarker);
         });
-      }
+      });
 
       newMarkers.push(gMarker);
     });

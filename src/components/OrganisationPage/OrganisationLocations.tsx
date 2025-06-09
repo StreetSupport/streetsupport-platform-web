@@ -17,7 +17,13 @@ export default function OrganisationLocations({ organisation }: Props) {
 
   const center = { lat: organisation.latitude, lng: organisation.longitude };
   const markers = [
-    { id: organisation.id, lat: organisation.latitude, lng: organisation.longitude, title: organisation.name },
+    {
+      id: organisation.id,
+      lat: organisation.latitude,
+      lng: organisation.longitude,
+      title: organisation.name,
+      organisationSlug: organisation.slug || 'org-loc-default' // ✅ dummy fallback slug
+    },
   ];
 
   return (
