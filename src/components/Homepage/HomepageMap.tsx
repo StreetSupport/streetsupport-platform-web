@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import locations from '@/data/locations.json';
 import GoogleMap from '@/components/MapComponent/GoogleMap';
@@ -14,7 +13,6 @@ interface LocationEntry {
 }
 
 export default function HomepageMap() {
-  const router = useRouter();
 
   const markers = useMemo(() => {
     return (locations as LocationEntry[])
