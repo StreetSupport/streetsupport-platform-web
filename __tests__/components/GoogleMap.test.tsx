@@ -45,4 +45,10 @@ describe('GoogleMap', () => {
     render(<GoogleMap markers={mockMarkers} center={mockCenter} />);
     expect((window as any).google.maps.Marker).toHaveBeenCalledTimes(mockMarkers.length);
   });
+
+  it('uses provided zoom level', () => {
+    render(<GoogleMap markers={mockMarkers} center={mockCenter} zoom={8} />);
+    const call = (window as any).google.maps.Map.mock.calls[0][1];
+    expect(call.zoom).toBe(8);
+  });
 });
