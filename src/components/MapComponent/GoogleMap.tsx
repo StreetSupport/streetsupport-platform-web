@@ -17,35 +17,35 @@ interface Marker {
 interface Props {
   center: { lat: number; lng: number } | null;
   markers: Marker[];
+  zoom?: number;
 }
 
-export default function GoogleMap({ center, markers }: Props) {
+export default function GoogleMap({ center, markers, zoom }: Props) {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
   const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
 
-  // Initialise map once
+  const effectiveZoom = zoom ?? 12;
+
   useEffect(() => {
     if (!mapRef.current || !center || mapInstanceRef.current) return;
 
     const map = new google.maps.Map(mapRef.current, {
       center,
-      zoom: 12,
+      zoom: effectiveZoom,
       mapTypeControl: false,
       streetViewControl: false,
       fullscreenControl: false,
     });
 
     mapInstanceRef.current = map;
-  }, [center]);
+  }, [center, effectiveZoom]);
 
-  // Recreate markers when markers change
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map || !markers || markers.length === 0) return;
 
-    // Remove old markers
     markersRef.current.forEach((marker) => marker.setMap(null));
     markersRef.current = [];
 
@@ -61,12 +61,14 @@ export default function GoogleMap({ center, markers }: Props) {
         icon: icon || undefined,
       });
 
-      if (title !== 'You are here') {
+      if (link) {
+        gMarker.addListener('click', () => {
+          window.location.href = link;
+        });
+      } else {
         const htmlContent = `
           <div style="font-size:14px;max-width:220px;">
-            <strong>${link
-              ? `<a href="${link}" target="_blank" rel="noopener noreferrer">${organisation}</a>`
-              : organisation ?? 'Unknown Organisation'}</strong><br/>
+            <strong>${organisation ? `<a href="/organisation-slug" target="_blank" rel="noopener noreferrer">${organisation}</a>` : 'Unknown Organisation'}</strong><br/>
             ${serviceName ?? 'Unnamed service'}<br/>
             ${distanceKm?.toFixed(1) ?? '?'} km away
           </div>
