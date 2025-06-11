@@ -7,7 +7,7 @@ interface Marker {
   lat: number;
   lng: number;
   title: string;
-  organisationSlug: string; // ✅ must match field used in ServiceCard
+  organisationSlug: string;
   icon?: string;
   organisation?: string;
   serviceName?: string;
@@ -61,7 +61,7 @@ export default function GoogleMap({ center, markers, zoom }: Props) {
         organisation,
         serviceName,
         distanceKm,
-        organisationSlug, // ✅ corrected
+        organisationSlug,
       } = markerData;
 
       const gMarker = new google.maps.Marker({

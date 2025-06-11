@@ -37,9 +37,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
           lng: position.coords.longitude,
         });
       },
-      () => {
-        // quietly ignore location errors
-      },
+      () => {},
       {
         enableHighAccuracy: true,
         timeout: 10000,
