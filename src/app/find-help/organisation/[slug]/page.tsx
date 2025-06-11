@@ -5,10 +5,22 @@ import OrganisationServicesAccordion from '@/components/OrganisationPage/Organis
 import OrganisationContactBlock from '@/components/OrganisationPage/OrganisationContactBlock';
 import OrganisationFooter from '@/components/OrganisationPage/OrganisationFooter';
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default async function OrganisationPage(props: any) {
-  const { params }: { params: { slug: string } } = props;
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  const organisation = await getOrganisationBySlug(params.slug);
+  return { title: organisation ? organisation.name : 'Organisation' };
+}
+
+export default async function OrganisationPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
 
   const organisation = await getOrganisationBySlug(params.slug);
 

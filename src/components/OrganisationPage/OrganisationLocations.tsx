@@ -22,7 +22,7 @@ export default function OrganisationLocations({ organisation }: Props) {
       lat: organisation.latitude,
       lng: organisation.longitude,
       title: organisation.name,
-      organisationSlug: organisation.slug || 'org-loc-default' // ✅ dummy fallback slug
+      organisationSlug: organisation.slug || 'org-loc-default'
     },
   ];
 
