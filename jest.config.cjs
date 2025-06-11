@@ -1,5 +1,4 @@
 /** @type {import('jest').Config} */
-console.log('[JEST CONFIG] Using CJS config');
 
 module.exports = {
   testPathIgnorePatterns: [

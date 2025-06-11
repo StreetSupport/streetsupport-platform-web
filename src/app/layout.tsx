@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   description:
     'Connecting people and organisations locally to tackle homelessness.',
   icons: { icon: '/favicon.ico' },
+  metadataBase: new URL('https://streetsupport.net'),
 };
 
 export const viewport: Viewport = {
