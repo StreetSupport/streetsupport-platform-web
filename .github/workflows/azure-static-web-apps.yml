@@ -13,13 +13,17 @@ permissions:
   id-token: write
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build_and_deploy_job:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     environment:
-      name: "AzureStaticWebApps"  # 👈 REQUIRED FOR OIDC BINDING
+      name: "AzureStaticWebApps"
     steps:
       - uses: actions/checkout@v3
         with:
@@ -43,9 +47,3 @@ jobs:
     environment:
       name: "AzureStaticWebApps"
     steps:
-      - name: Close Pull Request
-        id: closepullrequest
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ""
-          action: "close"
