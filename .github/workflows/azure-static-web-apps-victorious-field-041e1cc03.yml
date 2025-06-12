@@ -27,7 +27,7 @@ jobs:
       - name: Get Id Token
         uses: actions/github-script@v6
         id: idtoken
-        with:Add commentMore actions
+        with:
            script: |
                const coredemo = require('@actions/core')
                return await coredemo.getIDToken()
