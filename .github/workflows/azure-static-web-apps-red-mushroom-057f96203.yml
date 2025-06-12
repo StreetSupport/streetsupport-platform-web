@@ -23,6 +23,7 @@ jobs:
     name: Build and Deploy
     environment:
       name: "AzureStaticWebApps"
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -35,7 +36,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build app
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run tests and build
         run: npm run build
 
       - name: Deploy to Azure Static Web Apps
@@ -45,3 +49,15 @@ jobs:
           app_location: "/"
           output_location: ".next"
           repo_token: ${{ secrets.GITHUB_TOKEN }}
+
+  close_pull_request_job:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    name: Close Pull Request
+    environment:
+      name: "AzureStaticWebApps"
+    steps:
+      - name: Close PR Preview
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          action: "close"
