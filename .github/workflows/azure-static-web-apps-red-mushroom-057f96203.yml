@@ -13,52 +13,36 @@ permissions:
   id-token: write
   contents: read
 
-concurrency:
-  group: deploy-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  build_and_deploy_job:
+  build_and_deploy:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
-    name: Build and Deploy
-    environment:
-      name: "AzureStaticWebApps"
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
+      - uses: actions/checkout@v3
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers
+      - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Run tests and build
+      - name: Run tests
         run: npm run build
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
-          action: upload
+          action: "upload"
           app_location: "/"
           output_location: ".next"
           repo_token: ${{ secrets.GITHUB_TOKEN }}
 
-  close_pull_request_job:
+  close_pull_request:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
-    name: Close Pull Request
-    environment:
-      name: "AzureStaticWebApps"
     steps:
-      - name: Close PR Preview
+      - name: Close PR preview
         uses: Azure/static-web-apps-deploy@v1
         with:
           action: "close"
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
