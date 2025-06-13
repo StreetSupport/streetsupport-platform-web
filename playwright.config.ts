@@ -6,7 +6,7 @@ export default defineConfig({
   timeout: 30000,
   retries: 0,
   use: {
-    baseURL: 'http://localhost:3000',
+    actionTimeout: 0,
     trace: 'on-first-retry',
     video: 'retain-on-failure',
   },
