@@ -7,8 +7,8 @@ export default defineConfig({
   retries: 0,
   use: {
     baseURL: 'http://localhost:3000',
-    trace: 'on-first-retry',
-    video: 'retain-on-failure',
+    trace: 'off',
+    video: 'off',
   },
   webServer: {
     command: 'npm run dev',
@@ -19,4 +19,5 @@ export default defineConfig({
       NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
     },
   },
+  reporter: 'list',
 });
