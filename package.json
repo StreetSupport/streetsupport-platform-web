@@ -50,6 +50,7 @@
     "playwright": "^1.52.0",
     "postcss": "^8.5.4",
     "tailwindcss": "^4.1.8",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vercel": "^43.1.0"
   }
 }
