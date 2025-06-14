@@ -61,6 +61,7 @@ jobs:
           TRELLO_DONE_LIST_ID: ${{ secrets.TRELLO_DONE_LIST_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+
           MERGE_COMMIT_MSG=$(git log -1 --pretty=%B)
           echo "Merge commit message: $MERGE_COMMIT_MSG"
 
