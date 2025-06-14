@@ -52,20 +52,31 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: npx vercel --prod --yes --token=${{ secrets.VERCEL_MAIN_TOKEN }}
 
-      - name: Move Trello Card to Done
+      - name: Move Trello Card to Done (using PR title)
         if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/main'
         env:
           TRELLO_API_KEY: ${{ secrets.TRELLO_API_KEY }}
           TRELLO_API_TOKEN: ${{ secrets.TRELLO_API_TOKEN }}
           TRELLO_BOARD_ID: ${{ secrets.TRELLO_BOARD_ID }}
           TRELLO_DONE_LIST_ID: ${{ secrets.TRELLO_DONE_LIST_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          MERGE_COMMIT_MSG=$(git log -1 --pretty=%B)
+          echo "Merge commit message: $MERGE_COMMIT_MSG"
 
-          BRANCH_NAME="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-          echo "Looking for Trello card matching: $BRANCH_NAME"
+          PR_NUMBER=$(echo "$MERGE_COMMIT_MSG" | grep -oE '#[0-9]+' | tr -d '#')
+          echo "Extracted PR number: $PR_NUMBER"
 
-          CARD_ID=$(curl -s "https://api.trello.com/1/boards/$TRELLO_BOARD_ID/cards?key=$TRELLO_API_KEY&token=$TRELLO_API_TOKEN" | jq -r ".[] | select(.name | contains(\"$BRANCH_NAME\")) | .id")
+          PR_TITLE=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/$PR_NUMBER" | jq -r '.title')
+
+          echo "PR title: $PR_TITLE"
+
+          CARD_ID=$(curl -s "https://api.trello.com/1/boards/$TRELLO_BOARD_ID/cards?key=$TRELLO_API_KEY&token=$TRELLO_API_TOKEN" \
+            | jq -r ".[] | select(.name | contains(\\\"$PR_TITLE\\\")) | .id")
 
           echo "Found Trello card ID: $CARD_ID"
 
           curl -s -X PUT "https://api.trello.com/1/cards/$CARD_ID?idList=$TRELLO_DONE_LIST_ID&key=$TRELLO_API_KEY&token=$TRELLO_API_TOKEN"
+
