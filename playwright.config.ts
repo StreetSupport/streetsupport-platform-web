@@ -10,6 +10,12 @@ export default defineConfig({
     trace: 'off',
     video: 'off',
   },
+  projects: [
+    {
+      name: 'Desktop Chrome',
+      use: { browserName: 'chromium' },
+    },
+  ],
   webServer: {
     command: 'npm run dev',
     port: 3000,
