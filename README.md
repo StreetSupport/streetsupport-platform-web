@@ -80,3 +80,6 @@ These will be addressed post-MVP once shared types (e.g. for services and locati
 ---
 
 For full developer instructions and context, see the `rebuild-docs.docx` or ask for clarification before making assumptions.
+
+We acknowledge the npm audit warnings for esbuild, path-to-regexp, and undici.
+These are development-time only and do not affect production security.
