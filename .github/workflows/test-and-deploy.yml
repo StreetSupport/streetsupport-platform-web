@@ -73,7 +73,6 @@ jobs:
 
           echo "Original PR title: $PR_TITLE"
 
-          # Replace spaces with dashes for matching
           NORMALISED_TITLE=$(echo "$PR_TITLE" | sed 's/ /-/g')
           echo "Normalised PR title: $NORMALISED_TITLE"
 
