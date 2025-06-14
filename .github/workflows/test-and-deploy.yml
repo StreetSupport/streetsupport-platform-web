@@ -60,7 +60,8 @@ jobs:
           TRELLO_BOARD_ID: ${{ secrets.TRELLO_BOARD_ID }}
           TRELLO_DONE_LIST_ID: ${{ secrets.TRELLO_DONE_LIST_ID }}
         run: |
-          BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+
+          BRANCH_NAME="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
           echo "Looking for Trello card matching: $BRANCH_NAME"
 
           CARD_ID=$(curl -s "https://api.trello.com/1/boards/$TRELLO_BOARD_ID/cards?key=$TRELLO_API_KEY&token=$TRELLO_API_TOKEN" | jq -r ".[] | select(.name | contains(\"$BRANCH_NAME\")) | .id")
