@@ -27,7 +27,7 @@ export default function Home() {
         {[
           { title: 'Instant Updates', desc: 'Stay informed with live alerts and notifications.' },
           { title: 'Community Map',   desc: 'Visualise nearby resources and support hubs.' },
-          { title: 'Volunteer Hub',   desc: 'Connect with volunteers in your area.' }
+          { title: 'Volunteer Hub',   desc: 'Connect with volunteers in your local area.' }
         ].map((feature) => (
           <div
             key={feature.title}
