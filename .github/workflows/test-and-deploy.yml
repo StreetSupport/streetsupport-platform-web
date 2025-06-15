@@ -1,0 +1,95 @@
+name: Test & Deploy
+
+on:
+  pull_request:
+    branches: [ staging, main ]
+  push:
+    branches: [ staging, main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium only
+        run: npx playwright install chromium
+
+      - name: Run all tests and build
+        run: npm run build
+
+      - name: Upload Playwright test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Deploy to Vercel (Staging)
+        if: github.ref == 'refs/heads/staging'
+        run: npx vercel --prod --yes --token=${{ secrets.VERCEL_STAGING_TOKEN }}
+
+      - name: Deploy to Vercel (Production)
+        if: github.ref == 'refs/heads/main'
+        run: npx vercel --prod --yes --token=${{ secrets.VERCEL_MAIN_TOKEN }}
+
+      - name: Notify Slack that tests passed
+        if: success()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          BRANCH=$(echo $GITHUB_REF | sed 's#refs/heads/##')
+          PAYLOAD="{
+            \"text\": \":white_check_mark: Tests passed on *$BRANCH* — <https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}|View Run>\"
+          }"
+          curl -X POST -H 'Content-type: application/json' --data "$PAYLOAD" $SLACK_WEBHOOK_URL
+
+      - name: Move Trello Card to Done (using PR title, normalised)
+        if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/main'
+        env:
+          TRELLO_API_KEY: ${{ secrets.TRELLO_API_KEY }}
+          TRELLO_API_TOKEN: ${{ secrets.TRELLO_API_TOKEN }}
+          TRELLO_BOARD_ID: ${{ secrets.TRELLO_BOARD_ID }}
+          TRELLO_DONE_LIST_ID: ${{ secrets.TRELLO_DONE_LIST_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          MERGE_COMMIT_MSG=$(git log -1 --pretty=%B)
+          echo "Merge commit message: $MERGE_COMMIT_MSG"
+
+          PR_NUMBER=$(echo "$MERGE_COMMIT_MSG" | grep -oE '#[0-9]+' | tr -d '#')
+          echo "Extracted PR number: $PR_NUMBER"
+
+          PR_TITLE=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/$PR_NUMBER" | jq -r '.title')
+
+          echo "Original PR title: $PR_TITLE"
+
+          NORMALISED_TITLE=$(echo "$PR_TITLE" | sed 's/ /-/g')
+          echo "Normalised PR title: $NORMALISED_TITLE"
+
+          CARD_ID=$(curl -s "https://api.trello.com/1/boards/$TRELLO_BOARD_ID/cards?key=$TRELLO_API_KEY&token=$TRELLO_API_TOKEN" \
+            | jq -r --arg TITLE "$NORMALISED_TITLE" '.[] | select(.name | test($TITLE; "i")) | .id')
+
+          echo "Found Trello card ID: $CARD_ID"
+
+          curl -s -X PUT "https://api.trello.com/1/cards/$CARD_ID?idList=$TRELLO_DONE_LIST_ID&key=$TRELLO_API_KEY&token=$TRELLO_API_TOKEN"
