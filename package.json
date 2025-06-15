@@ -5,15 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "jest && npx playwright test && next build",
+    "build": "jest --config ./config/jest.config.cjs && npx playwright test --config=./config/playwright.config.ts && next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:ci": "jest --ci",
-    "test:e2e": "playwright test --config=playwright.config.ts",
-    "test:e2e:headed": "playwright test --headed",
-    "test:e2e:debug": "playwright test --debug"
+    "test": "jest --config ./config/jest.config.cjs",
+    "test:watch": "jest --config ./config/jest.config.cjs --watch",
+    "test:ci": "jest --config ./config/jest.config.cjs --ci",
+    "test:e2e": "playwright test --config=./config/playwright.config.ts",
+    "test:e2e:headed": "playwright test --config=./config/playwright.config.ts --headed",
+    "test:e2e:debug": "playwright test --config=./config/playwright.config.ts --debug"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.8",

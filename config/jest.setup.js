@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom';
+require('@testing-library/jest-dom');
 
 // Provide a global fetch mock for components using fetch
 global.fetch = jest.fn(() =>
@@ -22,7 +22,7 @@ global.fetch = jest.fn(() =>
       },
     ]),
   })
-) as jest.Mock;
+);
 
 // Capture original console.error before overriding it
 const originalError = console.error;
