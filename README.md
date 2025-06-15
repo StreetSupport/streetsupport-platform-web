@@ -23,12 +23,21 @@ This project uses **Jest** and **React Testing Library** for unit and integratio
 npm run test
 ```
 
+### Running End-to-End Tests
+
+```bash
+npm run test:e2e
+```
+
 ### Test Setup Highlights
 
  - Babel is configured via `babel.config.json` (not `.js` due to Jest limitations).
 - Module path aliases (e.g. `@/components/...`) are resolved using `moduleNameMapper` in `config/jest.config.cjs`.
 - Geolocation and other browser APIs are stubbed or guarded for compatibility.
+- End-to-end tests use Playwright (`playwright.config.ts`) which launches the
+  Next.js server automatically.
  - The `tests/__mocks__` directory includes mocks for modules like `leaflet` and `react-leaflet`.
+
 
 All tests must pass before merging any pull request into `staging` or `main`.
 
