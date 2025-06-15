@@ -64,11 +64,18 @@ jobs:
           TRELLO_DONE_LIST_ID: ${{ secrets.TRELLO_DONE_LIST_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -e  # Stop script if a command actually fails
+
           MERGE_COMMIT_MSG=$(git log -1 --pretty=%B)
           echo "Merge commit message: $MERGE_COMMIT_MSG"
 
           PR_NUMBER=$(echo "$MERGE_COMMIT_MSG" | grep -oE '#[0-9]+' | tr -d '#')
           echo "Extracted PR number: $PR_NUMBER"
+
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No PR number found in commit message — skipping Trello move."
+            exit 0
+          fi
 
           PR_TITLE=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
@@ -83,10 +90,10 @@ jobs:
             | jq -r --arg TITLE "$NORMALISED_TITLE" '.[] | select(.name | test($TITLE; "i")) | .id')
 
           if [ -z "$CARD_ID" ]; then
-            echo "No matching Trello card found — skipping move."
+            echo "⚠️  No matching Trello card found — skipping move."
             exit 0
           fi
 
-          echo "Found Trello card ID: $CARD_ID"
+          echo "✅ Found Trello card ID: $CARD_ID"
 
           curl -s -X PUT "https://api.trello.com/1/cards/$CARD_ID?idList=$TRELLO_DONE_LIST_ID&key=$TRELLO_API_KEY&token=$TRELLO_API_TOKEN"
