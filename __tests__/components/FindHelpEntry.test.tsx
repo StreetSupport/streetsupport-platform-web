@@ -63,5 +63,36 @@ describe('FindHelpEntry', () => {
     await waitFor(() => {
       expect(alertSpy).toHaveBeenCalledWith(expect.stringMatching(/something went wrong/i));
     });
+});
+
+  it('uses browser geolocation when available', async () => {
+    const mockGetCurrentPosition = jest.fn((success) => {
+      success({ coords: { latitude: 10, longitude: 20 } });
+    });
+    Object.defineProperty(global.navigator, 'geolocation', {
+      value: { getCurrentPosition: mockGetCurrentPosition },
+      configurable: true,
+    });
+
+    renderWithProvider(<FindHelpEntry organisation={mockOrgWithNoServices} />);
+
+    await waitFor(() => {
+      expect(mockGetCurrentPosition).toHaveBeenCalled();
+      expect(screen.getByText(/location set/i)).toBeInTheDocument();
+    });
+  });
+
+  it('shows postcode form when geolocation fails', async () => {
+    const mockGetCurrentPosition = jest.fn((_s, error) => error());
+    Object.defineProperty(global.navigator, 'geolocation', {
+      value: { getCurrentPosition: mockGetCurrentPosition },
+      configurable: true,
+    });
+
+    renderWithProvider(<FindHelpEntry organisation={mockOrgWithNoServices} />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/enter your postcode/i)).toBeInTheDocument();
+    });
   });
 });
