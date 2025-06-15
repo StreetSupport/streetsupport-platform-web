@@ -17,6 +17,7 @@ This document tracks key test coverage across the Street Support Network rebuild
 | Component            | Status      | Notes                                     |
 |----------------------|-------------|-------------------------------------------|
 | `LocationContext`    | ⏳ TODO      | Behaviour under different locations       |
+| `LocationContext`    | ✅ Done      | Context updates and geolocation request |
 | Timetable View       | 🚧 Planned  | Based on rebuild roadmap                  |
 | Geolocation Fallback | 🚧 Planned  | Will stub `navigator.geolocation`         |
 
@@ -41,3 +42,28 @@ This document tracks key test coverage across the Street Support Network rebuild
 **Status:** ✅ All tests passing  
 **Date:** 2025-06-03  
 **Notes:** Mocks used for category API; geolocation stubbed for result validation
+**Notes:** Mocks used for category API; geolocation stubbed for result validation
+
+### ✅ Homepage – End-to-End (Playwright)
+
+**Coverage:**
+- Map renders on page load
+- Location markers become visible
+
+**File:** `e2e/homepage.spec.ts`
+**Status:** ✅ All tests passing
+**Date:** 2025-06-09
+**Notes:** Uses mocked map pins for reliability
+
+### ✅ Organisation Entry – End-to-End (Playwright)
+
+**Coverage:**
+- Organisation details load correctly
+- Accordions expand and collapse
+- Correct heading text asserted
+- Footer disclaimer visible
+
+**File:** `e2e/organisation-entry.spec.ts`
+**Status:** ✅ All tests passing
+**Date:** 2025-06-11
+**Notes:** Uses sample slug during local testing
