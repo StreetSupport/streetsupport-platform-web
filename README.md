@@ -31,12 +31,13 @@ npm run test:e2e
 
 ### Test Setup Highlights
 
-- Babel is configured via `babel.config.json` (not `.js` due to Jest limitations).
-- Module path aliases (e.g. `@/components/...`) are resolved using `moduleNameMapper` in `jest.config.cjs`.
+ - Babel is configured via `babel.config.json` (not `.js` due to Jest limitations).
+- Module path aliases (e.g. `@/components/...`) are resolved using `moduleNameMapper` in `config/jest.config.cjs`.
 - Geolocation and other browser APIs are stubbed or guarded for compatibility.
 - End-to-end tests use Playwright (`playwright.config.ts`) which launches the
   Next.js server automatically.
-- The `__mocks__` directory includes mocks for modules like `leaflet` and `react-leaflet`.
+ - The `tests/__mocks__` directory includes mocks for modules like `leaflet` and `react-leaflet`.
+
 
 All tests must pass before merging any pull request into `staging` or `main`.
 
@@ -64,7 +65,7 @@ npm run dev
 - `src/contexts/` – React context providers (e.g. `LocationContext`)
 - `src/data/` – local JSON data sources for mock services and locations
 - `src/pages/` – Next.js pages and routing
-- `__mocks__/` – mocks for external libraries used in test environment
+- `tests/__mocks__/` – mocks for external libraries used in the test environment
 
 ## 🔄 Git Workflow
 

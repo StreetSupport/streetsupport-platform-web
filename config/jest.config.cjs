@@ -1,24 +1,26 @@
 /** @type {import('jest').Config} */
+const path = require('path');
 console.log('[JEST CONFIG] Using CJS config');
 
 module.exports = {
+  rootDir: '..',
   testPathIgnorePatterns: [
     '/node_modules/',
-    '/e2e/',
+    '/tests/e2e/',
     '<rootDir>/.next/',
   ],
   testEnvironment: 'jsdom',
   transform: {
     // Use babel-jest for TS/TSX
-    '^.+\\.(ts|tsx)$': 'babel-jest',
+    '^.+\\.(ts|tsx)$': ['babel-jest', { configFile: path.resolve(__dirname, '../babel.config.json') }],
     // Fallback for JS if needed:
-    '^.+\\.(js|jsx)$': 'babel-jest',
+    '^.+\\.(js|jsx)$': ['babel-jest', { configFile: path.resolve(__dirname, '../babel.config.json') }],
   },
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/config/jest.setup.js'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    '^leaflet$': '<rootDir>/__mocks__/leaflet.js',
-    '^react-leaflet$': '<rootDir>/__mocks__/react-leaflet.ts',
+    '^leaflet$': '<rootDir>/tests/__mocks__/leaflet.js',
+    '^react-leaflet$': '<rootDir>/tests/__mocks__/react-leaflet.ts',
     '\\.css$': 'identity-obj-proxy',
   },
   moduleDirectories: ['node_modules', 'src'],

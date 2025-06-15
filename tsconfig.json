@@ -34,8 +34,8 @@
     "**/*.tsx",
     "next-env.d.ts",
     ".next/types/**/*.ts",
-    "jest.config.cjs",
-    "__mocks__/leaflet.js"
+    "config/jest.config.cjs",
+    "tests/__mocks__/leaflet.js"
   ],
   "exclude": [
     "node_modules"
