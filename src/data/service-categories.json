@@ -22,7 +22,7 @@
     ]
   },
   {
-    "key": "food",
+    "key": "foodbank",
     "name": "Food",
     "subCategories": [
       {
@@ -60,7 +60,7 @@
     ]
   },
   {
-    "key": "health-services",
+    "key": "medical",
     "name": "Health Services",
     "subCategories": [
       {
@@ -158,7 +158,7 @@
     ]
   },
   {
-    "key": "accommodation",
+    "key": "accom",
     "name": "Accommodation",
     "subCategories": [
       {
@@ -200,7 +200,7 @@
     ]
   },
   {
-    "key": "personal-services",
+    "key": "services",
     "name": "Personal Services",
     "subCategories": [
       {
@@ -256,7 +256,7 @@
     ]
   },
   {
-    "key": "financial-help",
+    "key": "financial",
     "name": "Financial Help",
     "subCategories": [
       {
@@ -282,7 +282,7 @@
     ]
   },
   {
-    "key": "personal-items",
+    "key": "items",
     "name": "Personal Items",
     "subCategories": [
       {
@@ -506,7 +506,7 @@
     ]
   },
   {
-    "key": "drop-in",
+    "key": "dropin",
     "name": "Drop-In",
     "subCategories": [
       {
@@ -534,7 +534,7 @@
     ]
   },
   {
-    "key": "advice-services",
+    "key": "support",
     "name": "Advice Services",
     "subCategories": [
       {
