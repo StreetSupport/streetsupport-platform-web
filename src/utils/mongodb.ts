@@ -3,7 +3,7 @@ import { MongoClient } from 'mongodb';
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
 
-const getClientPromise = () => {
+export const getClientPromise = () => {
   if (!process.env.MONGODB_URI) {
     throw new Error('Invalid/Missing environment variable: "MONGODB_URI"');
   }
@@ -24,5 +24,3 @@ const getClientPromise = () => {
 
   return clientPromise;
 };
-
-export default getClientPromise();

@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import clientPromise from '@/utils/mongodb';
+import { getClientPromise } from '@/utils/mongodb';
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const location = searchParams.get('location'); // e.g. 'leeds'
 
-    const client = await clientPromise;
+    const client = await getClientPromise();
     const db = client.db('streetsupport');
 
     const query: any = {};

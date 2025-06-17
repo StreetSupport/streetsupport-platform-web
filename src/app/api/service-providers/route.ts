@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import clientPromise from '@/utils/mongodb';
+import { getClientPromise } from '@/utils/mongodb';
 
 export async function GET(req: Request) {
   try {
@@ -12,7 +12,7 @@ export async function GET(req: Request) {
 
     const skip = (page - 1) * limit;
 
-    const client = await clientPromise;
+    const client = await getClientPromise();
     const db = client.db('streetsupport');
 
     const query: any = {};

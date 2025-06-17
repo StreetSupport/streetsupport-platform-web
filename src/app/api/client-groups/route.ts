@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import clientPromise from '@/utils/mongodb';
+import { getClientPromise } from '@/utils/mongodb';
 
 export async function GET() {
   try {
-    const client = await clientPromise;
+    const client = await getClientPromise();
     const db = client.db('streetsupport');
 
     // Query ClientGroups collection

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import clientPromise from '@/utils/mongodb';
+import { getClientPromise } from '@/utils/mongodb';
 
 export async function GET(req: Request) {
   try {
@@ -8,7 +8,7 @@ export async function GET(req: Request) {
     const parts = url.pathname.split('/');
     const slug = parts[parts.length - 1]; // last part is the slug
 
-    const client = await clientPromise;
+    const client = await getClientPromise();
     const db = client.db('streetsupport');
 
     const organisation = await db
