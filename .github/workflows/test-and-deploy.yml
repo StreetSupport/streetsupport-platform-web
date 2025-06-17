@@ -25,13 +25,14 @@ jobs:
       - name: Install Playwright Chromium only
         run: npx playwright install chromium
 
-      # ✅ SAFE: Only run fetch if PR comes from same repo (trusted)
+      # ✅ Debug trusted vs fork PR
       - name: Debug PR origin
         run: |
           echo "PR repo: ${{ github.event.pull_request.head.repo.full_name }}"
           echo "Base repo: ${{ github.repository }}"
 
-      - name: Fetch locations JSON (only if trusted)
+      # ✅ Fetch locations JSON — only for trusted pushes or same-repo PRs
+      - name: Fetch locations JSON (trusted only)
         if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
@@ -39,16 +40,27 @@ jobs:
           echo "Running fetch-locations with MONGODB_URI: $MONGODB_URI"
           npm run fetch:locations
 
+      # ✅ Log skip if fork PR
       - name: Skip fetch for fork PRs
         if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
         run: |
           echo "⏭️  Skipping fetch-locations: fork PRs cannot access MONGODB_URI."
 
-      - name: Run all tests and build
+      # ✅ Build — with fork-safe prebuild skip
+      - name: Run all tests and build (trusted)
+        if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
         run: |
           echo "Running build with MONGODB_URI: $MONGODB_URI"
+          npm run build
+
+      - name: Run all tests and build (fork PRs, skip prebuild)
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
+        env:
+          SKIP_FETCH: "true"
+        run: |
+          echo "Running build with SKIP_FETCH=true for fork PR"
           npm run build
 
       - name: Upload Playwright test results
