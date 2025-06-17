@@ -9,9 +9,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      MONGODB_URI: ${{ secrets.MONGODB_URI }}
-      
 
     steps:
       - name: Checkout repository
@@ -28,10 +25,43 @@ jobs:
       - name: Install Playwright Chromium only
         run: npx playwright install chromium
 
-      - name: Run all tests and build
+      # ✅ Debug trusted vs fork PR
+      - name: Debug PR origin
+        run: |
+          echo "PR repo: ${{ github.event.pull_request.head.repo.full_name }}"
+          echo "Base repo: ${{ github.repository }}"
+
+      # ✅ Fetch locations JSON — only for trusted pushes or same-repo PRs
+      - name: Fetch locations JSON (trusted only)
+        if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
         env:
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}          
-        run: npm run build
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        run: |
+          echo "Running fetch-locations with MONGODB_URI: $MONGODB_URI"
+          npm run fetch:locations
+
+      # ✅ Log skip if fork PR
+      - name: Skip fetch for fork PRs
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
+        run: |
+          echo "⏭️  Skipping fetch-locations: fork PRs cannot access MONGODB_URI."
+
+      # ✅ Build — with fork-safe prebuild skip
+      - name: Run all tests and build (trusted)
+        if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        run: |
+          echo "Running build with MONGODB_URI: $MONGODB_URI"
+          npm run build
+
+      - name: Run all tests and build (fork PRs, skip prebuild)
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
+        env:
+          SKIP_FETCH: "true"
+        run: |
+          echo "Running build with SKIP_FETCH=true for fork PR"
+          npm run build
 
       - name: Upload Playwright test results
         if: always()
@@ -69,7 +99,7 @@ jobs:
           TRELLO_DONE_LIST_ID: ${{ secrets.TRELLO_DONE_LIST_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          set -e  # Stop script if a command actually fails
+          set -e
 
           MERGE_COMMIT_MSG=$(git log -1 --pretty=%B)
           echo "Merge commit message: $MERGE_COMMIT_MSG"

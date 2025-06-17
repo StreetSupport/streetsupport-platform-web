@@ -61,7 +61,7 @@ export default function GoogleMap({ center, markers, zoom }: Props) {
         organisation,
         serviceName,
         distanceKm,
-        organisationSlug, // ✅ corrected
+        organisationSlug,
       } = markerData;
 
       const gMarker = new google.maps.Marker({
