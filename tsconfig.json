@@ -36,7 +36,7 @@
     ".next/types/**/*.ts",
     "config/jest.config.cjs",
     "tests/__mocks__/leaflet.js"
-  ],
+, "scripts/fetch-locations.js"  ],
   "exclude": [
     "node_modules"
   ]

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
+    "prebuild": "npm run fetch:locations",
     "build": "jest --config ./config/jest.config.cjs && npx playwright test --config=./config/playwright.config.ts && next build",
     "start": "next start",
     "lint": "next lint",
@@ -13,7 +14,8 @@
     "test:ci": "jest --config ./config/jest.config.cjs --ci",
     "test:e2e": "playwright test --config=./config/playwright.config.ts",
     "test:e2e:headed": "playwright test --config=./config/playwright.config.ts --headed",
-    "test:e2e:debug": "playwright test --config=./config/playwright.config.ts --debug"
+    "test:e2e:debug": "playwright test --config=./config/playwright.config.ts --debug",
+    "fetch:locations": "node scripts/fetch-locations.js"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.8",
@@ -51,6 +53,7 @@
     "playwright": "^1.52.0",
     "postcss": "^8.5.4",
     "tailwindcss": "^4.1.8",
+    "ts-node": "^10.9.2",
     "typescript": "^5",
     "vercel": "^43.1.0"
   }
