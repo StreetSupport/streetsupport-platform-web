@@ -9,8 +9,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
     steps:
       - name: Checkout repository
@@ -27,15 +25,11 @@ jobs:
       - name: Install Playwright Chromium only
         run: npx playwright install chromium
 
-      # ✅ Explicit prebuild step with env to guarantee DB connection
       - name: Fetch locations JSON
-        env:
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
-        run: npm run fetch:locations
+        run: MONGODB_URI=${{ secrets.MONGODB_URI }} npm run fetch:locations
 
-      # ✅ Run build AFTER locations are fetched
       - name: Run all tests and build
-        run: npm run build
+        run: MONGODB_URI=${{ secrets.MONGODB_URI }} npm run build
 
       - name: Upload Playwright test results
         if: always()
