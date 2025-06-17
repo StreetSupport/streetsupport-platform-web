@@ -31,6 +31,13 @@ export default function Nav() {
     }, 100);
   }
 
+  // ✅ Handler to close all menus on link click
+  function handleLocationClick() {
+    setIsLocationsOpen(false);
+    setMobileLocationsOpen(false);
+    setMenuOpen(false);
+  }
+
   return (
     <nav className="bg-white border-b border-neutral-200">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -75,6 +82,7 @@ export default function Nav() {
                           <Link
                             href={`/${location.slug}`}
                             className="block text-sm text-neutral-800 hover:underline"
+                            onClick={handleLocationClick} // ✅ Close on click
                           >
                             {location.name}
                           </Link>
@@ -111,6 +119,7 @@ export default function Nav() {
                     <Link
                       href={`/${location.slug}`}
                       className="block text-neutral-800 hover:text-blue-600 text-sm"
+                      onClick={handleLocationClick} // ✅ Close on click
                     >
                       {location.name}
                     </Link>
