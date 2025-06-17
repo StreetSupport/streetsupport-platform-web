@@ -25,11 +25,25 @@ jobs:
       - name: Install Playwright Chromium only
         run: npx playwright install chromium
 
-      - name: Fetch locations JSON
-        run: MONGODB_URI=${{ secrets.MONGODB_URI }} npm run fetch:locations
+      - name: Debug MONGODB_URI value
+        run: |
+          echo "MONGODB_URI is: $MONGODB_URI"
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
-      - name: Run all tests and build
-        run: MONGODB_URI=${{ secrets.MONGODB_URI }} npm run build
+
+
+      - name: Fetch locations JSON (explicit export)
+        run: |
+          export MONGODB_URI=${{ secrets.MONGODB_URI }}
+          echo "Running fetch-locations with MONGODB_URI: $MONGODB_URI"
+          npm run fetch:locations
+
+      - name: Run all tests and build (explicit export)
+        run: |
+          export MONGODB_URI=${{ secrets.MONGODB_URI }}
+          echo "Running build with MONGODB_URI: $MONGODB_URI"
+          npm run build
 
       - name: Upload Playwright test results
         if: always()
@@ -37,6 +51,7 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
+
 
   deploy:
     needs: test
