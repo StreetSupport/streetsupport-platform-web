@@ -12,7 +12,7 @@ function setup(selectedCategory = '', selectedSubCategory = '') {
       setSelectedSubCategory={setSub}
     />
   );
-  return { setCategory, setSub, ...utils };
+  return { setCategory, setSub, rerender: utils.rerender };
 }
 
 describe('FilterPanel', () => {
@@ -20,7 +20,6 @@ describe('FilterPanel', () => {
     setup();
     const select = screen.getByLabelText('Category:');
     expect(select).toBeInTheDocument();
-    // Check a known category from the data file
     expect(screen.getByRole('option', { name: /Food/i })).toBeInTheDocument();
   });
 
@@ -28,13 +27,14 @@ describe('FilterPanel', () => {
     const { setCategory, setSub, rerender } = setup();
     const categorySelect = screen.getByLabelText('Category:');
 
-    fireEvent.change(categorySelect, { target: { value: 'foodbank' } });
+    // ✅ Use the correct key now
+    fireEvent.change(categorySelect, { target: { value: 'food' } });
 
-    await waitFor(() => expect(setCategory).toHaveBeenCalledWith('foodbank'));
+    await waitFor(() => expect(setCategory).toHaveBeenCalledWith('food'));
 
     rerender(
       <FilterPanel
-        selectedCategory="foodbank"
+        selectedCategory="food"
         selectedSubCategory=""
         setSelectedCategory={setCategory}
         setSelectedSubCategory={setSub}
@@ -44,9 +44,8 @@ describe('FilterPanel', () => {
     const subSelect = screen.getByLabelText('Subcategory:');
     expect(subSelect).not.toBeDisabled();
 
-    await waitFor(() =>
-      expect(screen.getByRole('option', { name: /Food Banks/i })).toBeInTheDocument()
-    );
+    const subOption = await screen.findByRole('option', { name: /Food Banks/i });
+    expect(subOption).toBeInTheDocument();
 
     fireEvent.change(subSelect, { target: { value: 'general' } });
     expect(setSub).toHaveBeenCalledWith('general');

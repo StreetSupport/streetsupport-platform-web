@@ -23,9 +23,14 @@ test.describe('Find Help Page', () => {
 
   test('should allow selecting category and subcategory', async ({ page }) => {
     await enterPostcode(page);
+
+    // ✅ Use real generated keys:
     await expect(page.locator('#category')).toBeVisible();
-    await page.locator('#category').selectOption('medical');
+    await page.locator('#category').selectOption('health-services');
+
     await expect(page.locator('#subCategory')).toBeVisible();
+    // Example: pick a real subcategory under Health Services:
+    await page.locator('#subCategory').selectOption('gp');
   });
 
   test('should toggle map visibility', async ({ page }) => {
