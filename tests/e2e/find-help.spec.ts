@@ -26,7 +26,7 @@ test.describe('Find Help Page', () => {
 
     // ✅ Use real generated keys:
     await expect(page.locator('#category')).toBeVisible();
-    await page.locator('#category').selectOption('health-services');
+    await page.locator('#category').selectOption('medical');
 
     await expect(page.locator('#subCategory')).toBeVisible();
     // Example: pick a real subcategory under Health Services:

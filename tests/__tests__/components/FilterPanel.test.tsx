@@ -28,13 +28,13 @@ describe('FilterPanel', () => {
     const categorySelect = screen.getByLabelText('Category:');
 
     // ✅ Use the correct key now
-    fireEvent.change(categorySelect, { target: { value: 'food' } });
+    fireEvent.change(categorySelect, { target: { value: 'foodbank' } });
 
-    await waitFor(() => expect(setCategory).toHaveBeenCalledWith('food'));
+    await waitFor(() => expect(setCategory).toHaveBeenCalledWith('foodbank'));
 
     rerender(
       <FilterPanel
-        selectedCategory="food"
+        selectedCategory="foodbank"
         selectedSubCategory=""
         setSelectedCategory={setCategory}
         setSelectedSubCategory={setSub}

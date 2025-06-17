@@ -18,7 +18,7 @@ const createKey = (name) =>
   name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
 
 const formatCategory = (doc) => ({
-  key: createKey(doc.Name || doc.name),
+  key: doc._id || doc.Key || doc.key,
   name: doc.Name || doc.name,
   subCategories: (doc.SubCategories || []).map((sc) => ({
     key: sc.Key || sc.key,
