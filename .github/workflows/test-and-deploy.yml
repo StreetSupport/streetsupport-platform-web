@@ -32,7 +32,7 @@ jobs:
           echo "Base repo: ${{ github.repository }}"
 
       - name: Fetch locations JSON (only if trusted)
-        if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+        if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
         run: |
@@ -40,8 +40,9 @@ jobs:
           npm run fetch:locations
 
       - name: Skip fetch for fork PRs
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
-        run: echo "⏭️  Skipping fetch-locations: fork PRs cannot access MONGODB_URI."
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
+        run: |
+          echo "⏭️  Skipping fetch-locations: fork PRs cannot access MONGODB_URI."
 
       - name: Run all tests and build
         env:
