@@ -25,23 +25,28 @@ jobs:
       - name: Install Playwright Chromium only
         run: npx playwright install chromium
 
-      - name: Debug MONGODB_URI value
+      # ✅ SAFE: Only run fetch if PR comes from same repo (trusted)
+      - name: Debug PR origin
         run: |
-          echo "MONGODB_URI is: $MONGODB_URI"
+          echo "PR repo: ${{ github.event.pull_request.head.repo.full_name }}"
+          echo "Base repo: ${{ github.repository }}"
+
+      - name: Fetch locations JSON (only if trusted)
+        if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
-
-
-
-      - name: Fetch locations JSON (explicit export)
         run: |
-          export MONGODB_URI=${{ secrets.MONGODB_URI }}
           echo "Running fetch-locations with MONGODB_URI: $MONGODB_URI"
           npm run fetch:locations
 
-      - name: Run all tests and build (explicit export)
+      - name: Skip fetch for fork PRs
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+        run: echo "⏭️  Skipping fetch-locations: fork PRs cannot access MONGODB_URI."
+
+      - name: Run all tests and build
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
         run: |
-          export MONGODB_URI=${{ secrets.MONGODB_URI }}
           echo "Running build with MONGODB_URI: $MONGODB_URI"
           npm run build
 
@@ -51,7 +56,6 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
-
 
   deploy:
     needs: test
