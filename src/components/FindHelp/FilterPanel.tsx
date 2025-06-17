@@ -16,7 +16,9 @@ interface Props {
   setSelectedSubCategory: (subCategory: string) => void;
 }
 
-const categories = (rawCategories as Category[]).sort((a, b) => a.name.localeCompare(b.name));
+const categories = (rawCategories as Category[]).sort((a, b) =>
+  a.name.localeCompare(b.name)
+);
 
 export default function FilterPanel({
   selectedCategory,
@@ -24,12 +26,18 @@ export default function FilterPanel({
   setSelectedCategory,
   setSelectedSubCategory,
 }: Props) {
-  const [subCategories, setSubCategories] = useState<{ key: string; name: string }[]>([]);
+  const [subCategories, setSubCategories] = useState<
+    { key: string; name: string }[]
+  >([]);
 
   useEffect(() => {
     const matched = categories.find((cat) => cat.key === selectedCategory);
     if (matched && matched.subCategories) {
-      setSubCategories([...matched.subCategories].sort((a, b) => a.name.localeCompare(b.name)));
+      setSubCategories(
+        [...matched.subCategories].sort((a, b) =>
+          a.name.localeCompare(b.name)
+        )
+      );
     } else {
       setSubCategories([]);
     }
@@ -47,7 +55,7 @@ export default function FilterPanel({
           value={selectedCategory}
           onChange={(e) => {
             setSelectedCategory(e.target.value);
-            setSelectedSubCategory(''); // reset subcategory when changing category
+            setSelectedSubCategory('');
           }}
         >
           <option value="">All</option>

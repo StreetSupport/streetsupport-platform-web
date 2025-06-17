@@ -5,17 +5,24 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "prebuild": "if [ \"$SKIP_FETCH\" != \"true\" ]; then npm run fetch:locations; else echo '⏭️  Skipping prebuild fetch'; fi",
-    "build": "jest --config ./config/jest.config.cjs && npx playwright test --config=./config/playwright.config.ts && next build",
+
+    "prebuild": "node ./scripts/fetch-prebuild.js",
+
+    "build": "npm run test && npm run test:e2e && next build",
+
     "start": "next start",
     "lint": "next lint",
+
     "test": "jest --config ./config/jest.config.cjs",
     "test:watch": "jest --config ./config/jest.config.cjs --watch",
     "test:ci": "jest --config ./config/jest.config.cjs --ci",
     "test:e2e": "playwright test --config=./config/playwright.config.ts",
     "test:e2e:headed": "playwright test --config=./config/playwright.config.ts --headed",
     "test:e2e:debug": "playwright test --config=./config/playwright.config.ts --debug",
-    "fetch:locations": "cross-env node scripts/fetch-locations.js"
+
+    "fetch:locations": "node ./scripts/fetch-locations.js",
+    "fetch:service-categories": "node ./scripts/fetch-service-categories.js",
+    "fetch:all": "npm-run-all fetch:locations fetch:service-categories"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.8",
@@ -51,6 +58,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^30.0.0-beta.3",
     "jest-environment-jsdom": "^30.0.0-beta.3",
+    "npm-run-all": "^4.1.5",
     "playwright": "^1.52.0",
     "postcss": "^8.5.4",
     "tailwindcss": "^4.1.8",
