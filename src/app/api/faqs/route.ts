@@ -1,39 +1,22 @@
 import { NextResponse } from 'next/server';
-import { getClientPromise } from '@/utils/mongodb';
+import { getFaqs } from './helper';
 
 export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const location = searchParams.get('location'); // e.g. 'leeds'
+    const url = new URL(req.url);
+    const location = url.searchParams.get('location');
 
-    const client = await getClientPromise();
-    const db = client.db('streetsupport');
-
-    const query: any = {};
-
-    if (location) {
-      query.Location = location;
-    }
-
-    // If location is provided, filter by it — otherwise get general FAQs
-    const faqs = await db.collection('FAQs').find(query).toArray();
-
-    const output = faqs.map((faq) => ({
-      id: faq._id,
-      question: faq.Question,
-      answer: faq.Answer,
-      location: faq.Location || null,
-    }));
+    const faqs = await getFaqs(location ?? undefined);
 
     return NextResponse.json({
       status: 'success',
-      data: output,
+      data: faqs,
     });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({
-      status: 'error',
-      message: error instanceof Error ? error.message : 'Unknown error',
-    });
+    console.error('Error fetching FAQs:', error);
+    return NextResponse.json(
+      { status: 'error', message: 'Failed to fetch FAQs' },
+      { status: 500 }
+    );
   }
 }

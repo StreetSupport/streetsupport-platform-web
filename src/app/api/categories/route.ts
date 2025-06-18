@@ -1,29 +1,14 @@
+// src/app/api/categories/route.ts
+
 import { NextResponse } from 'next/server';
-import { getClientPromise } from '@/utils/mongodb';
-import { formatCategory } from '@/utils/formatCategories';
-
-interface RawCategory {
-  key: string;
-  name: string;
-  subCategories: { key: string; name: string }[];
-}
-
+import { getCategories } from './helper';
 
 export async function GET() {
   try {
-    const client = await getClientPromise();
-    const db = client.db('streetsupport');
-
-    const categories = await db
-      .collection<RawCategory>('NestedServiceCategories')
-      .find({})
-      .toArray();
-
-    const formatted = categories.map(formatCategory);
-
+    const categories = await getCategories();
     return NextResponse.json({
       status: 'success',
-      data: formatted,
+      data: categories,
     });
   } catch (error) {
     console.error('Error fetching categories:', error);
