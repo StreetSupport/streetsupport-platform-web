@@ -7,7 +7,9 @@ export interface Service {
   id: string;
   name: string;
   category: string;
+  categoryName?: string;
   subCategory: string;
+  subCategoryName?: string;
   description: string;
   organisation?: string;
   organisationSlug?: string;
@@ -19,12 +21,18 @@ export interface Service {
 
 interface ServiceCardProps {
   service: Service;
+  isOpen: boolean;
+  onToggle: () => void;
 }
 
-export default function ServiceCard({ service }: ServiceCardProps) {
+export default function ServiceCard({ service, isOpen, onToggle }: ServiceCardProps) {
   const destination = service.organisationSlug
     ? `/find-help/organisation/${service.organisationSlug}`
     : '#';
+
+  const preview = service.description.length > 120
+    ? service.description.slice(0, 120) + '...'
+    : service.description;
 
   return (
     <Link
@@ -38,14 +46,28 @@ export default function ServiceCard({ service }: ServiceCardProps) {
         <p className="text-sm text-gray-600 mb-2">{service.organisation}</p>
       )}
 
-      <p className="text-gray-800 mb-2">{service.description}</p>
+      <p className="text-gray-800 mb-2">
+        {isOpen ? service.description : preview}
+        {service.description.length > 120 && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault(); // prevent link navigation
+              onToggle(); // notify parent
+            }}
+            className="ml-2 text-blue-600 underline text-sm"
+          >
+            {isOpen ? 'Show less' : 'Read more'}
+          </button>
+        )}
+      </p>
 
       <p className="text-sm text-gray-500 mb-1">
-        Category: {service.category}
+        Category: {service.categoryName || service.category}
       </p>
 
       <p className="text-sm text-gray-500 mb-2">
-        Subcategory: {service.subCategory}
+        Subcategory: {service.subCategoryName || service.subCategory}
       </p>
 
       {service.clientGroups && service.clientGroups.length > 0 && (

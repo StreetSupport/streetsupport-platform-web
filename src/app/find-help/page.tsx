@@ -1,19 +1,60 @@
-'use client';
+// src/app/find-help/page.tsx
 
 import { LocationProvider } from '@/contexts/LocationContext';
 import FindHelpEntry from '@/components/FindHelp/FindHelpEntry';
 import FindHelpResults from '@/components/FindHelp/FindHelpResults';
-import rawProviders from '@/data/service-providers.json';
-import type { ServiceProvider } from '@/types';
+import type { FlattenedService } from '@/types';
+import { decodeHtmlEntities } from '@/utils/htmlDecode'; 
+import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup';
 
-export default function FindHelpPage() {
-  const providers = rawProviders as ServiceProvider[];
+
+export default async function FindHelpPage() {
+  const baseUrl =
+    process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'http://localhost:3000';
+
+  const res = await fetch(`${baseUrl}/api/services?limit=1000`, {
+    cache: 'no-store',
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch services: ${res.status}`);
+  }
+
+  const raw = await res.json();
+  const rawArray = raw.results || [];
+
+  if (!Array.isArray(rawArray)) {
+    throw new Error('API did not return an array in "results"!');
+  }
+
+  const services: FlattenedService[] = rawArray
+    .filter((item: any) => item.IsPublished === true)
+    .map((item: any) => {
+      const coords = item.Address?.Location?.coordinates || [0, 0];
+      return {
+        id: item._id,
+        name: decodeHtmlEntities(item.ServiceProviderName || ''),
+        description: decodeHtmlEntities(item.Info || ''),
+        category: item.ParentCategoryKey || '',
+        categoryName: categoryKeyToName[item.ParentCategoryKey] || item.ParentCategoryKey || '',
+        subCategory: item.SubCategoryKey || '',
+        subCategoryName: subCategoryKeyToName[item.SubCategoryKey] || item.SubCategoryKey || '',
+        latitude: coords[1],
+        longitude: coords[0],
+        organisationName: decodeHtmlEntities(item.organisation?.Name || item.ServiceProviderName || ''),
+        organisationSlug: item.organisation?.Key || item.ServiceProviderKey || '',
+        clientGroups: item.ClientGroups || [],
+        openTimes: item.OpeningTimes || [],
+      };
+  });
 
   return (
     <LocationProvider>
       <div>
         <FindHelpEntry />
-        <FindHelpResults providers={providers} />
+        <FindHelpResults services={services} />
       </div>
     </LocationProvider>
   );

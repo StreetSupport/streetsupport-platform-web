@@ -5,17 +5,13 @@ import { useLocation } from '@/contexts/LocationContext';
 import ServiceCard from './ServiceCard';
 import FilterPanel from './FilterPanel';
 import GoogleMap from '@/components/MapComponent/GoogleMap';
-import type { ServiceProvider, FlattenedService } from '@/types';
+import type { FlattenedService } from '@/types';
 
 interface Props {
-  providers: ServiceProvider[];
+  services: FlattenedService[];
 }
 
 interface FlattenedServiceWithExtras extends FlattenedService {
-  organisation: string;
-  organisationSlug: string;
-  lat: number;
-  lng: number;
   distance?: number;
 }
 
@@ -31,13 +27,14 @@ interface MapMarker {
   icon?: string;
 }
 
-export default function FindHelpResults({ providers }: Props) {
+export default function FindHelpResults({ services }: Props) {
   const { location } = useLocation();
   const [showMap, setShowMap] = useState(false);
   const [radius, setRadius] = useState(10);
   const [sortOrder, setSortOrder] = useState<'distance' | 'alpha'>('distance');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubCategory, setSelectedSubCategory] = useState('');
+  const [openDescriptionId, setOpenDescriptionId] = useState<string | null>(null); // ✅ NEW
 
   const getDistanceFromLatLonInKm = useCallback((lat1: number, lon1: number, lat2: number, lon2: number) => {
     const R = 6371;
@@ -55,69 +52,41 @@ export default function FindHelpResults({ providers }: Props) {
     return deg * (Math.PI / 180);
   }
 
-  const flattenedServices: FlattenedServiceWithExtras[] = useMemo(() => {
-    if (!providers || providers.length === 0) return [];
+  const servicesWithDistance: FlattenedServiceWithExtras[] = useMemo(() => {
+    if (!services || services.length === 0 || !location) return [];
 
-    return providers.flatMap((org) => {
-      if (!org.services || !Array.isArray(org.services)) return [];
+    return services.map((service) => {
+      const distance = location.lat != null && location.lng != null
+        ? getDistanceFromLatLonInKm(location.lat, location.lng, service.latitude, service.longitude)
+        : undefined;
 
-      return org.services.flatMap((service) => {
-        if (
-          typeof service.latitude !== 'number' ||
-          typeof service.longitude !== 'number'
-        ) {
-          return [];
-        }
-
-        return [{
-          id: service.id,
-          name: service.name,
-          description: service.description,
-          category: service.category,
-          subCategory: service.subCategory,
-          lat: service.latitude,
-          lng: service.longitude,
-          latitude: service.latitude,
-          longitude: service.longitude,
-          organisation: org.name,
-          organisationSlug: org.slug,
-          clientGroups: service.clientGroups || [],
-          openTimes: service.openTimes || [],
-        }];
-      });
+      return { ...service, distance };
     });
-  }, [providers]);
+  }, [services, location, getDistanceFromLatLonInKm]);
 
-  const filteredServicesWithDistance = useMemo(() => {
-    if (!location || location.lat == null || location.lng == null) return [];
-
-    return flattenedServices
-      .map((service) => ({
-        ...service,
-        distance: getDistanceFromLatLonInKm(location.lat!, location.lng!, service.lat, service.lng),
-      }))
-      .filter((service) => {
-        const distanceMatch = service.distance! <= radius;
-        const categoryMatch = selectedCategory ? service.category === selectedCategory : true;
-        const subCategoryMatch = selectedSubCategory ? service.subCategory === selectedSubCategory : true;
-        return distanceMatch && categoryMatch && subCategoryMatch;
-      });
-  }, [flattenedServices, location, radius, selectedCategory, selectedSubCategory, getDistanceFromLatLonInKm]);
+  const filteredServices = useMemo(() => {
+    return servicesWithDistance.filter((service) => {
+      const withinRadius = service.distance != null ? service.distance <= radius : true;
+      const categoryMatch = selectedCategory ? service.category === selectedCategory : true;
+      const subCategoryMatch = selectedSubCategory ? service.subCategory === selectedSubCategory : true;
+      return withinRadius && categoryMatch && subCategoryMatch;
+    });
+  }, [servicesWithDistance, radius, selectedCategory, selectedSubCategory]);
 
   const sortedServices = useMemo(() => {
     if (sortOrder === 'alpha') {
-      return [...filteredServicesWithDistance].sort((a, b) => a.name.localeCompare(b.name));
+      return [...filteredServices].sort((a, b) => a.name.localeCompare(b.name));
     }
-    return [...filteredServicesWithDistance].sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0));
-  }, [filteredServicesWithDistance, sortOrder]);
+    return [...filteredServices].sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0));
+  }, [filteredServices, sortOrder]);
 
   const combinedMarkers: MapMarker[] = useMemo(() => {
-    const markers: MapMarker[] = filteredServicesWithDistance.map((s) => ({
+    const markers: MapMarker[] = filteredServices.map((s) => ({
       id: s.id,
-      lat: s.lat,
-      lng: s.lng,
+      lat: s.latitude,
+      lng: s.longitude,
       title: s.name,
-      organisation: s.organisation,
+      organisation: s.organisationName,
       organisationSlug: s.organisationSlug,
       serviceName: s.name,
       distanceKm: s.distance,
@@ -135,7 +104,7 @@ export default function FindHelpResults({ providers }: Props) {
     }
 
     return markers;
-  }, [filteredServicesWithDistance, location]);
+  }, [filteredServices, location]);
 
   return (
     <section className="flex flex-col lg:flex-row items-start px-4 sm:px-6 md:px-8 py-6 gap-6 max-w-7xl mx-auto h-auto lg:h-[calc(100vh-4rem)]">
@@ -185,7 +154,7 @@ export default function FindHelpResults({ providers }: Props) {
 
         {showMap && (
           <div className="block lg:hidden w-full mb-4" data-testid="map-container">
-            <GoogleMap center={(location && location.lat != null && location.lng != null) ? { lat: location.lat, lng: location.lng } : null} markers={combinedMarkers} />
+            <GoogleMap center={location ? { lat: location.lat, lng: location.lng } : null} markers={combinedMarkers} />
           </div>
         )}
 
@@ -199,7 +168,13 @@ export default function FindHelpResults({ providers }: Props) {
                   key={service.id}
                   className="border border-gray-300 rounded-md p-4 bg-white flex flex-col"
                 >
-                  <ServiceCard service={service} />
+                  <ServiceCard
+                    service={service}
+                    isOpen={openDescriptionId === service.id}
+                    onToggle={() =>
+                      setOpenDescriptionId(openDescriptionId === service.id ? null : service.id)
+                    }
+                  />
                   {service.distance !== undefined && (
                     <p className="text-sm text-gray-500 mt-auto pt-4">
                       Approx. {service.distance.toFixed(1)} km away
@@ -215,11 +190,7 @@ export default function FindHelpResults({ providers }: Props) {
       {showMap && (
         <div className="hidden lg:block w-full lg:w-1/2 mt-8 lg:mt-0 lg:sticky lg:top-[6.5rem] min-h-[400px]" data-testid="map-container">
           <GoogleMap
-            center={
-              location && location.lat != null && location.lng != null
-                ? { lat: location.lat, lng: location.lng }
-                : null
-            }
+            center={location ? { lat: location.lat, lng: location.lng } : null}
             markers={combinedMarkers}
           />
         </div>
