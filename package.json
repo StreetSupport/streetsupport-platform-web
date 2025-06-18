@@ -22,7 +22,8 @@
 
     "fetch:locations": "node ./scripts/fetch-locations.js",
     "fetch:service-categories": "node ./scripts/fetch-service-categories.js",
-    "fetch:all": "npm-run-all fetch:locations fetch:service-categories"
+    "fetch:client-groups": "node ./scripts/fetch-client-groups.js",
+    "fetch:all": "npm-run-all fetch:locations fetch:service-categories fetch:client-groups"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.8",

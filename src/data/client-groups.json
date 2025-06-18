@@ -1,36 +1,172 @@
 [
-  "age-10-24",
-  "age-under-16",
-  "families",
-  "age-under-18",
-  "age-under-19",
-  "age-under-21",
-  "age-under-25",
-  "age-under-26",
-  "age-11-25",
-  "age-16+",
-  "age-16-21",
-  "age-16-24",
-  "age-16-25",
-  "age-18-25",
-  "age-18-30",
-  "age-18+",
-  "age-25+",
-  "age-26+",
-  "age-40+",
-  "male-only",
-  "female-only",
-  "bame",
-  "asylum-seekers",
-  "refugees",
-  "eea-residents",
-  "rough-sleepers",
-  "veterans",
-  "sex-workers",
-  "ex-offenders",
-  "lgbt+",
-  "gay",
-  "lesbian",
-  "bisexual",
-  "transgender"
+  {
+    "_id": "5bd060eb46e3da5220f9c8ba",
+    "key": "refugees",
+    "name": "Refugees"
+  },
+  {
+    "_id": "5bf6b9e323c7a0408e8e6912",
+    "key": "age-18-30",
+    "name": "18-30 only"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8be",
+    "key": "lgbt+",
+    "name": "LGBT+"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8b8",
+    "key": "bame",
+    "name": "Black, Asian and Minority Ethnic"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8bf",
+    "key": "gay",
+    "name": "Gay"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8c1",
+    "key": "bisexual",
+    "name": "Bisexual"
+  },
+  {
+    "_id": "5be0274846e3da23605eaf2e",
+    "key": "age-40+",
+    "name": "40+ only"
+  },
+  {
+    "_id": "5bf4289c23c7a0408e8e690b",
+    "key": "age-16+",
+    "name": "16+ only"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8c2",
+    "key": "transgender",
+    "name": "Transgender"
+  },
+  {
+    "_id": "5be0274846e3da23605eaf27",
+    "key": "age-11-25",
+    "name": "11-25 only"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8b6",
+    "key": "female-only",
+    "name": "Female only"
+  },
+  {
+    "_id": "5be0274846e3da23605eaf26",
+    "key": "age-under-21",
+    "name": "Under 21s only"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8b9",
+    "key": "asylum-seekers",
+    "name": "Asylum seekers"
+  },
+  {
+    "_id": "5be0274846e3da23605eaf2c",
+    "key": "age-25+",
+    "name": "25+ only"
+  },
+  {
+    "_id": "5be0274846e3da23605eaf2d",
+    "key": "age-26+",
+    "name": "26+ only"
+  },
+  {
+    "_id": "5bf3ee8a23c7a0408e8e6909",
+    "key": "age-under-16",
+    "name": "Under 16s only"
+  },
+  {
+    "_id": "5bf6b9c323c7a0408e8e6911",
+    "key": "age-under-26",
+    "name": "Under 26s only"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8bb",
+    "key": "eea-residents",
+    "name": "EEA residents"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8c0",
+    "key": "lesbian",
+    "name": "Lesbian"
+  },
+  {
+    "_id": "5be0274846e3da23605eaf28",
+    "key": "age-16-21",
+    "name": "16-21 only"
+  },
+  {
+    "_id": "5bf4295323c7a0408e8e690c",
+    "key": "ex-offenders",
+    "name": "Ex-Offenders"
+  },
+  {
+    "_id": "5be0274846e3da23605eaf2a",
+    "key": "age-18-25",
+    "name": "18-25 only"
+  },
+  {
+    "_id": "5be0274846e3da23605eaf29",
+    "key": "age-16-25",
+    "name": "16-25 only"
+  },
+  {
+    "_id": "5be0274846e3da23605eaf2b",
+    "key": "age-18+",
+    "name": "18+ only"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8b5",
+    "key": "male-only",
+    "name": "Male only"
+  },
+  {
+    "_id": "5bf6b96e23c7a0408e8e6910",
+    "key": "age-10-24",
+    "name": "10-24 only"
+  },
+  {
+    "_id": "5be0274846e3da23605eaf24",
+    "key": "age-under-18",
+    "name": "Under 18s only"
+  },
+  {
+    "_id": "5be0274846e3da23605eaf25",
+    "key": "age-under-19",
+    "name": "Under 19s only"
+  },
+  {
+    "_id": "5be0274846e3da23605eaf2f",
+    "key": "sex-workers",
+    "name": "Sex workers"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8bc",
+    "key": "rough-sleepers",
+    "name": "Rough sleepers"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8bd",
+    "key": "veterans",
+    "name": "Armed forces veterans"
+  },
+  {
+    "_id": "5bed9f4623c7a0408e8e6904",
+    "key": "age-under-25",
+    "name": "Under 25s only"
+  },
+  {
+    "_id": "5bf435a423c7a0408e8e690d",
+    "key": "age-16-24",
+    "name": "16-24 only"
+  },
+  {
+    "_id": "5f844e470532b71444f305ff",
+    "key": "families",
+    "name": "Families"
+  }
 ]
