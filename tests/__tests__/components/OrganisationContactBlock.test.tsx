@@ -4,12 +4,13 @@ import OrganisationContactBlock from '@/components/OrganisationPage/Organisation
 describe('OrganisationContactBlock', () => {
   it('shows no contact items if none are provided', () => {
     const organisation = {
-      Name: 'Org A',
-      Email: '',
-      Telephone: '',
-      Website: '',
-      Facebook: '',
-      Twitter: '',
+      name: 'Org A',
+      email: '',
+      telephone: '',
+      website: '',
+      facebook: '',
+      twitter: '',
+      groupedServices: {}, // required by prop type
     };
 
     render(<OrganisationContactBlock organisation={organisation} />);
@@ -17,7 +18,7 @@ describe('OrganisationContactBlock', () => {
     // Heading always visible
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('Contact Details');
 
-    // List should be empty
+    // Should have no rendered contact items
     const listItems = screen.queryAllByRole('listitem');
     expect(listItems.length).toBe(0);
   });

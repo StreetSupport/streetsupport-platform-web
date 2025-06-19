@@ -1,4 +1,5 @@
 'use client';
+
 import React from 'react';
 import type { OrganisationDetails } from '@/utils/organisation';
 
@@ -11,29 +12,59 @@ export default function OrganisationContactBlock({ organisation }: Props) {
     <section className="mb-6">
       <h2 className="text-xl font-semibold mb-2">Contact Details</h2>
       <ul className="list-none space-y-1">
-        {organisation.Email && (
+        {organisation.email && (
           <li>
-            <strong>Email:</strong> <a href={`mailto:${organisation.Email}`} className="text-brand-h underline">{organisation.Email}</a>
+            <strong>Email:</strong>{' '}
+            <a href={`mailto:${organisation.email}`} className="text-brand-h underline">
+              {organisation.email}
+            </a>
           </li>
         )}
-        {organisation.Telephone && (
+        {organisation.telephone && (
           <li>
-            <strong>Telephone:</strong> <a href={`tel:${organisation.Telephone}`} className="text-brand-h underline">{organisation.Telephone}</a>
+            <strong>Telephone:</strong>{' '}
+            <a href={`tel:${organisation.telephone}`} className="text-brand-h underline">
+              {organisation.telephone}
+            </a>
           </li>
         )}
-        {organisation.Website && (
+        {organisation.website && (
           <li>
-            <strong>Website:</strong> <a href={organisation.Website} target="_blank" rel="noopener noreferrer" className="text-brand-h underline">{organisation.Website}</a>
+            <strong>Website:</strong>{' '}
+            <a
+              href={organisation.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand-h underline"
+            >
+              {organisation.website}
+            </a>
           </li>
         )}
-        {organisation.Facebook && (
+        {organisation.facebook && (
           <li>
-            <strong>Facebook:</strong> <a href={organisation.Facebook} target="_blank" rel="noopener noreferrer" className="text-brand-h underline">{organisation.Facebook}</a>
+            <strong>Facebook:</strong>{' '}
+            <a
+              href={organisation.facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand-h underline"
+            >
+              {organisation.facebook}
+            </a>
           </li>
         )}
-        {organisation.Twitter && (
+        {organisation.twitter && (
           <li>
-            <strong>Twitter:</strong> <a href={organisation.Twitter} target="_blank" rel="noopener noreferrer" className="text-brand-h underline">{organisation.Twitter}</a>
+            <strong>Twitter:</strong>{' '}
+            <a
+              href={organisation.twitter}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand-h underline"
+            >
+              {organisation.twitter}
+            </a>
           </li>
         )}
       </ul>

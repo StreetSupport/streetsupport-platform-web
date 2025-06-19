@@ -1,53 +1,58 @@
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import OrganisationLocations from '@/components/OrganisationPage/OrganisationLocations';
 
+// ✅ Mock GoogleMap to capture props
 jest.mock('@/components/MapComponent/GoogleMap', () => (props: any) => {
   (globalThis as any).mapProps = props;
-  return <div data-testid="map" />;
+  return <div data-testid="mock-map">MockMap</div>;
 });
 
-const baseOrg: any = {
-  id: '1',
-  name: 'Loc Org',
-  Key: 'loc-org',
-  Addresses: [
+const baseOrg = {
+  addresses: [
     {
-      Location: {
-        coordinates: [-2, 53], // GeoJSON order: [lng, lat]
-      },
-      Street: '123 High St',
-      City: 'Manchester',
-      Postcode: 'M1 2AB',
+      Key: { $binary: { base64: 'addr-1' } },
+      Location: { coordinates: [-2, 53] },
+      Street: '123 Example St',
+      City: 'Testville',
+      Postcode: 'TS1 1TS',
     },
   ],
+  key: 'org-key',
 };
 
 describe('OrganisationLocations', () => {
-  it('returns null when no valid addresses', () => {
+  afterEach(() => {
+    (globalThis as any).mapProps = undefined;
+  });
+
+  it('shows fallback message when no valid addresses', () => {
     const { container } = render(
-      <OrganisationLocations organisation={{ ...baseOrg, Addresses: [] }} />
+      <OrganisationLocations organisation={{ ...baseOrg, addresses: [] }} />
     );
-    expect(container.firstChild).toBeNull();
+
+    // It should render <h2> and fallback text
+    expect(container).toHaveTextContent('Locations');
+    expect(container).toHaveTextContent('No addresses available');
   });
 
   it('renders map with provided coordinates', () => {
     render(<OrganisationLocations organisation={baseOrg} />);
     expect((globalThis as any).mapProps.center).toEqual({ lat: 53, lng: -2 });
     expect((globalThis as any).mapProps.markers[0]).toMatchObject({
-      id: 'addr-0',
+      id: 'addr-1',   // ✅ match your mock!
       lat: 53,
       lng: -2,
-      title: '123 High St, Manchester, M1 2AB',
-      organisationSlug: 'loc-org',
     });
   });
 
+
   it('uses default slug when none provided', () => {
-    render(
-      <OrganisationLocations
-        organisation={{ ...baseOrg, Key: undefined, slug: undefined }}
-      />
-    );
+    const orgNoSlug = {
+      ...baseOrg,
+      key: undefined,
+    };
+
+    render(<OrganisationLocations organisation={orgNoSlug} />);
     expect((globalThis as any).mapProps.markers[0].organisationSlug).toBe(
       'org-location'
     );

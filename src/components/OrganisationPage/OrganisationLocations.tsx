@@ -9,9 +9,9 @@ interface Props {
 }
 
 export default function OrganisationLocations({ organisation }: Props) {
-  const addresses = organisation.Addresses || [];
+  // ✅ Normalised prop
+  const addresses = organisation.addresses || [];
 
-  // ✅ If no addresses or none have valid coordinates, skip map
   const validAddresses = addresses.filter(
     (addr) =>
       addr.Location?.coordinates &&
@@ -20,11 +20,16 @@ export default function OrganisationLocations({ organisation }: Props) {
       typeof addr.Location.coordinates[1] === 'number'
   );
 
+  // ✅ Always render heading, even if no map
   if (validAddresses.length === 0) {
-    return null;
+    return (
+      <section className="mb-6">
+        <h2 className="text-xl font-semibold mb-2">Locations</h2>
+        <p>No addresses available for this organisation.</p>
+      </section>
+    );
   }
 
-  // ✅ Center on the first valid address
   const first = validAddresses[0];
   const center = {
     lat: first.Location.coordinates[1],
@@ -36,7 +41,7 @@ export default function OrganisationLocations({ organisation }: Props) {
     lat: addr.Location.coordinates[1],
     lng: addr.Location.coordinates[0],
     title: [addr.Street, addr.City, addr.Postcode].filter(Boolean).join(', '),
-    organisationSlug: organisation.Key || 'org-location',
+    organisationSlug: organisation.key || 'org-location', // ✅ normalised
   }));
 
   return (

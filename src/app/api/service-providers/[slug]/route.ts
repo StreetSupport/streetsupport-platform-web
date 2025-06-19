@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
 
-export async function GET(
-  req: Request,
-  context: any
-) {
-  const { slug } = await context.params;
+export async function GET(req: Request) {
+  // ✅ App Router API routes do not receive `context.params`
+  // So parse slug manually:
+  const url = new URL(req.url);
+  const parts = url.pathname.split('/');
+  const slug = parts[parts.length - 1];
 
   if (!slug) {
     return NextResponse.json(
@@ -21,8 +22,7 @@ export async function GET(
     const providersCol = db.collection('ServiceProviders');
     const servicesCol = db.collection('ProvidedServices');
 
-    // ✅ 1️⃣ Get the full ServiceProvider with all expected details
-    const provider = await providersCol.findOne(
+    const rawProvider = await providersCol.findOne(
       { Key: { $regex: new RegExp(`^${slug}$`, 'i') } },
       {
         projection: {
@@ -30,7 +30,7 @@ export async function GET(
           Key: 1,
           Name: 1,
           ShortDescription: 1,
-          Description: 1,         // ✅ The long text for main overview
+          Description: 1,
           Website: 1,
           Telephone: 1,
           Email: 1,
@@ -42,42 +42,59 @@ export async function GET(
           IsPublished: 1,
           AssociatedLocationIds: 1,
           Tags: 1,
-          Addresses: 1,            // ✅ Use inline addresses
+          Addresses: 1,
         },
       }
     );
 
-    if (!provider) {
+    if (!rawProvider) {
       return NextResponse.json(
         { status: 'error', message: 'Organisation not found' },
         { status: 404 }
       );
     }
 
-    // ✅ 2️⃣ Get all ProvidedServices for this provider (correct source for Info!)
     const services = await servicesCol
       .find({
-        ServiceProviderKey: provider.Key,
-        IsPublished: true
+        ServiceProviderKey: rawProvider.Key,
+        IsPublished: true,
       })
       .project({
         _id: 1,
         ParentCategoryKey: 1,
         SubCategoryKey: 1,
         SubCategoryName: 1,
-        Info: 1,             // ✅ The real service description
+        Info: 1,
         OpeningTimes: 1,
         ClientGroups: 1,
-        Address: 1           // ✅ This may override or complement org addresses
+        Address: 1,
       })
       .toArray();
 
-    // ✅ 3️⃣ Response
+    const provider = {
+      key: rawProvider.Key,
+      name: rawProvider.Name,
+      shortDescription: rawProvider.ShortDescription,
+      description: rawProvider.Description,
+      website: rawProvider.Website,
+      telephone: rawProvider.Telephone,
+      email: rawProvider.Email,
+      facebook: rawProvider.Facebook,
+      twitter: rawProvider.Twitter,
+      instagram: rawProvider.Instagram,
+      bluesky: rawProvider.Bluesky,
+      isVerified: rawProvider.IsVerified,
+      isPublished: rawProvider.IsPublished,
+      associatedLocationIds: rawProvider.AssociatedLocationIds,
+      tags: rawProvider.Tags,
+      addresses: rawProvider.Addresses || [],
+    };
+
     return NextResponse.json({
       status: 'success',
       organisation: provider,
-      addresses: provider.Addresses || [],
-      services: services
+      addresses: provider.addresses,
+      services: services,
     });
 
   } catch (error) {

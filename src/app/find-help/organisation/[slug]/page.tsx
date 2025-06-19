@@ -2,19 +2,20 @@ export const dynamic = 'force-dynamic';
 
 import OrganisationShell from './OrganisationShell';
 import { notFound } from 'next/navigation';
-import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup'; // ✅ adjust path if needed
+import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup';
+
+import type { RawService } from '@/types/api';
 
 interface Props {
-  params: { slug: string } | Promise<{ slug: string }>;
+  params: Promise<{ slug: string }>;
 }
 
 export default async function OrganisationPage(props: Props) {
   const { slug } = await props.params;
 
-  const baseUrl =
-    process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : 'http://localhost:3000';
+  const baseUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'http://localhost:3000';
 
   const res = await fetch(`${baseUrl}/api/service-providers/${slug}`, {
     cache: 'no-store',
@@ -36,30 +37,38 @@ export default async function OrganisationPage(props: Props) {
     return notFound();
   }
 
-const services = (data.services || []).map((service, idx) => {
-  const coords = service.Address?.Location?.coordinates || [0, 0];
-  const parentKey = service.ParentCategoryKey || '';
-  const subKey = service.SubCategoryKey || '';
+  // Cast services
+  const rawServices = (data.services || []) as RawService[];
 
-  return {
-    id: service._id || `service-${idx}`,
-    name: subCategoryKeyToName[subKey] || subKey || 'Unnamed Service',
-    category: parentKey,
-    categoryName: categoryKeyToName[parentKey] || parentKey || 'Other',
-    subCategory: subKey,
-    subCategoryName: subCategoryKeyToName[subKey] || subKey || 'Other',
-    description: service.Info || '',  // ✅ Use Info exactly as is
-    address: service.Address || {},   // ✅ Raw address object
-    openTimes: service.OpeningTimes || [],
-    organisationName: data.organisation.Name,
-    organisationSlug: data.organisation.Key,
-    latitude: coords[1],
-    longitude: coords[0],
-    clientGroups: service.ClientGroups || [],
-  };
-});
+  const services = rawServices.map((service, idx) => {
+    const coords = service.Address?.Location?.coordinates || [0, 0];
+    const parentKey = service.ParentCategoryKey || '';
+    const subKey = service.SubCategoryKey || '';
 
-  // ✅ Group by Parent Category Name → Subcategory Name
+    const openTimes = (service.OpeningTimes || []).map(slot => ({
+      day: slot.day,
+      start: slot.start,
+      end: slot.end,
+    }));
+
+    return {
+      id: service._id || `service-${idx}`,
+      name: subCategoryKeyToName[subKey] || subKey || 'Unnamed Service',
+      category: parentKey,
+      categoryName: categoryKeyToName[parentKey] || parentKey || 'Other',
+      subCategory: subKey,
+      subCategoryName: subCategoryKeyToName[subKey] || subKey || 'Other',
+      description: service.Info || '',
+      address: service.Address || {},
+      openTimes,
+      organisation: data.organisation.name,   // ✅ lowercase
+      organisationSlug: data.organisation.key, // ✅ lowercase
+      latitude: coords[1],
+      longitude: coords[0],
+      clientGroups: service.ClientGroups || [],
+    };
+  });
+
   const groupedServices = services.reduce((acc, s) => {
     const parent = s.categoryName || 'Other';
     const sub = s.subCategoryName || 'Other';
@@ -71,15 +80,14 @@ const services = (data.services || []).map((service, idx) => {
     return acc;
   }, {} as Record<string, Record<string, any[]>>);
 
-  // ✅ Final shape for OrganisationShell
   const organisation = {
     ...data.organisation,
-    Addresses: data.addresses || [],
-    Services: services,
-    groupedServices: groupedServices,
+    services,
+    groupedServices,
   };
 
-console.log('✅ DEBUG groupedServices:', JSON.stringify(groupedServices, null, 2));
+
+  console.log('✅ DEBUG groupedServices:', JSON.stringify(groupedServices, null, 2));
 
   return <OrganisationShell organisation={organisation} />;
 }

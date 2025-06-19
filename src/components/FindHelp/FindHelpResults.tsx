@@ -5,13 +5,13 @@ import { useLocation } from '@/contexts/LocationContext';
 import ServiceCard from './ServiceCard';
 import FilterPanel from './FilterPanel';
 import GoogleMap from '@/components/MapComponent/GoogleMap';
-import type { FlattenedService } from '@/types';
+import type { UIFlattenedService } from '@/types';
 
 interface Props {
-  services: FlattenedService[];
+  services: UIFlattenedService[];
 }
 
-interface FlattenedServiceWithExtras extends FlattenedService {
+interface FlattenedServiceWithExtras extends UIFlattenedService {
   distance?: number;
 }
 
@@ -34,7 +34,7 @@ export default function FindHelpResults({ services }: Props) {
   const [sortOrder, setSortOrder] = useState<'distance' | 'alpha'>('distance');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubCategory, setSelectedSubCategory] = useState('');
-  const [openDescriptionId, setOpenDescriptionId] = useState<string | null>(null); // ✅ NEW
+  const [openDescriptionId, setOpenDescriptionId] = useState<string | null>(null);
 
   const getDistanceFromLatLonInKm = useCallback((lat1: number, lon1: number, lat2: number, lon2: number) => {
     const R = 6371;
@@ -86,7 +86,7 @@ export default function FindHelpResults({ services }: Props) {
       lat: s.latitude,
       lng: s.longitude,
       title: s.name,
-      organisation: s.organisationName,
+      organisation: s.organisation?.name,
       organisationSlug: s.organisationSlug,
       serviceName: s.name,
       distanceKm: s.distance,
@@ -154,7 +154,14 @@ export default function FindHelpResults({ services }: Props) {
 
         {showMap && (
           <div className="block lg:hidden w-full mb-4" data-testid="map-container">
-            <GoogleMap center={location ? { lat: location.lat, lng: location.lng } : null} markers={combinedMarkers} />
+            <GoogleMap
+              center={
+                location && location.lat !== undefined && location.lng !== undefined
+                  ? { lat: location.lat, lng: location.lng }
+                  : null
+              }
+              markers={combinedMarkers}
+            />
           </div>
         )}
 
@@ -169,7 +176,14 @@ export default function FindHelpResults({ services }: Props) {
                   className="border border-gray-300 rounded-md p-4 bg-white flex flex-col"
                 >
                   <ServiceCard
-                    service={service}
+                    service={{
+                      ...service,
+                      openTimes: service.openTimes.map(slot => ({
+                        day: slot.day.toString(),
+                        start: slot.start.toString(),
+                        end: slot.end.toString(),
+                      })),
+                    }}
                     isOpen={openDescriptionId === service.id}
                     onToggle={() =>
                       setOpenDescriptionId(openDescriptionId === service.id ? null : service.id)
@@ -190,7 +204,11 @@ export default function FindHelpResults({ services }: Props) {
       {showMap && (
         <div className="hidden lg:block w-full lg:w-1/2 mt-8 lg:mt-0 lg:sticky lg:top-[6.5rem] min-h-[400px]" data-testid="map-container">
           <GoogleMap
-            center={location ? { lat: location.lat, lng: location.lng } : null}
+            center={
+              location && location.lat !== undefined && location.lng !== undefined
+                ? { lat: location.lat, lng: location.lng }
+                : null
+            }
             markers={combinedMarkers}
           />
         </div>

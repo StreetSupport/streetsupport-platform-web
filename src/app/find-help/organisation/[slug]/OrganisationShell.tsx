@@ -6,24 +6,7 @@ import OrganisationServicesAccordion from '@/components/OrganisationPage/Organis
 import OrganisationContactBlock from '@/components/OrganisationPage/OrganisationContactBlock';
 import OrganisationFooter from '@/components/OrganisationPage/OrganisationFooter';
 
-export interface OrganisationDetails {
-  _id?: string;
-  Key: string;
-  Name: string;
-  ShortDescription?: string;
-  Description?: string;
-  IsVerified?: boolean;
-  Email?: string;
-  Telephone?: string;
-  Website?: string;
-  Facebook?: string;
-  Twitter?: string;
-  Instagram?: string;
-  Bluesky?: string;
-  Addresses: any[];
-  Services: any[];
-  groupedServices: Record<string, Record<string, any[]>>; // ✅ CORRECTED HERE
-}
+import type { OrganisationDetails } from '@/utils/organisation';
 
 interface Props {
   organisation: OrganisationDetails;

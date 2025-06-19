@@ -9,14 +9,14 @@ interface Props {
 export default function OrganisationOverview({ organisation }: Props) {
   return (
     <section className="mb-6">
-      <h1 className="text-2xl font-bold mb-2">{organisation.Name}</h1>
+      <h1 className="text-2xl font-bold mb-2">{organisation.name}</h1>
 
-      {organisation.ShortDescription && (
-        <p className="text-lg mb-2">{organisation.ShortDescription}</p>
+      {organisation.shortDescription && (
+        <p className="text-lg mb-2">{organisation.shortDescription}</p>
       )}
 
-      {organisation.Description && (
-        <p className="text-gray-700 whitespace-pre-line">{organisation.Description}</p>
+      {organisation.description && (
+        <p className="text-gray-700 whitespace-pre-line">{organisation.description}</p>
       )}
     </section>
   );

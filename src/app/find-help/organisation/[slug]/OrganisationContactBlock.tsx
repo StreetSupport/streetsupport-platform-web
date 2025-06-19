@@ -1,6 +1,6 @@
 'use client';
-
-import type { OrganisationDetails } from '../path/to/OrganisationShell';
+import React from 'react';
+import type { OrganisationDetails } from '@/utils/organisation';
 
 interface Props {
   organisation: OrganisationDetails;
@@ -8,66 +8,65 @@ interface Props {
 
 export default function OrganisationContactBlock({ organisation }: Props) {
   return (
-    <section className="mt-6">
-      <h2 className="text-xl font-bold mb-2">Contact</h2>
-
-      {organisation.Email && (
-        <p>
-          <strong>Email:</strong>{' '}
-          <a href={`mailto:${organisation.Email}`}>{organisation.Email}</a>
-        </p>
-      )}
-
-      {organisation.Telephone && (
-        <p>
-          <strong>Phone:</strong> {organisation.Telephone}
-        </p>
-      )}
-
-      {organisation.Website && (
-        <p>
-          <strong>Website:</strong>{' '}
-          <a href={organisation.Website} target="_blank" rel="noopener noreferrer">
-            {organisation.Website}
-          </a>
-        </p>
-      )}
-
-      {organisation.Facebook && (
-        <p>
-          <strong>Facebook:</strong>{' '}
-          <a href={organisation.Facebook} target="_blank" rel="noopener noreferrer">
-            {organisation.Facebook}
-          </a>
-        </p>
-      )}
-
-      {organisation.Twitter && (
-        <p>
-          <strong>Twitter:</strong>{' '}
-          <a href={organisation.Twitter} target="_blank" rel="noopener noreferrer">
-            {organisation.Twitter}
-          </a>
-        </p>
-      )}
-
-      {organisation.Instagram && (
-        <p>
-          <strong>Instagram:</strong>{' '}
-          <a href={organisation.Instagram} target="_blank" rel="noopener noreferrer">
-            {organisation.Instagram}
-          </a>
-        </p>
-      )}
-
-      {organisation.Bluesky && (
-        <p>
-          <strong>Bluesky:</strong>{' '}
-          <a href={organisation.Bluesky} target="_blank" rel="noopener noreferrer">
-            {organisation.Bluesky}
-          </a>
-        </p>
-      )}
+    <section className="mb-6">
+      <h2 className="text-xl font-semibold mb-2">Contact Details</h2>
+      <ul className="list-none space-y-1">
+        {organisation.email && (
+          <li>
+            <strong>Email:</strong>{' '}
+            <a href={`mailto:${organisation.email}`} className="text-brand-h underline">
+              {organisation.email}
+            </a>
+          </li>
+        )}
+        {organisation.telephone && (
+          <li>
+            <strong>Telephone:</strong>{' '}
+            <a href={`tel:${organisation.telephone}`} className="text-brand-h underline">
+              {organisation.telephone}
+            </a>
+          </li>
+        )}
+        {organisation.website && (
+          <li>
+            <strong>Website:</strong>{' '}
+            <a
+              href={organisation.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand-h underline"
+            >
+              {organisation.website}
+            </a>
+          </li>
+        )}
+        {organisation.facebook && (
+          <li>
+            <strong>Facebook:</strong>{' '}
+            <a
+              href={organisation.facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand-h underline"
+            >
+              {organisation.facebook}
+            </a>
+          </li>
+        )}
+        {organisation.twitter && (
+          <li>
+            <strong>Twitter:</strong>{' '}
+            <a
+              href={organisation.twitter}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand-h underline"
+            >
+              {organisation.twitter}
+            </a>
+          </li>
+        )}
+      </ul>
     </section>
   );
 }

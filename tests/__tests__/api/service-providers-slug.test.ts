@@ -91,7 +91,8 @@ describe('GET /api/service-providers/[slug]', () => {
 
     expect(res.status).toBe(200);
     expect(json.status).toBe('success');
-    expect(json.organisation.Name).toBe('Test Org');
+    // ✅ MATCHES API: check normalised `name`
+    expect(json.organisation.name).toBe('Test Org');
     expect(Array.isArray(json.addresses)).toBe(true);
     expect(Array.isArray(json.services)).toBe(true);
   });

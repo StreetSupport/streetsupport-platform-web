@@ -1,9 +1,7 @@
-// src/app/find-help/page.tsx
-
 import { LocationProvider } from '@/contexts/LocationContext';
 import FindHelpEntry from '@/components/FindHelp/FindHelpEntry';
 import FindHelpResults from '@/components/FindHelp/FindHelpResults';
-import type { FlattenedService } from '@/types';
+import type { UIFlattenedService } from '@/types';
 import { decodeHtmlEntities } from '@/utils/htmlDecode';
 import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup';
 
@@ -28,7 +26,8 @@ export default async function FindHelpPage() {
     throw new Error('API did not return an array in "results"!');
   }
 
-  const services: FlattenedService[] = rawArray.map((item: any) => {
+  // Map services preserving nested organisation object as expected by UIFlattenedService
+  const services: UIFlattenedService[] = rawArray.map((item: any) => {
     const coords = item.Address?.Location?.coordinates || [0, 0];
     return {
       id: item._id || item.id, // fallback in case
@@ -53,10 +52,12 @@ export default async function FindHelpPage() {
         slug: item.organisation?.slug || item.ServiceProviderKey || '',
         isVerified: item.organisation?.isVerified || false,
       },
+      organisationSlug: item.organisation?.slug || item.ServiceProviderKey || '',
       clientGroups: item.ClientGroups || [],
       openTimes: item.OpeningTimes || [],
     };
   });
+
 
   return (
     <LocationProvider>

@@ -5,21 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-
     "prebuild": "node ./scripts/fetch-prebuild.js",
-
     "build": "npm run test && npm run test:e2e && next build",
-
     "start": "next start",
     "lint": "next lint",
-
     "test": "jest --config ./config/jest.config.cjs",
     "test:watch": "jest --config ./config/jest.config.cjs --watch",
     "test:ci": "jest --config ./config/jest.config.cjs --ci",
     "test:e2e": "playwright test --config=./config/playwright.config.ts",
     "test:e2e:headed": "playwright test --config=./config/playwright.config.ts --headed",
     "test:e2e:debug": "playwright test --config=./config/playwright.config.ts --debug",
-
     "fetch:locations": "node ./scripts/fetch-locations.js",
     "fetch:service-categories": "node ./scripts/fetch-service-categories.js",
     "fetch:client-groups": "node ./scripts/fetch-client-groups.js",
@@ -47,8 +42,8 @@
     "@types/google.maps": "^3.58.1",
     "@types/jest": "^29.5.14",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
     "autoprefixer": "^10.4.21",
     "babel-jest": "^30.0.0-beta.3",
     "babel-plugin-module-resolver": "^5.0.2",
