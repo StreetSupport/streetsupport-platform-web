@@ -1,6 +1,7 @@
 // tests/__tests__/api/locations.test.ts
 
 import { getLocations, formatLocation } from '../../../src/app/api/locations/helper';
+import '../../setup/mongoMemory';
 
 jest.mock('../../../src/utils/mongodb', () => ({
   getClientPromise: jest.fn(),

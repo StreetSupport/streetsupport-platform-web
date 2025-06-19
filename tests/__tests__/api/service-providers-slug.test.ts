@@ -3,6 +3,8 @@
  */
 
 import { GET } from '@/app/api/service-providers/[slug]/route';
+import '../../setup/mongoMemory';
+
 
 // ✅ Mock Mongo client for slug route (provider + addresses + services)
 jest.mock('@/utils/mongodb', () => ({

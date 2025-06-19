@@ -1,26 +1,33 @@
 require('@testing-library/jest-dom');
 
+// ✅ Add TextEncoder / TextDecoder for mongodb-memory-server + bson compatibility
+const { TextEncoder, TextDecoder } = require('util');
+
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
 // Provide a global fetch mock for components using fetch
 global.fetch = jest.fn(() =>
   Promise.resolve({
-    json: () => Promise.resolve([
-      {
-        key: 'health',
-        name: 'Health',
-        subCategories: [
-          { key: 'dentist', name: 'Dentist' },
-          { key: 'gp', name: 'GP' },
-        ],
-      },
-      {
-        key: 'foodbank',
-        name: 'Foodbank',
-        subCategories: [
-          { key: 'meals', name: 'Meals' },
-          { key: 'parcels', name: 'Parcels' },
-        ],
-      },
-    ]),
+    json: () =>
+      Promise.resolve([
+        {
+          key: 'health',
+          name: 'Health',
+          subCategories: [
+            { key: 'dentist', name: 'Dentist' },
+            { key: 'gp', name: 'GP' },
+          ],
+        },
+        {
+          key: 'foodbank',
+          name: 'Foodbank',
+          subCategories: [
+            { key: 'meals', name: 'Meals' },
+            { key: 'parcels', name: 'Parcels' },
+          ],
+        },
+      ]),
   })
 );
 
