@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node ./scripts/fetch-prebuild.js",
-    "build": "npm run test && npm run test:e2e && next build",
+    "fetch-prebuild": "node ./scripts/fetch-prebuild.js",
+    "build": "npm run fetch-prebuild && npm run test && npm run test:e2e && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest --config ./config/jest.config.cjs",
