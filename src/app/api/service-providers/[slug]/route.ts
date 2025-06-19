@@ -19,10 +19,9 @@ export async function GET(
     const db = client.db('streetsupport');
 
     const providersCol = db.collection('ServiceProviders');
-    const addressesCol = db.collection('ServiceProviderAddresses');
     const servicesCol = db.collection('ProvidedServices');
 
-    // Find the provider by slug (Key)
+    // ✅ 1️⃣ Get the full ServiceProvider with all expected details
     const provider = await providersCol.findOne(
       { Key: { $regex: new RegExp(`^${slug}$`, 'i') } },
       {
@@ -31,19 +30,22 @@ export async function GET(
           Key: 1,
           Name: 1,
           ShortDescription: 1,
-          LongDescription: 1,
+          Description: 1,         // ✅ The long text for main overview
           Website: 1,
           Telephone: 1,
           Email: 1,
+          Facebook: 1,
+          Twitter: 1,
+          Instagram: 1,
+          Bluesky: 1,
           IsVerified: 1,
           IsPublished: 1,
           AssociatedLocationIds: 1,
           Tags: 1,
-          SocialLinks: 1,
+          Addresses: 1,            // ✅ Use inline addresses
         },
       }
     );
-
 
     if (!provider) {
       return NextResponse.json(
@@ -52,43 +54,32 @@ export async function GET(
       );
     }
 
-    // Get related addresses
-    const addresses = await addressesCol
-      .find({ ServiceProviderKey: provider.Key })
-      .project({
-        _id: 0,
-        Key: 1,
-        Line1: 1,
-        Line2: 1,
-        City: 1,
-        Postcode: 1,
-        Latitude: 1,
-        Longitude: 1,
-      })
-      .toArray();
-
-    // Get related services
+    // ✅ 2️⃣ Get all ProvidedServices for this provider (correct source for Info!)
     const services = await servicesCol
-      .find({ ServiceProviderKey: provider.Key })
+      .find({
+        ServiceProviderKey: provider.Key,
+        IsPublished: true
+      })
       .project({
-        _id: 0,
-        Key: 1,
-        Title: 1,
+        _id: 1,
         ParentCategoryKey: 1,
         SubCategoryKey: 1,
-        Description: 1,
+        SubCategoryName: 1,
+        Info: 1,             // ✅ The real service description
         OpeningTimes: 1,
         ClientGroups: 1,
-        Address: 1,
+        Address: 1           // ✅ This may override or complement org addresses
       })
       .toArray();
 
+    // ✅ 3️⃣ Response
     return NextResponse.json({
       status: 'success',
       organisation: provider,
-      addresses,
-      services,
+      addresses: provider.Addresses || [],
+      services: services
     });
+
   } catch (error) {
     console.error('[API ERROR] /api/service-providers/[slug]:', error);
     return NextResponse.json(

@@ -4,9 +4,8 @@ import { LocationProvider } from '@/contexts/LocationContext';
 import FindHelpEntry from '@/components/FindHelp/FindHelpEntry';
 import FindHelpResults from '@/components/FindHelp/FindHelpResults';
 import type { FlattenedService } from '@/types';
-import { decodeHtmlEntities } from '@/utils/htmlDecode'; 
+import { decodeHtmlEntities } from '@/utils/htmlDecode';
 import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup';
-
 
 export default async function FindHelpPage() {
   const baseUrl =
@@ -29,25 +28,34 @@ export default async function FindHelpPage() {
     throw new Error('API did not return an array in "results"!');
   }
 
-  const services: FlattenedService[] = rawArray
-    .filter((item: any) => item.IsPublished === true)
-    .map((item: any) => {
-      const coords = item.Address?.Location?.coordinates || [0, 0];
-      return {
-        id: item._id,
-        name: decodeHtmlEntities(item.ServiceProviderName || ''),
-        description: decodeHtmlEntities(item.Info || ''),
-        category: item.ParentCategoryKey || '',
-        categoryName: categoryKeyToName[item.ParentCategoryKey] || item.ParentCategoryKey || '',
-        subCategory: item.SubCategoryKey || '',
-        subCategoryName: subCategoryKeyToName[item.SubCategoryKey] || item.SubCategoryKey || '',
-        latitude: coords[1],
-        longitude: coords[0],
-        organisationName: decodeHtmlEntities(item.organisation?.Name || item.ServiceProviderName || ''),
-        organisationSlug: item.organisation?.Key || item.ServiceProviderKey || '',
-        clientGroups: item.ClientGroups || [],
-        openTimes: item.OpeningTimes || [],
-      };
+  const services: FlattenedService[] = rawArray.map((item: any) => {
+    const coords = item.Address?.Location?.coordinates || [0, 0];
+    return {
+      id: item._id || item.id, // fallback in case
+      name: decodeHtmlEntities(item.ServiceProviderName || item.name || ''),
+      description: decodeHtmlEntities(item.Info || item.description || ''),
+      category: item.ParentCategoryKey || item.category || '',
+      categoryName:
+        categoryKeyToName[item.ParentCategoryKey] ||
+        item.ParentCategoryKey ||
+        '',
+      subCategory: item.SubCategoryKey || item.subCategory || '',
+      subCategoryName:
+        subCategoryKeyToName[item.SubCategoryKey] ||
+        item.SubCategoryKey ||
+        '',
+      latitude: coords[1],
+      longitude: coords[0],
+      organisation: {
+        name: decodeHtmlEntities(
+          item.organisation?.name || item.ServiceProviderName || ''
+        ),
+        slug: item.organisation?.slug || item.ServiceProviderKey || '',
+        isVerified: item.organisation?.isVerified || false,
+      },
+      clientGroups: item.ClientGroups || [],
+      openTimes: item.OpeningTimes || [],
+    };
   });
 
   return (

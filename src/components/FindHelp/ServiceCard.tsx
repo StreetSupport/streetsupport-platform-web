@@ -11,8 +11,11 @@ export interface Service {
   subCategory: string;
   subCategoryName?: string;
   description: string;
-  organisation?: string;
-  organisationSlug?: string;
+  organisation?: {
+    name: string;
+    slug: string;
+    isVerified?: boolean;
+  };
   openTimes?: { day: string; start: string; end: string }[];
   clientGroups?: string[];
   lat?: number;
@@ -26,24 +29,45 @@ interface ServiceCardProps {
 }
 
 export default function ServiceCard({ service, isOpen, onToggle }: ServiceCardProps) {
-  const destination = service.organisationSlug
-    ? `/find-help/organisation/${service.organisationSlug}`
+  const destination = service.organisation?.slug
+    ? `/find-help/organisation/${service.organisation.slug}`
     : '#';
 
-  const preview = service.description.length > 120
-    ? service.description.slice(0, 120) + '...'
-    : service.description;
+  const preview =
+    service.description.length > 120
+      ? service.description.slice(0, 120) + '...'
+      : service.description;
 
   return (
     <Link
       href={destination}
-      className="block border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-a"
+      className="relative block border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-a"
       aria-label={`View details for ${service.name}`}
     >
+      {/* ✅ Verified check icon */}
+      {service.organisation?.isVerified && (
+        <span
+          className="absolute top-2 right-2 inline-flex items-center justify-center"
+          title="Verified Service"
+        >
+          <svg
+            className="w-4 h-4 text-green-600"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </span>
+      )}
+
       <h2 className="text-lg font-semibold mb-1">{service.name}</h2>
 
-      {service.organisation && (
-        <p className="text-sm text-gray-600 mb-2">{service.organisation}</p>
+      {service.organisation?.name && (
+        <p className="text-sm text-gray-600 mb-2">{service.organisation.name}</p>
       )}
 
       <p className="text-gray-800 mb-2">
@@ -52,8 +76,8 @@ export default function ServiceCard({ service, isOpen, onToggle }: ServiceCardPr
           <button
             type="button"
             onClick={(e) => {
-              e.preventDefault(); // prevent link navigation
-              onToggle(); // notify parent
+              e.preventDefault();
+              onToggle();
             }}
             className="ml-2 text-blue-600 underline text-sm"
           >

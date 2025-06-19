@@ -8,3 +8,13 @@
 .btn-test {
   @apply px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700;
 }
+
+/* Remove default marker in Chrome, Safari, Edge */
+.custom-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Remove default marker in Firefox */
+.custom-accordion summary {
+  list-style: none;
+}

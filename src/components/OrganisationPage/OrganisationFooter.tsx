@@ -1,22 +1,33 @@
 'use client';
-import React from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { Cloud } from 'lucide-react';
 import { SiFacebook, SiX } from 'react-icons/si';
 
 export default function OrganisationFooter() {
+  const [currentUrl, setCurrentUrl] = useState('');
+  const [currentTitle, setCurrentTitle] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setCurrentUrl(window.location.href);
+      setCurrentTitle(document.title);
+    }
+  }, []);
+
   const shareOnBluesky = () => {
     const text = encodeURIComponent(
-      `Help is out there – check out this page on Street Support Network: ${document.title} ${window.location.href}`
+      `Help is out there – check out this page on Street Support Network: ${currentTitle} ${currentUrl}`
     );
     const shareUrl = `https://bsky.app/intent/compose?text=${text}`;
     window.open(shareUrl, 'blank', 'width=600,height=300');
   };
 
   const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-    window.location.href
+    currentUrl
   )}`;
   const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-    `Help is out there - check out this page on Street Support Network: ${document.title} ${window.location.href}`
+    `Help is out there - check out this page on Street Support Network: ${currentTitle} ${currentUrl}`
   )}`;
 
   return (
