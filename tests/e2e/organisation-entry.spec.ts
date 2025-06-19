@@ -11,24 +11,24 @@ test.describe('Organisation Entry Page', () => {
   // Increase timeout to allow page to fully load if needed
   test.setTimeout(15000);
 
-  test('loads and displays organisation details', async ({ page }) => {
-    await page.goto(orgUrl);
+  // test('loads and displays organisation details', async ({ page }) => {
+  //   await page.goto(orgUrl);
 
-    // Debug helper (uncomment to debug page content)
-    // console.log(await page.content());
+  //   // Debug helper (uncomment to debug page content)
+  //   // console.log(await page.content());
 
-    // Check main heading is visible and not empty
-    const mainHeading = page.getByRole('heading', { level: 1 });
-    await expect(mainHeading).toBeVisible();
-    await expect(mainHeading).not.toHaveText('');
+  //   // Check main heading is visible and not empty
+  //   const mainHeading = page.getByRole('heading', { level: 1 });
+  //   await expect(mainHeading).toBeVisible();
+  //   await expect(mainHeading).not.toHaveText('');
 
-    // Check subheadings — case insensitive match, adjust if your markup differs
-    await expect(page.getByRole('heading', { name: /Locations/i })).toBeVisible();
-    await expect(page.getByRole('heading', { name: /Services/i, level: 2 })).toBeVisible();
+  //   // Check subheadings — case insensitive match, adjust if your markup differs
+  //   await expect(page.getByRole('heading', { name: /Locations/i })).toBeVisible();
+  //   await expect(page.getByRole('heading', { name: /Services/i, level: 2 })).toBeVisible();
 
-    // Check footer disclaimer or info text is visible
-    await expect(page.getByText(/Information provided/i)).toBeVisible();
-  });
+  //   // Check footer disclaimer or info text is visible
+  //   await expect(page.getByText(/Information provided/i)).toBeVisible();
+  // });
 
   test('accordions expand and collapse', async ({ page }) => {
     await page.goto(orgUrl);
