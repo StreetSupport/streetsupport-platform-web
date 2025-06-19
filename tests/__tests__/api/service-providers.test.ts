@@ -3,6 +3,7 @@
  */
 
 import { GET } from '@/app/api/service-providers/route';
+import '../../setup/mongoMemory';
 
 jest.mock('@/utils/mongodb', () => ({
   getClientPromise: async () => {

@@ -25,44 +25,13 @@ jobs:
       - name: Install Playwright Chromium only
         run: npx playwright install chromium
 
-      # Debug: show repo info for clarity
-      - name: Debug PR origin
-        run: |
-          echo "PR repo: ${{ github.event.pull_request.head.repo.full_name }}"
-          echo "Base repo: ${{ github.repository }}"
+      # ✅ Run unit tests with mongodb-memory-server
+      - name: Run Jest unit tests
+        run: npm run test
 
-      # Fetch locations — only for trusted branches & same-repo PRs
-      - name: Fetch locations JSON
-        if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
-        env:
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
-        run: |
-          echo "Running fetch-locations with MONGODB_URI..."
-          npm run fetch:locations
-
-      # Skip fetch for fork PRs, log clearly
-      - name: Skip fetch for fork PRs
-        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
-        run: |
-          echo "⏭️  Skipping fetch-locations: fork PRs cannot access secrets."
-
-      # Build & test: trusted branches / same-repo PRs
-      - name: Run all tests and build (trusted)
-        if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
-        env:
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
-        run: |
-          echo "Running build with DB fetch..."
-          npm run build
-
-      # Build & test: fork PRs, skip prebuild by env flag
-      - name: Run all tests and build (fork PRs, skip prebuild)
-        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
-        env:
-          SKIP_FETCH: "true"
-        run: |
-          echo "Running build with SKIP_FETCH=true for fork PR..."
-          npm run build
+      # ✅ Run Playwright E2E using same in-memory DB
+      - name: Run Playwright E2E tests
+        run: npm run test:e2e
 
       - name: Upload Playwright test results
         if: always()

@@ -70,51 +70,65 @@ describe('FindHelpResults', () => {
   });
 
   it('sorts services alphabetically when selected', async () => {
-    const providers = [
+    const services = [
       {
         id: '1',
-        name: 'Alpha Org',
-        slug: 'alpha',
-        services: [
-          { id: 'a1', name: 'Alpha Service', category: 'health', subCategory: 'gp', description: '', latitude: 0, longitude: 0, clientGroups: [], openTimes: [] },
-        ],
+        name: 'Beta Service',
+        category: 'health',
+        subCategory: 'gp',
+        description: '',
+        latitude: 0.01,
+        longitude: 0.01,
+        clientGroups: [],
+        openTimes: [],
       },
       {
         id: '2',
-        name: 'Beta Org',
-        slug: 'beta',
-        services: [
-          { id: 'b1', name: 'Beta Service', category: 'health', subCategory: 'gp', description: '', latitude: 0.01, longitude: 0.01, clientGroups: [], openTimes: [] },
-        ],
+        name: 'Alpha Service',
+        category: 'health',
+        subCategory: 'gp',
+        description: '',
+        latitude: 0,
+        longitude: 0,
+        clientGroups: [],
+        openTimes: [],
       },
     ];
 
-    const { container } = renderWithProviders(
-      <FindHelpResults providers={providers as any} />,
+    renderWithProviders(
+      <FindHelpResults services={services as any} />,
       { lat: 0, lng: 0 }
     );
 
     fireEvent.change(screen.getByLabelText(/Sort by/i), { target: { value: 'alpha' } });
 
-    const headings = container.querySelectorAll('h2');
-    expect(headings[0].textContent).toBe('Alpha Service');
-    expect(headings[1].textContent).toBe('Beta Service');
+    // Use a reliable heading role, assuming ServiceCard uses <h2> for name
+    const headings = screen.getAllByRole('heading', { level: 2 });
+
+    expect(headings[0]).toHaveTextContent('Alpha Service');
+    expect(headings[1]).toHaveTextContent('Beta Service');
   });
 
+
   it('passes user location marker to GoogleMap', async () => {
-    const providers = [
+    const services = [
       {
         id: '1',
-        name: 'Test Org',
-        slug: 'test',
-        services: [
-          { id: 's1', name: 'S1', category: 'health', subCategory: 'gp', description: '', latitude: 0, longitude: 0, clientGroups: [], openTimes: [] },
-        ],
+        name: 'Test Service',
+        category: 'health',
+        subCategory: 'gp',
+        description: '',
+        latitude: 0,
+        longitude: 0,
+        clientGroups: [],
+        openTimes: [],
       },
     ];
 
-    renderWithProviders(<FindHelpResults providers={providers as any} />, { lat: 0, lng: 0 });
+    renderWithProviders(<FindHelpResults services={services as any} />, { lat: 0, lng: 0 });
+
     fireEvent.click(screen.getByRole('button', { name: /show map/i }));
+
     const markers = (globalThis as any).googleMapProps.markers;
     expect(markers[0].id).toBe('user-location');
     expect(markers).toHaveLength(2);

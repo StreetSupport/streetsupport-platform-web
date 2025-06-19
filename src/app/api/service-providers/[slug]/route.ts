@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
 
-export async function GET(
-  req: Request,
-  context: any
-) {
-  const { slug } = await context.params;
+export async function GET(req: Request) {
+  // ✅ App Router API routes do not receive `context.params`
+  // So parse slug manually:
+  const url = new URL(req.url);
+  const parts = url.pathname.split('/');
+  const slug = parts[parts.length - 1];
 
   if (!slug) {
     return NextResponse.json(
@@ -19,11 +20,9 @@ export async function GET(
     const db = client.db('streetsupport');
 
     const providersCol = db.collection('ServiceProviders');
-    const addressesCol = db.collection('ServiceProviderAddresses');
     const servicesCol = db.collection('ProvidedServices');
 
-    // Find the provider by slug (Key)
-    const provider = await providersCol.findOne(
+    const rawProvider = await providersCol.findOne(
       { Key: { $regex: new RegExp(`^${slug}$`, 'i') } },
       {
         projection: {
@@ -31,64 +30,73 @@ export async function GET(
           Key: 1,
           Name: 1,
           ShortDescription: 1,
-          LongDescription: 1,
+          Description: 1,
           Website: 1,
           Telephone: 1,
           Email: 1,
+          Facebook: 1,
+          Twitter: 1,
+          Instagram: 1,
+          Bluesky: 1,
           IsVerified: 1,
           IsPublished: 1,
           AssociatedLocationIds: 1,
           Tags: 1,
-          SocialLinks: 1,
+          Addresses: 1,
         },
       }
     );
 
-
-    if (!provider) {
+    if (!rawProvider) {
       return NextResponse.json(
         { status: 'error', message: 'Organisation not found' },
         { status: 404 }
       );
     }
 
-    // Get related addresses
-    const addresses = await addressesCol
-      .find({ ServiceProviderKey: provider.Key })
-      .project({
-        _id: 0,
-        Key: 1,
-        Line1: 1,
-        Line2: 1,
-        City: 1,
-        Postcode: 1,
-        Latitude: 1,
-        Longitude: 1,
-      })
-      .toArray();
-
-    // Get related services
     const services = await servicesCol
-      .find({ ServiceProviderKey: provider.Key })
+      .find({
+        ServiceProviderKey: rawProvider.Key,
+        IsPublished: true,
+      })
       .project({
-        _id: 0,
-        Key: 1,
-        Title: 1,
+        _id: 1,
         ParentCategoryKey: 1,
         SubCategoryKey: 1,
-        Description: 1,
+        SubCategoryName: 1,
+        Info: 1,
         OpeningTimes: 1,
         ClientGroups: 1,
         Address: 1,
       })
       .toArray();
 
+    const provider = {
+      key: rawProvider.Key,
+      name: rawProvider.Name,
+      shortDescription: rawProvider.ShortDescription,
+      description: rawProvider.Description,
+      website: rawProvider.Website,
+      telephone: rawProvider.Telephone,
+      email: rawProvider.Email,
+      facebook: rawProvider.Facebook,
+      twitter: rawProvider.Twitter,
+      instagram: rawProvider.Instagram,
+      bluesky: rawProvider.Bluesky,
+      isVerified: rawProvider.IsVerified,
+      isPublished: rawProvider.IsPublished,
+      associatedLocationIds: rawProvider.AssociatedLocationIds,
+      tags: rawProvider.Tags,
+      addresses: rawProvider.Addresses || [],
+    };
+
     return NextResponse.json({
       status: 'success',
       organisation: provider,
-      addresses,
-      services,
+      addresses: provider.addresses,
+      services: services,
     });
+
   } catch (error) {
     console.error('[API ERROR] /api/service-providers/[slug]:', error);
     return NextResponse.json(

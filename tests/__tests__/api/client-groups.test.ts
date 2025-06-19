@@ -1,6 +1,7 @@
 // tests/__tests__/api/client-groups.test.ts
 
 import { getClientGroups } from '../../../src/app/api/client-groups/helper';
+import '../../setup/mongoMemory';
 
 jest.mock('@/utils/mongodb', () => ({
   getClientPromise: jest.fn(),

@@ -1,28 +1,40 @@
-import providers from '@/data/service-providers.json';
-import type { ServiceProvider, FlattenedService } from '@/types';
+import type { FlattenedService } from '@/types';
 
-export interface OrganisationDetails extends ServiceProvider {
-  groupedServices: Record<string, FlattenedService[]>;
+// ✅ Correct type matching your API response shape
+export interface OrganisationDetails {
+  key: string;
+  name: string;
+  shortDescription?: string;
+  description?: string;
+  website?: string;
+  telephone?: string;
+  email?: string;
+  facebook?: string;
+  twitter?: string;
+  instagram?: string;
+  bluesky?: string;
+  isVerified?: boolean;
+  isPublished?: boolean;
+  associatedLocationIds?: string[];
+  tags?: string[];
+  addresses: any[];
+  services: FlattenedService[];
+  groupedServices: Record<string, Record<string, FlattenedService[]>>;
 }
 
-export function getOrganisationBySlug(slug: string): OrganisationDetails | null {
-  const list = providers as ServiceProvider[];
-  const provider = list.find((p) => p.slug === slug);
-  if (!provider) return null;
+// ✅ Async API fetcher using your real route
+export async function getOrganisationBySlug(
+  slug: string
+): Promise<OrganisationDetails | null> {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/service-providers/${slug}`,
+    {
+      cache: 'no-store',
+    }
+  );
 
-  const grouped: Record<string, FlattenedService[]> = {};
+  if (!res.ok) return null;
 
-  if (Array.isArray(provider.services)) {
-    provider.services.forEach((s) => {
-      const cat = s.category || 'Other';
-      if (!grouped[cat]) grouped[cat] = [];
-      grouped[cat].push({
-        ...s,
-        organisation: provider.name,
-        organisationSlug: provider.slug,
-      });
-    });
-  }
-
-  return { ...provider, groupedServices: grouped };
+  const data = await res.json();
+  return data.organisation as OrganisationDetails; // ✅ Use .organisation because that’s your API shape
 }

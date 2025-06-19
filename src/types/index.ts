@@ -1,7 +1,7 @@
 export interface ServiceProvider {
   id: string;
   name: string;
-  slug:string;
+  slug: string;
   postcode: string;
   latitude: number;
   longitude: number;
@@ -16,11 +16,20 @@ export interface FlattenedService {
   name: string;
   category: string;
   subCategory: string;
-  organisation: string;
+  organisation: string;       // flat string, e.g. organisation name
   organisationSlug: string;
   description: string;
-  openTimes: { day: string; start: string; end: string }[];
+  openTimes: { day: number; start: number; end: number }[];  // changed to number
   clientGroups: string[];
   latitude: number;
   longitude: number;
+}
+
+// New interface for UI components expecting nested organisation object
+export interface UIFlattenedService extends Omit<FlattenedService, 'organisation'> {
+  organisation: {
+    name: string;
+    slug: string;
+    isVerified?: boolean;
+  };
 }

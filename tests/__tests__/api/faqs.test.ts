@@ -1,4 +1,5 @@
 import { getFaqs } from '../../../src/app/api/faqs/helper';
+import '../../setup/mongoMemory';
 
 jest.mock('../../../src/utils/mongodb', () => ({
   getClientPromise: jest.fn(),
