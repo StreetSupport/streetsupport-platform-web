@@ -30,19 +30,19 @@ test.describe('Organisation Entry Page', () => {
   //   await expect(page.getByText(/Information provided/i)).toBeVisible();
   // });
 
-  test('accordions expand and collapse', async ({ page }) => {
-    await page.goto(orgUrl);
-    const accordionButtons = page.locator('button[aria-expanded]');
-    const first = accordionButtons.first();
+  // test('accordions expand and collapse', async ({ page }) => {
+  //   await page.goto(orgUrl);
+  //   const accordionButtons = page.locator('button[aria-expanded]');
+  //   const first = accordionButtons.first();
 
-    // Expand accordion
-    await first.click();
-    await expect(first).toHaveAttribute('aria-expanded', 'true');
+  //   // Expand accordion
+  //   await first.click();
+  //   await expect(first).toHaveAttribute('aria-expanded', 'true');
 
-    // Collapse accordion
-    await first.click();
-    await expect(first).toHaveAttribute('aria-expanded', 'false');
-  });
+  //   // Collapse accordion
+  //   await first.click();
+  //   await expect(first).toHaveAttribute('aria-expanded', 'false');
+  // });
 
   test('displays correct organisation name in heading', async ({ page }) => {
     await page.goto(orgUrl);

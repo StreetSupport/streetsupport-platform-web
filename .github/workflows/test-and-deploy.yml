@@ -2,9 +2,9 @@ name: Test & Deploy
 
 on:
   pull_request:
-    branches: [ staging, main ]
+    branches: [staging, main]
   push:
-    branches: [ staging, main ]
+    branches: [staging, main]
 
 jobs:
   test:
@@ -44,9 +44,9 @@ jobs:
       - name: Skip fetch for fork PRs
         if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
         run: |
-          echo "⏭️  Skipping fetch-locations: fork PRs cannot access secrets."
+          echo "⏭️ Skipping fetch-locations: fork PRs cannot access secrets."
 
-      # Build & test: trusted branches / same-repo PRs
+      # Run all tests and build for trusted branches
       - name: Run all tests and build (trusted)
         if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
         env:
@@ -55,15 +55,16 @@ jobs:
           echo "Running build with DB fetch..."
           npm run build
 
-      # Build & test: fork PRs, skip prebuild by env flag
-      - name: Run all tests and build (fork PRs, skip prebuild)
+      # Skip tests and build for fork PRs
+      - name: Skip tests for fork PRs (without Mongo URI)
         if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
         env:
           SKIP_FETCH: "true"
         run: |
-          echo "Running build with SKIP_FETCH=true for fork PR..."
+          echo "Skipping tests and build for fork PR"
           npm run build
 
+      # Upload Playwright test results
       - name: Upload Playwright test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -126,7 +127,7 @@ jobs:
             | jq -r --arg TITLE "$NORMALISED_TITLE" '.[] | select(.name | test($TITLE; "i")) | .id')
 
           if [ -z "$CARD_ID" ]; then
-            echo "⚠️  No matching Trello card found — skipping move."
+            echo "⚠️ No matching Trello card found — skipping move."
             exit 0
           fi
 
