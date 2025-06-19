@@ -2,9 +2,9 @@ name: Test & Deploy
 
 on:
   pull_request:
-    branches: [ staging, main ]
+    branches: [staging, main]
   push:
-    branches: [ staging, main ]
+    branches: [staging, main]
 
 jobs:
   test:
@@ -46,8 +46,21 @@ jobs:
         run: |
           echo "⏭️  Skipping fetch-locations: fork PRs cannot access secrets."
 
+      # Run unit and integration tests (always)
+      - name: Run unit and integration tests
+        run: |
+          npm run test:unit
+          npm run test:integration
+
+      # Skip E2E tests for fork PRs
+      - name: Run E2E tests (trusted branches only)
+        if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
+        run: |
+          echo "Running E2E tests"
+          npm run test:e2e
+
       # Build & test: trusted branches / same-repo PRs
-      - name: Run all tests and build (trusted)
+      - name: Build & test for trusted branches
         if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
@@ -56,12 +69,12 @@ jobs:
           npm run build
 
       # Build & test: fork PRs, skip prebuild by env flag
-      - name: Run all tests and build (fork PRs, skip prebuild)
+      - name: Build & test (skip tests) for fork PR
         if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
         env:
           SKIP_FETCH: "true"
         run: |
-          echo "Running build with SKIP_FETCH=true for fork PR..."
+          echo "Skipping tests for fork PR"
           npm run build
 
       - name: Upload Playwright test results
@@ -70,66 +83,3 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
-
-  deploy:
-    needs: test
-    if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Notify Slack that tests passed
-        if: success()
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        run: |
-          BRANCH=$(echo $GITHUB_REF | sed 's#refs/heads/##')
-          PAYLOAD="{
-            \"text\": \":white_check_mark: Tests passed on *$BRANCH* — <https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}|View Run>\"
-          }"
-          curl -X POST -H 'Content-type: application/json' --data "$PAYLOAD" $SLACK_WEBHOOK_URL
-
-      - name: Move Trello Card to Done (using PR title)
-        if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/main'
-        env:
-          TRELLO_API_KEY: ${{ secrets.TRELLO_API_KEY }}
-          TRELLO_API_TOKEN: ${{ secrets.TRELLO_API_TOKEN }}
-          TRELLO_BOARD_ID: ${{ secrets.TRELLO_BOARD_ID }}
-          TRELLO_DONE_LIST_ID: ${{ secrets.TRELLO_DONE_LIST_ID }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -e
-
-          MERGE_COMMIT_MSG=$(git log -1 --pretty=%B)
-          echo "Merge commit message: $MERGE_COMMIT_MSG"
-
-          PR_NUMBER=$(echo "$MERGE_COMMIT_MSG" | grep -oE '#[0-9]+' | tr -d '#')
-          echo "Extracted PR number: $PR_NUMBER"
-
-          if [ -z "$PR_NUMBER" ]; then
-            echo "No PR number found in commit message — skipping Trello move."
-            exit 0
-          fi
-
-          PR_TITLE=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/$PR_NUMBER" | jq -r '.title')
-
-          echo "Original PR title: $PR_TITLE"
-
-          NORMALISED_TITLE=$(echo "$PR_TITLE" | sed 's/ /-/g')
-          echo "Normalised PR title: $NORMALISED_TITLE"
-
-          CARD_ID=$(curl -s "https://api.trello.com/1/boards/$TRELLO_BOARD_ID/cards?key=$TRELLO_API_KEY&token=$TRELLO_API_TOKEN" \
-            | jq -r --arg TITLE "$NORMALISED_TITLE" '.[] | select(.name | test($TITLE; "i")) | .id')
-
-          if [ -z "$CARD_ID" ]; then
-            echo "⚠️  No matching Trello card found — skipping move."
-            exit 0
-          fi
-
-          echo "✅ Found Trello card ID: $CARD_ID"
-
-          curl -s -X PUT "https://api.trello.com/1/cards/$CARD_ID?idList=$TRELLO_DONE_LIST_ID&key=$TRELLO_API_KEY&token=$TRELLO_API_TOKEN"
