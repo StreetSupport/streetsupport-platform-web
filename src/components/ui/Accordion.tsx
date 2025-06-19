@@ -1,41 +1,42 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
-import clsx from 'clsx';
+import React from 'react';
 
 interface AccordionProps {
   title: string;
   children: React.ReactNode;
   className?: string;
+  isOpen: boolean; // ✅ NEW
+  onToggle: () => void; // ✅ NEW
 }
 
-export default function Accordion({ title, children, className }: AccordionProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
+export default function Accordion({
+  title,
+  children,
+  className = '',
+  isOpen,
+  onToggle,
+}: AccordionProps) {
   return (
-    <div
-      className={clsx(
-        'mx-auto mb-5 max-w-[640px] rounded-[7px] shadow-md border border-gray-200',
-        className
-      )}
-    >
+    <div className={`border border-gray-300 rounded ${className}`}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={clsx(
-          'w-full px-10 py-[15px] text-left text-white bg-brand-h rounded-t-[7px] flex justify-between items-center',
-          isOpen ? 'border-b border-white' : ''
-        )}
-        aria-expanded={isOpen}
+        type="button"
+        onClick={onToggle}
+        className="w-full text-left px-4 py-3 bg-gray-100 hover:bg-gray-200 flex justify-between items-center"
       >
-        <span className="font-headline font-medium">{title}</span>
-        <span className="ml-4">
-          {isOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-        </span>
+        <span className="font-medium">{title}</span>
+        <svg
+          className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeWidth="2" d="M19 9l-7 7-7-7" />
+        </svg>
       </button>
 
       {isOpen && (
-        <div className="px-6 py-4 bg-white text-black transition-all duration-300">
+        <div className="px-4 py-3 border-t border-gray-200">
           {children}
         </div>
       )}

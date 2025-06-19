@@ -21,11 +21,15 @@ export async function GET(req: Request) {
     const servicesCol = db.collection('ProvidedServices');
     const providersCol = db.collection('ServiceProviders');
 
-        // Build filter
-    const query: any = {};
+    // ✅ Always filter to only published services
+    const query: any = {
+      IsPublished: true
+    };
+
     if (location) {
       query['Address.City'] = { $regex: new RegExp(`^${location}$`, 'i') };
     }
+
     if (category) {
       query.ParentCategoryKey = { $regex: new RegExp(`^${category}$`, 'i') };
     }
@@ -38,7 +42,7 @@ export async function GET(req: Request) {
       .limit(limit)
       .toArray();
 
-    // Optionally embed related org info
+    // Embed related org info in correct shape for ServiceCard
     const results = await Promise.all(
       services.map(async (service) => {
         const provider = await providersCol.findOne(
@@ -48,17 +52,24 @@ export async function GET(req: Request) {
               _id: 0,
               Key: 1,
               Name: 1,
+              IsVerified: 1,
               ShortDescription: 1,
               Website: 1,
               Telephone: 1,
-              Email: 1,
-              IsVerified: 1,
-            },
+              Email: 1
+            }
           }
         );
+
         return {
           ...service,
-          organisation: provider || null,
+          organisation: provider
+            ? {
+                name: provider.Name,
+                slug: provider.Key,
+                isVerified: provider.IsVerified
+              }
+            : null
         };
       })
     );
@@ -68,7 +79,7 @@ export async function GET(req: Request) {
       total,
       page,
       limit,
-      results,
+      results
     });
   } catch (error) {
     console.error('[API ERROR] /api/services:', error);

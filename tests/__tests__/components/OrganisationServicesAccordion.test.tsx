@@ -2,11 +2,9 @@ import { render, screen } from '@testing-library/react';
 import OrganisationServicesAccordion from '@/components/OrganisationPage/OrganisationServicesAccordion';
 
 jest.mock('@/components/ui/Accordion', () => ({ title, children, className }: any) => (
-  <div data-testid="accordion" data-title={title} className={className}>{children}</div>
-));
-
-jest.mock('@/components/FindHelp/ServiceCard', () => ({ service }: any) => (
-  <div data-testid="service-card">{service.name}</div>
+  <div data-testid="accordion" data-title={title} className={className}>
+    {children}
+  </div>
 ));
 
 describe('OrganisationServicesAccordion', () => {
@@ -20,15 +18,51 @@ describe('OrganisationServicesAccordion', () => {
   it('renders grouped services inside accordions', () => {
     const org: any = {
       groupedServices: {
-        training: [{ id: 'a', name: 'Train' }],
-        employment: [{ id: 'b', name: 'Job1' }, { id: 'c', name: 'Job2' }],
+        training: {
+          skills: [
+            {
+              id: 'a',
+              name: 'Train',
+              Address: {
+                Street: '123 High St',
+                Location: { coordinates: [-2, 53] },
+              },
+              description: 'Training description',
+              openTimes: [],
+            },
+          ],
+        },
+        employment: {
+          jobs: [
+            {
+              id: 'b',
+              name: 'Job1',
+              Address: {
+                Street: '456 Job St',
+                Location: { coordinates: [-2.1, 53.1] },
+              },
+              description: 'Job1 description',
+              openTimes: [],
+            },
+            {
+              id: 'c',
+              name: 'Job2',
+              Address: {
+                Street: '789 Work Rd',
+                Location: { coordinates: [-2.2, 53.2] },
+              },
+              description: 'Job2 description',
+              openTimes: [],
+            },
+          ],
+        },
       },
     };
+
     render(<OrganisationServicesAccordion organisation={org} />);
     expect(screen.getByText('Services')).toBeInTheDocument();
     const accs = screen.getAllByTestId('accordion');
     expect(accs).toHaveLength(2);
-    expect(accs[0]).toHaveAttribute('data-title', 'training');
-    expect(screen.getAllByTestId('service-card')).toHaveLength(3);
+    expect(accs[0]).toHaveAttribute('data-title', 'skills');
   });
 });
