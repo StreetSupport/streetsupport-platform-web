@@ -12,7 +12,11 @@ const mockService = {
     { day: 'Wednesday', start: '09:00', end: '17:00' },
   ],
   clientGroups: ['age-18+', 'rough-sleepers'],
-  organisation: 'Mayer Inc',
+  organisation: {
+    name: 'Mayer Inc',
+    slug: 'mayer-inc',
+    isVerified: true,
+  },
   orgPostcode: 'LN4 2LE',
 };
 
@@ -25,7 +29,9 @@ describe('ServiceCard', () => {
 
   it('displays description and category tags', () => {
     render(<ServiceCard service={mockService} />);
-    expect(screen.getByText(/A local service offering dentist/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/A local service offering dentist/i)
+    ).toBeInTheDocument();
     expect(screen.getByText(/Category: health/i)).toBeInTheDocument();
     expect(screen.getByText(/Subcategory: dentist/i)).toBeInTheDocument();
   });

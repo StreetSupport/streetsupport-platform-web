@@ -27,6 +27,7 @@ jest.mock('@/utils/mongodb', () => ({
                         OpeningTimes: [],
                         ClientGroups: [],
                         Address: { City: 'Leeds' },
+                        IsPublished: true // ✅ add to match your live filter
                       },
                     ],
                   }),
@@ -82,6 +83,9 @@ describe('GET /api/services', () => {
     expect(json.status).toBe('success');
     expect(Array.isArray(json.results)).toBe(true);
     expect(json.results[0].organisation).toBeDefined();
-    expect(json.results[0].organisation.Name).toBe('Test Org');
+    // ✅ FIXED: new shape
+    expect(json.results[0].organisation.name).toBe('Test Org');
+    expect(json.results[0].organisation.slug).toBe('org-1');
+    expect(json.results[0].organisation.isVerified).toBe(true);
   });
 });
