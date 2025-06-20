@@ -6,15 +6,8 @@ import { decodeHtmlEntities } from '@/utils/htmlDecode';
 import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup';
 
 export default async function FindHelpPage() {
-  const isServer = typeof window === 'undefined';
-
-  const baseUrl = isServer
-    ? process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : 'http://localhost:3000'
-    : '';
-
-  const res = await fetch(`${baseUrl}/api/services?limit=1000`, { cache: 'no-store' });
+  // ✅ Use relative URL for internal API call — safe for local and Vercel
+  const res = await fetch('/api/services?limit=1000', { cache: 'no-store' });
 
   if (!res.ok) {
     throw new Error(`Failed to fetch services: ${res.status}`);

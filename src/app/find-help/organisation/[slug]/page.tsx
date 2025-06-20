@@ -13,11 +13,8 @@ interface Props {
 export default async function OrganisationPage(props: Props) {
   const { slug } = await props.params;
 
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : 'http://localhost:3000';
-
-  const res = await fetch(`${baseUrl}/api/service-providers/${slug}`, {
+  // ✅ Use relative path for internal API call
+  const res = await fetch(`/api/service-providers/${slug}`, {
     cache: 'no-store',
   });
 
@@ -37,7 +34,6 @@ export default async function OrganisationPage(props: Props) {
     return notFound();
   }
 
-  // Cast services
   const rawServices = (data.services || []) as RawService[];
 
   const services = rawServices.map((service, idx) => {
@@ -61,8 +57,8 @@ export default async function OrganisationPage(props: Props) {
       description: service.Info || '',
       address: service.Address || {},
       openTimes,
-      organisation: data.organisation.name,   // ✅ lowercase
-      organisationSlug: data.organisation.key, // ✅ lowercase
+      organisation: data.organisation.name,
+      organisationSlug: data.organisation.key,
       latitude: coords[1],
       longitude: coords[0],
       clientGroups: service.ClientGroups || [],
@@ -85,7 +81,6 @@ export default async function OrganisationPage(props: Props) {
     services,
     groupedServices,
   };
-
 
   console.log('✅ DEBUG groupedServices:', JSON.stringify(groupedServices, null, 2));
 
