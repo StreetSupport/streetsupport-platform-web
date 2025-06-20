@@ -178,10 +178,10 @@ export default function FindHelpResults({ services }: Props) {
                   <ServiceCard
                     service={{
                       ...service,
-                      openTimes: service.openTimes.map(slot => ({
-                        day: slot.day.toString(),
-                        start: slot.start.toString(),
-                        end: slot.end.toString(),
+                      openTimes: (service.openTimes ?? []).map(slot => ({
+                        day: slot?.day?.toString?.() ?? '',
+                        start: slot?.start?.toString?.() ?? '',
+                        end: slot?.end?.toString?.() ?? '',
                       })),
                     }}
                     isOpen={openDescriptionId === service.id}
