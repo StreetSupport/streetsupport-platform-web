@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
 import fallbackProviders from '@/data/service-providers.json';
-import type { ServiceProvider } from '@/types';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -23,7 +22,6 @@ export async function GET(req: Request) {
     const servicesCol = db.collection('ProvidedServices');
     const providersCol = db.collection('ServiceProviders');
 
-    // ✅ Always filter to only published services
     const query: any = {
       IsPublished: true
     };
@@ -44,7 +42,6 @@ export async function GET(req: Request) {
       .limit(limit)
       .toArray();
 
-    // Embed related org info in correct shape for ServiceCard
     const results = await Promise.all(
       services.map(async (service) => {
         const provider = await providersCol.findOne(
@@ -86,21 +83,34 @@ export async function GET(req: Request) {
   } catch (error) {
     console.error('[API ERROR] /api/services:', error);
 
-    // Fallback to static mock data if DB access fails
+    // ✅ Fallback with proper typing
     try {
-      const providers = fallbackProviders as ServiceProvider[];
-      const allServices = providers.flatMap((provider) =>
-        (provider.services || []).map((service) => ({
-          ...service,
+      interface RawProvider {
+        name: string;
+        slug: string;
+        verified: boolean;
+        services?: any[];
+      }
+
+      const rawProviders = fallbackProviders as RawProvider[];
+
+      const allServices = rawProviders.flatMap((provider) =>
+        (provider.services ?? []).map((service: any) => ({
+          id: service.id,
+          name: service.name,
+          category: service.category,
+          subCategory: service.subCategory,
+          description: service.description,
+          openTimes: service.openTimes ?? [],
+          clientGroups: service.clientGroups ?? [],
+          latitude: service.latitude,
+          longitude: service.longitude,
           organisation: {
-            Key: provider.slug,
-            Name: provider.name,
-            ShortDescription: '',
-            Website: '',
-            Telephone: '',
-            Email: '',
-            IsVerified: provider.verified,
+            name: provider.name,
+            slug: provider.slug,
+            isVerified: provider.verified,
           },
+          organisationSlug: provider.slug,
         }))
       );
 
