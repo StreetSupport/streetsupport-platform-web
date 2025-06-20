@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
+import fallbackProviders from '@/data/service-providers.json';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -21,7 +22,6 @@ export async function GET(req: Request) {
     const servicesCol = db.collection('ProvidedServices');
     const providersCol = db.collection('ServiceProviders');
 
-    // ✅ Always filter to only published services
     const query: any = {
       IsPublished: true
     };
@@ -42,7 +42,6 @@ export async function GET(req: Request) {
       .limit(limit)
       .toArray();
 
-    // Embed related org info in correct shape for ServiceCard
     const results = await Promise.all(
       services.map(async (service) => {
         const provider = await providersCol.findOne(
@@ -83,9 +82,55 @@ export async function GET(req: Request) {
     });
   } catch (error) {
     console.error('[API ERROR] /api/services:', error);
-    return NextResponse.json(
-      { status: 'error', message: 'Failed to fetch services' },
-      { status: 500 }
-    );
+
+    // ✅ Fallback with proper typing
+    try {
+      interface RawProvider {
+        name: string;
+        slug: string;
+        verified: boolean;
+        services?: any[];
+      }
+
+      const rawProviders = fallbackProviders as RawProvider[];
+
+      const allServices = rawProviders.flatMap((provider) =>
+        (provider.services ?? []).map((service: any) => ({
+          id: service.id,
+          name: service.name,
+          category: service.category,
+          subCategory: service.subCategory,
+          description: service.description,
+          openTimes: service.openTimes ?? [],
+          clientGroups: service.clientGroups ?? [],
+          latitude: service.latitude,
+          longitude: service.longitude,
+          organisation: {
+            name: provider.name,
+            slug: provider.slug,
+            isVerified: provider.verified,
+          },
+          organisationSlug: provider.slug,
+        }))
+      );
+
+      const total = allServices.length;
+      const start = (page - 1) * limit;
+      const results = allServices.slice(start, start + limit);
+
+      return NextResponse.json({
+        status: 'success',
+        total,
+        page,
+        limit,
+        results,
+      });
+    } catch (fallbackError) {
+      console.error('[API ERROR] Fallback services failed:', fallbackError);
+      return NextResponse.json(
+        { status: 'error', message: 'Failed to fetch services' },
+        { status: 500 }
+      );
+    }
   }
 }
