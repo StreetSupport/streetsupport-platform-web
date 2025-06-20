@@ -6,14 +6,15 @@ import { decodeHtmlEntities } from '@/utils/htmlDecode';
 import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup';
 
 export default async function FindHelpPage() {
-  const baseUrl =
-    process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : 'http://localhost:3000';
+  const isServer = typeof window === 'undefined';
 
-  const res = await fetch(`${baseUrl}/api/services?limit=1000`, {
-    cache: 'no-store',
-  });
+  const baseUrl = isServer
+    ? process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'http://localhost:3000'
+    : '';
+
+  const res = await fetch(`${baseUrl}/api/services?limit=1000`, { cache: 'no-store' });
 
   if (!res.ok) {
     throw new Error(`Failed to fetch services: ${res.status}`);
@@ -26,11 +27,10 @@ export default async function FindHelpPage() {
     throw new Error('API did not return an array in "results"!');
   }
 
-  // Map services preserving nested organisation object as expected by UIFlattenedService
   const services: UIFlattenedService[] = rawArray.map((item: any) => {
     const coords = item.Address?.Location?.coordinates || [0, 0];
     return {
-      id: item._id || item.id, // fallback in case
+      id: item._id || item.id,
       name: decodeHtmlEntities(item.ServiceProviderName || item.name || ''),
       description: decodeHtmlEntities(item.Info || item.description || ''),
       category: item.ParentCategoryKey || item.category || '',
@@ -57,7 +57,6 @@ export default async function FindHelpPage() {
       openTimes: item.OpeningTimes || [],
     };
   });
-
 
   return (
     <LocationProvider>
