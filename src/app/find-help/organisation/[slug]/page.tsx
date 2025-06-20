@@ -13,8 +13,10 @@ interface Props {
 export default async function OrganisationPage(props: Props) {
   const { slug } = await props.params;
 
-  // ✅ Use relative path for internal API call
-  const res = await fetch(`/api/service-providers/${slug}`, {
+  // ✅ Use absolute URL for server fetch
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+
+  const res = await fetch(`${baseUrl}/api/service-providers/${slug}`, {
     cache: 'no-store',
   });
 
