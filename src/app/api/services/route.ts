@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
+import fallbackProviders from '@/data/service-providers.json';
+import type { ServiceProvider } from '@/types';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -72,9 +74,42 @@ export async function GET(req: Request) {
     });
   } catch (error) {
     console.error('[API ERROR] /api/services:', error);
-    return NextResponse.json(
-      { status: 'error', message: 'Failed to fetch services' },
-      { status: 500 }
-    );
+
+    // Fallback to static mock data if DB access fails
+    try {
+      const providers = fallbackProviders as ServiceProvider[];
+      const allServices = providers.flatMap((provider) =>
+        (provider.services || []).map((service) => ({
+          ...service,
+          organisation: {
+            Key: provider.slug,
+            Name: provider.name,
+            ShortDescription: '',
+            Website: '',
+            Telephone: '',
+            Email: '',
+            IsVerified: provider.verified,
+          },
+        }))
+      );
+
+      const total = allServices.length;
+      const start = (page - 1) * limit;
+      const results = allServices.slice(start, start + limit);
+
+      return NextResponse.json({
+        status: 'success',
+        total,
+        page,
+        limit,
+        results,
+      });
+    } catch (fallbackError) {
+      console.error('[API ERROR] Fallback services failed:', fallbackError);
+      return NextResponse.json(
+        { status: 'error', message: 'Failed to fetch services' },
+        { status: 500 }
+      );
+    }
   }
 }
