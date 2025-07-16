@@ -33,3 +33,8 @@ export interface UIFlattenedService extends Omit<FlattenedService, 'organisation
     isVerified?: boolean;
   };
 }
+
+// Interface for services with distance calculation from geospatial queries
+export interface ServiceWithDistance extends UIFlattenedService {
+  distance?: number; // Distance in kilometers, calculated by database or client-side
+}
