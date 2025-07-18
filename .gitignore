@@ -13,6 +13,8 @@
 # testing
 /.kiro
 /coverage
+/playwright-report
+/test-results
 
 # next.js
 /.next/
@@ -40,7 +42,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-test-results/
 
 # generated data
 /src/data/locations.json

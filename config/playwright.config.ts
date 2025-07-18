@@ -52,8 +52,7 @@ export default defineConfig({
   },
   reporter: [
     ['list'],
-    ['html', { open: 'never' }],
-    ['json', { outputFile: 'test-results/results.json' }]
+    ['html', { open: 'never', outputFolder: 'playwright-report' }]
   ],
   expect: {
     timeout: 20000, // Increased timeout for assertions

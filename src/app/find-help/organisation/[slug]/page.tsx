@@ -63,20 +63,14 @@ export default async function OrganisationPage(props: Props) {
     cache: 'no-store',
   });
 
-  // Using console statements for debugging only
-  console.warn('ORG SLUG:', slug);
-  console.warn('API STATUS:', res.status);
 
   if (!res.ok) {
-    console.error('Organisation not found, calling notFound()');
     return notFound();
   }
 
   const data = await res.json();
-  console.warn('API RESPONSE:', data);
 
   if (!data || !data.organisation) {
-    console.error('Organisation data missing, calling notFound()');
     return notFound();
   }
 
@@ -128,7 +122,6 @@ export default async function OrganisationPage(props: Props) {
     groupedServices,
   };
 
-  console.warn('DEBUG groupedServices:', JSON.stringify(groupedServices, null, 2));
 
   return <OrganisationShell organisation={organisation} />;
 }
