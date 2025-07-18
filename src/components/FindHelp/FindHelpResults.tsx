@@ -1,18 +1,18 @@
 'use client';
 
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { useLocation } from '@/contexts/LocationContext';
+import { useSearchNavigation } from '@/contexts/SearchNavigationContext';
+import { useSearchParams } from 'next/navigation';
 import ServiceCard from './ServiceCard';
 import FilterPanel from './FilterPanel';
 import GoogleMap from '@/components/MapComponent/GoogleMap';
-import type { UIFlattenedService } from '@/types';
+import type { ServiceWithDistance } from '@/types';
 
 interface Props {
-  services: UIFlattenedService[];
-}
-
-interface FlattenedServiceWithExtras extends UIFlattenedService {
-  distance?: number;
+  services: ServiceWithDistance[];
+  loading?: boolean;
+  error?: string | null;
 }
 
 interface MapMarker {
@@ -27,51 +27,29 @@ interface MapMarker {
   icon?: string;
 }
 
-export default function FindHelpResults({ services }: Props) {
+export default function FindHelpResults({ services, loading = false, error = null }: Props) {
   const { location } = useLocation();
+  const { saveSearchState, searchState } = useSearchNavigation();
+  const searchParams = useSearchParams();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  
   const [showMap, setShowMap] = useState(false);
-  const [radius, setRadius] = useState(10);
   const [sortOrder, setSortOrder] = useState<'distance' | 'alpha'>('distance');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubCategory, setSelectedSubCategory] = useState('');
   const [openDescriptionId, setOpenDescriptionId] = useState<string | null>(null);
+  const [isRestoringState, setIsRestoringState] = useState(false);
 
-  const getDistanceFromLatLonInKm = useCallback((lat1: number, lon1: number, lat2: number, lon2: number) => {
-    const R = 6371;
-    const dLat = deg2rad(lat2 - lat1);
-    const dLon = deg2rad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  }, []);
-
-  function deg2rad(deg: number) {
-    return deg * (Math.PI / 180);
-  }
-
-  const servicesWithDistance: FlattenedServiceWithExtras[] = useMemo(() => {
-    if (!services || services.length === 0 || !location) return [];
-
-    return services.map((service) => {
-      const distance = location.lat != null && location.lng != null
-        ? getDistanceFromLatLonInKm(location.lat, location.lng, service.latitude, service.longitude)
-        : undefined;
-
-      return { ...service, distance };
-    });
-  }, [services, location, getDistanceFromLatLonInKm]);
-
+  // Filter services by category and subcategory (radius filtering is now handled by API)
   const filteredServices = useMemo(() => {
-    return servicesWithDistance.filter((service) => {
-      const withinRadius = service.distance != null ? service.distance <= radius : true;
+    if (!services || services.length === 0) return [];
+    
+    return services.filter((service) => {
       const categoryMatch = selectedCategory ? service.category === selectedCategory : true;
       const subCategoryMatch = selectedSubCategory ? service.subCategory === selectedSubCategory : true;
-      return withinRadius && categoryMatch && subCategoryMatch;
+      return categoryMatch && subCategoryMatch;
     });
-  }, [servicesWithDistance, radius, selectedCategory, selectedSubCategory]);
+  }, [services, selectedCategory, selectedSubCategory]);
 
   const sortedServices = useMemo(() => {
     if (sortOrder === 'alpha') {
@@ -79,6 +57,45 @@ export default function FindHelpResults({ services }: Props) {
     }
     return [...filteredServices].sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0));
   }, [filteredServices, sortOrder]);
+
+  // Restore search state if available
+  useEffect(() => {
+    if (searchState && !isRestoringState) {
+      setIsRestoringState(true);
+      setSortOrder(searchState.filters.sortOrder);
+      setSelectedCategory(searchState.filters.selectedCategory);
+      setSelectedSubCategory(searchState.filters.selectedSubCategory);
+      
+      // Restore scroll position after a short delay to ensure DOM is ready
+      setTimeout(() => {
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollTop = searchState.scrollPosition;
+        }
+        setIsRestoringState(false);
+      }, 100);
+    }
+  }, [searchState, isRestoringState]);
+
+  // Save search state when navigating away
+  const handleServiceNavigation = () => {
+    const currentScrollPosition = scrollContainerRef.current?.scrollTop || 0;
+    const currentSearchParams: Record<string, string> = {};
+    
+    searchParams.forEach((value, key) => {
+      currentSearchParams[key] = value;
+    });
+
+    saveSearchState({
+      services,
+      scrollPosition: currentScrollPosition,
+      filters: {
+        selectedCategory,
+        selectedSubCategory,
+        sortOrder,
+      },
+      searchParams: currentSearchParams,
+    });
+  };
 
   const combinedMarkers: MapMarker[] = useMemo(() => {
     const markers: MapMarker[] = filteredServices.map((s) => ({
@@ -119,19 +136,6 @@ export default function FindHelpResults({ services }: Props) {
           />
           <div className="flex items-center flex-wrap gap-4 mt-4">
             <div className="flex items-center gap-2">
-              <label htmlFor="radius" className="text-sm font-medium">Distance radius:</label>
-              <select
-                id="radius"
-                className="border px-2 py-1 rounded"
-                value={radius}
-                onChange={(e) => setRadius(Number(e.target.value))}
-              >
-                {[1, 3, 5, 10, 25].map((r) => (
-                  <option key={r} value={r}>{r} km</option>
-                ))}
-              </select>
-            </div>
-            <div className="flex items-center gap-2">
               <label htmlFor="sortOrder" className="text-sm font-medium">Sort by:</label>
               <select
                 id="sortOrder"
@@ -165,9 +169,31 @@ export default function FindHelpResults({ services }: Props) {
           </div>
         )}
 
-        <div className="flex-1 overflow-y-visible lg:overflow-y-auto pr-2">
-          {sortedServices.length === 0 ? (
-            <p>No services found within {radius} km of your location.</p>
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-visible lg:overflow-y-auto pr-2">
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" role="status" aria-label="Loading"></div>
+              <span className="ml-2 text-gray-600">Loading services...</span>
+            </div>
+          ) : error ? (
+            <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-red-800">Error loading services</h3>
+                  <p className="mt-1 text-sm text-red-700">{error}</p>
+                </div>
+              </div>
+            </div>
+          ) : sortedServices.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-600 mb-2">No services found matching your criteria.</p>
+              <p className="text-sm text-gray-500">Try adjusting your filters or search in a different area.</p>
+            </div>
           ) : (
             <div className={`gap-4 ${showMap ? 'flex flex-col' : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
               {sortedServices.map((service) => (
@@ -176,18 +202,12 @@ export default function FindHelpResults({ services }: Props) {
                   className="border border-gray-300 rounded-md p-4 bg-white flex flex-col"
                 >
                   <ServiceCard
-                    service={{
-                      ...service,
-                      openTimes: (service.openTimes ?? []).map(slot => ({
-                        day: slot?.day?.toString?.() ?? '',
-                        start: slot?.start?.toString?.() ?? '',
-                        end: slot?.end?.toString?.() ?? '',
-                      })),
-                    }}
+                    service={service}
                     isOpen={openDescriptionId === service.id}
                     onToggle={() =>
                       setOpenDescriptionId(openDescriptionId === service.id ? null : service.id)
                     }
+                    onNavigate={handleServiceNavigation}
                   />
                   {service.distance !== undefined && (
                     <p className="text-sm text-gray-500 mt-auto pt-4">

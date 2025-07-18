@@ -3,32 +3,16 @@
 import React from 'react';
 import Link from 'next/link';
 
-export interface Service {
-  id: string;
-  name: string;
-  category: string;
-  categoryName?: string;
-  subCategory: string;
-  subCategoryName?: string;
-  description: string;
-  organisation?: {
-    name: string;
-    slug: string;
-    isVerified?: boolean;
-  };
-  openTimes?: { day: string; start: string; end: string }[];
-  clientGroups?: string[];
-  lat?: number;
-  lng?: number;
-}
+import type { ServiceWithDistance } from '@/types';
 
 interface ServiceCardProps {
-  service: Service;
+  service: ServiceWithDistance;
   isOpen: boolean;
   onToggle: () => void;
+  onNavigate?: () => void;
 }
 
-export default function ServiceCard({ service, isOpen, onToggle }: ServiceCardProps) {
+export default function ServiceCard({ service, isOpen, onToggle, onNavigate }: ServiceCardProps) {
   const destination = service.organisation?.slug
     ? `/find-help/organisation/${service.organisation.slug}`
     : '#';
@@ -41,6 +25,7 @@ export default function ServiceCard({ service, isOpen, onToggle }: ServiceCardPr
   return (
     <Link
       href={destination}
+      onClick={onNavigate}
       className="relative block border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-a"
       aria-label={`View details for ${service.name}`}
     >
@@ -77,6 +62,7 @@ export default function ServiceCard({ service, isOpen, onToggle }: ServiceCardPr
             type="button"
             onClick={(e) => {
               e.preventDefault();
+              e.stopPropagation();
               onToggle();
             }}
             className="ml-2 text-blue-600 underline text-sm"
@@ -87,33 +73,62 @@ export default function ServiceCard({ service, isOpen, onToggle }: ServiceCardPr
       </p>
 
       <p className="text-sm text-gray-500 mb-1">
-        Category: {service.categoryName || service.category}
+        Category: {service.category}
       </p>
 
       <p className="text-sm text-gray-500 mb-2">
-        Subcategory: {service.subCategoryName || service.subCategory}
+        Subcategory: {service.subCategory}
       </p>
 
       {service.clientGroups && service.clientGroups.length > 0 && (
         <div className="text-sm mt-2">
-          {service.clientGroups.map((group, idx) => (
-            <span
-              key={idx}
-              className="inline-block bg-gray-100 px-2 py-1 mr-2 rounded"
-            >
-              {group}
-            </span>
-          ))}
+          {service.clientGroups.map((group, idx) => {
+            // Handle both string format and object format for client groups
+            const groupName = typeof group === 'string' ? group : (group as { Name?: string; name?: string })?.Name || (group as { Name?: string; name?: string })?.name || String(group);
+            return (
+              <span
+                key={idx}
+                className="inline-block bg-gray-100 px-2 py-1 mr-2 rounded"
+              >
+                {groupName}
+              </span>
+            );
+          })}
         </div>
       )}
 
       {service.openTimes && service.openTimes.length > 0 && (
         <div className="text-sm mt-2 text-gray-600">
-          {service.openTimes.map((slot, idx) => (
-            <div key={idx}>
-              {slot.day}: {slot.start} – {slot.end}
-            </div>
-          ))}
+          {service.openTimes.map((slot, idx) => {
+            // Convert day number to day name
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            
+            // Handle both MongoDB format (Day, StartTime, EndTime) and normalized format (day, start, end)
+            const dayValue = (slot as { Day?: number | string; day?: number | string }).Day ?? (slot as { Day?: number | string; day?: number | string }).day;
+            const startValue = (slot as { StartTime?: number | string; start?: number | string }).StartTime ?? (slot as { StartTime?: number | string; start?: number | string }).start;
+            const endValue = (slot as { EndTime?: number | string; end?: number | string }).EndTime ?? (slot as { EndTime?: number | string; end?: number | string }).end;
+            
+            // Skip if we don't have the required data
+            if (dayValue === undefined || startValue === undefined || endValue === undefined) {
+              return null;
+            }
+            
+            const dayName = typeof dayValue === 'number' ? dayNames[dayValue] || dayValue : dayValue;
+            
+            // Format time (assuming it's in HHMM format or already a string)
+            const formatTime = (time: number | string) => {
+              if (typeof time === 'string') return time;
+              if (typeof time !== 'number') return 'N/A';
+              const timeStr = time.toString().padStart(4, '0');
+              return `${timeStr.slice(0, 2)}:${timeStr.slice(2)}`;
+            };
+            
+            return (
+              <div key={idx}>
+                {dayName}: {formatTime(startValue)} – {formatTime(endValue)}
+              </div>
+            );
+          })}
         </div>
       )}
     </Link>

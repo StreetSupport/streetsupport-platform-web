@@ -4,7 +4,7 @@ export async function getFaqs(locationKey?: string) {
   const client = await getClientPromise();
   const db = client.db('streetsupport');
 
-  const query: any = {};
+  const query: { LocationKey?: string } = {};
   if (locationKey) {
     query.LocationKey = locationKey;
   }

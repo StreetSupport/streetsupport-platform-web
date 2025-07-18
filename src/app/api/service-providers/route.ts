@@ -20,7 +20,7 @@ export async function GET(req: Request) {
     const collection = db.collection('ServiceProviders');
 
     // Build query
-    const query: any = {};
+    const query: { AssociatedLocationIds?: { $in: string[] } } = {};
     if (location) {
       query.AssociatedLocationIds = { $in: [location] };
     }

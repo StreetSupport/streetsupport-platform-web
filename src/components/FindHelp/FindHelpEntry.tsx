@@ -13,7 +13,7 @@ export default function FindHelpEntry() {
     if (typeof window !== 'undefined' && 'geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+          setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude, source: 'geolocation' });
         },
         () => {
           setFallbackVisible(true);
@@ -41,7 +41,7 @@ export default function FindHelpEntry() {
 
       if (data.location?.lat && data.location?.lng) {
         const { lat, lng } = data.location;
-        setLocation({ lat, lng, postcode: postcodeInput.trim() });
+        setLocation({ lat, lng, postcode: postcodeInput.trim(), source: 'postcode' });
       } else {
         alert(data.error || 'Sorry, we couldn’t find that postcode.');
       }

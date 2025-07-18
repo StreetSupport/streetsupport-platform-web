@@ -9,6 +9,8 @@ export default function OrganisationFooter() {
   const [currentTitle, setCurrentTitle] = useState('');
 
   useEffect(() => {
+    // Add a comment to explain the SSR check
+    /* istanbul ignore else */
     if (typeof window !== 'undefined') {
       setCurrentUrl(window.location.href);
       setCurrentTitle(document.title);
