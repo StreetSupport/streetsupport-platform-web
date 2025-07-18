@@ -14,6 +14,18 @@ interface Props {
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const { slug } = await props.params;
   
+  // Always return a fallback title for E2E tests and error cases
+  // This ensures the page always has a title, even when the API fails
+  const fallbackMetadata = {
+    title: 'Organisation Not Found | Street Support',
+    description: 'The organisation you are looking for could not be found.',
+  };
+  
+  // Skip API call if MONGODB_URI is missing (e.g., in CI tests)
+  if (!process.env.MONGODB_URI) {
+    return fallbackMetadata;
+  }
+  
   // ✅ Use absolute URL for server fetch
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   
@@ -23,19 +35,13 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     });
     
     if (!res.ok) {
-      return {
-        title: 'Organisation Not Found | Street Support',
-        description: 'The organisation you are looking for could not be found.',
-      };
+      return fallbackMetadata;
     }
     
     const data = await res.json();
     
     if (!data || !data.organisation) {
-      return {
-        title: 'Organisation Not Found | Street Support',
-        description: 'The organisation you are looking for could not be found.',
-      };
+      return fallbackMetadata;
     }
     
     return {
@@ -43,10 +49,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
       description: data.organisation.description || `Services provided by ${data.organisation.name}`,
     };
   } catch (error) {
-    return {
-      title: 'Organisation Not Found | Street Support',
-      description: 'The organisation you are looking for could not be found.',
-    };
+    return fallbackMetadata;
   }
 }
 
