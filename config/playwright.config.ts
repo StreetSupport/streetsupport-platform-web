@@ -19,8 +19,6 @@ export default defineConfig({
     locale: 'en-GB',
     // Add timezone for consistent testing
     timezoneId: 'Europe/London',
-    // Add better handling for strict mode violations
-    strictSelectors: false,
   },
   projects: [
     {
@@ -45,7 +43,7 @@ export default defineConfig({
       NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
       NODE_ENV: 'test',
       // Add test database URL if needed
-      MONGODB_URI: process.env.MONGODB_URI || process.env.TEST_MONGODB_URI,
+      MONGODB_URI: process.env.MONGODB_URI || process.env.TEST_MONGODB_URI || '',
       // Ensure Next.js handles routes properly in test mode
       NEXT_TELEMETRY_DISABLED: '1',
     },
