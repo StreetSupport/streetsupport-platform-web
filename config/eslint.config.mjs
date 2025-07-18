@@ -11,7 +11,7 @@ const compat = new FlatCompat({
   recommendedConfig: js.configs.recommended
 });
 
-export default [
+const config = [
   js.configs.recommended,
   ...compat.extends(
     "next/core-web-vitals",
@@ -36,6 +36,37 @@ export default [
     }
   },
   {
+    files: ["**/*.test.{js,jsx,ts,tsx}", "**/*.spec.{js,jsx,ts,tsx}", "**/tests/**/*", "**/config/jest.setup.js", "**/config/jest.config.cjs"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+      "no-undef": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "react/display-name": "off",
+      "prefer-rest-params": "off",
+      "@typescript-eslint/ban-ts-comment": "off"
+    },
+    languageOptions: {
+      globals: {
+        jest: "readonly",
+        describe: "readonly",
+        it: "readonly",
+        expect: "readonly",
+        beforeAll: "readonly",
+        beforeEach: "readonly",
+        afterAll: "readonly",
+        afterEach: "readonly"
+      }
+    }
+  },
+  {
+    files: ["scripts/**/*"],
+    rules: {
+      "no-console": "off"
+    }
+  },
+  {
     ignores: ["**/node_modules/**", "**/.next/**", "**/out/**", "**/public/**", "**/coverage/**"]
   }
 ];
+
+export default config;

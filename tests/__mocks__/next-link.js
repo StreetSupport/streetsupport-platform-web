@@ -1,7 +1,7 @@
 // Enhanced mock for next/link
 const React = require('react');
 
-const nextLink = ({ children, href, as, replace, scroll, shallow, passHref, prefetch, locale, ...props }) => {
+const nextLink = ({ children, href, _as, _replace, _scroll, _shallow, _passHref, _prefetch, _locale, ...props }) => {
   return React.createElement('a', { 
     href: href || '/', 
     onClick: (e) => {

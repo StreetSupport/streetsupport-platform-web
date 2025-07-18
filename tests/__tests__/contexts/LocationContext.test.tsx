@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import React from 'react';
-import { LocationProvider, useLocation, LocationState, LocationError } from '@/contexts/LocationContext';
+import { LocationProvider, useLocation } from '@/contexts/LocationContext';
 
 // Mock Next.js navigation
 jest.mock('next/navigation', () => ({
@@ -43,7 +43,7 @@ function Consumer() {
   const handleRequestLocation = async () => {
     try {
       await requestLocation();
-    } catch (error) {
+    } catch {
       // Error is already handled by the context
     }
   };

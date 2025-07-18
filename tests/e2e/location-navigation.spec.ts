@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 // Test navigation context detection from location pages to find help
 test.describe('Location Navigation Context', () => {

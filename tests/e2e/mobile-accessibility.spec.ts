@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 // Test mobile responsiveness and accessibility compliance
 test.describe('Mobile Responsiveness and Accessibility', () => {
@@ -151,7 +151,7 @@ test.describe('Mobile Responsiveness and Accessibility', () => {
       await page.goto('/find-help');
       
       // Check heading structure
-      const h1 = page.locator('h1');
+      // const h1 = page.locator('h1');
       const h2 = page.locator('h2');
       
       // Should have proper heading hierarchy

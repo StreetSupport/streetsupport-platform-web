@@ -32,18 +32,18 @@ async function enterPostcodeInLocationPrompt(page: Page, postcode: string = test
   await page.waitForTimeout(1000);
 }
 
-async function useCurrentLocationInPrompt(page: Page) {
-  await page.goto('/find-help');
-  
-  // Wait for LocationPrompt to load
-  await expect(page.getByText('Find Services Near You')).toBeVisible();
-  
-  // Click "Use My Current Location" button
-  await page.getByRole('button', { name: /use my current location/i }).click();
-  
-  // Wait for location to be processed
-  await page.waitForTimeout(1000);
-}
+// async function useCurrentLocationInPrompt(page: Page) {
+//   await page.goto('/find-help');
+//   
+//   // Wait for LocationPrompt to load
+//   await expect(page.getByText('Find Services Near You')).toBeVisible();
+//   
+//   // Click "Use My Current Location" button
+//   await page.getByRole('button', { name: /use my current location/i }).click();
+//   
+//   // Wait for location to be processed
+//   await page.waitForTimeout(1000);
+// }
 
 test.describe('Location-Based Service Discovery', () => {
   test.beforeEach(async ({ page }) => {
@@ -279,7 +279,7 @@ test.describe('Location-Based Service Discovery', () => {
     
     // If category select doesn't exist, skip this test
     if (!(await categorySelect.isVisible())) {
-      console.log('Category filter not available, skipping test');
+      console.warn('Category filter not available, skipping test');
       return;
     }
     
@@ -288,7 +288,7 @@ test.describe('Location-Based Service Discovery', () => {
     
     // If there are no options to filter by, skip the test
     if (options.length <= 1) {
-      console.log('No category options available for filtering, skipping test');
+      console.warn('No category options available for filtering, skipping test');
       return;
     }
     

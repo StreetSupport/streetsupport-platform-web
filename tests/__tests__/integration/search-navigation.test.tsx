@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
 import FindHelpResults from '@/components/FindHelp/FindHelpResults';
 import OrganisationOverview from '@/components/OrganisationPage/OrganisationOverview';
