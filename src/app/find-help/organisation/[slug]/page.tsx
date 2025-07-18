@@ -5,9 +5,49 @@ import { notFound } from 'next/navigation';
 import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup';
 
 import type { RawService } from '@/types/api';
+import type { Metadata } from 'next';
 
 interface Props {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const { slug } = await props.params;
+  
+  // ✅ Use absolute URL for server fetch
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  
+  try {
+    const res = await fetch(`${baseUrl}/api/service-providers/${slug}`, {
+      cache: 'no-store',
+    });
+    
+    if (!res.ok) {
+      return {
+        title: 'Organisation Not Found | Street Support',
+        description: 'The organisation you are looking for could not be found.',
+      };
+    }
+    
+    const data = await res.json();
+    
+    if (!data || !data.organisation) {
+      return {
+        title: 'Organisation Not Found | Street Support',
+        description: 'The organisation you are looking for could not be found.',
+      };
+    }
+    
+    return {
+      title: `${data.organisation.name} | Street Support`,
+      description: data.organisation.description || `Services provided by ${data.organisation.name}`,
+    };
+  } catch (error) {
+    return {
+      title: 'Organisation Not Found | Street Support',
+      description: 'The organisation you are looking for could not be found.',
+    };
+  }
 }
 
 export default async function OrganisationPage(props: Props) {
