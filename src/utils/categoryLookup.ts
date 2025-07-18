@@ -1,9 +1,9 @@
 // src/utils/categoryLookup.ts
 
 import rawCategories from '@/data/service-categories.json';
-import { formatCategory } from './formatCategories';
+import { formatCategory, type RawCategory } from './formatCategories';
 
-const categories = (rawCategories as unknown[]).map(formatCategory);
+const categories = (rawCategories as RawCategory[]).map(formatCategory);
 
 export const categoryKeyToName: Record<string, string> = {};
 export const subCategoryKeyToName: Record<string, string> = {};

@@ -1,5 +1,24 @@
 import type { FlattenedService } from '@/types';
 
+// ✅ Address type based on the MongoDB structure
+export interface Address {
+  Key?: {
+    $binary?: {
+      base64?: string;
+      subType?: string;
+    };
+  };
+  Location?: {
+    coordinates?: [number, number];
+  };
+  Street?: string;
+  City?: string;
+  Postcode?: string;
+  Charity?: string;
+  Latitude?: number;
+  Longitude?: number;
+}
+
 // ✅ Correct type matching your API response shape
 export interface OrganisationDetails {
   key: string;
@@ -17,7 +36,7 @@ export interface OrganisationDetails {
   isPublished?: boolean;
   associatedLocationIds?: string[];
   tags?: string[];
-  addresses: unknown[];
+  addresses: Address[];
   services: FlattenedService[];
   groupedServices: Record<string, Record<string, FlattenedService[]>>;
 }
