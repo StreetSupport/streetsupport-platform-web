@@ -48,7 +48,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
       title: `${data.organisation.name} | Street Support`,
       description: data.organisation.description || `Services provided by ${data.organisation.name}`,
     };
-  } catch (error) {
+  } catch {
     return fallbackMetadata;
   }
 }

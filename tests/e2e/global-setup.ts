@@ -35,13 +35,13 @@ async function globalSetup(config: FullConfig) {
         });
         console.warn(`✓ Route ${route} is accessible`);
       } catch (error) {
-        console.warn(`⚠ Route ${route} may have issues:`, error.message);
+        console.warn(`⚠ Route ${route} may have issues:`, error instanceof Error ? error.message : String(error));
       }
     }
     
     console.warn('✓ Development server is ready');
   } catch (error) {
-    console.error('✗ Failed to connect to development server:', error);
+    console.error('✗ Failed to connect to development server:', error instanceof Error ? error.message : String(error));
     throw error;
   } finally {
     await context.close();

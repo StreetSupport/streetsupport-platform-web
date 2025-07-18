@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Page Not Found | Street Support',
@@ -14,12 +15,12 @@ export default function NotFoundPage() {
         <p className="text-gray-600 mb-8">
           The page you are looking for could not be found.
         </p>
-        <a
+        <Link
           href="/"
           className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
         >
           Go Home
-        </a>
+        </Link>
       </div>
     </main>
   );
