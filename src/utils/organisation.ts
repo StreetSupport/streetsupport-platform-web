@@ -17,7 +17,7 @@ export interface OrganisationDetails {
   isPublished?: boolean;
   associatedLocationIds?: string[];
   tags?: string[];
-  addresses: any[];
+  addresses: unknown[];
   services: FlattenedService[];
   groupedServices: Record<string, Record<string, FlattenedService[]>>;
 }

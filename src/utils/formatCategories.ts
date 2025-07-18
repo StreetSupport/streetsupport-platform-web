@@ -17,6 +17,9 @@ export function formatCategory(raw: RawCategory): ApiCategory {
   return {
     key: raw.key,
     name: raw.name,
-    subCategories: raw.subCategories,
+    subCategories: raw.subCategories.map(sub => ({
+      key: sub.key,
+      name: sub.name,
+    })),
   };
 }

@@ -84,7 +84,7 @@ export default function ServiceCard({ service, isOpen, onToggle, onNavigate }: S
         <div className="text-sm mt-2">
           {service.clientGroups.map((group, idx) => {
             // Handle both string format and object format for client groups
-            const groupName = typeof group === 'string' ? group : (group as any)?.Name || (group as any)?.name || String(group);
+            const groupName = typeof group === 'string' ? group : (group as { Name?: string; name?: string })?.Name || (group as { Name?: string; name?: string })?.name || String(group);
             return (
               <span
                 key={idx}
@@ -104,9 +104,9 @@ export default function ServiceCard({ service, isOpen, onToggle, onNavigate }: S
             const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             
             // Handle both MongoDB format (Day, StartTime, EndTime) and normalized format (day, start, end)
-            const dayValue = (slot as any).Day ?? (slot as any).day;
-            const startValue = (slot as any).StartTime ?? (slot as any).start;
-            const endValue = (slot as any).EndTime ?? (slot as any).end;
+            const dayValue = (slot as { Day?: number | string; day?: number | string }).Day ?? (slot as { Day?: number | string; day?: number | string }).day;
+            const startValue = (slot as { StartTime?: number | string; start?: number | string }).StartTime ?? (slot as { StartTime?: number | string; start?: number | string }).start;
+            const endValue = (slot as { EndTime?: number | string; end?: number | string }).EndTime ?? (slot as { EndTime?: number | string; end?: number | string }).end;
             
             // Skip if we don't have the required data
             if (dayValue === undefined || startValue === undefined || endValue === undefined) {

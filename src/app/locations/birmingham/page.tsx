@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function BirminghamLocationPage() {
   return (
     <main>
@@ -5,9 +7,9 @@ export default function BirminghamLocationPage() {
       <p>Connecting people and organisations locally to tackle homelessness in Birmingham.</p>
 
       <section>
-        <a href="/find-help">
+        <Link href="/find-help">
           <button>Find Help</button>
-        </a>
+        </Link>
       </section>
 
       <section>
@@ -19,9 +21,9 @@ export default function BirminghamLocationPage() {
             Streetlink
           </a>.
         </p>
-        <a href="/birmingham/advice">
+        <Link href="/birmingham/advice">
           <button>See More Emergency Advice</button>
-        </a>
+        </Link>
       </section>
 
       <section>

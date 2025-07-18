@@ -3,7 +3,7 @@
 import rawCategories from '@/data/service-categories.json';
 import { formatCategory } from './formatCategories';
 
-const categories = (rawCategories as any[]).map(formatCategory);
+const categories = (rawCategories as unknown[]).map(formatCategory);
 
 export const categoryKeyToName: Record<string, string> = {};
 export const subCategoryKeyToName: Record<string, string> = {};

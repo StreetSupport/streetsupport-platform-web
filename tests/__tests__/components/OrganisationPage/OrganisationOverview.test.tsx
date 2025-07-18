@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import OrganisationOverview from '@/components/OrganisationPage/OrganisationOverview';
+import { mockOrganisationDetails } from '../../../__mocks__/api-responses';
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({
@@ -18,15 +19,6 @@ jest.mock('@/contexts/SearchNavigationContext', () => ({
   useSearchNavigation: jest.fn(),
 }));
 
-const mockOrganisation = {
-  name: 'Test Organisation',
-  shortDescription: 'A test organisation for testing purposes',
-  description: 'This is a longer description of the test organisation that provides various services.',
-  key: 'test-org',
-  services: [],
-  groupedServices: {},
-};
-
 describe('OrganisationOverview', () => {
   const { useSearchNavigation } = require('@/contexts/SearchNavigationContext');
 
@@ -40,7 +32,7 @@ describe('OrganisationOverview', () => {
       searchState: null,
     });
 
-    render(<OrganisationOverview organisation={mockOrganisation} />);
+    render(<OrganisationOverview organisation={mockOrganisationDetails} />);
 
     expect(screen.getByText('Test Organisation')).toBeInTheDocument();
     expect(screen.getByText('A test organisation for testing purposes')).toBeInTheDocument();
@@ -53,7 +45,7 @@ describe('OrganisationOverview', () => {
       searchState: null,
     });
 
-    render(<OrganisationOverview organisation={mockOrganisation} />);
+    render(<OrganisationOverview organisation={mockOrganisationDetails} />);
 
     expect(screen.queryByText('Back to search results')).not.toBeInTheDocument();
   });
@@ -74,14 +66,14 @@ describe('OrganisationOverview', () => {
       },
     });
 
-    render(<OrganisationOverview organisation={mockOrganisation} />);
+    render(<OrganisationOverview organisation={mockOrganisationDetails} />);
 
     expect(screen.getByText('Back to search results')).toBeInTheDocument();
   });
 
   it('renders without short description when not provided', () => {
     const orgWithoutShortDesc = {
-      ...mockOrganisation,
+      ...mockOrganisationDetails,
       shortDescription: undefined,
     };
 
@@ -99,7 +91,7 @@ describe('OrganisationOverview', () => {
 
   it('renders without description when not provided', () => {
     const orgWithoutDesc = {
-      ...mockOrganisation,
+      ...mockOrganisationDetails,
       description: undefined,
     };
 
@@ -131,7 +123,7 @@ describe('OrganisationOverview', () => {
       },
     });
 
-    render(<OrganisationOverview organisation={mockOrganisation} />);
+    render(<OrganisationOverview organisation={mockOrganisationDetails} />);
 
     const backButton = screen.getByRole('button', { name: 'Back to search results' });
     expect(backButton).toHaveAttribute('aria-label', 'Back to search results');
@@ -153,7 +145,7 @@ describe('OrganisationOverview', () => {
       },
     });
 
-    render(<OrganisationOverview organisation={mockOrganisation} />);
+    render(<OrganisationOverview organisation={mockOrganisationDetails} />);
 
     const backButton = screen.getByText('Back to search results');
     const svg = backButton.querySelector('svg');

@@ -27,9 +27,11 @@ export class ErrorBoundary extends Component<Props, State> {
     this.state = { hasError: false, retryCount: 0 };
   }
 
-  static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error, retryCount: 0 };
+  static getDerivedStateFromError(error: Error): Partial<State> {
+    return { hasError: true, error };
   }
+
+
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
@@ -47,6 +49,7 @@ export class ErrorBoundary extends Component<Props, State> {
       return; // Max retry attempts reached
     }
 
+    // Reset error state and increment retry count
     this.setState(prevState => ({ 
       hasError: false, 
       error: undefined,
@@ -57,19 +60,11 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.props.onRetry) {
       this.props.onRetry();
     }
-
-    // Auto-retry with exponential backoff for network errors
-    if (this.props.errorType === 'network' && this.state.retryCount < 2) {
-      const delay = Math.pow(2, this.state.retryCount) * 1000; // 1s, 2s, 4s
-      this.retryTimeoutId = setTimeout(() => {
-        this.handleRetry();
-      }, delay);
-    }
   };
 
   getErrorMessage(): { title: string; message: string; actionText: string } {
     const { errorType } = this.props;
-    const { error, retryCount } = this.state;
+    const { retryCount } = this.state;
 
     switch (errorType) {
       case 'location':
@@ -95,7 +90,7 @@ export class ErrorBoundary extends Component<Props, State> {
       default:
         return {
           title: 'Something went wrong',
-          message: error?.message || 'An unexpected error occurred. Please try refreshing the page.',
+          message: 'An unexpected error occurred. Please try refreshing the page.',
           actionText: 'Refresh Page'
         };
     }
@@ -130,22 +125,25 @@ export class ErrorBoundary extends Component<Props, State> {
               )}
 
               <div className="mt-3 flex flex-wrap gap-2">
-                {showRetry && !maxRetriesReached && (
+                {/* For non-default error types, show retry button */}
+                {showRetry && !maxRetriesReached && this.props.errorType && this.props.errorType !== 'generic' ? (
                   <button
                     onClick={this.handleRetry}
                     className="text-sm bg-red-100 text-red-800 px-3 py-1 rounded-md hover:bg-red-200 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                     aria-label={`${actionText} (${3 - this.state.retryCount} attempts remaining)`}
+                    data-testid="retry-button"
                   >
                     {actionText}
                   </button>
+                ) : (
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="text-sm bg-gray-100 text-gray-800 px-3 py-1 rounded-md hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                    data-testid="refresh-button"
+                  >
+                    Refresh Page
+                  </button>
                 )}
-                
-                <button
-                  onClick={() => window.location.reload()}
-                  className="text-sm bg-gray-100 text-gray-800 px-3 py-1 rounded-md hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-                >
-                  Refresh Page
-                </button>
 
                 {this.props.errorType === 'location' && (
                   <button
@@ -154,6 +152,7 @@ export class ErrorBoundary extends Component<Props, State> {
                       window.location.href = '/find-help?browse=all';
                     }}
                     className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-md hover:bg-blue-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    data-testid="browse-all-button"
                   >
                     Browse All Services
                   </button>

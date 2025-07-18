@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function AboutPage() {
   return (
     <main className="container mx-auto px-4 py-12">
@@ -11,12 +13,12 @@ export default function AboutPage() {
         <li>Real-time availability and contact information</li>
         <li>Volunteer opportunities and donation guidelines</li>
       </ul>
-      <a
+      <Link
         href="/find-help"
         className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
       >
         Find Help Now
-      </a>
+      </Link>
     </main>
-)
+  );
 }

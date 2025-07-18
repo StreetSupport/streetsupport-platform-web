@@ -63,7 +63,7 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
 
     // Create AbortController for timeout handling
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
 
     try {
       const response = await fetch(`/api/geocode?postcode=${encodeURIComponent(trimmedPostcode)}`, {
@@ -99,7 +99,7 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
         setRetryCount(0); // Reset retry count on success
         onLocationSet?.();
       } else {
-        setGeocodingError(data.error || 'Sorry, we couldn\'t find that postcode. Please check and try again.');
+        setGeocodingError(data.error || 'Postcode not found');
       }
     } catch (err) {
       clearTimeout(timeoutId);
@@ -110,6 +110,10 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
           setNetworkError('Request timed out. Please check your connection and try again.');
         } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
           setNetworkError('Network error. Please check your internet connection.');
+        } else if (err.message.includes('Server error')) {
+          setGeocodingError('Server error. Please try again later.');
+        } else if (err.message.includes('Too many requests')) {
+          setGeocodingError('Too many requests. Please wait a moment and try again.');
         } else {
           setGeocodingError(err.message || 'Something went wrong when trying to find your location. Please try again.');
         }
@@ -159,7 +163,9 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
 
   const handleBrowseAllServices = () => {
     // Navigate to browse all services without location filtering
-    window.location.href = '/find-help?browse=all';
+    if (typeof window !== 'undefined') {
+      window.location.href = '/find-help?browse=all';
+    }
   };
 
   // If location is already set, show confirmation
@@ -207,7 +213,7 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
 
         {/* Loading state */}
         {isLoading && (
-          <div className="flex items-center justify-center py-4">
+          <div className="flex items-center justify-center py-4" role="status" aria-label="Loading">
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
             <span className="ml-2 text-sm text-gray-600">Getting your location...</span>
           </div>
@@ -263,7 +269,7 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
 
         {/* Postcode input form */}
         {showPostcodeInput && (
-          <form onSubmit={handlePostcodeSubmit} className="space-y-4">
+          <form onSubmit={handlePostcodeSubmit} className="space-y-4" role="form">
             <div className="text-left">
               <label htmlFor="postcode" className="block text-sm font-medium text-gray-700 mb-2">
                 Enter your postcode
@@ -287,7 +293,7 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
               {networkError && (
                 <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-md">
                   <p className="text-sm text-red-600">{networkError}</p>
-                  {retryCount < 3 && (
+                  {retryCount < 3 && !networkError.includes('Maximum retry attempts reached') && (
                     <div className="mt-2 flex space-x-2">
                       <button
                         type="button"
@@ -297,6 +303,17 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
                       >
                         {isRetrying ? 'Retrying...' : `Retry (${3 - retryCount} attempts left)`}
                       </button>
+                      <button
+                        type="button"
+                        onClick={handleBrowseAllServices}
+                        className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded hover:bg-blue-200 transition-colors"
+                      >
+                        Browse All Services
+                      </button>
+                    </div>
+                  )}
+                  {(retryCount >= 3 || networkError.includes('Maximum retry attempts reached')) && (
+                    <div className="mt-2 flex space-x-2">
                       <button
                         type="button"
                         onClick={handleBrowseAllServices}
