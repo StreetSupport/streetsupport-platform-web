@@ -94,7 +94,7 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
           lng, 
           postcode: trimmedPostcode,
           source: 'postcode',
-          radius: 10 // Default radius in km
+          radius: 5 // Default radius in km
         });
         setRetryCount(0); // Reset retry count on success
         onLocationSet?.();

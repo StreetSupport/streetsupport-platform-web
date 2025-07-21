@@ -11,69 +11,11 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata(props: Props): Promise<Metadata> {
-  const { slug } = await props.params;
-  
-  // Always return a fallback title for E2E tests and error cases
-  // This ensures the page always has a title, even when the API fails
-  const fallbackMetadata = {
-    title: 'Organisation Not Found | Street Support',
-    description: 'The organisation you are looking for could not be found.',
-  };
-  
-  // Skip API call if MONGODB_URI is missing (e.g., in CI tests)
-  if (!process.env.MONGODB_URI) {
-    return fallbackMetadata;
-  }
-  
-  // ✅ Use absolute URL for server fetch
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  
-  try {
-    const res = await fetch(`${baseUrl}/api/service-providers/${slug}`, {
-      cache: 'no-store',
-    });
-    
-    if (!res.ok) {
-      return fallbackMetadata;
-    }
-    
-    const data = await res.json();
-    
-    if (!data || !data.organisation) {
-      return fallbackMetadata;
-    }
-    
-    return {
-      title: `${data.organisation.name} | Street Support`,
-      description: data.organisation.description || `Services provided by ${data.organisation.name}`,
-    };
-  } catch {
-    return fallbackMetadata;
-  }
-}
+// Shared cache for organisation data to eliminate double API calls
+const organisationCache = new Map<string, { data: unknown; timestamp: number }>();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-export default async function OrganisationPage(props: Props) {
-  const { slug } = await props.params;
-
-  // ✅ Use absolute URL for server fetch
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-
-  const res = await fetch(`${baseUrl}/api/service-providers/${slug}`, {
-    cache: 'no-store',
-  });
-
-
-  if (!res.ok) {
-    return notFound();
-  }
-
-  const data = await res.json();
-
-  if (!data || !data.organisation) {
-    return notFound();
-  }
-
+function processOrganisationData(data: { organisation: unknown; services: unknown[] }) {
   const rawServices = (data.services || []) as RawService[];
 
   const services = rawServices.map((service, idx) => {
@@ -82,9 +24,9 @@ export default async function OrganisationPage(props: Props) {
     const subKey = service.SubCategoryKey || '';
 
     const openTimes = (service.OpeningTimes || []).map(slot => ({
-      day: slot.day,
-      start: slot.start,
-      end: slot.end,
+      day: slot.Day ?? slot.day,
+      start: slot.StartTime ?? slot.start,
+      end: slot.EndTime ?? slot.end,
     }));
 
     return {
@@ -116,11 +58,80 @@ export default async function OrganisationPage(props: Props) {
     return acc;
   }, {} as Record<string, Record<string, unknown[]>>);
 
-  const organisation = {
+  return {
     ...data.organisation,
     services,
     groupedServices,
   };
+}
+
+async function fetchOrganisationData(slug: string) {
+  const cacheKey = `org-${slug}`;
+  const cached = organisationCache.get(cacheKey);
+  
+  // Return cached data if it's fresh
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    return cached.data;
+  }
+
+  // Skip API call if MONGODB_URI is missing (e.g., in CI tests)
+  if (!process.env.MONGODB_URI) {
+    return null;
+  }
+  
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  
+  try {
+    const res = await fetch(`${baseUrl}/api/service-providers/${slug}`, {
+      cache: 'no-store',
+    });
+    
+    if (!res.ok) {
+      return null;
+    }
+    
+    const data = await res.json();
+    
+    // Cache the result
+    organisationCache.set(cacheKey, { data, timestamp: Date.now() });
+    
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const { slug } = await props.params;
+  
+  // Always return a fallback title for E2E tests and error cases
+  const fallbackMetadata = {
+    title: 'Organisation Not Found | Street Support',
+    description: 'The organisation you are looking for could not be found.',
+  };
+  
+  const data = await fetchOrganisationData(slug);
+  
+  if (!data || !data.organisation) {
+    return fallbackMetadata;
+  }
+  
+  return {
+    title: `${data.organisation.name} | Street Support`,
+    description: data.organisation.description || `Services provided by ${data.organisation.name}`,
+  };
+}
+
+export default async function OrganisationPage(props: Props) {
+  const { slug } = await props.params;
+
+  const data = await fetchOrganisationData(slug);
+
+  if (!data || !data.organisation) {
+    return notFound();
+  }
+
+  const organisation = processOrganisationData(data);
 
 
   return <OrganisationShell organisation={organisation} />;

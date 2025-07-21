@@ -1,8 +1,21 @@
 'use client';
 
 import React from 'react';
+import dynamic from 'next/dynamic';
 import type { OrganisationDetails } from '@/utils/organisation';
-import GoogleMap from '@/components/MapComponent/GoogleMap';
+
+// Lazy load GoogleMap to improve initial page load performance
+const GoogleMap = dynamic(() => import('@/components/MapComponent/GoogleMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600 mx-auto mb-2"></div>
+        <p className="text-gray-600">Loading map...</p>
+      </div>
+    </div>
+  ),
+});
 
 interface Props {
   organisation: OrganisationDetails;

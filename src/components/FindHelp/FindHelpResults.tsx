@@ -6,6 +6,7 @@ import { useSearchNavigation } from '@/contexts/SearchNavigationContext';
 import { useSearchParams } from 'next/navigation';
 import ServiceCard from './ServiceCard';
 import FilterPanel from './FilterPanel';
+import RadiusFilter from './RadiusFilter';
 import GoogleMap from '@/components/MapComponent/GoogleMap';
 import type { ServiceWithDistance } from '@/types';
 
@@ -28,7 +29,7 @@ interface MapMarker {
 }
 
 export default function FindHelpResults({ services, loading = false, error = null }: Props) {
-  const { location } = useLocation();
+  const { location, updateRadius } = useLocation();
   const { saveSearchState, searchState } = useSearchNavigation();
   const searchParams = useSearchParams();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -147,6 +148,14 @@ export default function FindHelpResults({ services, loading = false, error = nul
                 <option value="alpha">Alphabetical</option>
               </select>
             </div>
+            <div className="flex items-center gap-2">
+              <label htmlFor="radius-filter" className="text-sm font-medium">Search radius:</label>
+              <RadiusFilter
+                selectedRadius={location?.radius || 5}
+                onRadiusChange={updateRadius}
+                className="border px-2 py-1 rounded"
+              />
+            </div>
             <button
               onClick={() => setShowMap(!showMap)}
               className="text-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 ml-auto"
@@ -209,11 +218,6 @@ export default function FindHelpResults({ services, loading = false, error = nul
                     }
                     onNavigate={handleServiceNavigation}
                   />
-                  {service.distance !== undefined && (
-                    <p className="text-sm text-gray-500 mt-auto pt-4">
-                      Approx. {service.distance.toFixed(1)} km away
-                    </p>
-                  )}
                 </div>
               ))}
             </div>

@@ -5,6 +5,7 @@ import Accordion from '@/components/ui/Accordion';
 import type { OrganisationDetails } from '@/utils/organisation';
 import type { FlattenedService } from '@/types';
 import { decodeText } from '@/utils/htmlDecode';
+import { isServiceOpenNow } from '@/utils/openingTimes';
 
 interface Address {
   Street?: string;
@@ -115,13 +116,37 @@ export default function OrganisationServicesAccordion({ organisation }: Props) {
 
                   {service.openTimes && service.openTimes.length > 0 && (
                     <div>
-                      <p className="font-semibold mb-1">Opening Times:</p>
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-semibold">Opening Times:</p>
+                        {(() => {
+                          const openingStatus = isServiceOpenNow(service as FlattenedServiceWithAddress);
+                          return (
+                            <div className="flex items-center gap-2">
+                              {openingStatus.isOpen && (
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                  Available Now
+                                </span>
+                              )}
+                              {openingStatus.isAppointmentOnly && (
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                  Appointment Only
+                                </span>
+                              )}
+                              {!openingStatus.isOpen && openingStatus.nextOpen && (
+                                <span className="text-xs text-gray-600">
+                                  Next open: {openingStatus.nextOpen.day} {openingStatus.nextOpen.time}
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })()}
+                      </div>
                       <ul className="list-disc pl-5">
                         {service.openTimes.map((slot, idx) => {
                           const dayIndex = Number(slot.day);
                           const startTime = Number(slot.start);
                           const endTime = Number(slot.end);
-                          const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                          const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
                           return (
                             <li key={idx}>

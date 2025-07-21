@@ -70,7 +70,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
       const params = new URLSearchParams({
         lat: locationData.lat.toString(),
         lng: locationData.lng.toString(),
-        radius: (locationData.radius || 10).toString(),
+        radius: (locationData.radius || 5).toString(),
         limit: '1000',
       });
 
