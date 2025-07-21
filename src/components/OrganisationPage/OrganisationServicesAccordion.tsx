@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Accordion from '@/components/ui/Accordion';
 import type { OrganisationDetails } from '@/utils/organisation';
 import type { FlattenedService } from '@/types';
+import { decodeText } from '@/utils/htmlDecode';
 
 interface Address {
   Street?: string;
@@ -78,7 +79,7 @@ export default function OrganisationServicesAccordion({ organisation }: Props) {
                   onToggle={() => setOpenAccordion(openAccordion === key ? null : key)}
                 >
                   {service.description && (
-                    <p className="mb-4 whitespace-pre-line">{service.description}</p>
+                    <p className="mb-4 whitespace-pre-line">{decodeText(service.description)}</p>
                   )}
 
                   {fullAddress && (

@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 
 import type { ServiceWithDistance } from '@/types';
+import { decodeText } from '@/utils/htmlDecode';
 
 interface ServiceCardProps {
   service: ServiceWithDistance;
@@ -17,17 +18,21 @@ export default function ServiceCard({ service, isOpen, onToggle, onNavigate }: S
     ? `/find-help/organisation/${service.organisation.slug}`
     : '#';
 
+  const decodedDescription = decodeText(service.description);
+  const decodedName = decodeText(service.name);
+  const decodedOrgName = decodeText(service.organisation?.name || '');
+
   const preview =
-    service.description.length > 120
-      ? service.description.slice(0, 120) + '...'
-      : service.description;
+    decodedDescription.length > 120
+      ? decodedDescription.slice(0, 120) + '...'
+      : decodedDescription;
 
   return (
     <Link
       href={destination}
       onClick={onNavigate}
       className="relative block border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-a"
-      aria-label={`View details for ${service.name}`}
+      aria-label={`View details for ${decodedName}`}
     >
       {/* ✅ Verified check icon */}
       {service.organisation?.isVerified && (
@@ -49,15 +54,15 @@ export default function ServiceCard({ service, isOpen, onToggle, onNavigate }: S
         </span>
       )}
 
-      <h2 className="text-lg font-semibold mb-1">{service.name}</h2>
+      <h2 className="text-lg font-semibold mb-1">{decodedName}</h2>
 
-      {service.organisation?.name && (
-        <p className="text-sm text-gray-600 mb-2">{service.organisation.name}</p>
+      {decodedOrgName && (
+        <p className="text-sm text-gray-600 mb-2">{decodedOrgName}</p>
       )}
 
       <p className="text-gray-800 mb-2">
-        {isOpen ? service.description : preview}
-        {service.description.length > 120 && (
+        {isOpen ? decodedDescription : preview}
+        {decodedDescription.length > 120 && (
           <button
             type="button"
             onClick={(e) => {

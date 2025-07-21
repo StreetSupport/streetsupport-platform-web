@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
+import { decodeText } from '@/utils/htmlDecode';
 
 export async function GET(req: Request) {
   // ✅ App Router API routes do not receive `context.params`
@@ -73,9 +74,9 @@ export async function GET(req: Request) {
 
     const provider = {
       key: rawProvider.Key,
-      name: rawProvider.Name,
-      shortDescription: rawProvider.ShortDescription,
-      description: rawProvider.Description,
+      name: decodeText(rawProvider.Name),
+      shortDescription: decodeText(rawProvider.ShortDescription || ''),
+      description: decodeText(rawProvider.Description || ''),
       website: rawProvider.Website,
       telephone: rawProvider.Telephone,
       email: rawProvider.Email,
@@ -90,11 +91,17 @@ export async function GET(req: Request) {
       addresses: rawProvider.Addresses || [],
     };
 
+    const decodedServices = services.map(service => ({
+      ...service,
+      Info: decodeText(service.Info || ''),
+      SubCategoryName: decodeText(service.SubCategoryName || '')
+    }));
+
     return NextResponse.json({
       status: 'success',
       organisation: provider,
       addresses: provider.addresses,
-      services: services,
+      services: decodedServices,
     });
 
   } catch (error) {
