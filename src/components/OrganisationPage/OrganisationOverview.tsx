@@ -3,6 +3,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useSearchNavigation } from '@/contexts/SearchNavigationContext';
 import type { OrganisationDetails } from '@/utils/organisation';
+import { decodeText } from '@/utils/htmlDecode';
 
 interface Props {
   organisation: OrganisationDetails;
@@ -11,6 +12,9 @@ interface Props {
 export default function OrganisationOverview({ organisation }: Props) {
   const router = useRouter();
   const { hasSearchState, searchState } = useSearchNavigation();
+  
+  const decodedName = decodeText(organisation.name);
+  const decodedDescription = decodeText(organisation.description || '');
 
   const handleBackToResults = () => {
     if (hasSearchState && searchState) {
@@ -51,14 +55,14 @@ export default function OrganisationOverview({ organisation }: Props) {
         </div>
       )}
       
-      <h1 className="text-2xl font-bold mb-2">{organisation.name}</h1>
+      <h1 className="text-2xl font-bold mb-2">{decodedName}</h1>
 
       {organisation.shortDescription && (
-        <p className="text-lg mb-2">{organisation.shortDescription}</p>
+        <p className="text-lg mb-2">{decodeText(organisation.shortDescription)}</p>
       )}
 
-      {organisation.description && (
-        <p className="text-gray-700 whitespace-pre-line">{organisation.description}</p>
+      {decodedDescription && (
+        <p className="text-gray-700 whitespace-pre-line">{decodedDescription}</p>
       )}
     </section>
   );

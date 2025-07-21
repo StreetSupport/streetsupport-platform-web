@@ -7,7 +7,6 @@ import LocationPrompt from '@/components/Location/LocationPrompt';
 import FindHelpResults from '@/components/FindHelp/FindHelpResults';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import type { ServiceWithDistance } from '@/types';
-import { decodeHtmlEntities } from '@/utils/htmlDecode';
 
 interface FindHelpPageClientProps {
   searchParams: { [key: string]: string | string[] | undefined };
@@ -115,16 +114,14 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
         const coords = ((serviceItem.Address as Record<string, unknown>)?.Location as Record<string, unknown>)?.coordinates as number[] || [0, 0];
         return {
           id: serviceItem._id || serviceItem.id,
-          name: decodeHtmlEntities(String(serviceItem.ServiceProviderName || serviceItem.name || '')),
-          description: decodeHtmlEntities(String(serviceItem.Info || serviceItem.description || '')),
+          name: String(serviceItem.ServiceProviderName || serviceItem.name || ''),
+          description: String(serviceItem.Info || serviceItem.description || ''),
           category: serviceItem.ParentCategoryKey || serviceItem.category || '',
           subCategory: serviceItem.SubCategoryKey || serviceItem.subCategory || '',
           latitude: coords[1],
           longitude: coords[0],
           organisation: {
-            name: decodeHtmlEntities(
-              String((serviceItem.organisation as Record<string, unknown>)?.name || serviceItem.ServiceProviderName || '')
-            ),
+            name: String((serviceItem.organisation as Record<string, unknown>)?.name || serviceItem.ServiceProviderName || ''),
             slug: (serviceItem.organisation as Record<string, unknown>)?.slug || serviceItem.ServiceProviderKey || '',
             isVerified: (serviceItem.organisation as Record<string, unknown>)?.isVerified || false,
           },
@@ -183,16 +180,14 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
                 const coords = ((fallbackItem.Address as Record<string, unknown>)?.Location as Record<string, unknown>)?.coordinates as number[] || [0, 0];
                 return {
                   id: fallbackItem._id || fallbackItem.id,
-                  name: decodeHtmlEntities(String(fallbackItem.ServiceProviderName || fallbackItem.name || '')),
-                  description: decodeHtmlEntities(String(fallbackItem.Info || fallbackItem.description || '')),
+                  name: String(fallbackItem.ServiceProviderName || fallbackItem.name || ''),
+                  description: String(fallbackItem.Info || fallbackItem.description || ''),
                   category: fallbackItem.ParentCategoryKey || fallbackItem.category || '',
                   subCategory: fallbackItem.SubCategoryKey || fallbackItem.subCategory || '',
                   latitude: coords[1],
                   longitude: coords[0],
                   organisation: {
-                    name: decodeHtmlEntities(
-                      String((fallbackItem.organisation as Record<string, unknown>)?.name || fallbackItem.ServiceProviderName || '')
-                    ),
+                    name: String((fallbackItem.organisation as Record<string, unknown>)?.name || fallbackItem.ServiceProviderName || ''),
                     slug: (fallbackItem.organisation as Record<string, unknown>)?.slug || fallbackItem.ServiceProviderKey || '',
                     isVerified: (fallbackItem.organisation as Record<string, unknown>)?.isVerified || false,
                   },
@@ -262,14 +257,14 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
             const coords = ((browseItem.Address as Record<string, unknown>)?.Location as Record<string, unknown>)?.coordinates as number[] || [0, 0];
             return {
               id: browseItem._id || browseItem.id,
-              name: decodeHtmlEntities(String(browseItem.ServiceProviderName || browseItem.name || '')),
-              description: decodeHtmlEntities(String(browseItem.Info || browseItem.description || '')),
+              name: String(browseItem.ServiceProviderName || browseItem.name || ''),
+              description: String(browseItem.Info || browseItem.description || ''),
               category: browseItem.ParentCategoryKey || browseItem.category || '',
               subCategory: browseItem.SubCategoryKey || browseItem.subCategory || '',
               latitude: coords[1],
               longitude: coords[0],
               organisation: {
-                name: decodeHtmlEntities(String((browseItem.organisation as Record<string, unknown>)?.name || browseItem.ServiceProviderName || '')),
+                name: String((browseItem.organisation as Record<string, unknown>)?.name || browseItem.ServiceProviderName || ''),
                 slug: (browseItem.organisation as Record<string, unknown>)?.slug || browseItem.ServiceProviderKey || '',
                 isVerified: (browseItem.organisation as Record<string, unknown>)?.isVerified || false,
               },

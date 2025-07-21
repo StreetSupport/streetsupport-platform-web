@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
 import fallbackProviders from '@/data/service-providers.json';
+import { decodeText } from '@/utils/htmlDecode';
 
 interface MongoQuery {
   IsPublished: boolean;
@@ -216,9 +217,11 @@ export async function GET(req: Request) {
 
         const result: Record<string, unknown> = {
           ...service,
+          name: decodeText(service.ServiceProviderName || ''),
+          description: decodeText(service.Info || ''),
           organisation: provider
             ? {
-                name: provider.Name,
+                name: decodeText(provider.Name),
                 slug: provider.Key,
                 isVerified: provider.IsVerified
               }
@@ -256,16 +259,16 @@ export async function GET(req: Request) {
       let allServices: ServiceWithDistance[] = rawProviders.flatMap((provider) =>
         (provider.services ?? []).map((service: RawService): ServiceWithDistance => ({
           id: service.id,
-          name: service.name,
+          name: decodeText(service.name),
           category: service.category,
           subCategory: service.subCategory,
-          description: service.description,
+          description: decodeText(service.description),
           openTimes: service.openTimes ?? [],
           clientGroups: service.clientGroups ?? [],
           latitude: service.latitude,
           longitude: service.longitude,
           organisation: {
-            name: provider.name,
+            name: decodeText(provider.name),
             slug: provider.slug,
             isVerified: provider.verified,
           },
