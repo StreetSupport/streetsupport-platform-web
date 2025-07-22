@@ -5,6 +5,7 @@ import { useLocation } from '@/contexts/LocationContext';
 import { useSearchNavigation } from '@/contexts/SearchNavigationContext';
 import { useSearchParams } from 'next/navigation';
 import ServiceCard from './ServiceCard';
+import GroupedServiceCard from './GroupedServiceCard';
 import FilterPanel from './FilterPanel';
 import RadiusFilter from './RadiusFilter';
 import GoogleMap from '@/components/MapComponent/GoogleMap';
@@ -28,6 +29,78 @@ interface MapMarker {
   icon?: string;
 }
 
+// Grouping interfaces
+interface ServiceGroup {
+  orgId: string;
+  orgName: string;
+  orgSlug: string;
+  isVerified: boolean;
+  orgDescription?: string;
+  services: ServiceWithDistance[];
+  categories: string[];
+  subcategories: string[];
+  distance: number; // Minimum distance from any service in the group
+}
+
+// Utility function to group services by organisation only
+function groupServicesByOrganisation(
+  services: ServiceWithDistance[],
+  selectedCategory: string = '',
+  selectedSubCategory: string = ''
+): ServiceGroup[] {
+  const groups = new Map<string, ServiceGroup>();
+
+  services.forEach((service) => {
+    // Apply filtering at the service level first
+    const categoryMatch = selectedCategory ? service.category === selectedCategory : true;
+    const subCategoryMatch = selectedSubCategory ? service.subCategory === selectedSubCategory : true;
+    
+    if (!categoryMatch || !subCategoryMatch) {
+      return; // Skip this service if it doesn't match filters
+    }
+
+    const groupKey = service.organisation.slug; // Group by organisation only
+    
+    if (!groups.has(groupKey)) {
+      // Use the first service's description as the organization description
+      // In a real scenario, this would come from organization data
+      const orgDescription = service.description || '';
+      
+      groups.set(groupKey, {
+        orgId: service.organisation.slug,
+        orgName: service.organisation.name,
+        orgSlug: service.organisation.slug,
+        isVerified: service.organisation.isVerified || false,
+        orgDescription: orgDescription,
+        services: [],
+        categories: [],
+        subcategories: [],
+        distance: service.distance || 0,
+      });
+    }
+
+    const group = groups.get(groupKey)!;
+    group.services.push(service);
+    
+    // Add category if not already present
+    if (!group.categories.includes(service.category)) {
+      group.categories.push(service.category);
+    }
+    
+    // Add subcategory if not already present
+    if (!group.subcategories.includes(service.subCategory)) {
+      group.subcategories.push(service.subCategory);
+    }
+    
+    // Update distance to minimum distance in group
+    if (service.distance && service.distance < group.distance) {
+      group.distance = service.distance;
+    }
+  });
+
+  return Array.from(groups.values());
+}
+
 export default function FindHelpResults({ services, loading = false, error = null }: Props) {
   const { location, updateRadius } = useLocation();
   const { saveSearchState, searchState } = useSearchNavigation();
@@ -41,7 +114,27 @@ export default function FindHelpResults({ services, loading = false, error = nul
   const [openDescriptionId, setOpenDescriptionId] = useState<string | null>(null);
   const [isRestoringState, setIsRestoringState] = useState(false);
 
-  // Filter services by category and subcategory (radius filtering is now handled by API)
+  // Centralized read more state management
+  const handleToggleDescription = (id: string) => {
+    setOpenDescriptionId(openDescriptionId === id ? null : id);
+  };
+
+  // Group services by organisation only
+  const groupedServices = useMemo(() => {
+    if (!services || services.length === 0) return [];
+    
+    return groupServicesByOrganisation(services, selectedCategory, selectedSubCategory);
+  }, [services, selectedCategory, selectedSubCategory]);
+
+  // Sort grouped services
+  const sortedGroups = useMemo(() => {
+    if (sortOrder === 'alpha') {
+      return [...groupedServices].sort((a, b) => a.orgName.localeCompare(b.orgName));
+    }
+    return [...groupedServices].sort((a, b) => a.distance - b.distance);
+  }, [groupedServices, sortOrder]);
+
+  // Create filtered services for map markers (using original flat structure)
   const filteredServices = useMemo(() => {
     if (!services || services.length === 0) return [];
     
@@ -51,13 +144,6 @@ export default function FindHelpResults({ services, loading = false, error = nul
       return categoryMatch && subCategoryMatch;
     });
   }, [services, selectedCategory, selectedSubCategory]);
-
-  const sortedServices = useMemo(() => {
-    if (sortOrder === 'alpha') {
-      return [...filteredServices].sort((a, b) => a.name.localeCompare(b.name));
-    }
-    return [...filteredServices].sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0));
-  }, [filteredServices, sortOrder]);
 
   // Restore search state if available
   useEffect(() => {
@@ -198,26 +284,33 @@ export default function FindHelpResults({ services, loading = false, error = nul
                 </div>
               </div>
             </div>
-          ) : sortedServices.length === 0 ? (
+          ) : sortedGroups.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-600 mb-2">No services found matching your criteria.</p>
               <p className="text-sm text-gray-500">Try adjusting your filters or search in a different area.</p>
             </div>
           ) : (
             <div className={`gap-4 ${showMap ? 'flex flex-col' : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
-              {sortedServices.map((service) => (
+              {sortedGroups.map((group) => (
                 <div
-                  key={service.id}
+                  key={group.orgId}
                   className="border border-gray-300 rounded-md p-4 bg-white flex flex-col"
                 >
-                  <ServiceCard
-                    service={service}
-                    isOpen={openDescriptionId === service.id}
-                    onToggle={() =>
-                      setOpenDescriptionId(openDescriptionId === service.id ? null : service.id)
-                    }
-                    onNavigate={handleServiceNavigation}
-                  />
+                  {group.services.length === 1 ? (
+                    <ServiceCard
+                      service={group.services[0]}
+                      isOpen={openDescriptionId === group.services[0].id}
+                      onToggle={() => handleToggleDescription(group.services[0].id)}
+                      onNavigate={handleServiceNavigation}
+                    />
+                  ) : (
+                    <GroupedServiceCard
+                      group={group}
+                      isDescriptionOpen={openDescriptionId === group.orgId}
+                      onToggleDescription={() => handleToggleDescription(group.orgId)}
+                      onNavigate={handleServiceNavigation}
+                    />
+                  )}
                 </div>
               ))}
             </div>

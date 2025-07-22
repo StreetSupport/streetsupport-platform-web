@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 
 import type { ServiceWithDistance } from '@/types';
+import MarkdownContent from '@/components/ui/MarkdownContent';
 import { decodeText } from '@/utils/htmlDecode';
 import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup';
 import { isServiceOpenNow, formatDistance } from '@/utils/openingTimes';
@@ -50,14 +51,14 @@ export default function ServiceCard({ service, isOpen, onToggle, onNavigate }: S
       {/* Top row with verified icon and distance */}
       <div className="flex justify-between items-start mb-2">
         <div className="flex items-center gap-2">
-          {/* ✅ Verified check icon */}
+          {/* ✅ Verified badge */}
           {service.organisation?.isVerified && (
             <span
-              className="inline-flex items-center justify-center"
+              className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-800"
               title="Verified Service"
             >
               <svg
-                className="w-4 h-4 text-green-600"
+                className="w-3 h-3 text-green-600"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -67,13 +68,14 @@ export default function ServiceCard({ service, isOpen, onToggle, onNavigate }: S
                   clipRule="evenodd"
                 />
               </svg>
+              <span className="text-xs font-medium">Verified</span>
             </span>
           )}
           
-          {/* Available Now indicator */}
+          {/* Open Now indicator */}
           {openingStatus.isOpen && (
             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-              Available Now
+              Open Now
             </span>
           )}
           
@@ -100,9 +102,13 @@ export default function ServiceCard({ service, isOpen, onToggle, onNavigate }: S
       <p className="text-sm text-gray-600 mb-2">{formattedCategory}</p>
 
       {/* Description */}
-      <p className="text-gray-800 mb-2">
-        {isOpen ? decodedDescription : preview}
-      </p>
+      <div className="text-gray-800 mb-2">
+        {isOpen ? (
+          <MarkdownContent content={service.description} className="prose-sm" />
+        ) : (
+          <p>{preview}</p>
+        )}
+      </div>
       
       {/* Read more/less button on its own line */}
       {decodedDescription.length > 120 && (
@@ -114,13 +120,46 @@ export default function ServiceCard({ service, isOpen, onToggle, onNavigate }: S
               e.stopPropagation();
               onToggle();
             }}
-            className="text-blue-600 underline text-sm hover:text-blue-800"
+            className="text-blue-600 underline text-sm hover:text-blue-800 cursor-pointer"
           >
             {isOpen ? 'Show less' : 'Read more'}
           </button>
         </div>
       )}
 
+      {/* Opening Times */}
+      {service.openTimes && service.openTimes.length > 0 ? (
+        <div className="mt-3">
+          <p className="font-semibold text-sm mb-1">Opening Times:</p>
+          <ul className="list-disc pl-5 text-sm">
+            {service.openTimes.map((slot, idx) => {
+              // Access the correct property names from the raw data
+              const dayIndex = Number(slot.Day);
+              const startTime = Number(slot.StartTime);
+              const endTime = Number(slot.EndTime);
+              // Database: Monday=0, Tuesday=1, ..., Sunday=6
+              const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+              
+              const formatTime = (time: number) => {
+                // Handle invalid numbers
+                if (isNaN(time)) return '00:00';
+                const str = time.toString().padStart(4, '0');
+                return `${str.slice(0, 2)}:${str.slice(2)}`;
+              };
+
+              return (
+                <li key={idx}>
+                  {days[dayIndex] ?? 'Unknown'}: {formatTime(startTime)} – {formatTime(endTime)}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ) : (
+        <div className="mt-3">
+          <p className="text-xs text-gray-500">No opening times available</p>
+        </div>
+      )}
 
       {/* Next open indicator */}
       {!openingStatus.isOpen && openingStatus.nextOpen && (

@@ -22,7 +22,7 @@ export default function Accordion({
       <button
         type="button"
         onClick={onToggle}
-        className="w-full text-left px-4 py-3 bg-gray-100 hover:bg-gray-200 flex justify-between items-center"
+        className="w-full text-left px-4 py-3 bg-gray-100 hover:bg-gray-200 flex justify-between items-center cursor-pointer"
       >
         <span className="font-medium">{title}</span>
         <svg

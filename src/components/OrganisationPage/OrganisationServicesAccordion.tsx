@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Accordion from '@/components/ui/Accordion';
+import MarkdownContent from '@/components/ui/MarkdownContent';
 import type { OrganisationDetails } from '@/utils/organisation';
 import type { FlattenedService } from '@/types';
-import { decodeText } from '@/utils/htmlDecode';
 import { isServiceOpenNow } from '@/utils/openingTimes';
 
 interface Address {
@@ -28,11 +28,34 @@ interface Props {
 }
 
 export default function OrganisationServicesAccordion({ organisation }: Props) {
-  const groupedServices: Record<string, Record<string, FlattenedServiceWithAddress[]>> =
-    organisation.groupedServices || {};
+  const groupedServices = useMemo(() => 
+    organisation.groupedServices || {},
+    [organisation.groupedServices]
+  );
   const parentCategories = Object.keys(groupedServices);
 
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
+
+  // Check for hash in URL to open specific accordion
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash.slice(1); // Remove the # character
+      if (hash) {
+        // Check if the hash matches any accordion key
+        const matchesAccordion = parentCategories.some(category => {
+          const subCategories = Object.keys(groupedServices[category] || {});
+          return subCategories.some(subCategory => {
+            const key = `${category}-${subCategory}`;
+            return key === hash;
+          });
+        });
+        
+        if (matchesAccordion) {
+          setOpenAccordion(hash);
+        }
+      }
+    }
+  }, [parentCategories, groupedServices]);
 
   if (parentCategories.length === 0) return null;
 
@@ -80,7 +103,9 @@ export default function OrganisationServicesAccordion({ organisation }: Props) {
                   onToggle={() => setOpenAccordion(openAccordion === key ? null : key)}
                 >
                   {service.description && (
-                    <p className="mb-4 whitespace-pre-line">{decodeText(service.description)}</p>
+                    <div className="mb-4">
+                      <MarkdownContent content={service.description} />
+                    </div>
                   )}
 
                   {fullAddress && (
@@ -120,16 +145,39 @@ export default function OrganisationServicesAccordion({ organisation }: Props) {
                         <p className="font-semibold">Opening Times:</p>
                         {(() => {
                           const openingStatus = isServiceOpenNow(service as FlattenedServiceWithAddress);
+                          
+                          // Check for phone service
+                          const isPhoneService = service.subCategory.toLowerCase().includes('telephone') || 
+                                               service.subCategory.toLowerCase().includes('phone') ||
+                                               service.subCategory.toLowerCase().includes('helpline');
+                          
+                          // Check for 24-hour service
+                          const is24Hour = service.openTimes.some(slot => {
+                            const startTime = Number(slot.start);
+                            const endTime = Number(slot.end);
+                            return startTime === 0 && endTime === 2359; // 00:00 to 23:59
+                          });
+                          
                           return (
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center flex-wrap gap-2">
                               {openingStatus.isOpen && (
                                 <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                  Available Now
+                                  Open Now
                                 </span>
                               )}
                               {openingStatus.isAppointmentOnly && (
                                 <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                   Appointment Only
+                                </span>
+                              )}
+                              {isPhoneService && (
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                  Phone Service
+                                </span>
+                              )}
+                              {is24Hour && (
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                  24 Hours
                                 </span>
                               )}
                               {!openingStatus.isOpen && openingStatus.nextOpen && (
@@ -146,7 +194,8 @@ export default function OrganisationServicesAccordion({ organisation }: Props) {
                           const dayIndex = Number(slot.day);
                           const startTime = Number(slot.start);
                           const endTime = Number(slot.end);
-                          const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                          // Database: Monday=0, Tuesday=1, ..., Sunday=6
+                          const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
                           return (
                             <li key={idx}>
