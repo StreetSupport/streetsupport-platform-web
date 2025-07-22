@@ -29,6 +29,7 @@ export interface LocationError {
 interface LocationContextType {
   location: LocationState | null;
   setLocation: (location: LocationState) => void;
+  updateRadius: (radius: number) => void;
   requestLocation: () => Promise<void>;
   error: LocationError | null;
   isLoading: boolean;
@@ -60,7 +61,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
           lat: locationData.latitude,
           lng: locationData.longitude,
           source: 'navigation',
-          radius: 10, // Default radius in km
+          radius: 5, // Default radius in km
         });
       }
     }
@@ -85,7 +86,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
             source: 'geolocation',
-            radius: 10, // Default radius in km
+            radius: 5, // Default radius in km
           });
           setIsLoading(false);
           resolve();
@@ -140,11 +141,16 @@ export function LocationProvider({ children }: { children: ReactNode }) {
     setError(null); // Clear any existing errors when location is set
   }, []);
 
+  const updateRadius = useCallback((radius: number) => {
+    setLocation(prev => prev ? { ...prev, radius } : null);
+  }, []);
+
   return (
     <LocationContext.Provider 
       value={{ 
         location, 
         setLocation: enhancedSetLocation, 
+        updateRadius,
         requestLocation, 
         error, 
         isLoading, 

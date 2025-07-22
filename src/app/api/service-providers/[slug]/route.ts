@@ -43,6 +43,7 @@ export async function GET(req: Request) {
           IsPublished: 1,
           AssociatedLocationIds: 1,
           Tags: 1,
+          RegisteredCharity: 1,
           Addresses: 1,
         },
       }
@@ -88,6 +89,7 @@ export async function GET(req: Request) {
       isPublished: rawProvider.IsPublished,
       associatedLocationIds: rawProvider.AssociatedLocationIds,
       tags: rawProvider.Tags,
+      RegisteredCharity: rawProvider.RegisteredCharity,
       addresses: rawProvider.Addresses || [],
     };
 

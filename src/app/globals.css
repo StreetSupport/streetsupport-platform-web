@@ -4,6 +4,28 @@
 /* Core import for Tailwind v4 */
 @import "tailwindcss";
 
+/* Brand Colors for Tailwind v4 */
+@theme {
+  --color-brand-a: #38ae8e;
+  --color-brand-b: #0b9b75;
+  --color-brand-c: #086049;
+  --color-brand-d: #ffa200;
+  --color-brand-e: #ffde00;
+  --color-brand-f: #8d8d8d;
+  --color-brand-g: #a90000;
+  --color-brand-h: #5a497f;
+  --color-brand-i: #f6e9d2;
+  --color-brand-j: #e1c116;
+  --color-brand-k: #48484a;
+  --color-brand-l: #29272a;
+  --color-brand-m: #101011;
+  --color-brand-n: #9886bf;
+  --color-brand-p: #086149;
+  --color-brand-q: #f3f3f3;
+  --color-brand-r: #0A8564;
+  --color-brand-s: #E1B500;
+}
+
 /* Your test style */
 .btn-test {
   @apply px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700;

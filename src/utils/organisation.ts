@@ -35,7 +35,8 @@ export interface OrganisationDetails {
   isVerified?: boolean;
   isPublished?: boolean;
   associatedLocationIds?: string[];
-  tags?: string[];
+  tags?: string[] | string;
+  RegisteredCharity?: number;
   addresses: Address[];
   services: FlattenedService[];
   groupedServices: Record<string, Record<string, FlattenedService[]>>;

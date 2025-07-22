@@ -191,7 +191,7 @@ describe('LocationContext', () => {
           lat: 3,
           lng: 4,
           source: 'geolocation',
-          radius: 10
+          radius: 5
         });
       });
 
@@ -438,7 +438,7 @@ describe('LocationContext', () => {
         lat: 52.4862,
         lng: -1.8904,
         source: 'navigation',
-        radius: 10
+        radius: 5
       });
     });
 
@@ -457,7 +457,7 @@ describe('LocationContext', () => {
         lat: 53.8021,
         lng: -1.5485,
         source: 'navigation',
-        radius: 10
+        radius: 5
       });
     });
 
@@ -526,7 +526,7 @@ describe('LocationContext', () => {
         lat: 52.4862,
         lng: -1.8904,
         source: 'navigation',
-        radius: 10
+        radius: 5
       });
     });
   });

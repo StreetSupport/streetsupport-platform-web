@@ -43,11 +43,14 @@ module.exports = {
     // Mock third-party libraries
     '^leaflet': '<rootDir>/tests/__mocks__/leaflet.js',
     '^react-leaflet': '<rootDir>/tests/__mocks__/react-leaflet.ts',
+    // Mock markdown components to avoid ESM issues
+    'react-markdown': '<rootDir>/tests/__mocks__/react-markdown.js',
+    'rehype-raw': '<rootDir>/tests/__mocks__/rehype-raw.js',
   },
   moduleDirectories: ['node_modules', 'src'],
   transformIgnorePatterns: [
     // Keep ESM packages unignored if needed for transpile
-    'node_modules/(?!(react-leaflet|@react-leaflet|leaflet|@esm|lodash-es)/)',
+    'node_modules/(?!(react-leaflet|@react-leaflet|leaflet|@esm|lodash-es|react-markdown|rehype-raw|unified|remark-parse|remark-rehype|rehype-stringify|micromark|mdast-util-from-markdown|mdast-util-to-hast|hast-util-to-html|vfile|unist-util-stringify-position|bail|is-plain-obj|trough|zwitch|property-information|space-separated-tokens|comma-separated-tokens|hast-util-parse-selector|hastscript|html-void-elements|web-namespaces)/)',
   ],
   // Coverage configuration
   collectCoverage: true,

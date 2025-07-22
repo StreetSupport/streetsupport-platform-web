@@ -56,9 +56,9 @@ beforeEach(() => {
   mockSetMap.mockClear();
   mockMapConstructor.mockClear();
 
-  // Mock window.location
+  // Use the global mock location to avoid navigation errors
   delete (window as any).location;
-  (window as any).location = { href: '' };
+  (window as any).location = global.mockLocation;
 
   (window as any).google = {
     maps: {
@@ -85,7 +85,7 @@ beforeEach(() => {
 
 afterEach(() => {
   delete (window as any).google;
-  delete (window as any).location;
+  // Don't delete window.location as it affects other tests
 });
 
 describe('GoogleMap', () => {

@@ -74,11 +74,12 @@ if (typeof window !== 'undefined') {
 // Capture original console.error before overriding it
 const originalError = console.error;
 
-// Suppress only specific React test warnings
+// Suppress specific React test warnings and jsdom navigation errors
 beforeAll(() => {
   jest.spyOn(console, 'error').mockImplementation((msg) => {
     const [text] = Array.isArray(msg) ? msg : [msg];
     if (typeof text === 'string' && text.includes('not wrapped in act')) return;
+    if (typeof text === 'string' && text.includes('Not implemented: navigation')) return;
     originalError(...(Array.isArray(msg) ? msg : [msg]));
   });
 });

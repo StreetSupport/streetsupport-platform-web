@@ -29,15 +29,16 @@ export default function HomepageMap() {
   }, []);
 
   return (
-    <section className="w-full max-w-7xl mx-auto px-4 py-6">
-      <h2 className="text-xl font-semibold mb-4 text-center">Find Street Support in your area</h2>
-      <div className="w-full max-w-md mx-auto rounded overflow-hidden border">
-        <GoogleMap
-          center={{ lat: 53.4098, lng: -2.1576 }}
-          markers={markers}
-          zoom={6}
-        />
+    <div className="w-full">
+      <div className="rounded-lg overflow-hidden shadow-lg border border-gray-200 bg-white">
+        <div className="h-[500px] w-full">
+          <GoogleMap
+            center={{ lat: 53.4098, lng: -2.1576 }}
+            markers={markers}
+            zoom={6}
+          />
+        </div>
       </div>
-    </section>
+    </div>
   );
 }

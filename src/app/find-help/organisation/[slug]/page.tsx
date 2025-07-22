@@ -6,74 +6,18 @@ import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup'
 
 import type { RawService } from '@/types/api';
 import type { Metadata } from 'next';
+import type { Address } from '@/utils/organisation';
+import type { FlattenedService } from '@/types';
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata(props: Props): Promise<Metadata> {
-  const { slug } = await props.params;
-  
-  // Always return a fallback title for E2E tests and error cases
-  // This ensures the page always has a title, even when the API fails
-  const fallbackMetadata = {
-    title: 'Organisation Not Found | Street Support',
-    description: 'The organisation you are looking for could not be found.',
-  };
-  
-  // Skip API call if MONGODB_URI is missing (e.g., in CI tests)
-  if (!process.env.MONGODB_URI) {
-    return fallbackMetadata;
-  }
-  
-  // ✅ Use absolute URL for server fetch
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  
-  try {
-    const res = await fetch(`${baseUrl}/api/service-providers/${slug}`, {
-      cache: 'no-store',
-    });
-    
-    if (!res.ok) {
-      return fallbackMetadata;
-    }
-    
-    const data = await res.json();
-    
-    if (!data || !data.organisation) {
-      return fallbackMetadata;
-    }
-    
-    return {
-      title: `${data.organisation.name} | Street Support`,
-      description: data.organisation.description || `Services provided by ${data.organisation.name}`,
-    };
-  } catch {
-    return fallbackMetadata;
-  }
-}
+// Shared cache for organisation data to eliminate double API calls
+const organisationCache = new Map<string, { data: unknown; timestamp: number }>();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-export default async function OrganisationPage(props: Props) {
-  const { slug } = await props.params;
-
-  // ✅ Use absolute URL for server fetch
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-
-  const res = await fetch(`${baseUrl}/api/service-providers/${slug}`, {
-    cache: 'no-store',
-  });
-
-
-  if (!res.ok) {
-    return notFound();
-  }
-
-  const data = await res.json();
-
-  if (!data || !data.organisation) {
-    return notFound();
-  }
-
+function processOrganisationData(data: { organisation: unknown; services: unknown[] }) {
   const rawServices = (data.services || []) as RawService[];
 
   const services = rawServices.map((service, idx) => {
@@ -81,10 +25,10 @@ export default async function OrganisationPage(props: Props) {
     const parentKey = service.ParentCategoryKey || '';
     const subKey = service.SubCategoryKey || '';
 
-    const openTimes = (service.OpeningTimes || []).map(slot => ({
-      day: slot.day,
-      start: slot.start,
-      end: slot.end,
+    const openTimes = (service.OpeningTimes || []).map((slot: { Day?: number; day?: number; StartTime?: number; start?: number; EndTime?: number; end?: number }) => ({
+      day: slot.Day ?? slot.day ?? 0,
+      start: slot.StartTime ?? slot.start ?? 0,
+      end: slot.EndTime ?? slot.end ?? 0,
     }));
 
     return {
@@ -97,8 +41,8 @@ export default async function OrganisationPage(props: Props) {
       description: service.Info || '',
       address: service.Address || {},
       openTimes,
-      organisation: data.organisation.name,
-      organisationSlug: data.organisation.key,
+      organisation: (data.organisation as { name?: string; key?: string })?.name || 'Unknown Organisation',
+      organisationSlug: (data.organisation as { name?: string; key?: string })?.key || '',
       latitude: coords[1],
       longitude: coords[0],
       clientGroups: service.ClientGroups || [],
@@ -114,13 +58,119 @@ export default async function OrganisationPage(props: Props) {
     acc[parent][sub].push(s);
 
     return acc;
-  }, {} as Record<string, Record<string, unknown[]>>);
+  }, {} as Record<string, Record<string, FlattenedService[]>>);
 
-  const organisation = {
-    ...data.organisation,
+  // Extract organisation properties with proper typing
+  const orgData = data.organisation as {
+    key?: string;
+    name?: string;
+    shortDescription?: string;
+    description?: string;
+    website?: string;
+    telephone?: string;
+    email?: string;
+    facebook?: string;
+    twitter?: string;
+    instagram?: string;
+    bluesky?: string;
+    isVerified?: boolean;
+    isPublished?: boolean;
+    associatedLocationIds?: string[];
+    tags?: string[] | string;
+    RegisteredCharity?: number;
+    addresses?: Address[];
+  };
+
+  return {
+    key: orgData.key || '',
+    name: orgData.name || '',
+    shortDescription: orgData.shortDescription,
+    description: orgData.description,
+    website: orgData.website,
+    telephone: orgData.telephone,
+    email: orgData.email,
+    facebook: orgData.facebook,
+    twitter: orgData.twitter,
+    instagram: orgData.instagram,
+    bluesky: orgData.bluesky,
+    isVerified: orgData.isVerified,
+    isPublished: orgData.isPublished,
+    associatedLocationIds: orgData.associatedLocationIds,
+    tags: orgData.tags,
+    RegisteredCharity: orgData.RegisteredCharity,
+    addresses: orgData.addresses || [],
     services,
     groupedServices,
   };
+}
+
+async function fetchOrganisationData(slug: string) {
+  const cacheKey = `org-${slug}`;
+  const cached = organisationCache.get(cacheKey);
+  
+  // Return cached data if it's fresh
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    return cached.data;
+  }
+
+  // Skip API call if MONGODB_URI is missing (e.g., in CI tests)
+  if (!process.env.MONGODB_URI) {
+    return null;
+  }
+  
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  
+  try {
+    const res = await fetch(`${baseUrl}/api/service-providers/${slug}`, {
+      cache: 'no-store',
+    });
+    
+    if (!res.ok) {
+      return null;
+    }
+    
+    const data = await res.json();
+    
+    // Cache the result
+    organisationCache.set(cacheKey, { data, timestamp: Date.now() });
+    
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const { slug } = await props.params;
+  
+  // Always return a fallback title for E2E tests and error cases
+  const fallbackMetadata = {
+    title: 'Organisation Not Found | Street Support',
+    description: 'The organisation you are looking for could not be found.',
+  };
+  
+  const data = await fetchOrganisationData(slug);
+  
+  if (!data || !data.organisation) {
+    return fallbackMetadata;
+  }
+  
+  return {
+    title: `${data.organisation.name} | Street Support`,
+    description: data.organisation.description || `Services provided by ${data.organisation.name}`,
+  };
+}
+
+export default async function OrganisationPage(props: Props) {
+  const { slug } = await props.params;
+
+  const data = await fetchOrganisationData(slug);
+
+  if (!data || !data.organisation) {
+    return notFound();
+  }
+
+  const organisation = processOrganisationData(data);
 
 
   return <OrganisationShell organisation={organisation} />;

@@ -104,7 +104,7 @@ export async function GET(req: Request) {
       );
     }
 
-    radiusKm = radius ? parseFloat(radius) : 10; // Default 10km radius
+    radiusKm = radius ? parseFloat(radius) : 5; // Default 5km radius
     if (isNaN(radiusKm) || radiusKm <= 0) {
       return NextResponse.json(
         { status: 'error', message: 'Invalid radius value' },
