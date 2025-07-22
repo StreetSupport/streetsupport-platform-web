@@ -21,7 +21,7 @@ export default function OrganisationOverview({ organisation }: Props) {
   const isCharity = (() => {
     // First check if there's a RegisteredCharity field (more reliable)
     if (organisation.RegisteredCharity !== undefined && organisation.RegisteredCharity !== null) {
-      const isRegisteredCharity = organisation.RegisteredCharity !== 0 && organisation.RegisteredCharity !== '';
+      const isRegisteredCharity = organisation.RegisteredCharity !== 0;
       if (isRegisteredCharity) return true;
     }
     

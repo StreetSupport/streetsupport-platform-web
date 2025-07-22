@@ -6,6 +6,8 @@ import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup'
 
 import type { RawService } from '@/types/api';
 import type { Metadata } from 'next';
+import type { Address } from '@/utils/organisation';
+import type { FlattenedService } from '@/types';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -23,10 +25,10 @@ function processOrganisationData(data: { organisation: unknown; services: unknow
     const parentKey = service.ParentCategoryKey || '';
     const subKey = service.SubCategoryKey || '';
 
-    const openTimes = (service.OpeningTimes || []).map(slot => ({
-      day: slot.Day ?? slot.day,
-      start: slot.StartTime ?? slot.start,
-      end: slot.EndTime ?? slot.end,
+    const openTimes = (service.OpeningTimes || []).map((slot: { Day?: number; day?: number; StartTime?: number; start?: number; EndTime?: number; end?: number }) => ({
+      day: slot.Day ?? slot.day ?? 0,
+      start: slot.StartTime ?? slot.start ?? 0,
+      end: slot.EndTime ?? slot.end ?? 0,
     }));
 
     return {
@@ -39,8 +41,8 @@ function processOrganisationData(data: { organisation: unknown; services: unknow
       description: service.Info || '',
       address: service.Address || {},
       openTimes,
-      organisation: data.organisation.name,
-      organisationSlug: data.organisation.key,
+      organisation: (data.organisation as { name?: string; key?: string })?.name || 'Unknown Organisation',
+      organisationSlug: (data.organisation as { name?: string; key?: string })?.key || '',
       latitude: coords[1],
       longitude: coords[0],
       clientGroups: service.ClientGroups || [],
@@ -56,10 +58,47 @@ function processOrganisationData(data: { organisation: unknown; services: unknow
     acc[parent][sub].push(s);
 
     return acc;
-  }, {} as Record<string, Record<string, unknown[]>>);
+  }, {} as Record<string, Record<string, FlattenedService[]>>);
+
+  // Extract organisation properties with proper typing
+  const orgData = data.organisation as {
+    key?: string;
+    name?: string;
+    shortDescription?: string;
+    description?: string;
+    website?: string;
+    telephone?: string;
+    email?: string;
+    facebook?: string;
+    twitter?: string;
+    instagram?: string;
+    bluesky?: string;
+    isVerified?: boolean;
+    isPublished?: boolean;
+    associatedLocationIds?: string[];
+    tags?: string[] | string;
+    RegisteredCharity?: number;
+    addresses?: Address[];
+  };
 
   return {
-    ...data.organisation,
+    key: orgData.key || '',
+    name: orgData.name || '',
+    shortDescription: orgData.shortDescription,
+    description: orgData.description,
+    website: orgData.website,
+    telephone: orgData.telephone,
+    email: orgData.email,
+    facebook: orgData.facebook,
+    twitter: orgData.twitter,
+    instagram: orgData.instagram,
+    bluesky: orgData.bluesky,
+    isVerified: orgData.isVerified,
+    isPublished: orgData.isPublished,
+    associatedLocationIds: orgData.associatedLocationIds,
+    tags: orgData.tags,
+    RegisteredCharity: orgData.RegisteredCharity,
+    addresses: orgData.addresses || [],
     services,
     groupedServices,
   };

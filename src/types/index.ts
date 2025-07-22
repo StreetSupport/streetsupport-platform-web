@@ -19,6 +19,7 @@ export interface FlattenedService {
   organisation: string;       // flat string, e.g. organisation name
   organisationSlug: string;
   description: string;
+  address?: Record<string, unknown>; // Add address field for organisation services
   openTimes: { day: number; start: number; end: number }[];  // changed to number
   clientGroups: string[];
   latitude: number;

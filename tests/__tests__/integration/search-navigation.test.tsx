@@ -69,6 +69,7 @@ const mockOrganisation = {
   shortDescription: 'A test organisation',
   description: 'Detailed description of the organisation',
   key: 'test-org-1',
+  addresses: [],
   services: [],
   groupedServices: {},
 };
@@ -78,7 +79,7 @@ const mockLocationContext = {
   location: {
     lat: 53.4808,
     lng: -2.2426,
-    radius: 10,
+    radius: 5,
     postcode: 'M1 1AA',
   },
   setLocation: jest.fn(),

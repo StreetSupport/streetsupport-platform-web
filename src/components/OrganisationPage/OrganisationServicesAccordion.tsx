@@ -4,24 +4,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Accordion from '@/components/ui/Accordion';
 import MarkdownContent from '@/components/ui/MarkdownContent';
 import type { OrganisationDetails } from '@/utils/organisation';
-import type { FlattenedService } from '@/types';
 import { isServiceOpenNow } from '@/utils/openingTimes';
 
-interface Address {
-  Street?: string;
-  Street1?: string;
-  Street2?: string;
-  Street3?: string;
-  City?: string;
-  Postcode?: string;
-  Location?: {
-    coordinates: [number, number];
-  };
-}
-
-interface FlattenedServiceWithAddress extends FlattenedService {
-  address?: Address;
-}
 
 interface Props {
   organisation: OrganisationDetails;
@@ -72,7 +56,17 @@ export default function OrganisationServicesAccordion({ organisation }: Props) {
 
             {subCats.map((sub) => {
               const service = groupedServices[parent][sub][0];
-              const address = service.address || {};
+              const address = service.address as {
+                Street?: string;
+                Street1?: string; 
+                Street2?: string;
+                Street3?: string;
+                City?: string;
+                Postcode?: string;
+                Location?: {
+                  coordinates?: [number, number];
+                };
+              } || {};
               const fullAddress = [
                 address.Street,
                 address.Street1,
@@ -144,7 +138,15 @@ export default function OrganisationServicesAccordion({ organisation }: Props) {
                       <div className="flex items-center gap-2 mb-1">
                         <p className="font-semibold">Opening Times:</p>
                         {(() => {
-                          const openingStatus = isServiceOpenNow(service as FlattenedServiceWithAddress);
+                          const serviceWithDistance = {
+                            ...service,
+                            organisation: {
+                              name: service.organisation,
+                              slug: service.organisationSlug,
+                              isVerified: false,
+                            },
+                          };
+                          const openingStatus = isServiceOpenNow(serviceWithDistance);
                           
                           // Check for phone service
                           const isPhoneService = service.subCategory.toLowerCase().includes('telephone') || 

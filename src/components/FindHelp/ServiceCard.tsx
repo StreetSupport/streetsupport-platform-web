@@ -93,9 +93,14 @@ export default function ServiceCard({ service, isOpen, onToggle, onNavigate }: S
         )}
       </div>
 
-      {/* Organization name - prominent */}
+      {/* Service name - prominent */}
+      {decodedName && (
+        <h2 className="text-lg font-semibold mb-1">{decodedName}</h2>
+      )}
+
+      {/* Organization name */}
       {decodedOrgName && (
-        <h2 className="text-lg font-semibold mb-1">{decodedOrgName}</h2>
+        <h3 className="text-md font-medium mb-1 text-gray-700">{decodedOrgName}</h3>
       )}
 
       {/* Category > Subcategory */}
@@ -134,9 +139,9 @@ export default function ServiceCard({ service, isOpen, onToggle, onNavigate }: S
           <ul className="list-disc pl-5 text-sm">
             {service.openTimes.map((slot, idx) => {
               // Access the correct property names from the raw data
-              const dayIndex = Number(slot.Day);
-              const startTime = Number(slot.StartTime);
-              const endTime = Number(slot.EndTime);
+              const dayIndex = Number(slot.day);
+              const startTime = Number(slot.start);
+              const endTime = Number(slot.end);
               // Database: Monday=0, Tuesday=1, ..., Sunday=6
               const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
               

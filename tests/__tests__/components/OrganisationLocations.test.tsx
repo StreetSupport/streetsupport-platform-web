@@ -12,6 +12,20 @@ jest.mock('@/components/MapComponent/GoogleMap', () => (props: any) => {
   return <div data-testid="mock-map">MockMap</div>;
 });
 
+// Mock next/dynamic to return the mocked GoogleMap directly
+jest.mock('next/dynamic', () => (fn: any, options?: any) => {
+  // Return the mocked GoogleMap component directly
+  return (props: any) => {
+    (globalThis as any).mapProps = props;
+    return <div data-testid="mock-map">MockMap</div>;
+  };
+});
+
+beforeEach(() => {
+  // Clear any previous map props
+  delete (globalThis as any).mapProps;
+});
+
 // Create a more complete mock organization with proper typing
 const baseOrg: Partial<OrganisationDetails> = {
   addresses: [
@@ -46,6 +60,12 @@ describe('OrganisationLocations', () => {
 
   it('renders map with provided coordinates', () => {
     render(<OrganisationLocations organisation={baseOrg as OrganisationDetails} />);
+    
+    // Debug: Check if the mock map was rendered
+    expect(screen.getByTestId('mock-map')).toBeInTheDocument();
+    
+    // Check if mapProps was set by the mock
+    expect((globalThis as any).mapProps).toBeDefined();
     expect((globalThis as any).mapProps.center).toEqual({ lat: 53, lng: -2 });
     expect((globalThis as any).mapProps.markers[0]).toMatchObject({
       id: 'addr-1',   // ✅ match your mock!
