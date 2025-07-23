@@ -56,7 +56,7 @@ function groupServicesByOrganisation(
     const subCategoryMatch = selectedSubCategory ? service.subCategory === selectedSubCategory : true;
     
     if (!categoryMatch || !subCategoryMatch) {
-      continue; // Skip this service if it doesn't match filters
+      continue;
     }
 
     const groupKey = service.organisation.slug;
