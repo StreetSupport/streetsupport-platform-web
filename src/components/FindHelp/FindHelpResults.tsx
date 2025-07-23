@@ -4,8 +4,8 @@ import { useMemo, useState, useEffect, useRef, useCallback } from 'react';
 import { useLocation } from '@/contexts/LocationContext';
 import { useSearchNavigation } from '@/contexts/SearchNavigationContext';
 import { useSearchParams } from 'next/navigation';
-import ServiceCard from './ServiceCard';
-import GroupedServiceCard from './GroupedServiceCard';
+import { useDebounce } from '@/hooks/useDebounce';
+import ProgressiveServiceGrid from './ProgressiveServiceGrid';
 import FilterPanel from './FilterPanel';
 import RadiusFilter from './RadiusFilter';
 import GoogleMap from '@/components/MapComponent/GoogleMap';
@@ -110,24 +110,28 @@ export default function FindHelpResults({ services, loading = false, error = nul
   const [openDescriptionId, setOpenDescriptionId] = useState<string | null>(null);
   const [isRestoringState, setIsRestoringState] = useState(false);
 
+  // Debounce filter values to prevent excessive re-renders
+  const debouncedSelectedCategory = useDebounce(selectedCategory, 300);
+  const debouncedSelectedSubCategory = useDebounce(selectedSubCategory, 300);
+
   // Centralized read more state management
   const handleToggleDescription = useCallback((id: string) => {
     setOpenDescriptionId(prev => prev === id ? null : id);
   }, []);
 
-  // Combined filtering and grouping logic
+  // Combined filtering and grouping logic with debounced values
   const { sortedGroups, filteredServices } = useMemo(() => {
     if (!services || services.length === 0) return { sortedGroups: [], filteredServices: [] };
     
-    // Filter services first
+    // Filter services first using debounced values
     const filtered = services.filter((service) => {
-      const categoryMatch = selectedCategory ? service.category === selectedCategory : true;
-      const subCategoryMatch = selectedSubCategory ? service.subCategory === selectedSubCategory : true;
+      const categoryMatch = debouncedSelectedCategory ? service.category === debouncedSelectedCategory : true;
+      const subCategoryMatch = debouncedSelectedSubCategory ? service.subCategory === debouncedSelectedSubCategory : true;
       return categoryMatch && subCategoryMatch;
     });
     
-    // Group filtered services
-    const grouped = groupServicesByOrganisation(services, selectedCategory, selectedSubCategory);
+    // Group filtered services using debounced values
+    const grouped = groupServicesByOrganisation(services, debouncedSelectedCategory, debouncedSelectedSubCategory);
     
     // Sort groups
     const sorted = sortOrder === 'alpha' 
@@ -138,7 +142,7 @@ export default function FindHelpResults({ services, loading = false, error = nul
       sortedGroups: sorted,
       filteredServices: filtered
     };
-  }, [services, selectedCategory, selectedSubCategory, sortOrder]);
+  }, [services, debouncedSelectedCategory, debouncedSelectedSubCategory, sortOrder]);
 
   // Restore search state if available
   useEffect(() => {
@@ -171,13 +175,13 @@ export default function FindHelpResults({ services, loading = false, error = nul
       services,
       scrollPosition: currentScrollPosition,
       filters: {
-        selectedCategory,
-        selectedSubCategory,
+        selectedCategory: debouncedSelectedCategory,
+        selectedSubCategory: debouncedSelectedSubCategory,
         sortOrder,
       },
       searchParams: currentSearchParams,
     });
-  }, [services, selectedCategory, selectedSubCategory, sortOrder, saveSearchState, searchParams]);
+  }, [services, debouncedSelectedCategory, debouncedSelectedSubCategory, sortOrder, saveSearchState, searchParams]);
 
   const combinedMarkers: MapMarker[] = useMemo(() => {
     const markers: MapMarker[] = filteredServices.map((s) => ({
@@ -285,30 +289,14 @@ export default function FindHelpResults({ services, loading = false, error = nul
               <p className="text-sm text-gray-500">Try adjusting your filters or search in a different area.</p>
             </div>
           ) : (
-            <div className={`gap-4 ${showMap ? 'flex flex-col' : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
-              {sortedGroups.map((group) => (
-                <div
-                  key={group.orgId}
-                  className="border border-gray-300 rounded-md p-4 bg-white flex flex-col"
-                >
-                  {group.services.length === 1 ? (
-                    <ServiceCard
-                      service={group.services[0]}
-                      isOpen={openDescriptionId === group.services[0].id}
-                      onToggle={() => handleToggleDescription(group.services[0].id)}
-                      onNavigate={handleServiceNavigation}
-                    />
-                  ) : (
-                    <GroupedServiceCard
-                      group={group}
-                      isDescriptionOpen={openDescriptionId === group.orgId}
-                      onToggleDescription={() => handleToggleDescription(group.orgId)}
-                      onNavigate={handleServiceNavigation}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
+            <ProgressiveServiceGrid
+              groups={sortedGroups}
+              showMap={showMap}
+              openDescriptionId={openDescriptionId}
+              onToggleDescription={handleToggleDescription}
+              onNavigate={handleServiceNavigation}
+              batchSize={20}
+            />
           )}
         </div>
       </div>

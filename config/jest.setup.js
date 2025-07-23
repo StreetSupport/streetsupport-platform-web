@@ -105,3 +105,19 @@ const mockLocation = {
 
 // Export the mock location for tests to use
 global.mockLocation = mockLocation;
+
+// Mock IntersectionObserver for progressive loading tests
+global.IntersectionObserver = jest.fn().mockImplementation((callback, options) => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+  callback,
+  options,
+}));
+
+// Mock ResizeObserver if needed
+global.ResizeObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));
