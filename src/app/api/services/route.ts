@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
 import fallbackProviders from '@/data/service-providers.json';
 import { decodeText } from '@/utils/htmlDecode';
+import queryCache from '@/utils/queryCache';
 
 interface MongoQuery {
   IsPublished: boolean;
@@ -23,6 +24,16 @@ interface GeospatialQuery {
 interface AggregationStage {
   $match?: MongoQuery;
   $geoNear?: GeospatialQuery;
+  $lookup?: {
+    from: string;
+    localField: string;
+    foreignField: string;
+    as: string;
+    pipeline?: Array<{ $project?: Record<string, number | string> }>;
+  };
+  $addFields?: Record<string, unknown>;
+  $unwind?: string | { path: string; preserveNullAndEmptyArrays?: boolean };
+  $project?: Record<string, number | string>;
   $skip?: number;
   $limit?: number;
   $count?: string;
@@ -113,11 +124,30 @@ export async function GET(req: Request) {
     }
   }
 
+  // Generate cache key from query parameters
+  const cacheKey = queryCache.generateKey({
+    location,
+    category,
+    lat,
+    lng,
+    radius,
+    page,
+    limit
+  });
+  
+  // Check cache first
+  const cachedResult = queryCache.get(cacheKey);
+  if (cachedResult) {
+    const response = NextResponse.json(cachedResult);
+    response.headers.set('Cache-Control', 'public, max-age=300, s-maxage=600');
+    response.headers.set('X-Cache', 'HIT');
+    return response;
+  }
+
   try {
     const client = await getClientPromise();
     const db = client.db('streetsupport');
     const servicesCol = db.collection('ProvidedServices');
-    const providersCol = db.collection('ServiceProviders');
 
     const query: MongoQuery = {
       IsPublished: true
@@ -168,82 +198,131 @@ export async function GET(req: Request) {
       }
     }
 
+    // Add $lookup to join with ServiceProviders collection to eliminate N+1 queries
+    pipeline.push({
+      $lookup: {
+        from: 'ServiceProviders',
+        localField: 'ServiceProviderKey',
+        foreignField: 'Key',
+        as: 'provider',
+        pipeline: [{
+          $project: {
+            _id: 0,
+            Key: 1,
+            Name: 1,
+            IsVerified: 1,
+            ShortDescription: 1,
+            Website: 1,
+            Telephone: 1,
+            Email: 1
+          }
+        }]
+      }
+    });
+
+    // Add computed fields and unwind provider array
+    pipeline.push(
+      {
+        $unwind: {
+          path: '$provider',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $addFields: {
+          name: '$ServiceProviderName',
+          description: '$Info',
+          organisation: {
+            $cond: {
+              if: { $ne: ['$provider', null] },
+              then: {
+                name: '$provider.Name',
+                slug: '$provider.Key',
+                isVerified: { $ifNull: ['$provider.IsVerified', false] }
+              },
+              else: null
+            }
+          }
+        }
+      }
+    );
+
+    // Add lightweight projection to reduce payload size
+    pipeline.push({
+      $project: {
+        _id: 1,
+        name: 1,
+        description: 1,
+        ParentCategoryKey: 1,
+        SubCategoryKey: 1,
+        ServiceProviderName: 1,
+        ServiceProviderKey: 1,
+        OpeningTimes: 1,
+        ClientGroups: 1,
+        'Address.Location': 1,
+        organisation: 1,
+        distance: 1
+      }
+    });
+
     // Add pagination
     pipeline.push(
       { $skip: (page - 1) * limit },
       { $limit: limit }
     );
 
-    let services;
-    let total;
+    // Use aggregation pipeline for all queries now (optimized with $lookup)
+    const services = await servicesCol.aggregate(pipeline).toArray();
+    
+    // Get total count using optimized pipeline
+    const countPipeline = [...pipeline];
+    countPipeline.splice(-2, 2); // Remove skip and limit  
+    countPipeline.push({ $count: "total" });
+    const countResult = await servicesCol.aggregate(countPipeline).toArray();
+    const total = countResult.length > 0 ? countResult[0].total : 0;
 
-    if (latitude !== undefined && longitude !== undefined) {
-      // Use aggregation pipeline for geospatial queries
-      services = await servicesCol.aggregate(pipeline).toArray();
-      
-      // Get total count for geospatial queries
-      const countPipeline = [...pipeline];
-      countPipeline.splice(-2, 2); // Remove skip and limit
-      countPipeline.push({ $count: "total" });
-      const countResult = await servicesCol.aggregate(countPipeline).toArray();
-      total = countResult.length > 0 ? countResult[0].total : 0;
-    } else {
-      // Use traditional find for non-geospatial queries
-      total = await servicesCol.countDocuments(query);
-      services = await servicesCol
-        .find(query)
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .toArray();
-    }
+    // Process results with HTML decoding and distance conversion
+    const results = services.map((service) => {
+      const result: Record<string, unknown> = {
+        ...service,
+        name: decodeText(service.name || service.ServiceProviderName || ''),
+        description: decodeText(service.description || service.Info || ''),
+        organisationSlug: service.organisation?.slug || service.ServiceProviderKey,
+        // Ensure organisation data is properly decoded
+        organisation: service.organisation ? {
+          name: decodeText(service.organisation.name),
+          slug: service.organisation.slug,
+          isVerified: service.organisation.isVerified
+        } : null
+      };
 
-    const results = await Promise.all(
-      services.map(async (service) => {
-        const provider = await providersCol.findOne(
-          { Key: service.ServiceProviderKey },
-          {
-            projection: {
-              _id: 0,
-              Key: 1,
-              Name: 1,
-              IsVerified: 1,
-              ShortDescription: 1,
-              Website: 1,
-              Telephone: 1,
-              Email: 1
-            }
-          }
-        );
+      // Add distance to result if it was calculated by geospatial query
+      if (service.distance !== undefined) {
+        result.distance = Math.round(service.distance / 1000 * 100) / 100; // Convert to km and round to 2 decimal places
+      }
 
-        const result: Record<string, unknown> = {
-          ...service,
-          name: decodeText(service.ServiceProviderName || ''),
-          description: decodeText(service.Info || ''),
-          organisation: provider
-            ? {
-                name: decodeText(provider.Name),
-                slug: provider.Key,
-                isVerified: provider.IsVerified
-              }
-            : null
-        };
+      return result;
+    });
 
-        // Add distance to result if it was calculated by geospatial query
-        if (service.distance !== undefined) {
-          result.distance = Math.round(service.distance / 1000 * 100) / 100; // Convert to km and round to 2 decimal places
-        }
-
-        return result;
-      })
-    );
-
-    return NextResponse.json({
+    const responseData = {
       status: 'success',
       total,
       page,
       limit,
       results
-    });
+    };
+
+    // Cache the result for 5 minutes
+    queryCache.set(cacheKey, responseData, 300000);
+
+    const response = NextResponse.json(responseData);
+
+    // Add cache headers for better performance
+    response.headers.set('Cache-Control', 'public, max-age=300, s-maxage=600'); // 5 min browser, 10 min CDN
+    response.headers.set('ETag', `services-${Date.now()}-${total}-${page}`);
+    response.headers.set('X-Cache', 'MISS');
+    
+    return response;
   } catch (error) {
     console.error('[API ERROR] /api/services:', error);
 

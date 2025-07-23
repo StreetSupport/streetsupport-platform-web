@@ -1,13 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 
 import type { ServiceWithDistance } from '@/types';
 import LazyMarkdownContent from '@/components/ui/LazyMarkdownContent';
 import { decodeText } from '@/utils/htmlDecode';
 import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup';
-import { isServiceOpenNow, formatDistance } from '@/utils/openingTimes';
+import { formatDistance } from '@/utils/openingTimes';
+import openingTimesCache from '@/utils/openingTimesCache';
 
 interface ServiceCardProps {
   service: ServiceWithDistance;
@@ -17,29 +18,54 @@ interface ServiceCardProps {
 }
 
 const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle, onNavigate }: ServiceCardProps) {
-  const destination = service.organisation?.slug
-    ? `/find-help/organisation/${service.organisation.slug}`
-    : '#';
+  // Memoize expensive computations to prevent recalculation on every render
+  const memoizedData = useMemo(() => {
+    const destination = service.organisation?.slug
+      ? `/find-help/organisation/${service.organisation.slug}`
+      : '#';
 
-  const decodedDescription = decodeText(service.description);
-  const decodedName = decodeText(service.name);
-  const decodedOrgName = decodeText(service.organisation?.name || '');
+    const decodedDescription = decodeText(service.description);
+    const decodedName = decodeText(service.name);
+    const decodedOrgName = decodeText(service.organisation?.name || '');
 
-  const preview =
-    decodedDescription.length > 120
-      ? decodedDescription.slice(0, 120) + '...'
-      : decodedDescription;
+    const preview =
+      decodedDescription.length > 120
+        ? decodedDescription.slice(0, 120) + '...'
+        : decodedDescription;
 
-  // Get formatted category and subcategory names
-  const categoryName = categoryKeyToName[service.category] || service.category;
-  const subCategoryName = subCategoryKeyToName[service.subCategory] || service.subCategory;
-  const formattedCategory = `${categoryName} > ${subCategoryName}`;
+    // Get formatted category and subcategory names
+    const categoryName = categoryKeyToName[service.category] || service.category;
+    const subCategoryName = subCategoryKeyToName[service.subCategory] || service.subCategory;
+    const formattedCategory = `${categoryName} > ${subCategoryName}`;
 
-  // Get opening status
-  const openingStatus = isServiceOpenNow(service);
-  
-  // Format distance
-  const distanceText = formatDistance(service.distance);
+    // Get opening status using cache to avoid expensive recalculations
+    const openingStatus = openingTimesCache.getOpeningStatus(service);
+    
+    // Format distance
+    const distanceText = formatDistance(service.distance);
+
+    return {
+      destination,
+      decodedDescription,
+      decodedName,
+      decodedOrgName,
+      preview,
+      formattedCategory,
+      openingStatus,
+      distanceText
+    };
+  }, [service]);
+
+  const {
+    destination,
+    decodedDescription,
+    decodedName,
+    decodedOrgName,
+    preview,
+    formattedCategory,
+    openingStatus,
+    distanceText
+  } = memoizedData;
 
   return (
     <Link
