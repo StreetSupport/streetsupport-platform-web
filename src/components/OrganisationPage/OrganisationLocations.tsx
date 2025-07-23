@@ -3,6 +3,7 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import type { OrganisationDetails } from '@/utils/organisation';
+import { decodeText } from '@/utils/htmlDecode';
 
 // Lazy load GoogleMap to improve initial page load performance
 const GoogleMap = dynamic(() => import('@/components/MapComponent/GoogleMap'), {
@@ -17,24 +18,85 @@ const GoogleMap = dynamic(() => import('@/components/MapComponent/GoogleMap'), {
   ),
 });
 
-interface Props {
-  organisation: OrganisationDetails;
+interface UserContext {
+  lat: number | null;
+  lng: number | null;
+  radius: number | null;
+  location: string | null;
 }
 
-export default function OrganisationLocations({ organisation }: Props) {
-  // ✅ Normalised prop
-  const addresses = organisation.addresses || [];
+interface Props {
+  organisation: OrganisationDetails;
+  userContext?: UserContext;
+  onMarkerClick?: (markerId: string) => void;
+}
 
-  const validAddresses = addresses.filter(
-    (addr) =>
-      addr.Location?.coordinates &&
-      addr.Location.coordinates.length === 2 &&
-      typeof addr.Location.coordinates[0] === 'number' &&
-      typeof addr.Location.coordinates[1] === 'number'
-  );
+export default function OrganisationLocations({ organisation, userContext, onMarkerClick }: Props) {
+  // Only count service locations to match the accordion behavior
+  const uniqueLocationMap = new Map();
+  
+  // Only add service locations (this matches what the accordion counts)
+  const services = organisation.services || [];
+  services.forEach((service, idx) => {
+    const address = service.address;
+    if (address?.Location?.coordinates && 
+        address.Location.coordinates.length === 2 &&
+        typeof address.Location.coordinates[0] === 'number' &&
+        typeof address.Location.coordinates[1] === 'number') {
+      
+      const locationKey = `${address.Location.coordinates[0]}-${address.Location.coordinates[1]}`;
+      
+      // Only add if this location doesn't already exist (deduplicate)
+      if (!uniqueLocationMap.has(locationKey)) {
+        const addressParts = [
+          address.Street,
+          address.Street1, 
+          address.City,
+          address.Postcode
+        ].filter(Boolean).map(part => decodeText(part));
+        
+        uniqueLocationMap.set(locationKey, {
+          id: `service-loc-${idx}`,
+          lat: address.Location.coordinates[1],
+          lng: address.Location.coordinates[0],
+          title: addressParts.join(', '),
+          organisationSlug: organisation.key || 'org-location',
+          serviceName: service.subCategoryName || service.name || 'Service',
+          type: 'service',
+        });
+      }
+    }
+  });
+  
+  // If no service locations, fall back to organization addresses
+  if (uniqueLocationMap.size === 0) {
+    const addresses = organisation.addresses || [];
+    addresses.forEach((addr, idx) => {
+      if (addr.Location?.coordinates && 
+          addr.Location.coordinates.length === 2 &&
+          typeof addr.Location.coordinates[0] === 'number' &&
+          typeof addr.Location.coordinates[1] === 'number') {
+        
+        const locationKey = `${addr.Location.coordinates[0]}-${addr.Location.coordinates[1]}`;
+        const addressParts = [addr.Street, addr.City, addr.Postcode].filter(Boolean).map(part => decodeText(part));
+        
+        uniqueLocationMap.set(locationKey, {
+          id: addr.Key?.$binary?.base64 || `org-addr-${idx}`,
+          lat: addr.Location.coordinates[1],
+          lng: addr.Location.coordinates[0],
+          title: addressParts.join(', '),
+          organisationSlug: organisation.key || 'org-location',
+          type: 'organisation',
+        });
+      }
+    });
+  }
+  
+  // Convert to array for rendering
+  const allLocations = Array.from(uniqueLocationMap.values());
 
   // ✅ Always render heading, even if no map
-  if (validAddresses.length === 0) {
+  if (allLocations.length === 0) {
     return (
       <section className="mb-6">
         <h2 className="text-xl font-semibold mb-2">Locations</h2>
@@ -43,42 +105,30 @@ export default function OrganisationLocations({ organisation }: Props) {
     );
   }
 
-  const first = validAddresses[0];
-  
-  // TypeScript guard: we know these exist because of the filter, but TS doesn't
-  if (!first.Location?.coordinates || first.Location.coordinates.length !== 2) {
-    return (
-      <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">Locations</h2>
-        <p>No valid addresses available for this organisation.</p>
-      </section>
-    );
-  }
-
-  const center = {
-    lat: first.Location.coordinates[1],
-    lng: first.Location.coordinates[0],
-  };
-
-  const markers = validAddresses.map((addr, idx) => {
-    // TypeScript guard for each address
-    if (!addr.Location?.coordinates || addr.Location.coordinates.length !== 2) {
-      return null;
-    }
-    
-    return {
-      id: addr.Key?.$binary?.base64 || `addr-${idx}`,
-      lat: addr.Location.coordinates[1],
-      lng: addr.Location.coordinates[0],
-      title: [addr.Street, addr.City, addr.Postcode].filter(Boolean).join(', '),
-      organisationSlug: organisation.key || 'org-location', // ✅ normalised
+  // Determine center point
+  let center;
+  if (userContext?.lat && userContext?.lng) {
+    // Use user location as center if available
+    center = {
+      lat: userContext.lat,
+      lng: userContext.lng,
     };
-  }).filter((marker): marker is NonNullable<typeof marker> => marker !== null);
+  } else {
+    // Use first location as center
+    const first = allLocations[0];
+    center = {
+      lat: first.lat,
+      lng: first.lng,
+    };
+  }
 
   return (
     <section className="mb-6">
       <h2 className="text-xl font-semibold mb-2">Locations</h2>
-      <GoogleMap center={center} markers={markers} zoom={14} />
+      <p className="text-sm text-gray-600 mb-3">
+        {allLocations.length} location{allLocations.length !== 1 ? 's' : ''} available for this organisation
+      </p>
+      <GoogleMap center={center} markers={allLocations} zoom={13} onMarkerClick={onMarkerClick} />
     </section>
   );
 }

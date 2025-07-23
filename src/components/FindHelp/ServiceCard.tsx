@@ -2,6 +2,8 @@
 
 import React, { useMemo } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { useLocation } from '@/contexts/LocationContext';
 
 import type { ServiceWithDistance } from '@/types';
 import LazyMarkdownContent from '@/components/ui/LazyMarkdownContent';
@@ -17,11 +19,34 @@ interface ServiceCardProps {
 }
 
 const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle }: ServiceCardProps) {
+  const { location } = useLocation();
+  const searchParams = useSearchParams();
+  
   // Memoize expensive computations to prevent recalculation on every render
   const memoizedData = useMemo(() => {
-    const destination = service.organisation?.slug
-      ? `/find-help/organisation/${service.organisation.slug}`
-      : '#';
+    // Build destination URL with location context
+    let destination = '#';
+    if (service.organisation?.slug) {
+      const params = new URLSearchParams();
+      
+      // Add location context if available
+      if (location?.lat && location?.lng) {
+        params.set('lat', location.lat.toString());
+        params.set('lng', location.lng.toString());
+        if (location.radius) {
+          params.set('radius', location.radius.toString());
+        }
+      }
+      
+      // Add current search parameters if available
+      searchParams.forEach((value, key) => {
+        if (!params.has(key)) {
+          params.set(key, value);
+        }
+      });
+      
+      destination = `/find-help/organisation/${service.organisation.slug}${params.toString() ? `?${params.toString()}` : ''}`;
+    }
 
     const decodedDescription = decodeText(service.description);
     const decodedName = decodeText(service.name);
@@ -52,7 +77,7 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
       openingStatus,
       distanceText
     };
-  }, [service]);
+  }, [service, location, searchParams]);
 
   const {
     destination,
@@ -113,12 +138,14 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
         )}
       </div>
 
-      {decodedName && (
-        <h2 className="text-lg font-semibold mb-1">{decodedName}</h2>
+      {/* Show organization name as primary title */}
+      {decodedOrgName && (
+        <h2 className="text-lg font-semibold mb-1">{decodedOrgName}</h2>
       )}
 
-      {decodedOrgName && (
-        <h3 className="text-md font-medium mb-1 text-gray-700">{decodedOrgName}</h3>
+      {/* Only show service name if it's different from organization name */}
+      {decodedName && decodedName !== decodedOrgName && (
+        <h3 className="text-md font-medium mb-1 text-gray-700">{decodedName}</h3>
       )}
 
       <p className="text-sm text-gray-600 mb-2">{formattedCategory}</p>
@@ -151,27 +178,49 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
         <div className="mt-3">
           <p className="font-semibold text-sm mb-1">Opening Times:</p>
           <ul className="list-disc pl-5 text-sm">
-            {service.openTimes.map((slot, idx) => {
-              // Access the correct property names from the raw data
-              const dayIndex = Number(slot.day);
-              const startTime = Number(slot.start);
-              const endTime = Number(slot.end);
-              // Database: Monday=0, Tuesday=1, ..., Sunday=6
+            {(() => {
+              // Group opening times by day and consolidate multiple sessions
               const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+              const dayGroups = new Map();
               
               const formatTime = (time: number) => {
-                // Handle invalid numbers
                 if (isNaN(time)) return '00:00';
                 const str = time.toString().padStart(4, '0');
                 return `${str.slice(0, 2)}:${str.slice(2)}`;
               };
-
-              return (
-                <li key={idx}>
-                  {days[dayIndex] ?? 'Unknown'}: {formatTime(startTime)} – {formatTime(endTime)}
-                </li>
-              );
-            })}
+              
+              // Group slots by day
+              service.openTimes.forEach((slot) => {
+                const dayIndex = Number(slot.day);
+                const startTime = Number(slot.start);
+                const endTime = Number(slot.end);
+                
+                if (dayIndex >= 0 && dayIndex <= 6) {
+                  const dayName = days[dayIndex];
+                  if (!dayGroups.has(dayName)) {
+                    dayGroups.set(dayName, []);
+                  }
+                  dayGroups.get(dayName).push({
+                    start: formatTime(startTime),
+                    end: formatTime(endTime)
+                  });
+                }
+              });
+              
+              // Sort days in proper order and format consolidated times
+              const orderedDays = days.filter(day => dayGroups.has(day));
+              
+              return orderedDays.map((dayName) => {
+                const slots = dayGroups.get(dayName);
+                const timeRanges = slots.map(slot => `${slot.start} – ${slot.end}`).join(', ');
+                
+                return (
+                  <li key={dayName}>
+                    {dayName}: {timeRanges}
+                  </li>
+                );
+              });
+            })()}
           </ul>
         </div>
       ) : (

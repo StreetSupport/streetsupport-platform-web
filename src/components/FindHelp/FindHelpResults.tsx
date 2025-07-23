@@ -171,7 +171,14 @@ export default function FindHelpResults({ services, loading = false, error = nul
     <section className="flex flex-col lg:flex-row items-start px-4 sm:px-6 md:px-8 py-6 gap-6 max-w-7xl mx-auto h-auto lg:h-[calc(100vh-4rem)]">
       <div className={`w-full ${showMap ? 'lg:w-1/2' : 'lg:w-full'} flex flex-col h-auto lg:h-full`}>
         <div className="mb-4">
-          <h1 className="text-xl font-bold mb-2">Services near you</h1>
+          <div className="flex justify-between items-baseline mb-2">
+            <h1 className="text-xl font-bold">Services near you</h1>
+            {!loading && !error && sortedGroups.length > 0 && (
+              <p className="text-sm text-gray-600">
+                {filteredServices.length} service{filteredServices.length !== 1 ? 's' : ''} from {sortedGroups.length} organisation{sortedGroups.length !== 1 ? 's' : ''}
+              </p>
+            )}
+          </div>
           <FilterPanel
             selectedCategory={selectedCategory}
             selectedSubCategory={selectedSubCategory}
@@ -217,6 +224,7 @@ export default function FindHelpResults({ services, loading = false, error = nul
                   : null
               }
               markers={combinedMarkers}
+              zoom={13}
             />
           </div>
         )}
@@ -267,6 +275,7 @@ export default function FindHelpResults({ services, loading = false, error = nul
                 : null
             }
             markers={combinedMarkers}
+            zoom={13}
           />
         </div>
       )}

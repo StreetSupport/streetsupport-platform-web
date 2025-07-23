@@ -18,7 +18,7 @@ export interface OpeningStatus {
   };
 }
 
-const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 function normalizeOpeningTime(slot: OpeningTimeSlot) {
   const dayValue = slot.Day ?? slot.day;
@@ -60,8 +60,8 @@ export function isServiceOpenNow(service: ServiceWithDistance): OpeningStatus {
 
   const now = new Date();
   const jsDay = now.getDay(); // JavaScript: 0 = Sunday, 1 = Monday, etc.
-  // Convert to database format: 1 = Monday, 2 = Tuesday, ..., 7 = Sunday
-  const currentDay = jsDay === 0 ? 7 : jsDay;
+  // Convert to database format: 0 = Monday, 1 = Tuesday, ..., 6 = Sunday
+  const currentDay = jsDay === 0 ? 6 : jsDay - 1;
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
 
@@ -86,6 +86,7 @@ export function isServiceOpenNow(service: ServiceWithDistance): OpeningStatus {
     .filter(slot => slot.day !== undefined && slot.start !== undefined)
     .sort((a, b) => {
       // Sort by day, with current day and later days first
+      // Add 7 to days earlier in the week to represent next week
       const dayA = a.day >= currentDay ? a.day : a.day + 7;
       const dayB = b.day >= currentDay ? b.day : b.day + 7;
       
@@ -102,13 +103,12 @@ export function isServiceOpenNow(service: ServiceWithDistance): OpeningStatus {
     
     // If it's today and the time hasn't passed, or it's a future day
     if (slotDay > currentDay || (slotDay === currentDay && slotMinutes > currentMinutes)) {
-      // Convert database day (1=Mon, 7=Sun) to array index (0=Sun, 1=Mon, etc.)
-      const dayIndex = slot.day === 7 ? 0 : slot.day;
+      // Database day directly maps to DAYS array index (0=Monday, 1=Tuesday, ..., 6=Sunday)
       return {
         isOpen: false,
         isAppointmentOnly,
         nextOpen: {
-          day: DAYS[dayIndex],
+          day: DAYS[slot.day],
           time: formatTime(slot.start)
         }
       };
@@ -118,13 +118,12 @@ export function isServiceOpenNow(service: ServiceWithDistance): OpeningStatus {
   // If we get here, use the first slot of next week
   if (sortedSlots.length > 0) {
     const nextSlot = sortedSlots[0];
-    // Convert database day (1=Mon, 7=Sun) to array index (0=Sun, 1=Mon, etc.)
-    const dayIndex = nextSlot.day === 7 ? 0 : nextSlot.day;
+    // Database day directly maps to DAYS array index (0=Monday, 1=Tuesday, ..., 6=Sunday)
     return {
       isOpen: false,
       isAppointmentOnly,
       nextOpen: {
-        day: DAYS[dayIndex],
+        day: DAYS[nextSlot.day],
         time: formatTime(nextSlot.start)
       }
     };

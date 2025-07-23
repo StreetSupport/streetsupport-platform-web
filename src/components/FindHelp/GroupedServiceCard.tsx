@@ -2,6 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { useLocation } from '@/contexts/LocationContext';
 
 import LazyMarkdownContent from '@/components/ui/LazyMarkdownContent';
 import { decodeText } from '@/utils/htmlDecode';
@@ -32,9 +34,32 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
   isDescriptionOpen = false, 
   onToggleDescription
 }: GroupedServiceCardProps) {
-  const destination = group.orgSlug
-    ? `/find-help/organisation/${group.orgSlug}`
-    : '#';
+  const { location } = useLocation();
+  const searchParams = useSearchParams();
+  
+  // Build destination URL with location context
+  let destination = '#';
+  if (group.orgSlug) {
+    const params = new URLSearchParams();
+    
+    // Add location context if available
+    if (location?.lat && location?.lng) {
+      params.set('lat', location.lat.toString());
+      params.set('lng', location.lng.toString());
+      if (location.radius) {
+        params.set('radius', location.radius.toString());
+      }
+    }
+    
+    // Add current search parameters if available
+    searchParams.forEach((value, key) => {
+      if (!params.has(key)) {
+        params.set(key, value);
+      }
+    });
+    
+    destination = `/find-help/organisation/${group.orgSlug}${params.toString() ? `?${params.toString()}` : ''}`;
+  }
 
   const decodedOrgName = decodeText(group.orgName);
   
@@ -44,7 +69,9 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
     categoryKeyToName[cat] || cat
   );
 
-  const formattedSubcategories = [...new Set(group.subcategories)].map(subcat => 
+  // Get unique subcategories - this should represent the actual number of different services
+  const uniqueSubcategories = [...new Set(group.subcategories)];
+  const formattedSubcategories = uniqueSubcategories.map(subcat => 
     subCategoryKeyToName[subcat] || subcat
   );
 
@@ -83,9 +110,9 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
             </span>
           )}
           
-          {/* Service count indicator */}
+          {/* Service count indicator - use unique subcategories count for accurate service types */}
           <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-            {group.services.length} service{group.services.length !== 1 ? 's' : ''}
+            {uniqueSubcategories.length} service{uniqueSubcategories.length !== 1 ? 's' : ''}
           </span>
         </div>
         

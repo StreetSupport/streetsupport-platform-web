@@ -14,15 +14,17 @@ interface Marker {
   serviceName?: string;
   distanceKm?: number;
   link?: string; // Custom link for homepage and other special markers
+  onMarkerClick?: (markerId: string) => void; // Custom click handler
 }
 
 interface Props {
   center: { lat: number; lng: number } | null;
   markers: Marker[];
   zoom?: number;
+  onMarkerClick?: (markerId: string) => void; // Global click handler
 }
 
-export default function GoogleMap({ center, markers, zoom }: Props) {
+export default function GoogleMap({ center, markers, zoom, onMarkerClick }: Props) {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
@@ -88,6 +90,7 @@ export default function GoogleMap({ center, markers, zoom }: Props) {
         distanceKm,
         organisationSlug,
         link,
+        onMarkerClick: markerClickHandler,
       } = markerData;
 
       const gMarker = new google.maps.Marker({
@@ -97,12 +100,25 @@ export default function GoogleMap({ center, markers, zoom }: Props) {
         icon: icon || undefined,
       });
 
+      // Determine if we have custom click handlers
+      const hasCustomHandler = markerClickHandler || onMarkerClick;
+      
       // Use custom link if provided, otherwise default to organisation page
       const destination = link || `/find-help/organisation/${organisationSlug}`;
       const infoId = `info-${id}`;
 
-      // Customize info window content based on marker type
-      const htmlContent = link ? 
+      // Customize info window content based on marker type and click handlers
+      const htmlContent = hasCustomHandler ?
+        // Custom handler - show address info
+        `<div
+          id="${infoId}"
+          style="font-size:14px;max-width:220px;cursor:pointer;padding:4px;"
+        >
+          <strong style="color:#0b9b75;">${title}</strong><br/>
+          ${serviceName ? `<span style="color:#666;">${serviceName}</span><br/>` : ''}
+          <span style="color:#666;font-size:12px;">Click to select this location</span>
+        </div>` :
+        link ? 
         // Homepage/location markers - simpler content
         `<div
           id="${infoId}"
@@ -124,6 +140,22 @@ export default function GoogleMap({ center, markers, zoom }: Props) {
       const infoWindow = new google.maps.InfoWindow({ content: htmlContent });
 
       gMarker.addListener('click', () => {
+        // For markers with links (like homepage), navigate directly without showing info window
+        if (link) {
+          window.location.href = destination;
+          return;
+        }
+
+        // For other markers, use custom handlers or show info window
+        if (markerClickHandler) {
+          markerClickHandler(id);
+          return;
+        } else if (onMarkerClick) {
+          onMarkerClick(id);
+          return;
+        }
+
+        // Default behavior: show info window
         if (infoWindowRef.current) {
           infoWindowRef.current.close();
         }
@@ -145,7 +177,7 @@ export default function GoogleMap({ center, markers, zoom }: Props) {
     });
 
     markersRef.current = newMarkers;
-  }, [markers, isLoaded]);
+  }, [markers, isLoaded, onMarkerClick]);
 
   if (loadError) {
     return (

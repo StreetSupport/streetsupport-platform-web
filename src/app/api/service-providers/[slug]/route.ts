@@ -9,6 +9,13 @@ export async function GET(req: Request) {
   const parts = url.pathname.split('/');
   const slug = parts[parts.length - 1];
 
+  // Extract search parameters for location-based filtering
+  const searchParams = url.searchParams;
+  const lat = searchParams.get('lat');
+  const lng = searchParams.get('lng');
+  const radius = searchParams.get('radius');
+  const userLocation = searchParams.get('location');
+
   if (!slug) {
     return NextResponse.json(
       { status: 'error', message: 'Slug is required' },
@@ -56,22 +63,83 @@ export async function GET(req: Request) {
       );
     }
 
-    const services = await servicesCol
-      .find({
-        ServiceProviderKey: rawProvider.Key,
-        IsPublished: true,
-      })
-      .project({
-        _id: 1,
-        ParentCategoryKey: 1,
-        SubCategoryKey: 1,
-        SubCategoryName: 1,
-        Info: 1,
-        OpeningTimes: 1,
-        ClientGroups: 1,
-        Address: 1,
-      })
-      .toArray();
+    // Build query for services with location filtering if provided
+    let servicesQuery: any = {
+      ServiceProviderKey: rawProvider.Key,
+      IsPublished: true,
+    };
+
+    let servicesResult;
+    
+    // If user location is provided, filter services by radius
+    if (lat && lng && radius) {
+      const latitude = parseFloat(lat);
+      const longitude = parseFloat(lng);
+      const radiusKm = parseFloat(radius);
+      
+      if (!isNaN(latitude) && !isNaN(longitude) && !isNaN(radiusKm) && radiusKm > 0) {
+        // Use MongoDB geospatial query to filter by distance
+        servicesResult = await servicesCol.aggregate([
+          {
+            $geoNear: {
+              near: {
+                type: 'Point',
+                coordinates: [longitude, latitude]
+              },
+              distanceField: 'distance',
+              maxDistance: radiusKm * 1000, // Convert km to meters
+              spherical: true,
+              query: servicesQuery
+            }
+          },
+          {
+            $project: {
+              _id: 1,
+              ParentCategoryKey: 1,
+              SubCategoryKey: 1,
+              SubCategoryName: 1,
+              Info: 1,
+              OpeningTimes: 1,
+              ClientGroups: 1,
+              Address: 1,
+              distance: 1
+            }
+          }
+        ]).toArray();
+      } else {
+        // Invalid coordinates, fall back to all services
+        servicesResult = await servicesCol
+          .find(servicesQuery)
+          .project({
+            _id: 1,
+            ParentCategoryKey: 1,
+            SubCategoryKey: 1,
+            SubCategoryName: 1,
+            Info: 1,
+            OpeningTimes: 1,
+            ClientGroups: 1,
+            Address: 1,
+          })
+          .toArray();
+      }
+    } else {
+      // No location filtering, return all services
+      servicesResult = await servicesCol
+        .find(servicesQuery)
+        .project({
+          _id: 1,
+          ParentCategoryKey: 1,
+          SubCategoryKey: 1,
+          SubCategoryName: 1,
+          Info: 1,
+          OpeningTimes: 1,
+          ClientGroups: 1,
+          Address: 1,
+        })
+        .toArray();
+    }
+
+    const services = servicesResult;
 
     const provider = {
       key: rawProvider.Key,
@@ -104,6 +172,12 @@ export async function GET(req: Request) {
       organisation: provider,
       addresses: provider.addresses,
       services: decodedServices,
+      userContext: {
+        lat: lat ? parseFloat(lat) : null,
+        lng: lng ? parseFloat(lng) : null,
+        radius: radius ? parseFloat(radius) : null,
+        location: userLocation,
+      },
     });
 
   } catch (error) {
