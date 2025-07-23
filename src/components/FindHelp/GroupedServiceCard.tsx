@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 
-import MarkdownContent from '@/components/ui/MarkdownContent';
+import LazyMarkdownContent from '@/components/ui/LazyMarkdownContent';
 import { decodeText } from '@/utils/htmlDecode';
 import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup';
 import { formatDistance } from '@/utils/openingTimes';
@@ -28,7 +28,7 @@ interface GroupedServiceCardProps {
   onNavigate?: () => void;
 }
 
-export default function GroupedServiceCard({ 
+const GroupedServiceCard = React.memo(function GroupedServiceCard({ 
   group, 
   isDescriptionOpen = false, 
   onToggleDescription, 
@@ -161,7 +161,7 @@ export default function GroupedServiceCard({
             </div>
           ) : (
             <div>
-              <MarkdownContent content={group.orgDescription} className="prose-sm" />
+              <LazyMarkdownContent content={group.orgDescription} className="prose-sm" />
               {shouldTruncate && (
                 <button
                   type="button"
@@ -186,4 +186,6 @@ export default function GroupedServiceCard({
       </div>
     </Link>
   );
-}
+});
+
+export default GroupedServiceCard;

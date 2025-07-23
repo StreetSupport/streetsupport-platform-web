@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useEffect, useRef } from 'react';
+import { useMemo, useState, useEffect, useRef, useCallback } from 'react';
 import { useLocation } from '@/contexts/LocationContext';
 import { useSearchNavigation } from '@/contexts/SearchNavigationContext';
 import { useSearchParams } from 'next/navigation';
@@ -42,36 +42,32 @@ interface ServiceGroup {
   distance: number; // Minimum distance from any service in the group
 }
 
-// Utility function to group services by organisation only
+// Optimized grouping function moved outside component to prevent recreation
 function groupServicesByOrganisation(
   services: ServiceWithDistance[],
-  selectedCategory: string = '',
-  selectedSubCategory: string = ''
+  selectedCategory: string,
+  selectedSubCategory: string
 ): ServiceGroup[] {
   const groups = new Map<string, ServiceGroup>();
 
-  services.forEach((service) => {
+  for (const service of services) {
     // Apply filtering at the service level first
     const categoryMatch = selectedCategory ? service.category === selectedCategory : true;
     const subCategoryMatch = selectedSubCategory ? service.subCategory === selectedSubCategory : true;
     
     if (!categoryMatch || !subCategoryMatch) {
-      return; // Skip this service if it doesn't match filters
+      continue;
     }
 
-    const groupKey = service.organisation.slug; // Group by organisation only
+    const groupKey = service.organisation.slug;
     
     if (!groups.has(groupKey)) {
-      // Use the first service's description as the organization description
-      // In a real scenario, this would come from organization data
-      const orgDescription = service.description || '';
-      
       groups.set(groupKey, {
         orgId: service.organisation.slug,
         orgName: service.organisation.name,
         orgSlug: service.organisation.slug,
         isVerified: service.organisation.isVerified || false,
-        orgDescription: orgDescription,
+        orgDescription: service.description || '',
         services: [],
         categories: [],
         subcategories: [],
@@ -96,7 +92,7 @@ function groupServicesByOrganisation(
     if (service.distance && service.distance < group.distance) {
       group.distance = service.distance;
     }
-  });
+  }
 
   return Array.from(groups.values());
 }
@@ -115,35 +111,34 @@ export default function FindHelpResults({ services, loading = false, error = nul
   const [isRestoringState, setIsRestoringState] = useState(false);
 
   // Centralized read more state management
-  const handleToggleDescription = (id: string) => {
-    setOpenDescriptionId(openDescriptionId === id ? null : id);
-  };
+  const handleToggleDescription = useCallback((id: string) => {
+    setOpenDescriptionId(prev => prev === id ? null : id);
+  }, []);
 
-  // Group services by organisation only
-  const groupedServices = useMemo(() => {
-    if (!services || services.length === 0) return [];
+  // Combined filtering and grouping logic
+  const { sortedGroups, filteredServices } = useMemo(() => {
+    if (!services || services.length === 0) return { sortedGroups: [], filteredServices: [] };
     
-    return groupServicesByOrganisation(services, selectedCategory, selectedSubCategory);
-  }, [services, selectedCategory, selectedSubCategory]);
-
-  // Sort grouped services
-  const sortedGroups = useMemo(() => {
-    if (sortOrder === 'alpha') {
-      return [...groupedServices].sort((a, b) => a.orgName.localeCompare(b.orgName));
-    }
-    return [...groupedServices].sort((a, b) => a.distance - b.distance);
-  }, [groupedServices, sortOrder]);
-
-  // Create filtered services for map markers (using original flat structure)
-  const filteredServices = useMemo(() => {
-    if (!services || services.length === 0) return [];
-    
-    return services.filter((service) => {
+    // Filter services first
+    const filtered = services.filter((service) => {
       const categoryMatch = selectedCategory ? service.category === selectedCategory : true;
       const subCategoryMatch = selectedSubCategory ? service.subCategory === selectedSubCategory : true;
       return categoryMatch && subCategoryMatch;
     });
-  }, [services, selectedCategory, selectedSubCategory]);
+    
+    // Group filtered services
+    const grouped = groupServicesByOrganisation(services, selectedCategory, selectedSubCategory);
+    
+    // Sort groups
+    const sorted = sortOrder === 'alpha' 
+      ? [...grouped].sort((a, b) => a.orgName.localeCompare(b.orgName))
+      : [...grouped].sort((a, b) => a.distance - b.distance);
+    
+    return {
+      sortedGroups: sorted,
+      filteredServices: filtered
+    };
+  }, [services, selectedCategory, selectedSubCategory, sortOrder]);
 
   // Restore search state if available
   useEffect(() => {
@@ -164,7 +159,7 @@ export default function FindHelpResults({ services, loading = false, error = nul
   }, [searchState, isRestoringState]);
 
   // Save search state when navigating away
-  const handleServiceNavigation = () => {
+  const handleServiceNavigation = useCallback(() => {
     const currentScrollPosition = scrollContainerRef.current?.scrollTop || 0;
     const currentSearchParams: Record<string, string> = {};
     
@@ -182,7 +177,7 @@ export default function FindHelpResults({ services, loading = false, error = nul
       },
       searchParams: currentSearchParams,
     });
-  };
+  }, [services, selectedCategory, selectedSubCategory, sortOrder, saveSearchState, searchParams]);
 
   const combinedMarkers: MapMarker[] = useMemo(() => {
     const markers: MapMarker[] = filteredServices.map((s) => ({

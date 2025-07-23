@@ -1,5 +1,10 @@
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import GoogleMap from '@/components/MapComponent/GoogleMap';
+
+// Mock the loadGoogleMaps utility
+jest.mock('@/utils/loadGoogleMaps', () => ({
+  loadGoogleMaps: jest.fn().mockResolvedValue(undefined),
+}));
 
 interface Marker {
   id: string;
@@ -58,8 +63,9 @@ beforeEach(() => {
 
   // Use the global mock location to avoid navigation errors
   delete (window as any).location;
-  (window as any).location = global.mockLocation;
+  (window as any).location = (global as any).mockLocation;
 
+  // Set up Google Maps API mock
   (window as any).google = {
     maps: {
       Map: jest.fn().mockImplementation(function (this: any) {
@@ -94,24 +100,34 @@ describe('GoogleMap', () => {
     expect(container.querySelector('div')).toBeInTheDocument();
   });
 
-  it('initialises Google Maps when center provided', () => {
+  it('initialises Google Maps when center provided', async () => {
     render(<GoogleMap markers={mockMarkers} center={mockCenter} />);
-    expect((window as any).google.maps.Map).toHaveBeenCalled();
+    await waitFor(() => {
+      expect((window as any).google.maps.Map).toHaveBeenCalled();
+    });
   });
 
-  it('creates markers using Google Maps API', () => {
+  it('creates markers using Google Maps API', async () => {
     render(<GoogleMap markers={mockMarkers} center={mockCenter} />);
-    expect((window as any).google.maps.Marker).toHaveBeenCalledTimes(mockMarkers.length);
+    await waitFor(() => {
+      expect((window as any).google.maps.Marker).toHaveBeenCalledTimes(mockMarkers.length);
+    });
   });
 
-  it('uses provided zoom level', () => {
+  it('uses provided zoom level', async () => {
     render(<GoogleMap markers={mockMarkers} center={mockCenter} zoom={8} />);
+    await waitFor(() => {
+      expect((window as any).google.maps.Map).toHaveBeenCalled();
+    });
     const call = (window as any).google.maps.Map.mock.calls[0][1];
     expect(call.zoom).toBe(8);
   });
 
-  it('uses default zoom level when not provided', () => {
+  it('uses default zoom level when not provided', async () => {
     render(<GoogleMap markers={mockMarkers} center={mockCenter} />);
+    await waitFor(() => {
+      expect((window as any).google.maps.Map).toHaveBeenCalled();
+    });
     const call = (window as any).google.maps.Map.mock.calls[0][1];
     expect(call.zoom).toBe(12);
   });
@@ -121,19 +137,27 @@ describe('GoogleMap', () => {
     expect((window as any).google.maps.Map).not.toHaveBeenCalled();
   });
 
-  it('creates InfoWindow for each marker', () => {
+  it('creates InfoWindow for each marker', async () => {
     render(<GoogleMap markers={mockMarkers} center={mockCenter} />);
-    expect((window as any).google.maps.InfoWindow).toHaveBeenCalledTimes(mockMarkers.length);
+    await waitFor(() => {
+      expect((window as any).google.maps.InfoWindow).toHaveBeenCalledTimes(mockMarkers.length);
+    });
   });
 
-  it('adds click listeners to markers', () => {
+  it('adds click listeners to markers', async () => {
     render(<GoogleMap markers={mockMarkers} center={mockCenter} />);
-    expect(mockAddListener).toHaveBeenCalledTimes(mockMarkers.length);
+    await waitFor(() => {
+      expect(mockAddListener).toHaveBeenCalledTimes(mockMarkers.length);
+    });
     expect(mockAddListener).toHaveBeenCalledWith('click', expect.any(Function));
   });
 
-  it('handles marker click and opens InfoWindow', () => {
+  it('handles marker click and opens InfoWindow', async () => {
     render(<GoogleMap markers={mockMarkers} center={mockCenter} />);
+    
+    await waitFor(() => {
+      expect(mockAddListener).toHaveBeenCalled();
+    });
     
     // Get the click handler for the first marker
     const clickHandler = mockAddListener.mock.calls[0][1];
@@ -145,8 +169,12 @@ describe('GoogleMap', () => {
     expect(mockAddListenerOnce).toHaveBeenCalledWith(expect.any(Object), 'domready', expect.any(Function));
   });
 
-  it('closes existing InfoWindow before opening new one', () => {
+  it('closes existing InfoWindow before opening new one', async () => {
     render(<GoogleMap markers={mockMarkers} center={mockCenter} />);
+    
+    await waitFor(() => {
+      expect(mockAddListener).toHaveBeenCalledTimes(mockMarkers.length);
+    });
     
     // Simulate first marker click
     const firstClickHandler = mockAddListener.mock.calls[0][1];
@@ -159,7 +187,7 @@ describe('GoogleMap', () => {
     expect(mockInfoWindowClose).toHaveBeenCalled();
   });
 
-  it('handles missing organisation and service data gracefully', () => {
+  it('handles missing organisation and service data gracefully', async () => {
     const markersWithMissingData: Marker[] = [
       { 
         id: '3', 
@@ -172,6 +200,10 @@ describe('GoogleMap', () => {
     
     render(<GoogleMap markers={markersWithMissingData} center={mockCenter} />);
     
+    await waitFor(() => {
+      expect((window as any).google.maps.InfoWindow).toHaveBeenCalled();
+    });
+    
     expect((window as any).google.maps.InfoWindow).toHaveBeenCalledWith({
       content: expect.stringContaining('Unknown Organisation')
     });
@@ -183,8 +215,12 @@ describe('GoogleMap', () => {
     });
   });
 
-  it('clears existing markers when new markers are provided', () => {
+  it('clears existing markers when new markers are provided', async () => {
     const { rerender } = render(<GoogleMap markers={mockMarkers} center={mockCenter} />);
+    
+    await waitFor(() => {
+      expect((window as any).google.maps.Marker).toHaveBeenCalledTimes(mockMarkers.length);
+    });
     
     const newMarkers: Marker[] = [
       { 
@@ -198,8 +234,10 @@ describe('GoogleMap', () => {
     
     rerender(<GoogleMap markers={newMarkers} center={mockCenter} />);
     
-    // Should call setMap(null) for each old marker to clear them
-    expect(mockSetMap).toHaveBeenCalledWith(null);
+    await waitFor(() => {
+      // Should call setMap(null) for each old marker to clear them
+      expect(mockSetMap).toHaveBeenCalledWith(null);
+    });
   });
 
   it('handles empty markers array', () => {
@@ -207,8 +245,12 @@ describe('GoogleMap', () => {
     expect((window as any).google.maps.Marker).not.toHaveBeenCalled();
   });
 
-  it('sets correct marker properties including custom icon', () => {
+  it('sets correct marker properties including custom icon', async () => {
     render(<GoogleMap markers={mockMarkers} center={mockCenter} />);
+    
+    await waitFor(() => {
+      expect((window as any).google.maps.Marker).toHaveBeenCalledTimes(mockMarkers.length);
+    });
     
     // Check first marker (no custom icon)
     expect((window as any).google.maps.Marker).toHaveBeenCalledWith({

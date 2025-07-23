@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 
 import type { ServiceWithDistance } from '@/types';
-import MarkdownContent from '@/components/ui/MarkdownContent';
+import LazyMarkdownContent from '@/components/ui/LazyMarkdownContent';
 import { decodeText } from '@/utils/htmlDecode';
 import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup';
 import { isServiceOpenNow, formatDistance } from '@/utils/openingTimes';
@@ -16,7 +16,7 @@ interface ServiceCardProps {
   onNavigate?: () => void;
 }
 
-export default function ServiceCard({ service, isOpen, onToggle, onNavigate }: ServiceCardProps) {
+const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle, onNavigate }: ServiceCardProps) {
   const destination = service.organisation?.slug
     ? `/find-help/organisation/${service.organisation.slug}`
     : '#';
@@ -109,7 +109,7 @@ export default function ServiceCard({ service, isOpen, onToggle, onNavigate }: S
       {/* Description */}
       <div className="text-gray-800 mb-2">
         {isOpen ? (
-          <MarkdownContent content={service.description} className="prose-sm" />
+          <LazyMarkdownContent content={service.description} className="prose-sm" />
         ) : (
           <p>{preview}</p>
         )}
@@ -174,4 +174,6 @@ export default function ServiceCard({ service, isOpen, onToggle, onNavigate }: S
       )}
     </Link>
   );
-}
+});
+
+export default ServiceCard;
