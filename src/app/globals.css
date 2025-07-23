@@ -1,10 +1,6 @@
-/* Optional if you want to pull in your JS config */
-/* @config "../tailwind.config.js" */
 
-/* Core import for Tailwind v4 */
 @import "tailwindcss";
 
-/* Brand Colors for Tailwind v4 */
 @theme {
   --color-brand-a: #38ae8e;
   --color-brand-b: #0b9b75;

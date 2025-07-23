@@ -4,7 +4,6 @@ import './globals.css';
 
 import Nav from '../components/partials/Nav';
 import { LocationProvider } from '../contexts/LocationContext';
-import { SearchNavigationProvider } from '../contexts/SearchNavigationContext';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -21,10 +20,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body>
         <LocationProvider>
-          <SearchNavigationProvider>
-            <Nav />
-            {children}
-          </SearchNavigationProvider>
+          <Nav />
+          {children}
         </LocationProvider>
       </body>
     </html>

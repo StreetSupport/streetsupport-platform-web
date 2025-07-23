@@ -49,14 +49,12 @@ export class ErrorBoundary extends Component<Props, State> {
       return; // Max retry attempts reached
     }
 
-    // Reset error state and increment retry count
     this.setState(prevState => ({ 
       hasError: false, 
       error: undefined,
       retryCount: prevState.retryCount + 1 
     }));
 
-    // Call custom retry handler if provided
     if (this.props.onRetry) {
       this.props.onRetry();
     }

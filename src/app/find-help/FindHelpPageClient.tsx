@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation } from '@/contexts/LocationContext';
-import { useSearchNavigation } from '@/contexts/SearchNavigationContext';
 import LocationPrompt from '@/components/Location/LocationPrompt';
 import FindHelpResults from '@/components/FindHelp/FindHelpResults';
 import ErrorBoundary from '@/components/ErrorBoundary';
@@ -46,7 +45,6 @@ interface FindHelpPageClientProps {
 
 export default function FindHelpPageClient({ searchParams }: FindHelpPageClientProps) {
   const { location } = useLocation();
-  const { searchState, clearSearchState } = useSearchNavigation();
   const [services, setServices] = useState<ServiceWithDistance[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -62,28 +60,6 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
     }
   }, [location]);
 
-  // Restore search state if available (user returning from service detail page)
-  useEffect(() => {
-    if (searchState && searchState.services.length > 0) {
-      // Check if the search state is recent (within 10 minutes)
-      const isRecentState = Date.now() - searchState.timestamp < 10 * 60 * 1000;
-      
-      if (isRecentState) {
-        setServices(searchState.services);
-        setHasLocationSet(true);
-        setLoading(false);
-        setError(null);
-        
-        // Clear the search state after restoring to prevent stale data
-        setTimeout(() => {
-          clearSearchState();
-        }, 1000);
-      } else {
-        // Clear stale search state
-        clearSearchState();
-      }
-    }
-  }, [searchState, clearSearchState]);
 
   const fetchServices = useCallback(async (locationData: typeof location, isRetry: boolean = false) => {
     if (!locationData?.lat || !locationData?.lng) {
@@ -148,7 +124,6 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
       setNetworkError(false);
     } catch (err) {
       clearTimeout(timeoutId);
-      console.error('Error fetching services:', err);
       
       let errorMessage = 'Failed to load services';
       let isNetworkIssue = false;
@@ -192,8 +167,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
               setError('Unable to filter by location, showing all available services');
             }
           }
-        } catch (fallbackErr) {
-          console.error('Fallback fetch also failed:', fallbackErr);
+        } catch {
           setError('Unable to load services. Please try again later.');
         }
       }
@@ -248,8 +222,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
           setError(null);
         }
       })
-      .catch(err => {
-        console.error('Browse all services failed:', err);
+      .catch(_err => {
         setError('Unable to load services. Please try again later.');
       })
       .finally(() => setLoading(false));

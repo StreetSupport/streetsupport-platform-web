@@ -23,7 +23,6 @@ interface ProgressiveServiceGridProps {
   showMap: boolean;
   openDescriptionId: string | null;
   onToggleDescription: (id: string) => void;
-  onNavigate: () => void;
   batchSize?: number;
 }
 
@@ -36,7 +35,6 @@ export default function ProgressiveServiceGrid({
   showMap,
   openDescriptionId,
   onToggleDescription,
-  onNavigate,
   batchSize = 20
 }: ProgressiveServiceGridProps) {
   const [visibleCount, setVisibleCount] = useState(batchSize);
@@ -73,14 +71,12 @@ export default function ProgressiveServiceGrid({
                 service={group.services[0]}
                 isOpen={openDescriptionId === group.services[0].id}
                 onToggle={() => onToggleDescription(group.services[0].id)}
-                onNavigate={onNavigate}
               />
             ) : (
               <GroupedServiceCard
                 group={group}
                 isDescriptionOpen={openDescriptionId === group.orgId}
                 onToggleDescription={() => onToggleDescription(group.orgId)}
-                onNavigate={onNavigate}
               />
             )}
           </div>

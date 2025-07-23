@@ -14,10 +14,9 @@ interface ServiceCardProps {
   service: ServiceWithDistance;
   isOpen: boolean;
   onToggle: () => void;
-  onNavigate?: () => void;
 }
 
-const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle, onNavigate }: ServiceCardProps) {
+const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle }: ServiceCardProps) {
   // Memoize expensive computations to prevent recalculation on every render
   const memoizedData = useMemo(() => {
     const destination = service.organisation?.slug
@@ -41,7 +40,6 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
     // Get opening status using cache to avoid expensive recalculations
     const openingStatus = openingTimesCache.getOpeningStatus(service);
     
-    // Format distance
     const distanceText = formatDistance(service.distance);
 
     return {
@@ -70,14 +68,11 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
   return (
     <Link
       href={destination}
-      onClick={onNavigate}
       className="relative block border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-a"
       aria-label={`View details for ${decodedName}`}
     >
-      {/* Top row with verified icon and distance */}
       <div className="flex justify-between items-start mb-2">
         <div className="flex items-center gap-2">
-          {/* ✅ Verified badge */}
           {service.organisation?.isVerified && (
             <span
               className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-800"
@@ -98,7 +93,6 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
             </span>
           )}
           
-          {/* Open Now indicator */}
           {openingStatus.isOpen && (
             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
               Open Now
@@ -119,20 +113,16 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
         )}
       </div>
 
-      {/* Service name - prominent */}
       {decodedName && (
         <h2 className="text-lg font-semibold mb-1">{decodedName}</h2>
       )}
 
-      {/* Organization name */}
       {decodedOrgName && (
         <h3 className="text-md font-medium mb-1 text-gray-700">{decodedOrgName}</h3>
       )}
 
-      {/* Category > Subcategory */}
       <p className="text-sm text-gray-600 mb-2">{formattedCategory}</p>
 
-      {/* Description */}
       <div className="text-gray-800 mb-2">
         {isOpen ? (
           <LazyMarkdownContent content={service.description} className="prose-sm" />
@@ -141,7 +131,6 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
         )}
       </div>
       
-      {/* Read more/less button on its own line */}
       {decodedDescription.length > 120 && (
         <div className="mb-2">
           <button
@@ -158,7 +147,6 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
         </div>
       )}
 
-      {/* Opening Times */}
       {service.openTimes && service.openTimes.length > 0 ? (
         <div className="mt-3">
           <p className="font-semibold text-sm mb-1">Opening Times:</p>
@@ -192,7 +180,6 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
         </div>
       )}
 
-      {/* Next open indicator */}
       {!openingStatus.isOpen && openingStatus.nextOpen && (
         <div className="text-sm mt-2 text-gray-600">
           Next open: {openingStatus.nextOpen.day} {openingStatus.nextOpen.time}

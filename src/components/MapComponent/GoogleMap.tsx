@@ -42,9 +42,8 @@ export default function GoogleMap({ center, markers, zoom }: Props) {
           setIsLoaded(true);
         }
       })
-      .catch((error) => {
+      .catch((_error) => {
         if (!isCancelled) {
-          console.error('Failed to load Google Maps:', error);
           setLoadError('Failed to load map. Please check your internet connection.');
         }
       });

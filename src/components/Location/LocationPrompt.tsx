@@ -103,7 +103,6 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
       }
     } catch (err) {
       clearTimeout(timeoutId);
-      console.error('Geocoding error:', err);
       
       if (err instanceof Error) {
         if (err.name === 'AbortError') {

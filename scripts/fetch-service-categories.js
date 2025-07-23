@@ -14,8 +14,6 @@ if (!MONGO_URI) {
 
 const client = new MongoClient(MONGO_URI);
 
-// const createKey = (name) =>
-//   name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 
 const formatCategory = (doc) => ({
   key: doc._id || doc.Key || doc.key,

@@ -80,6 +80,7 @@ beforeAll(() => {
     const [text] = Array.isArray(msg) ? msg : [msg];
     if (typeof text === 'string' && text.includes('not wrapped in act')) return;
     if (typeof text === 'string' && text.includes('Not implemented: navigation')) return;
+    if (typeof text === 'string' && text.includes('[API ERROR]')) return;
     originalError(...(Array.isArray(msg) ? msg : [msg]));
   });
 });
