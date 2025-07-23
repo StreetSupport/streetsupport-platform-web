@@ -45,7 +45,6 @@ export default function AdvicePageClient({ locationKey, locationName }: AdvicePa
           throw new Error(result.message || 'Failed to fetch FAQs');
         }
       } catch (err) {
-        console.error('Error fetching FAQs:', err);
         setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
         setLoading(false);

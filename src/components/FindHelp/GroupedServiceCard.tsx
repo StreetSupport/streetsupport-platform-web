@@ -25,14 +25,12 @@ interface GroupedServiceCardProps {
   group: ServiceGroup;
   isDescriptionOpen?: boolean;
   onToggleDescription?: () => void;
-  onNavigate?: () => void;
 }
 
 const GroupedServiceCard = React.memo(function GroupedServiceCard({ 
   group, 
   isDescriptionOpen = false, 
-  onToggleDescription, 
-  onNavigate
+  onToggleDescription
 }: GroupedServiceCardProps) {
   const destination = group.orgSlug
     ? `/find-help/organisation/${group.orgSlug}`
@@ -40,20 +38,16 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
 
   const decodedOrgName = decodeText(group.orgName);
   
-  // Format distance
   const distanceText = formatDistance(group.distance);
 
-  // Get unique categories and format them
   const formattedCategories = [...new Set(group.categories)].map(cat => 
     categoryKeyToName[cat] || cat
   );
 
-  // Get unique subcategories and format them
   const formattedSubcategories = [...new Set(group.subcategories)].map(subcat => 
     subCategoryKeyToName[subcat] || subcat
   );
 
-  // Handle description truncation
   const decodedDescription = group.orgDescription ? decodeText(group.orgDescription) : '';
   const shouldTruncate = decodedDescription.length > 100;
   const displayDescription = shouldTruncate && !isDescriptionOpen
@@ -64,14 +58,11 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
   return (
     <Link
       href={destination}
-      onClick={onNavigate}
       className="relative block border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-a"
       aria-label={`View details for ${decodedOrgName}`}
     >
-      {/* Top row with verified icon and distance */}
       <div className="flex justify-between items-start mb-2">
         <div className="flex items-center gap-2">
-          {/* ✅ Verified badge */}
           {group.isVerified && (
             <span
               className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-800"

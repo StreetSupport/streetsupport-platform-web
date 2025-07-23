@@ -25,7 +25,6 @@ const mockService = {
 
 describe('ServiceCard', () => {
   const mockOnToggle = jest.fn();
-  const mockOnNavigate = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -52,31 +51,7 @@ describe('ServiceCard', () => {
     expect(screen.getByText(/Wed.*09:00.*17:00/)).toBeInTheDocument();
   });
 
-  it('calls onNavigate when service card is clicked', () => {
-    render(
-      <ServiceCard 
-        service={mockService} 
-        isOpen={false} 
-        onToggle={mockOnToggle} 
-        onNavigate={mockOnNavigate}
-      />
-    );
-    
-    const serviceLink = screen.getByRole('link', { name: /View details for Health Help Service/i });
-    fireEvent.click(serviceLink);
-    
-    expect(mockOnNavigate).toHaveBeenCalledTimes(1);
-  });
 
-  it('does not call onNavigate when onNavigate prop is not provided', () => {
-    render(<ServiceCard service={mockService} isOpen={false} onToggle={mockOnToggle} />);
-    
-    const serviceLink = screen.getByRole('link', { name: /View details for Health Help Service/i });
-    fireEvent.click(serviceLink);
-    
-    // Should not throw error when onNavigate is undefined
-    expect(mockOnToggle).not.toHaveBeenCalled();
-  });
 
   it('shows correct link destination based on organisation slug', () => {
     render(<ServiceCard service={mockService} isOpen={false} onToggle={mockOnToggle} />);
@@ -162,7 +137,6 @@ describe('ServiceCard', () => {
         service={longDescriptionService} 
         isOpen={false} 
         onToggle={mockOnToggle} 
-        onNavigate={mockOnNavigate}
       />
     );
     
@@ -170,6 +144,5 @@ describe('ServiceCard', () => {
     fireEvent.click(readMoreButton);
     
     expect(mockOnToggle).toHaveBeenCalledTimes(1);
-    expect(mockOnNavigate).not.toHaveBeenCalled();
   });
 });

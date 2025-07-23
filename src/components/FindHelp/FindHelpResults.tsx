@@ -1,9 +1,7 @@
 'use client';
 
-import { useMemo, useState, useEffect, useRef, useCallback } from 'react';
+import { useMemo, useState, useRef, useCallback } from 'react';
 import { useLocation } from '@/contexts/LocationContext';
-import { useSearchNavigation } from '@/contexts/SearchNavigationContext';
-import { useSearchParams } from 'next/navigation';
 import { useDebounce } from '@/hooks/useDebounce';
 import ProgressiveServiceGrid from './ProgressiveServiceGrid';
 import FilterPanel from './FilterPanel';
@@ -99,8 +97,6 @@ function groupServicesByOrganisation(
 
 export default function FindHelpResults({ services, loading = false, error = null }: Props) {
   const { location, updateRadius } = useLocation();
-  const { saveSearchState, searchState } = useSearchNavigation();
-  const searchParams = useSearchParams();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   const [showMap, setShowMap] = useState(false);
@@ -108,7 +104,6 @@ export default function FindHelpResults({ services, loading = false, error = nul
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubCategory, setSelectedSubCategory] = useState('');
   const [openDescriptionId, setOpenDescriptionId] = useState<string | null>(null);
-  const [isRestoringState, setIsRestoringState] = useState(false);
 
   // Debounce filter values to prevent excessive re-renders
   const debouncedSelectedCategory = useDebounce(selectedCategory, 300);
@@ -144,44 +139,7 @@ export default function FindHelpResults({ services, loading = false, error = nul
     };
   }, [services, debouncedSelectedCategory, debouncedSelectedSubCategory, sortOrder]);
 
-  // Restore search state if available
-  useEffect(() => {
-    if (searchState && !isRestoringState) {
-      setIsRestoringState(true);
-      setSortOrder(searchState.filters.sortOrder);
-      setSelectedCategory(searchState.filters.selectedCategory);
-      setSelectedSubCategory(searchState.filters.selectedSubCategory);
-      
-      // Restore scroll position after a short delay to ensure DOM is ready
-      setTimeout(() => {
-        if (scrollContainerRef.current) {
-          scrollContainerRef.current.scrollTop = searchState.scrollPosition;
-        }
-        setIsRestoringState(false);
-      }, 100);
-    }
-  }, [searchState, isRestoringState]);
 
-  // Save search state when navigating away
-  const handleServiceNavigation = useCallback(() => {
-    const currentScrollPosition = scrollContainerRef.current?.scrollTop || 0;
-    const currentSearchParams: Record<string, string> = {};
-    
-    searchParams.forEach((value, key) => {
-      currentSearchParams[key] = value;
-    });
-
-    saveSearchState({
-      services,
-      scrollPosition: currentScrollPosition,
-      filters: {
-        selectedCategory: debouncedSelectedCategory,
-        selectedSubCategory: debouncedSelectedSubCategory,
-        sortOrder,
-      },
-      searchParams: currentSearchParams,
-    });
-  }, [services, debouncedSelectedCategory, debouncedSelectedSubCategory, sortOrder, saveSearchState, searchParams]);
 
   const combinedMarkers: MapMarker[] = useMemo(() => {
     const markers: MapMarker[] = filteredServices.map((s) => ({
@@ -294,7 +252,6 @@ export default function FindHelpResults({ services, loading = false, error = nul
               showMap={showMap}
               openDescriptionId={openDescriptionId}
               onToggleDescription={handleToggleDescription}
-              onNavigate={handleServiceNavigation}
               batchSize={20}
             />
           )}

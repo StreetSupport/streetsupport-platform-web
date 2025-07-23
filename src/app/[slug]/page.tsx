@@ -18,7 +18,6 @@ export default async function LocationPage(props) {
 
   return (
     <main className="space-y-12">
-      {/* ✅ Breadcrumbs */}
       <nav className="bg-gray-50 py-2">
         <div className="max-w-7xl mx-auto px-4">
           <ol className="flex space-x-2 text-sm text-gray-700">
@@ -31,7 +30,6 @@ export default async function LocationPage(props) {
         </div>
       </nav>
 
-      {/* ✅ Location Header */}
       <section className="bg-white py-12">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-3xl font-bold mb-2">
@@ -49,7 +47,6 @@ export default async function LocationPage(props) {
         </div>
       </section>
 
-      {/* ✅ Emergency Highlight Block */}
       <section className="bg-yellow-50 py-12">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <div className="flex justify-center mb-4">
@@ -87,7 +84,6 @@ export default async function LocationPage(props) {
         </div>
       </section>
 
-      {/* ✅ Map Placeholder */}
       <section className="py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h2 className="text-2xl font-semibold mb-4">Map</h2>
@@ -97,7 +93,6 @@ export default async function LocationPage(props) {
         </div>
       </section>
 
-      {/* ✅ Statistics & News Placeholders */}
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="bg-gray-100 p-8 text-center">
@@ -111,7 +106,6 @@ export default async function LocationPage(props) {
         </div>
       </section>
 
-      {/* ✅ Partners & CTA */}
       <section className="py-12 bg-blue-50">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h2 className="text-2xl font-semibold mb-4">Get in touch</h2>
