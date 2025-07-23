@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import rawCategories from '@/data/service-categories.json';
 
 interface Category {
@@ -16,6 +16,7 @@ interface Props {
   setSelectedSubCategory: (subCategory: string) => void;
 }
 
+// Pre-process categories once on module load
 const categories = (rawCategories as Category[]).sort((a, b) =>
   a.name.localeCompare(b.name)
 );
@@ -26,22 +27,26 @@ export default function FilterPanel({
   setSelectedCategory,
   setSelectedSubCategory,
 }: Props) {
-  const [subCategories, setSubCategories] = useState<
-    { key: string; name: string }[]
-  >([]);
-
-  useEffect(() => {
+  // Memoize subcategories calculation
+  const subCategories = useMemo(() => {
     const matched = categories.find((cat) => cat.key === selectedCategory);
     if (matched && matched.subCategories) {
-      setSubCategories(
-        [...matched.subCategories].sort((a, b) =>
-          a.name.localeCompare(b.name)
-        )
+      return [...matched.subCategories].sort((a, b) =>
+        a.name.localeCompare(b.name)
       );
-    } else {
-      setSubCategories([]);
     }
+    return [];
   }, [selectedCategory]);
+
+  // Reset subcategory when category changes
+  useEffect(() => {
+    if (selectedSubCategory && subCategories.length > 0) {
+      const isValidSubCategory = subCategories.some(sub => sub.key === selectedSubCategory);
+      if (!isValidSubCategory) {
+        setSelectedSubCategory('');
+      }
+    }
+  }, [selectedCategory, selectedSubCategory, subCategories, setSelectedSubCategory]);
 
   return (
     <div className="flex flex-col gap-4">

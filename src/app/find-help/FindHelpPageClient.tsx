@@ -8,6 +8,38 @@ import FindHelpResults from '@/components/FindHelp/FindHelpResults';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import type { ServiceWithDistance } from '@/types';
 
+// Utility function to process raw service data
+function processServiceData(item: unknown): ServiceWithDistance {
+  const serviceItem = item as Record<string, unknown>;
+  const coords = ((serviceItem.Address as Record<string, unknown>)?.Location as Record<string, unknown>)?.coordinates as number[] || [0, 0];
+  
+  // Process opening times to normalize the data structure
+  const openTimes = (serviceItem.OpeningTimes as Array<{ Day?: number; day?: number; StartTime?: number; start?: number; EndTime?: number; end?: number }> || []).map((slot) => ({
+    day: slot.Day ?? slot.day ?? 0,
+    start: slot.StartTime ?? slot.start ?? 0,
+    end: slot.EndTime ?? slot.end ?? 0,
+  }));
+  
+  return {
+    id: serviceItem._id || serviceItem.id,
+    name: String(serviceItem.ServiceProviderName || serviceItem.name || ''),
+    description: String(serviceItem.Info || serviceItem.description || ''),
+    category: serviceItem.ParentCategoryKey || serviceItem.category || '',
+    subCategory: serviceItem.SubCategoryKey || serviceItem.subCategory || '',
+    latitude: coords[1],
+    longitude: coords[0],
+    organisation: {
+      name: String((serviceItem.organisation as Record<string, unknown>)?.name || serviceItem.ServiceProviderName || ''),
+      slug: (serviceItem.organisation as Record<string, unknown>)?.slug || serviceItem.ServiceProviderKey || '',
+      isVerified: (serviceItem.organisation as Record<string, unknown>)?.isVerified || false,
+    },
+    organisationSlug: (serviceItem.organisation as Record<string, unknown>)?.slug || serviceItem.ServiceProviderKey || '',
+    clientGroups: serviceItem.ClientGroups || [],
+    openTimes,
+    distance: serviceItem.distance,
+  } as ServiceWithDistance;
+}
+
 interface FindHelpPageClientProps {
   searchParams: { [key: string]: string | string[] | undefined };
 }
@@ -71,7 +103,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
         lat: locationData.lat.toString(),
         lng: locationData.lng.toString(),
         radius: (locationData.radius || 5).toString(),
-        limit: '1000',
+        limit: '100',
       });
 
       // Add category filter from search params if provided
@@ -109,28 +141,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
         throw new Error('Invalid response format from services API');
       }
 
-      const processedServices: ServiceWithDistance[] = rawArray.map((item: unknown) => {
-        const serviceItem = item as Record<string, unknown>;
-        const coords = ((serviceItem.Address as Record<string, unknown>)?.Location as Record<string, unknown>)?.coordinates as number[] || [0, 0];
-        return {
-          id: serviceItem._id || serviceItem.id,
-          name: String(serviceItem.ServiceProviderName || serviceItem.name || ''),
-          description: String(serviceItem.Info || serviceItem.description || ''),
-          category: serviceItem.ParentCategoryKey || serviceItem.category || '',
-          subCategory: serviceItem.SubCategoryKey || serviceItem.subCategory || '',
-          latitude: coords[1],
-          longitude: coords[0],
-          organisation: {
-            name: String((serviceItem.organisation as Record<string, unknown>)?.name || serviceItem.ServiceProviderName || ''),
-            slug: (serviceItem.organisation as Record<string, unknown>)?.slug || serviceItem.ServiceProviderKey || '',
-            isVerified: (serviceItem.organisation as Record<string, unknown>)?.isVerified || false,
-          },
-          organisationSlug: (serviceItem.organisation as Record<string, unknown>)?.slug || serviceItem.ServiceProviderKey || '',
-          clientGroups: serviceItem.ClientGroups || [],
-          openTimes: serviceItem.OpeningTimes || [],
-          distance: serviceItem.distance, // Distance calculated by API
-        } as ServiceWithDistance;
-      });
+      const processedServices: ServiceWithDistance[] = rawArray.map(processServiceData);
 
       setServices(processedServices);
       setRetryCount(0); // Reset retry count on success
@@ -163,7 +174,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
           const fallbackController = new AbortController();
           const fallbackTimeoutId = setTimeout(() => fallbackController.abort(), 10000);
 
-          const fallbackResponse = await fetch('/api/services?limit=100', {
+          const fallbackResponse = await fetch('/api/services?limit=50', {
             cache: 'no-store',
             signal: fallbackController.signal,
           });
@@ -175,27 +186,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
             const fallbackArray = fallbackData.results || [];
             
             if (Array.isArray(fallbackArray)) {
-              const fallbackServices: ServiceWithDistance[] = fallbackArray.map((item: unknown) => {
-                const fallbackItem = item as Record<string, unknown>;
-                const coords = ((fallbackItem.Address as Record<string, unknown>)?.Location as Record<string, unknown>)?.coordinates as number[] || [0, 0];
-                return {
-                  id: fallbackItem._id || fallbackItem.id,
-                  name: String(fallbackItem.ServiceProviderName || fallbackItem.name || ''),
-                  description: String(fallbackItem.Info || fallbackItem.description || ''),
-                  category: fallbackItem.ParentCategoryKey || fallbackItem.category || '',
-                  subCategory: fallbackItem.SubCategoryKey || fallbackItem.subCategory || '',
-                  latitude: coords[1],
-                  longitude: coords[0],
-                  organisation: {
-                    name: String((fallbackItem.organisation as Record<string, unknown>)?.name || fallbackItem.ServiceProviderName || ''),
-                    slug: (fallbackItem.organisation as Record<string, unknown>)?.slug || fallbackItem.ServiceProviderKey || '',
-                    isVerified: (fallbackItem.organisation as Record<string, unknown>)?.isVerified || false,
-                  },
-                  organisationSlug: (fallbackItem.organisation as Record<string, unknown>)?.slug || fallbackItem.ServiceProviderKey || '',
-                  clientGroups: fallbackItem.ClientGroups || [],
-                  openTimes: fallbackItem.OpeningTimes || [],
-                } as ServiceWithDistance;
-              });
+              const fallbackServices: ServiceWithDistance[] = fallbackArray.map(processServiceData);
               
               setServices(fallbackServices);
               setError('Unable to filter by location, showing all available services');
@@ -247,32 +238,12 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
     setLoading(true);
     setError(null);
     
-    fetch('/api/services?limit=200', { cache: 'no-store' })
+    fetch('/api/services?limit=100', { cache: 'no-store' })
       .then(response => response.json())
       .then(data => {
         const rawArray = data.results || [];
         if (Array.isArray(rawArray)) {
-          const processedServices: ServiceWithDistance[] = rawArray.map((item: unknown) => {
-            const browseItem = item as Record<string, unknown>;
-            const coords = ((browseItem.Address as Record<string, unknown>)?.Location as Record<string, unknown>)?.coordinates as number[] || [0, 0];
-            return {
-              id: browseItem._id || browseItem.id,
-              name: String(browseItem.ServiceProviderName || browseItem.name || ''),
-              description: String(browseItem.Info || browseItem.description || ''),
-              category: browseItem.ParentCategoryKey || browseItem.category || '',
-              subCategory: browseItem.SubCategoryKey || browseItem.subCategory || '',
-              latitude: coords[1],
-              longitude: coords[0],
-              organisation: {
-                name: String((browseItem.organisation as Record<string, unknown>)?.name || browseItem.ServiceProviderName || ''),
-                slug: (browseItem.organisation as Record<string, unknown>)?.slug || browseItem.ServiceProviderKey || '',
-                isVerified: (browseItem.organisation as Record<string, unknown>)?.isVerified || false,
-              },
-              organisationSlug: (browseItem.organisation as Record<string, unknown>)?.slug || browseItem.ServiceProviderKey || '',
-              clientGroups: browseItem.ClientGroups || [],
-              openTimes: browseItem.OpeningTimes || [],
-            } as ServiceWithDistance;
-          });
+          const processedServices: ServiceWithDistance[] = rawArray.map(processServiceData);
           setServices(processedServices);
           setError(null);
         }
