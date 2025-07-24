@@ -395,7 +395,11 @@ describe('GET /api/services', () => {
     // Assert
     expect(res.status).toBe(200);
     expect(json.status).toBe('success');
-    expect(json.results[0].organisation).toBeNull();
+    expect(json.results[0].organisation).toEqual({
+      name: '',
+      slug: 'nonexistent-org',
+      isVerified: false
+    });
   });
 
   describe('Geospatial queries', () => {

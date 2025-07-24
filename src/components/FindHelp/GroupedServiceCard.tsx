@@ -39,6 +39,7 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
   
   // Build destination URL with location context
   let destination = '#';
+  
   if (group.orgSlug) {
     const params = new URLSearchParams();
     

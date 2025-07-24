@@ -5,6 +5,14 @@ import { useLocation } from '@/contexts/LocationContext';
 import LocationPrompt from '@/components/Location/LocationPrompt';
 import FindHelpResults from '@/components/FindHelp/FindHelpResults';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { 
+  getURLSearchParams, 
+  updateURLSearchParams, 
+  saveSearchState, 
+  loadSearchState, 
+  clearSearchState, 
+  isFromOrganisationPage
+} from '@/utils/findHelpStateUtils';
 import type { ServiceWithDistance } from '@/types';
 
 // Utility function to process raw service data
@@ -27,12 +35,18 @@ function processServiceData(item: unknown): ServiceWithDistance {
     subCategory: serviceItem.SubCategoryKey || serviceItem.subCategory || '',
     latitude: coords[1],
     longitude: coords[0],
-    organisation: {
-      name: String((serviceItem.organisation as Record<string, unknown>)?.name || serviceItem.ServiceProviderName || ''),
-      slug: (serviceItem.organisation as Record<string, unknown>)?.slug || serviceItem.ServiceProviderKey || '',
-      isVerified: (serviceItem.organisation as Record<string, unknown>)?.isVerified || false,
+    organisation: serviceItem.organisation ? {
+      name: String((serviceItem.organisation as Record<string, unknown>).name || ''),
+      slug: (serviceItem.organisation as Record<string, unknown>).slug || '',
+      isVerified: (serviceItem.organisation as Record<string, unknown>).isVerified || false,
+    } : {
+      name: String(serviceItem.ServiceProviderName || ''),
+      slug: serviceItem.ServiceProviderKey || '',
+      isVerified: false,
     },
-    organisationSlug: (serviceItem.organisation as Record<string, unknown>)?.slug || serviceItem.ServiceProviderKey || '',
+    organisationSlug: serviceItem.organisation ? 
+      (serviceItem.organisation as Record<string, unknown>).slug || serviceItem.ServiceProviderKey || '' : 
+      serviceItem.ServiceProviderKey || '',
     clientGroups: serviceItem.ClientGroups || [],
     openTimes,
     distance: serviceItem.distance,
@@ -44,7 +58,7 @@ interface FindHelpPageClientProps {
 }
 
 export default function FindHelpPageClient({ searchParams }: FindHelpPageClientProps) {
-  const { location } = useLocation();
+  const { location, setLocationFromCoordinates } = useLocation();
   const [services, setServices] = useState<ServiceWithDistance[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,7 +66,69 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
   const [networkError, setNetworkError] = useState<boolean>(false);
   const [retryCount, setRetryCount] = useState(0);
   const [isRetrying, setIsRetrying] = useState(false);
+  const [shouldRestoreState, setShouldRestoreState] = useState(false);
+  const [initialFilters, setInitialFilters] = useState<{
+    selectedCategory: string;
+    selectedSubCategory: string;
+    sortOrder: 'distance' | 'alpha';
+    showMap: boolean;
+  } | null>(null);
 
+  // Initialize state from URL and sessionStorage on mount
+  useEffect(() => {
+    const urlParams = getURLSearchParams();
+    const savedState = loadSearchState();
+    const fromOrgPage = isFromOrganisationPage();
+    
+    // Check if we should restore from saved state
+    if (savedState && fromOrgPage && savedState.fromResultsPage) {
+      setShouldRestoreState(true);
+      setInitialFilters({
+        selectedCategory: savedState.selectedCategory,
+        selectedSubCategory: savedState.selectedSubCategory,
+        sortOrder: savedState.sortOrder,
+        showMap: savedState.showMap
+      });
+      
+      // Restore location from saved state
+      if (!location || (location.lat !== savedState.lat || location.lng !== savedState.lng)) {
+        setLocationFromCoordinates({
+          lat: savedState.lat,
+          lng: savedState.lng,
+          label: savedState.locationLabel,
+          radius: savedState.radius,
+          source: 'navigation'
+        });
+      }
+    } else if (urlParams.lat && urlParams.lng) {
+      // Initialize from URL parameters
+      const lat = parseFloat(urlParams.lat);
+      const lng = parseFloat(urlParams.lng);
+      const radius = urlParams.radius ? parseFloat(urlParams.radius) : 5;
+      
+      if (!isNaN(lat) && !isNaN(lng)) {
+        setLocationFromCoordinates({
+          lat,
+          lng,
+          label: `${lat.toFixed(4)}, ${lng.toFixed(4)}`,
+          radius,
+          source: 'navigation'
+        });
+        
+        setInitialFilters({
+          selectedCategory: urlParams.cat || '',
+          selectedSubCategory: urlParams.subcat || '',
+          sortOrder: 'distance',
+          showMap: false
+        });
+      }
+    } else {
+      // Clear any old saved state if not coming from org page
+      clearSearchState();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run only once on mount - dependencies intentionally omitted
+  
   // Check if location is set from navigation or context
   useEffect(() => {
     if (location) {
@@ -82,8 +158,8 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
         limit: '500',
       });
 
-      // Add category filter from search params if provided
-      const category = searchParams.category;
+      // Add category filter from search params or initial filters if provided
+      const category = searchParams.category || initialFilters?.selectedCategory;
       if (category && typeof category === 'string') {
         params.append('category', category);
       }
@@ -174,7 +250,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
     } finally {
       setLoading(false);
     }
-  }, [searchParams.category]);
+  }, [searchParams.category, initialFilters?.selectedCategory]);
 
   // Fetch services when location is set
   useEffect(() => {
@@ -294,6 +370,35 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
             services={services} 
             loading={loading} 
             error={error}
+            shouldRestoreState={shouldRestoreState}
+            initialFilters={initialFilters}
+            onStateUpdate={(state) => {
+              // Update URL parameters
+              updateURLSearchParams({
+                lat: location?.lat?.toString(),
+                lng: location?.lng?.toString(),
+                cat: state.selectedCategory || undefined,
+                subcat: state.selectedSubCategory || undefined,
+                radius: (location?.radius && location.radius !== 5) ? location.radius.toString() : undefined
+              });
+              
+              // Save to sessionStorage if location is available
+              if (location && location.lat !== undefined && location.lng !== undefined) {
+                saveSearchState({
+                  lat: location.lat,
+                  lng: location.lng,
+                  locationLabel: location.label || `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}`,
+                  radius: location.radius || 5,
+                  selectedCategory: state.selectedCategory,
+                  selectedSubCategory: state.selectedSubCategory,
+                  selectedClientGroups: [],
+                  openNow: false,
+                  sortOrder: state.sortOrder,
+                  showMap: state.showMap,
+                  fromResultsPage: true
+                });
+              }
+            }}
           />
         </ErrorBoundary>
       )}

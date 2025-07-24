@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useRef, useCallback } from 'react';
+import { useMemo, useState, useRef, useCallback, useEffect } from 'react';
 import { useLocation } from '@/contexts/LocationContext';
 import { useDebounce } from '@/hooks/useDebounce';
 import ProgressiveServiceGrid from './ProgressiveServiceGrid';
@@ -13,6 +13,19 @@ interface Props {
   services: ServiceWithDistance[];
   loading?: boolean;
   error?: string | null;
+  shouldRestoreState?: boolean;
+  initialFilters?: {
+    selectedCategory: string;
+    selectedSubCategory: string;
+    sortOrder: 'distance' | 'alpha';
+    showMap: boolean;
+  } | null;
+  onStateUpdate?: (state: {
+    selectedCategory: string;
+    selectedSubCategory: string;
+    sortOrder: 'distance' | 'alpha';
+    showMap: boolean;
+  }) => void;
 }
 
 interface MapMarker {
@@ -95,19 +108,38 @@ function groupServicesByOrganisation(
   return Array.from(groups.values());
 }
 
-export default function FindHelpResults({ services, loading = false, error = null }: Props) {
+export default function FindHelpResults({ 
+  services, 
+  loading = false, 
+  error = null, 
+  shouldRestoreState: _shouldRestoreState = false,
+  initialFilters = null,
+  onStateUpdate
+}: Props) {
   const { location, updateRadius } = useLocation();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   
-  const [showMap, setShowMap] = useState(false);
-  const [sortOrder, setSortOrder] = useState<'distance' | 'alpha'>('distance');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedSubCategory, setSelectedSubCategory] = useState('');
+  const [showMap, setShowMap] = useState(initialFilters?.showMap || false);
+  const [sortOrder, setSortOrder] = useState<'distance' | 'alpha'>(initialFilters?.sortOrder || 'distance');
+  const [selectedCategory, setSelectedCategory] = useState(initialFilters?.selectedCategory || '');
+  const [selectedSubCategory, setSelectedSubCategory] = useState(initialFilters?.selectedSubCategory || '');
   const [openDescriptionId, setOpenDescriptionId] = useState<string | null>(null);
 
   // Debounce filter values to prevent excessive re-renders
   const debouncedSelectedCategory = useDebounce(selectedCategory, 300);
   const debouncedSelectedSubCategory = useDebounce(selectedSubCategory, 300);
+  
+  // Effect to call onStateUpdate when state changes
+  useEffect(() => {
+    if (onStateUpdate) {
+      onStateUpdate({
+        selectedCategory: debouncedSelectedCategory,
+        selectedSubCategory: debouncedSelectedSubCategory,
+        sortOrder,
+        showMap
+      });
+    }
+  }, [debouncedSelectedCategory, debouncedSelectedSubCategory, sortOrder, showMap, onStateUpdate]);
 
   // Centralized read more state management
   const handleToggleDescription = useCallback((id: string) => {

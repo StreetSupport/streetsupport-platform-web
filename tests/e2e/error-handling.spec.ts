@@ -328,9 +328,9 @@ test.describe('Error Handling and Recovery', () => {
     
     // Try to refresh or retry - reload the page to trigger new request
     await page.reload();
-    await page.getByRole('button', { name: /enter postcode instead/i }).click();
-    await page.getByLabel(/enter your postcode/i).fill(testPostcode);
-    await page.getByRole('button', { name: /find services/i }).click();
+    
+    // Since we have lat/lng in URL, page will automatically try to load services
+    // The reload will trigger the API call which will fail due to offline state
     
     // Should show offline error or some error handling
     await page.waitForTimeout(2000);

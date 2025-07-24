@@ -26,6 +26,7 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
   const memoizedData = useMemo(() => {
     // Build destination URL with location context
     let destination = '#';
+    
     if (service.organisation?.slug) {
       const params = new URLSearchParams();
       
