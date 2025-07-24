@@ -221,7 +221,7 @@ export default function GoogleMap({ center, markers, zoom, onMarkerClick, onMapR
     });
 
     markersRef.current = newMarkers;
-  }, [markers, isLoaded, onMarkerClick]);
+  }, [markers, isLoaded, onMarkerClick, userLocation?.lat, userLocation?.lng, userLocation?.radius]);
 
   if (loadError) {
     return (
