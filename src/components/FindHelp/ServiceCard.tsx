@@ -16,9 +16,11 @@ interface ServiceCardProps {
   service: ServiceWithDistance;
   isOpen: boolean;
   onToggle: () => void;
+  isLoading?: boolean;
+  onCardClick?: () => void;
 }
 
-const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle }: ServiceCardProps) {
+const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle, isLoading = false, onCardClick }: ServiceCardProps) {
   const { location } = useLocation();
   const searchParams = useSearchParams();
   
@@ -94,8 +96,26 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
   return (
     <Link
       href={destination}
-      className="relative block border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-a"
+      onClick={() => {
+        if (onCardClick) {
+          onCardClick();
+        }
+      }}
+      className={`relative block border-2 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-a ${
+        isLoading 
+          ? 'border-transparent animate-pulse' 
+          : 'border-gray-200'
+      }`}
       aria-label={`View details for ${decodedName}`}
+      style={isLoading ? {
+        backgroundImage: `
+          linear-gradient(white, white),
+          conic-gradient(from 0deg, #10b981 0deg, #10b981 60deg, rgba(16, 185, 129, 0.3) 90deg, transparent 120deg, transparent 240deg, rgba(16, 185, 129, 0.3) 270deg, #10b981 300deg, #10b981 360deg)
+        `,
+        backgroundOrigin: 'border-box',
+        backgroundClip: 'padding-box, border-box',
+        animation: 'loading-border 1.5s ease-in-out infinite'
+      } : {}}
     >
       <div className="flex justify-between items-start mb-2">
         <div className="flex items-center gap-2">

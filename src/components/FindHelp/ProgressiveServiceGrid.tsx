@@ -37,6 +37,7 @@ export default function ProgressiveServiceGrid({
   batchSize = 50
 }: ProgressiveServiceGridProps) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [loadingCardId, setLoadingCardId] = useState<string | null>(null);
   const itemsPerPage = batchSize;
   const gridRef = useRef<HTMLDivElement>(null);
   
@@ -49,6 +50,7 @@ export default function ProgressiveServiceGrid({
   // Reset page when groups change
   useEffect(() => {
     setCurrentPage(1);
+    setLoadingCardId(null); // Clear loading state when groups change
   }, [groups]);
   
   // Scroll to top of results when page changes
@@ -60,6 +62,17 @@ export default function ProgressiveServiceGrid({
   }, [currentPage]);
   
   // Generate page numbers to display
+  // Handle card click to show loading state
+  const handleCardClick = (cardId: string) => {
+    setLoadingCardId(cardId);
+    
+    // Clear loading state after navigation (simulated delay)
+    // In practice, this would be cleared when the new page loads
+    setTimeout(() => {
+      setLoadingCardId(null);
+    }, 3000);
+  };
+
   const getPageNumbers = () => {
     const pages = [];
     const maxPagesToShow = 5;
@@ -101,12 +114,16 @@ export default function ProgressiveServiceGrid({
                 service={group.services[0]}
                 isOpen={openDescriptionId === group.services[0].id}
                 onToggle={() => onToggleDescription(group.services[0].id)}
+                isLoading={loadingCardId === group.services[0].id}
+                onCardClick={() => handleCardClick(group.services[0].id)}
               />
             ) : (
               <GroupedServiceCard
                 group={group}
                 isDescriptionOpen={openDescriptionId === group.orgId}
                 onToggleDescription={() => onToggleDescription(group.orgId)}
+                isLoading={loadingCardId === group.orgId}
+                onCardClick={() => handleCardClick(group.orgId)}
               />
             )}
           </div>

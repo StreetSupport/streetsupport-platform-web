@@ -14,6 +14,7 @@ interface Props {
   selectedSubCategory: string;
   setSelectedCategory: (category: string) => void;
   setSelectedSubCategory: (subCategory: string) => void;
+  onResetFilters: () => void;
 }
 
 // Pre-process categories once on module load
@@ -26,6 +27,7 @@ export default function FilterPanel({
   selectedSubCategory,
   setSelectedCategory,
   setSelectedSubCategory,
+  onResetFilters,
 }: Props) {
   // Memoize subcategories calculation
   const subCategories = useMemo(() => {
@@ -47,6 +49,8 @@ export default function FilterPanel({
       }
     }
   }, [selectedCategory, selectedSubCategory, subCategories, setSelectedSubCategory]);
+
+  const hasActiveFilters = selectedCategory || selectedSubCategory;
 
   return (
     <div className="flex flex-col gap-4">
@@ -89,6 +93,15 @@ export default function FilterPanel({
             </option>
           ))}
         </select>
+        {hasActiveFilters && (
+          <button
+            onClick={onResetFilters}
+            className="text-xs px-2 py-1 text-gray-600 hover:text-gray-800 border border-gray-300 rounded hover:bg-gray-50 transition-colors ml-2"
+            title="Reset all filters"
+          >
+            Reset filters
+          </button>
+        )}
       </div>
     </div>
   );

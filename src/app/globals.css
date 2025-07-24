@@ -36,3 +36,52 @@
 .custom-accordion summary {
   list-style: none;
 }
+
+/* Loading border animation for service cards */
+@keyframes loading-border {
+  0% {
+    background-image: 
+      linear-gradient(white, white),
+      conic-gradient(from 0deg, #10b981 0deg, #10b981 60deg, rgba(16, 185, 129, 0.3) 90deg, transparent 120deg, transparent 240deg, rgba(16, 185, 129, 0.3) 270deg, #10b981 300deg, #10b981 360deg);
+  }
+  12.5% {
+    background-image: 
+      linear-gradient(white, white),
+      conic-gradient(from 45deg, #10b981 0deg, #10b981 60deg, rgba(16, 185, 129, 0.3) 90deg, transparent 120deg, transparent 240deg, rgba(16, 185, 129, 0.3) 270deg, #10b981 300deg, #10b981 360deg);
+  }
+  25% {
+    background-image: 
+      linear-gradient(white, white),
+      conic-gradient(from 90deg, #10b981 0deg, #10b981 60deg, rgba(16, 185, 129, 0.3) 90deg, transparent 120deg, transparent 240deg, rgba(16, 185, 129, 0.3) 270deg, #10b981 300deg, #10b981 360deg);
+  }
+  37.5% {
+    background-image: 
+      linear-gradient(white, white),
+      conic-gradient(from 135deg, #10b981 0deg, #10b981 60deg, rgba(16, 185, 129, 0.3) 90deg, transparent 120deg, transparent 240deg, rgba(16, 185, 129, 0.3) 270deg, #10b981 300deg, #10b981 360deg);
+  }
+  50% {
+    background-image: 
+      linear-gradient(white, white),
+      conic-gradient(from 180deg, #10b981 0deg, #10b981 60deg, rgba(16, 185, 129, 0.3) 90deg, transparent 120deg, transparent 240deg, rgba(16, 185, 129, 0.3) 270deg, #10b981 300deg, #10b981 360deg);
+  }
+  62.5% {
+    background-image: 
+      linear-gradient(white, white),
+      conic-gradient(from 225deg, #10b981 0deg, #10b981 60deg, rgba(16, 185, 129, 0.3) 90deg, transparent 120deg, transparent 240deg, rgba(16, 185, 129, 0.3) 270deg, #10b981 300deg, #10b981 360deg);
+  }
+  75% {
+    background-image: 
+      linear-gradient(white, white),
+      conic-gradient(from 270deg, #10b981 0deg, #10b981 60deg, rgba(16, 185, 129, 0.3) 90deg, transparent 120deg, transparent 240deg, rgba(16, 185, 129, 0.3) 270deg, #10b981 300deg, #10b981 360deg);
+  }
+  87.5% {
+    background-image: 
+      linear-gradient(white, white),
+      conic-gradient(from 315deg, #10b981 0deg, #10b981 60deg, rgba(16, 185, 129, 0.3) 90deg, transparent 120deg, transparent 240deg, rgba(16, 185, 129, 0.3) 270deg, #10b981 300deg, #10b981 360deg);
+  }
+  100% {
+    background-image: 
+      linear-gradient(white, white),
+      conic-gradient(from 360deg, #10b981 0deg, #10b981 60deg, rgba(16, 185, 129, 0.3) 90deg, transparent 120deg, transparent 240deg, rgba(16, 185, 129, 0.3) 270deg, #10b981 300deg, #10b981 360deg);
+  }
+}

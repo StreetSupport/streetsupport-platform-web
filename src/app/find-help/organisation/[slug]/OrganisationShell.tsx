@@ -46,6 +46,8 @@ export default function OrganisationShell({ organisation, userContext }: Props) 
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
   // State for back navigation URL
   const [backToSearchURL, setBackToSearchURL] = useState<string | null>(null);
+  // State for map instance reference
+  const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null);
   
   // Set up back navigation URL on mount
   useEffect(() => {
@@ -186,6 +188,18 @@ export default function OrganisationShell({ organisation, userContext }: Props) 
     return grouped;
   };
 
+  // Handler for when a location in the accordion is clicked (to center map)
+  const handleLocationClick = (lat: number, lng: number) => {
+    if (mapInstance) {
+      mapInstance.panTo({ lat, lng });
+    }
+  };
+
+  // Handler for when map is ready
+  const handleMapReady = (map: google.maps.Map) => {
+    setMapInstance(map);
+  };
+
   return (
     <main className="px-4 py-6 max-w-4xl mx-auto">
       {backToSearchURL && (
@@ -217,6 +231,8 @@ export default function OrganisationShell({ organisation, userContext }: Props) 
         organisation={organisation} 
         userContext={userContext} 
         onMarkerClick={handleMapMarkerClick}
+        onMapReady={handleMapReady}
+        selectedLocationForService={selectedLocationForService}
       />
       <OrganisationServicesAccordion 
         organisation={organisation} 
@@ -225,6 +241,7 @@ export default function OrganisationShell({ organisation, userContext }: Props) 
         setSelectedLocationForService={setSelectedLocationForService}
         openAccordion={openAccordion}
         setOpenAccordion={setOpenAccordion}
+        onLocationClick={handleLocationClick}
       />
       <OrganisationContactBlock organisation={organisation} />
       <OrganisationFooter />
