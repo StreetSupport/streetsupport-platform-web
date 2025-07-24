@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
-import fallbackProviders from '@/data/service-providers.json';
 import { decodeText } from '@/utils/htmlDecode';
 import queryCache from '@/utils/queryCache';
 
@@ -39,34 +38,6 @@ interface AggregationStage {
   $count?: string;
 }
 
-interface RawProvider {
-  name: string;
-  slug: string;
-  verified: boolean;
-  services?: RawService[];
-}
-
-interface RawService {
-  id: string;
-  name: string;
-  category: string;
-  subCategory: string;
-  description: string;
-  openTimes?: unknown[];
-  clientGroups?: string[];
-  latitude?: number;
-  longitude?: number;
-}
-
-interface ServiceWithDistance extends RawService {
-  distance?: number;
-  organisation: {
-    name: string;
-    slug: string;
-    isVerified: boolean;
-  };
-  organisationSlug: string;
-}
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -325,82 +296,13 @@ export async function GET(req: Request) {
     return response;
   } catch (error) {
     console.error('[API ERROR] /api/services:', error);
-
-    // Fallback with proper typing
-    try {
-      // Check if fallback data is available and valid
-      if (!fallbackProviders || !Array.isArray(fallbackProviders)) {
-        throw new Error('Fallback data is not available or invalid');
-      }
-
-      const rawProviders = fallbackProviders as RawProvider[];
-
-      let allServices: ServiceWithDistance[] = rawProviders.flatMap((provider) =>
-        (provider.services ?? []).map((service: RawService): ServiceWithDistance => ({
-          id: service.id,
-          name: decodeText(service.name),
-          category: service.category,
-          subCategory: service.subCategory,
-          description: decodeText(service.description),
-          openTimes: service.openTimes ?? [],
-          clientGroups: service.clientGroups ?? [],
-          latitude: service.latitude,
-          longitude: service.longitude,
-          organisation: {
-            name: decodeText(provider.name),
-            slug: provider.slug,
-            isVerified: provider.verified,
-          },
-          organisationSlug: provider.slug,
-        }))
-      );
-
-      // Apply geospatial filtering to fallback data if coordinates provided
-      if (latitude !== undefined && longitude !== undefined && radiusKm !== undefined) {
-        allServices = allServices
-          .map((service: ServiceWithDistance) => {
-            if (service.latitude && service.longitude) {
-              // Calculate distance using Haversine formula
-              const distance = calculateDistance(latitude, longitude, service.latitude, service.longitude);
-              return { ...service, distance };
-            }
-            return service;
-          })
-          .filter((service: ServiceWithDistance) => service.distance !== undefined && service.distance <= radiusKm)
-          .sort((a: ServiceWithDistance, b: ServiceWithDistance) => (a.distance || 0) - (b.distance || 0));
-      }
-
-      const total = allServices.length;
-      const start = (page - 1) * limit;
-      const results = allServices.slice(start, start + limit);
-
-      return NextResponse.json({
-        status: 'success',
-        total,
-        page,
-        limit,
-        results,
-      });
-    } catch (fallbackError) {
-      console.error('[API ERROR] Fallback services failed:', fallbackError);
-      return NextResponse.json(
-        { status: 'error', message: 'Failed to fetch services' },
-        { status: 500 }
-      );
-    }
+    
+    return NextResponse.json(
+      { 
+        status: 'error', 
+        message: 'Service temporarily unavailable. Please try again later.' 
+      },
+      { status: 503 }
+    );
   }
-}
-
-// Helper function to calculate distance between two points using Haversine formula
-function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const R = 6371; // Radius of the Earth in kilometers
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = 
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const distance = R * c; // Distance in kilometers
-  return Math.round(distance * 100) / 100; // Round to 2 decimal places
 }
