@@ -11,6 +11,7 @@ import type { FlattenedService } from '@/types';
 
 interface Props {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 // Shared cache for organisation data to eliminate double API calls
@@ -104,7 +105,7 @@ function processOrganisationData(data: { organisation: unknown; services: unknow
   };
 }
 
-async function fetchOrganisationData(slug: string) {
+async function fetchOrganisationData(slug: string, searchParams?: { [key: string]: string | string[] | undefined }) {
   const cacheKey = `org-${slug}`;
   const cached = organisationCache.get(cacheKey);
   
@@ -120,8 +121,18 @@ async function fetchOrganisationData(slug: string) {
   
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   
+  // Build URL with search parameters for location filtering
+  const url = new URL(`${baseUrl}/api/service-providers/${slug}`);
+  if (searchParams) {
+    Object.entries(searchParams).forEach(([key, value]) => {
+      if (value && typeof value === 'string') {
+        url.searchParams.set(key, value);
+      }
+    });
+  }
+  
   try {
-    const res = await fetch(`${baseUrl}/api/service-providers/${slug}`, {
+    const res = await fetch(url.toString(), {
       cache: 'no-store',
     });
     
@@ -142,6 +153,7 @@ async function fetchOrganisationData(slug: string) {
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const { slug } = await props.params;
+  const searchParams = await props.searchParams;
   
   // Always return a fallback title for E2E tests and error cases
   const fallbackMetadata = {
@@ -149,7 +161,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     description: 'The organisation you are looking for could not be found.',
   };
   
-  const data = await fetchOrganisationData(slug);
+  const data = await fetchOrganisationData(slug, searchParams);
   
   if (!data || !data.organisation) {
     return fallbackMetadata;
@@ -163,8 +175,9 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
 export default async function OrganisationPage(props: Props) {
   const { slug } = await props.params;
+  const searchParams = await props.searchParams;
 
-  const data = await fetchOrganisationData(slug);
+  const data = await fetchOrganisationData(slug, searchParams);
 
   if (!data || !data.organisation) {
     return notFound();
@@ -172,6 +185,8 @@ export default async function OrganisationPage(props: Props) {
 
   const organisation = processOrganisationData(data);
 
-
-  return <OrganisationShell organisation={organisation} />;
+  return <OrganisationShell 
+    organisation={organisation} 
+    userContext={data.userContext} 
+  />;
 }

@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
+import React, { useState, useEffect, useRef } from 'react';
 import ServiceCard from './ServiceCard';
 import GroupedServiceCard from './GroupedServiceCard';
 import type { ServiceWithDistance } from '@/types';
@@ -35,32 +34,63 @@ export default function ProgressiveServiceGrid({
   showMap,
   openDescriptionId,
   onToggleDescription,
-  batchSize = 20
+  batchSize = 50
 }: ProgressiveServiceGridProps) {
-  const [visibleCount, setVisibleCount] = useState(batchSize);
-  const [sentinelRef, isIntersecting] = useIntersectionObserver<HTMLDivElement>({
-    threshold: 0.1,
-    rootMargin: '100px'
-  });
-
-  // Load more items when sentinel comes into view
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = batchSize;
+  const gridRef = useRef<HTMLDivElement>(null);
+  
+  // Calculate pagination values
+  const totalPages = Math.ceil(groups.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const visibleGroups = groups.slice(startIndex, endIndex);
+  
+  // Reset page when groups change
   useEffect(() => {
-    if (isIntersecting && visibleCount < groups.length) {
-      setVisibleCount(prev => Math.min(prev + batchSize, groups.length));
+    setCurrentPage(1);
+  }, [groups]);
+  
+  // Scroll to top of results when page changes
+  useEffect(() => {
+    if (gridRef.current) {
+      // Scroll to the grid container
+      gridRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [isIntersecting, visibleCount, groups.length, batchSize]);
-
-  // Reset visible count when groups change
-  useEffect(() => {
-    setVisibleCount(batchSize);
-  }, [groups, batchSize]);
-
-  const visibleGroups = groups.slice(0, visibleCount);
-  const hasMore = visibleCount < groups.length;
+  }, [currentPage]);
+  
+  // Generate page numbers to display
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxPagesToShow = 5;
+    
+    if (totalPages <= maxPagesToShow) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1);
+        pages.push('...');
+        for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        pages.push('...');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+    return pages;
+  };
 
   return (
     <>
-      <div className={`gap-4 ${showMap ? 'flex flex-col' : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
+      <div ref={gridRef} className={`gap-4 ${showMap ? 'flex flex-col' : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
         {visibleGroups.map((group) => (
           <div
             key={group.orgId}
@@ -83,23 +113,58 @@ export default function ProgressiveServiceGrid({
         ))}
       </div>
 
-      {/* Loading sentinel - triggers loading more items when visible */}
-      {hasMore && (
-        <div
-          ref={sentinelRef}
-          className="flex items-center justify-center py-6"
-        >
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600" />
-          <span className="ml-2 text-gray-600 text-sm">
-            Loading more services... ({visibleCount} of {groups.length})
-          </span>
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-6 py-4">
+          {/* Previous button */}
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 text-sm rounded-md border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Previous page"
+          >
+            Previous
+          </button>
+          
+          {/* Page numbers */}
+          <div className="flex items-center gap-1">
+            {getPageNumbers().map((page, index) => (
+              page === '...' ? (
+                <span key={`ellipsis-${index}`} className="px-2 text-gray-400">...</span>
+              ) : (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(Number(page))}
+                  className={`px-3 py-1 text-sm rounded-md border ${
+                    currentPage === page
+                      ? 'bg-blue-600 text-white border-blue-600'
+                      : 'border-gray-300 hover:bg-gray-50'
+                  }`}
+                  aria-label={`Go to page ${page}`}
+                  aria-current={currentPage === page ? 'page' : undefined}
+                >
+                  {page}
+                </button>
+              )
+            ))}
+          </div>
+          
+          {/* Next button */}
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 text-sm rounded-md border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Next page"
+          >
+            Next
+          </button>
         </div>
       )}
-
-      {/* Show completion message when all items are loaded */}
-      {!hasMore && groups.length > batchSize && (
-        <div className="text-center py-4 text-gray-500 text-sm">
-          All {groups.length} services loaded
+      
+      {/* Page info */}
+      {groups.length > 0 && (
+        <div className="text-center text-sm text-gray-600 mt-2">
+          Showing {startIndex + 1}-{Math.min(endIndex, groups.length)} of {groups.length} organisations
         </div>
       )}
     </>

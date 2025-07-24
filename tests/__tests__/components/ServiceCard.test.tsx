@@ -1,5 +1,37 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import ServiceCard from '@/components/FindHelp/ServiceCard';
+import { LocationProvider } from '@/contexts/LocationContext';
+
+// Mock Next.js navigation
+jest.mock('next/navigation', () => ({
+  usePathname: jest.fn(() => '/'),
+  useSearchParams: jest.fn(() => new URLSearchParams()),
+}));
+
+// Mock locations data
+jest.mock('@/data/locations.json', () => [
+  {
+    id: '1',
+    key: 'birmingham',
+    name: 'Birmingham',
+    slug: 'birmingham',
+    latitude: 52.4862,
+    longitude: -1.8904,
+    isPublic: true,
+  },
+]);
+
+// Mock service categories data
+jest.mock('@/data/service-categories.json', () => [
+  {
+    key: 'health',
+    name: 'Health',
+    subCategories: [
+      { key: 'dentist', name: 'Dentist' },
+      { key: 'gp', name: 'GP' },
+    ],
+  },
+]);
 
 const mockService = {
   id: 'abc123',
@@ -26,18 +58,32 @@ const mockService = {
 describe('ServiceCard', () => {
   const mockOnToggle = jest.fn();
 
+  // Helper function to render ServiceCard with LocationProvider
+  const renderServiceCard = (service = mockService, props = {}) => {
+    return render(
+      <LocationProvider>
+        <ServiceCard 
+          service={service} 
+          isOpen={false} 
+          onToggle={mockOnToggle} 
+          {...props}
+        />
+      </LocationProvider>
+    );
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('renders service name and organisation', () => {
-    render(<ServiceCard service={mockService} isOpen={false} onToggle={mockOnToggle} />);
+    renderServiceCard();
     expect(screen.getByText(/Health Help Service/i)).toBeInTheDocument();
     expect(screen.getByText(/Mayer Inc/i)).toBeInTheDocument();
   });
 
   it('displays description and category tags', () => {
-    render(<ServiceCard service={mockService} isOpen={false} onToggle={mockOnToggle} />);
+    renderServiceCard();
     expect(
       screen.getByText(/A local service offering dentist/i)
     ).toBeInTheDocument();
@@ -45,16 +91,14 @@ describe('ServiceCard', () => {
   });
 
   it('renders opening times', () => {
-    render(<ServiceCard service={mockService} isOpen={false} onToggle={mockOnToggle} />);
+    renderServiceCard();
     // Note: ServiceCard component doesn't render client groups, only opening times
     expect(screen.getByText(/Mon.*09:00.*17:00/)).toBeInTheDocument();
     expect(screen.getByText(/Wed.*09:00.*17:00/)).toBeInTheDocument();
   });
 
-
-
   it('shows correct link destination based on organisation slug', () => {
-    render(<ServiceCard service={mockService} isOpen={false} onToggle={mockOnToggle} />);
+    renderServiceCard();
     
     const serviceLink = screen.getByRole('link', { name: /View details for Health Help Service/i });
     expect(serviceLink).toHaveAttribute('href', '/find-help/organisation/mayer-inc');
@@ -69,7 +113,7 @@ describe('ServiceCard', () => {
       },
     };
 
-    render(<ServiceCard service={serviceWithoutSlug} isOpen={false} onToggle={mockOnToggle} />);
+    renderServiceCard(serviceWithoutSlug);
     
     const serviceLink = screen.getByRole('link', { name: /View details for Health Help Service/i });
     expect(serviceLink).toHaveAttribute('href', '#');
@@ -81,7 +125,7 @@ describe('ServiceCard', () => {
       description: 'A'.repeat(150), // Long description to trigger "Read more" button
     };
 
-    render(<ServiceCard service={longDescriptionService} isOpen={false} onToggle={mockOnToggle} />);
+    renderServiceCard(longDescriptionService);
     
     const readMoreButton = screen.getByText('Read more');
     fireEvent.click(readMoreButton);
@@ -95,7 +139,7 @@ describe('ServiceCard', () => {
       description: 'A'.repeat(150), // Long description
     };
 
-    render(<ServiceCard service={longDescriptionService} isOpen={true} onToggle={mockOnToggle} />);
+    renderServiceCard(longDescriptionService, { isOpen: true });
     
     expect(screen.getByText('Show less')).toBeInTheDocument();
     
@@ -106,7 +150,7 @@ describe('ServiceCard', () => {
   });
 
   it('shows verified badge for verified organisations', () => {
-    render(<ServiceCard service={mockService} isOpen={false} onToggle={mockOnToggle} />);
+    renderServiceCard();
     
     const verifiedIcon = screen.getByTitle('Verified Service');
     expect(verifiedIcon).toBeInTheDocument();
@@ -121,7 +165,7 @@ describe('ServiceCard', () => {
       },
     };
 
-    render(<ServiceCard service={unverifiedService} isOpen={false} onToggle={mockOnToggle} />);
+    renderServiceCard(unverifiedService);
     
     expect(screen.queryByTitle('Verified Service')).not.toBeInTheDocument();
   });
@@ -132,13 +176,7 @@ describe('ServiceCard', () => {
       description: 'A'.repeat(150),
     };
 
-    render(
-      <ServiceCard 
-        service={longDescriptionService} 
-        isOpen={false} 
-        onToggle={mockOnToggle} 
-      />
-    );
+    renderServiceCard(longDescriptionService);
     
     const readMoreButton = screen.getByText('Read more');
     fireEvent.click(readMoreButton);

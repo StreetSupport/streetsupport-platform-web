@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import OrganisationOverview from '@/components/OrganisationPage/OrganisationOverview';
 import OrganisationLocations from '@/components/OrganisationPage/OrganisationLocations';
 import OrganisationServicesAccordion from '@/components/OrganisationPage/OrganisationServicesAccordion';
@@ -8,16 +9,180 @@ import OrganisationFooter from '@/components/OrganisationPage/OrganisationFooter
 
 import type { OrganisationDetails } from '@/utils/organisation';
 
-interface Props {
-  organisation: OrganisationDetails;
+interface UserContext {
+  lat: number | null;
+  lng: number | null;
+  radius: number | null;
+  location: string | null;
 }
 
-export default function OrganisationShell({ organisation }: Props) {
+interface AddressWithLocation {
+  Location?: {
+    coordinates: [number, number];
+  };
+  [key: string]: unknown;
+}
+
+interface ServiceWithCategoryNames {
+  categoryName?: string;
+  subCategoryName?: string;
+  category: string;
+  subCategory: string;
+  address?: unknown;
+  [key: string]: unknown;
+}
+
+interface Props {
+  organisation: OrganisationDetails;
+  userContext?: UserContext;
+}
+
+export default function OrganisationShell({ organisation, userContext }: Props) {
+  // State to manage location selection for services
+  const [selectedLocationForService, setSelectedLocationForService] = useState<Record<string, number>>({});
+  // State to manage which accordion is open
+  const [openAccordion, setOpenAccordion] = useState<string | null>(null);
+
+  // Handler for when a map marker is clicked
+  const handleMapMarkerClick = (markerId: string) => {
+    // Parse marker ID to extract location coordinates
+    if (markerId.startsWith('service-loc-')) {
+      // Find the service location that matches this marker
+      const services = organisation.services || [];
+      const matchingService = services.find((service, idx) => `service-loc-${idx}` === markerId);
+      
+      if (matchingService) {
+        // Find all services at this location and update their selection
+        const targetCoords = (matchingService.address as AddressWithLocation)?.Location?.coordinates;
+        if (targetCoords) {
+          let firstServiceKey: string | null = null;
+          
+          services.forEach((service) => {
+            const serviceCoords = (service.address as AddressWithLocation)?.Location?.coordinates;
+            if (serviceCoords && 
+                serviceCoords[0] === targetCoords[0] && 
+                serviceCoords[1] === targetCoords[1]) {
+              
+              const serviceWithNames = service as unknown as ServiceWithCategoryNames;
+              const category = serviceWithNames.category || 'Other';
+              const subcategory = serviceWithNames.subCategory || 'Other';
+              const serviceKey = `${category}-${subcategory}`;
+              
+              // Store the first service key to open its accordion
+              if (!firstServiceKey) {
+                firstServiceKey = serviceKey;
+              }
+              
+              // Find the index of this location in the service's locations array
+              const categoryGroupedServices = getCategoryGroupedServices();
+              const serviceData = categoryGroupedServices[category]?.[subcategory];
+              if (serviceData) {
+                const locationIndex = serviceData.locations.findIndex(loc => {
+                  const coords = (loc.address as AddressWithLocation)?.Location?.coordinates;
+                  return coords && coords[0] === targetCoords[0] && coords[1] === targetCoords[1];
+                });
+                
+                if (locationIndex >= 0) {
+                  setSelectedLocationForService(prev => ({
+                    ...prev,
+                    [serviceKey]: locationIndex
+                  }));
+                }
+              }
+            }
+          });
+          
+          // Open the accordion for the first service at this location
+          if (firstServiceKey) {
+            setOpenAccordion(firstServiceKey);
+            
+            // Scroll to the services section after a short delay to ensure the accordion opens
+            setTimeout(() => {
+              const servicesSection = document.querySelector('[data-testid="services-accordion"]');
+              if (servicesSection) {
+                servicesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }, 100);
+          }
+        }
+      }
+    }
+  };
+
+  // Helper function to recreate category grouped services (should match the one in OrganisationServicesAccordion)
+  const getCategoryGroupedServices = () => {
+    const services = organisation.services || [];
+    const grouped = {} as Record<string, Record<string, {
+      service: unknown;
+      locations: Array<{
+        address: unknown;
+        distance: number;
+        service: unknown;
+      }>;
+    }>>;
+    
+    services.forEach(service => {
+      const serviceWithNames = service as unknown as ServiceWithCategoryNames;
+      const category = serviceWithNames.category || 'Other';
+      const subcategory = serviceWithNames.subCategory || 'Other';
+      const address = service.address || {};
+      
+      // Calculate distance for this location
+      let distance = Infinity;
+      const coords = (address as AddressWithLocation).Location?.coordinates;
+      if (userContext?.lat && userContext?.lng && coords) {
+        const R = 6371; // Earth's radius in kilometers
+        const dLat = (coords[1] - userContext.lat) * Math.PI / 180;
+        const dLng = (coords[0] - userContext.lng) * Math.PI / 180;
+        const a = 
+          Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.cos(userContext.lat * Math.PI / 180) * Math.cos(coords[1] * Math.PI / 180) * 
+          Math.sin(dLng/2) * Math.sin(dLng/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        distance = R * c;
+      }
+      
+      if (!grouped[category]) grouped[category] = {};
+      if (!grouped[category][subcategory]) {
+        grouped[category][subcategory] = {
+          service: service,
+          locations: []
+        };
+      }
+      
+      grouped[category][subcategory].locations.push({
+        address,
+        distance,
+        service
+      });
+    });
+    
+    // Sort locations within each service by distance
+    Object.keys(grouped).forEach(category => {
+      Object.keys(grouped[category]).forEach(subcategory => {
+        grouped[category][subcategory].locations.sort((a, b) => a.distance - b.distance);
+      });
+    });
+    
+    return grouped;
+  };
+
   return (
     <main className="px-4 py-6 max-w-4xl mx-auto">
       <OrganisationOverview organisation={organisation} />
-      <OrganisationLocations organisation={organisation} />
-      <OrganisationServicesAccordion organisation={organisation} />
+      <OrganisationLocations 
+        organisation={organisation} 
+        userContext={userContext} 
+        onMarkerClick={handleMapMarkerClick}
+      />
+      <OrganisationServicesAccordion 
+        organisation={organisation} 
+        userContext={userContext}
+        selectedLocationForService={selectedLocationForService}
+        setSelectedLocationForService={setSelectedLocationForService}
+        openAccordion={openAccordion}
+        setOpenAccordion={setOpenAccordion}
+      />
       <OrganisationContactBlock organisation={organisation} />
       <OrganisationFooter />
     </main>

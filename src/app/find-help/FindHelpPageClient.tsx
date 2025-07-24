@@ -79,7 +79,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
         lat: locationData.lat.toString(),
         lng: locationData.lng.toString(),
         radius: (locationData.radius || 5).toString(),
-        limit: '100',
+        limit: '500',
       });
 
       // Add category filter from search params if provided
@@ -212,7 +212,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
     setLoading(true);
     setError(null);
     
-    fetch('/api/services?limit=100', { cache: 'no-store' })
+    fetch('/api/services?limit=500', { cache: 'no-store' })
       .then(response => response.json())
       .then(data => {
         const rawArray = data.results || [];

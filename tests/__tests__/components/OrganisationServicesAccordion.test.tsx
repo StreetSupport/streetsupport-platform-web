@@ -65,6 +65,8 @@ describe('OrganisationServicesAccordion', () => {
         name: 'Training Skills',
         category: 'training',
         subCategory: 'skills',
+        categoryName: 'training',
+        subCategoryName: 'skills',
         organisation: 'Test Org',
         organisationSlug: 'test-org',
         description: 'Training description',
@@ -78,6 +80,8 @@ describe('OrganisationServicesAccordion', () => {
         name: 'Job Search',
         category: 'employment',
         subCategory: 'jobs',
+        categoryName: 'employment',
+        subCategoryName: 'jobs',
         organisation: 'Test Org',
         organisationSlug: 'test-org',
         description: 'Job search description',
@@ -127,7 +131,26 @@ describe('OrganisationServicesAccordion', () => {
       key: 'test-org',
       name: 'Test Organisation',
       addresses: [],
-      services: mockServices,
+      services: [
+        {
+          ...mockServices[0],
+          address: {
+            Street: '123 High St',
+            City: 'Test City',
+            Postcode: 'TE1 1ST',
+            Location: { coordinates: [-2, 53] },
+          }
+        },
+        {
+          ...mockServices[1],
+          address: {
+            Street: '456 Low St',
+            City: 'Test City',
+            Postcode: 'TE2 2ST',
+            Location: { coordinates: [-2.1, 53.1] },
+          }
+        }
+      ],
       groupedServices
     };
 
@@ -177,6 +200,8 @@ describe('OrganisationServicesAccordion', () => {
       name: 'Counseling',
       category: 'health',
       subCategory: 'mental-health',
+      categoryName: 'health',
+      subCategoryName: 'mental-health',
       organisation: 'Test Org',
       organisationSlug: 'test-org',
       description: 'Counseling services',
@@ -210,7 +235,7 @@ describe('OrganisationServicesAccordion', () => {
       key: 'test-org',
       name: 'Test Organisation',
       addresses: [],
-      services: [],
+      services: [serviceWithOpenTimes],
       groupedServices
     };
 
@@ -233,6 +258,8 @@ describe('OrganisationServicesAccordion', () => {
       name: 'Housing Advice',
       category: 'housing',
       subCategory: 'housing-advice',
+      categoryName: 'housing',
+      subCategoryName: 'housing-advice',
       organisation: 'Test Org',
       organisationSlug: 'test-org',
       description: 'Housing advice services',
@@ -264,7 +291,7 @@ describe('OrganisationServicesAccordion', () => {
       key: 'test-org',
       name: 'Test Organisation',
       addresses: [],
-      services: [],
+      services: [serviceWithAddress],
       groupedServices
     };
 
@@ -278,7 +305,7 @@ describe('OrganisationServicesAccordion', () => {
     expect(screen.getByText('Address:')).toBeInTheDocument();
     
     // Check for the map link (we can't check the href directly with the mock)
-    const addressText = screen.getByText('101 Housing St, Floor 2, Test City, TE4 4ST');
+    const addressText = screen.getByText('101 Housing St, Test City, TE4 4ST');
     expect(addressText).toBeInTheDocument();
   });
 });
