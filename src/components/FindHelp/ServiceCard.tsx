@@ -212,7 +212,7 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
               
               return orderedDays.map((dayName) => {
                 const slots = dayGroups.get(dayName);
-                const timeRanges = slots.map(slot => `${slot.start} – ${slot.end}`).join(', ');
+                const timeRanges = slots.map((slot: { start: string; end: string }) => `${slot.start} – ${slot.end}`).join(', ');
                 
                 return (
                   <li key={dayName}>

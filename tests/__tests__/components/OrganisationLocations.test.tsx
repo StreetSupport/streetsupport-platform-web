@@ -209,7 +209,7 @@ describe('OrganisationLocations', () => {
     
     // Check that fallback IDs are generated
     const markers = (globalThis as any).mapProps.markers;
-    expect(markers[0].id).toBe('addr-0');
-    expect(markers[1].id).toBe('addr-1');
+    expect(markers[0].id).toBe('org-addr-0');
+    expect(markers[1].id).toBe('org-addr-1');
   });
 });

@@ -50,10 +50,9 @@ export default function OrganisationLocations({ organisation, userContext, onMar
       if (!uniqueLocationMap.has(locationKey)) {
         const addressParts = [
           address.Street,
-          address.Street1, 
           address.City,
           address.Postcode
-        ].filter(Boolean).map(part => decodeText(part));
+        ].filter(Boolean).map(part => decodeText(part!));
         
         uniqueLocationMap.set(locationKey, {
           id: `service-loc-${idx}`,
@@ -61,7 +60,7 @@ export default function OrganisationLocations({ organisation, userContext, onMar
           lng: address.Location.coordinates[0],
           title: addressParts.join(', '),
           organisationSlug: organisation.key || 'org-location',
-          serviceName: service.subCategoryName || service.name || 'Service',
+          serviceName: service.subCategory || service.name || 'Service',
           type: 'service',
         });
       }
@@ -78,7 +77,7 @@ export default function OrganisationLocations({ organisation, userContext, onMar
           typeof addr.Location.coordinates[1] === 'number') {
         
         const locationKey = `${addr.Location.coordinates[0]}-${addr.Location.coordinates[1]}`;
-        const addressParts = [addr.Street, addr.City, addr.Postcode].filter(Boolean).map(part => decodeText(part));
+        const addressParts = [addr.Street, addr.City, addr.Postcode].filter(Boolean).map(part => decodeText(part!));
         
         uniqueLocationMap.set(locationKey, {
           id: addr.Key?.$binary?.base64 || `org-addr-${idx}`,

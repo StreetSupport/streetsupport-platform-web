@@ -64,7 +64,7 @@ export async function GET(req: Request) {
     }
 
     // Build query for services with location filtering if provided
-    let servicesQuery: any = {
+    const servicesQuery = {
       ServiceProviderKey: rawProvider.Key,
       IsPublished: true,
     };

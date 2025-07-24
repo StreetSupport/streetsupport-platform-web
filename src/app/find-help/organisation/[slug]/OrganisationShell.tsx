@@ -16,6 +16,22 @@ interface UserContext {
   location: string | null;
 }
 
+interface AddressWithLocation {
+  Location?: {
+    coordinates: [number, number];
+  };
+  [key: string]: unknown;
+}
+
+interface ServiceWithCategoryNames {
+  categoryName?: string;
+  subCategoryName?: string;
+  category: string;
+  subCategory: string;
+  address?: unknown;
+  [key: string]: unknown;
+}
+
 interface Props {
   organisation: OrganisationDetails;
   userContext?: UserContext;
@@ -37,18 +53,19 @@ export default function OrganisationShell({ organisation, userContext }: Props) 
       
       if (matchingService) {
         // Find all services at this location and update their selection
-        const targetCoords = matchingService.address?.Location?.coordinates;
+        const targetCoords = (matchingService.address as AddressWithLocation)?.Location?.coordinates;
         if (targetCoords) {
           let firstServiceKey: string | null = null;
           
           services.forEach((service) => {
-            const serviceCoords = service.address?.Location?.coordinates;
+            const serviceCoords = (service.address as AddressWithLocation)?.Location?.coordinates;
             if (serviceCoords && 
                 serviceCoords[0] === targetCoords[0] && 
                 serviceCoords[1] === targetCoords[1]) {
               
-              const category = service.categoryName || 'Other';
-              const subcategory = service.subCategoryName || 'Other';
+              const serviceWithNames = service as unknown as ServiceWithCategoryNames;
+              const category = serviceWithNames.category || 'Other';
+              const subcategory = serviceWithNames.subCategory || 'Other';
               const serviceKey = `${category}-${subcategory}`;
               
               // Store the first service key to open its accordion
@@ -60,11 +77,10 @@ export default function OrganisationShell({ organisation, userContext }: Props) 
               const categoryGroupedServices = getCategoryGroupedServices();
               const serviceData = categoryGroupedServices[category]?.[subcategory];
               if (serviceData) {
-                const locationIndex = serviceData.locations.findIndex(loc => 
-                  loc.address?.Location?.coordinates &&
-                  loc.address.Location.coordinates[0] === targetCoords[0] &&
-                  loc.address.Location.coordinates[1] === targetCoords[1]
-                );
+                const locationIndex = serviceData.locations.findIndex(loc => {
+                  const coords = (loc.address as AddressWithLocation)?.Location?.coordinates;
+                  return coords && coords[0] === targetCoords[0] && coords[1] === targetCoords[1];
+                });
                 
                 if (locationIndex >= 0) {
                   setSelectedLocationForService(prev => ({
@@ -79,6 +95,14 @@ export default function OrganisationShell({ organisation, userContext }: Props) 
           // Open the accordion for the first service at this location
           if (firstServiceKey) {
             setOpenAccordion(firstServiceKey);
+            
+            // Scroll to the services section after a short delay to ensure the accordion opens
+            setTimeout(() => {
+              const servicesSection = document.querySelector('[data-testid="services-accordion"]');
+              if (servicesSection) {
+                servicesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }, 100);
           }
         }
       }
@@ -89,28 +113,30 @@ export default function OrganisationShell({ organisation, userContext }: Props) 
   const getCategoryGroupedServices = () => {
     const services = organisation.services || [];
     const grouped = {} as Record<string, Record<string, {
-      service: any;
+      service: unknown;
       locations: Array<{
-        address: any;
+        address: unknown;
         distance: number;
-        service: any;
+        service: unknown;
       }>;
     }>>;
     
     services.forEach(service => {
-      const category = service.categoryName || 'Other';
-      const subcategory = service.subCategoryName || 'Other';
+      const serviceWithNames = service as unknown as ServiceWithCategoryNames;
+      const category = serviceWithNames.category || 'Other';
+      const subcategory = serviceWithNames.subCategory || 'Other';
       const address = service.address || {};
       
       // Calculate distance for this location
       let distance = Infinity;
-      if (userContext?.lat && userContext?.lng && address.Location?.coordinates) {
+      const coords = (address as AddressWithLocation).Location?.coordinates;
+      if (userContext?.lat && userContext?.lng && coords) {
         const R = 6371; // Earth's radius in kilometers
-        const dLat = (address.Location.coordinates[1] - userContext.lat) * Math.PI / 180;
-        const dLng = (address.Location.coordinates[0] - userContext.lng) * Math.PI / 180;
+        const dLat = (coords[1] - userContext.lat) * Math.PI / 180;
+        const dLng = (coords[0] - userContext.lng) * Math.PI / 180;
         const a = 
           Math.sin(dLat/2) * Math.sin(dLat/2) +
-          Math.cos(userContext.lat * Math.PI / 180) * Math.cos(address.Location.coordinates[1] * Math.PI / 180) * 
+          Math.cos(userContext.lat * Math.PI / 180) * Math.cos(coords[1] * Math.PI / 180) * 
           Math.sin(dLng/2) * Math.sin(dLng/2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         distance = R * c;

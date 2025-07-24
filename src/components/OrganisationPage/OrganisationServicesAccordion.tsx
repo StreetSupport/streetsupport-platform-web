@@ -3,24 +3,19 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Accordion from '@/components/ui/Accordion';
 import MarkdownContent from '@/components/ui/MarkdownContent';
-import type { OrganisationDetails } from '@/utils/organisation';
+import type { OrganisationDetails, Address } from '@/utils/organisation';
+import type { ServiceWithDistance, FlattenedService } from '@/types';
 import { isServiceOpenNow } from '@/utils/openingTimes';
 import { decodeText } from '@/utils/htmlDecode';
+import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup';
 
-// Helper function to create a unique key for location grouping
-function getLocationKey(address: any): string {
-  if (!address) return 'unknown-location';
-  
-  const parts = [
-    address.Street,
-    address.Street1,
-    address.City,
-    address.Postcode
-  ].filter(Boolean);
-  
-  if (parts.length === 0) return 'unknown-location';
-  return parts.join('-').toLowerCase().replace(/\s+/g, '-');
-}
+
+// Type for service location data
+type ServiceLocation = {
+  address: Address;
+  distance: number;
+  service: FlattenedService;
+};
 
 // Helper function to calculate distance between two points
 function calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
@@ -36,17 +31,14 @@ function calculateDistance(lat1: number, lng1: number, lat2: number, lng2: numbe
 }
 
 // Helper function to format decoded address
-function formatAddress(address: any): string {
+function formatAddress(address: Address): string {
   const parts = [
     address.Street,
-    address.Street1,
-    address.Street2,
-    address.Street3,
     address.City,
     address.Postcode,
   ]
     .filter(Boolean)
-    .map(part => decodeText(part));
+    .map(part => decodeText(part!));
   
   return parts.join(', ');
 }
@@ -88,17 +80,13 @@ export default function OrganisationServicesAccordion({
   const categoryGroupedServices = useMemo(() => {
     const services = organisation.services || [];
     const grouped = {} as Record<string, Record<string, {
-      service: any;
-      locations: Array<{
-        address: any;
-        distance: number;
-        service: any;
-      }>;
+      service: FlattenedService;
+      locations: ServiceLocation[];
     }>>;
     
     services.forEach(service => {
-      const category = service.categoryName || 'Other';
-      const subcategory = service.subCategoryName || 'Other';
+      const category = service.category || 'Other';
+      const subcategory = service.subCategory || 'Other';
       const address = service.address || {};
       
       // Calculate distance for this location
@@ -122,14 +110,14 @@ export default function OrganisationServicesAccordion({
       
       // Only add location if it's unique (deduplicate by coordinates with tolerance for floating point precision)
       const existingLocation = grouped[category][subcategory].locations.find(loc => {
-        if (!loc.address.Location?.coordinates || !address.Location?.coordinates) {
+        if (!(loc.address as Address).Location?.coordinates || !address.Location?.coordinates) {
           return false; // Don't deduplicate locations without coordinates
         }
         
         // Use a small tolerance for floating point comparison
         const tolerance = 0.000001;
-        const latDiff = Math.abs(loc.address.Location.coordinates[1] - address.Location.coordinates[1]);
-        const lngDiff = Math.abs(loc.address.Location.coordinates[0] - address.Location.coordinates[0]);
+        const latDiff = Math.abs((loc.address as Address).Location!.coordinates![1] - address.Location.coordinates[1]);
+        const lngDiff = Math.abs((loc.address as Address).Location!.coordinates![0] - address.Location.coordinates[0]);
         
         return latDiff < tolerance && lngDiff < tolerance;
       });
@@ -138,7 +126,7 @@ export default function OrganisationServicesAccordion({
         grouped[category][subcategory].locations.push({
           address,
           distance,
-          service
+          service: service as FlattenedService
         });
       }
     });
@@ -161,7 +149,7 @@ export default function OrganisationServicesAccordion({
         setOpenAccordion(hash);
       }
     }
-  }, []);
+  }, [setOpenAccordion]);
 
   if (Object.keys(categoryGroupedServices).length === 0) return null;
 
@@ -183,7 +171,7 @@ export default function OrganisationServicesAccordion({
   };
 
   return (
-    <section className="mb-6">
+    <section className="mb-6" data-testid="services-accordion">
       <h2 className="text-xl font-semibold mb-4">Services</h2>
 
       {Object.keys(categoryGroupedServices).map((category) => {
@@ -191,7 +179,7 @@ export default function OrganisationServicesAccordion({
 
         return (
           <div key={category} className="mb-6">
-            <h3 className="text-lg font-bold mb-4">{category}</h3>
+            <h3 className="text-lg font-bold mb-4">{categoryKeyToName[category] || category}</h3>
 
             {subcategories.map((subcategory) => {
               const serviceData = categoryGroupedServices[category][subcategory];
@@ -201,7 +189,7 @@ export default function OrganisationServicesAccordion({
               return (
                 <Accordion
                   key={accordionKey}
-                  title={subcategory}
+                  title={subCategoryKeyToName[subcategory] || subcategory}
                   className="mb-4"
                   isOpen={openAccordion === accordionKey}
                   onToggle={() => setOpenAccordion(openAccordion === accordionKey ? null : accordionKey)}
@@ -210,38 +198,43 @@ export default function OrganisationServicesAccordion({
                   {serviceData.locations.length > 1 && (
                     <div className="mb-4">
                       <p className="font-semibold mb-2 text-sm">Available at {serviceData.locations.length} locations:</p>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="space-y-2">
                         {serviceData.locations.map((location, locationIndex) => {
-                          const fullAddress = formatAddress(location.address);
+                          const fullAddress = formatAddress(location.address as Address);
 
                           const isSelected = (selectedLocationForService[accordionKey] || 0) === locationIndex;
                           
                           // Get opening status for this location
+                          const service = location.service;
                           const serviceWithDistance = {
-                            ...location.service,
+                            ...service,
                             organisation: {
-                              name: location.service.organisation,
-                              slug: location.service.organisationSlug,
+                              name: service.organisation,
+                              slug: service.organisationSlug,
                               isVerified: false,
                             },
                           };
-                          const openingStatus = isServiceOpenNow(serviceWithDistance);
+                          const openingStatus = isServiceOpenNow(serviceWithDistance as ServiceWithDistance);
 
                           return (
                             <button
                               key={locationIndex}
                               type="button"
                               onClick={() => setSelectedLocation(category, subcategory, locationIndex)}
-                              className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition-colors ${
+                              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg border text-sm transition-colors ${
                                 isSelected
                                   ? 'bg-blue-50 border-blue-200 text-blue-800'
                                   : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
                               }`}
                             >
-                              <span className="text-xs">📍</span>
-                              <div className="text-left">
-                                <div className="font-medium">{fullAddress || 'Unknown Address'}</div>
-                                <div className="flex items-center gap-2 text-xs">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs">📍</span>
+                                <div className="text-left flex-1">
+                                  <div className="font-medium truncate">{fullAddress || 'Unknown Address'}</div>
+                                </div>
+                              </div>
+                              <div className="flex flex-col items-end gap-1 text-xs">
+                                <div className="flex items-center gap-2">
                                   {location.distance !== Infinity && (
                                     <span className="text-gray-500">{location.distance.toFixed(1)} km</span>
                                   )}
@@ -252,6 +245,11 @@ export default function OrganisationServicesAccordion({
                                     <span className="text-gray-500">● Closed</span>
                                   )}
                                 </div>
+                                {!openingStatus.isOpen && openingStatus.nextOpen && (
+                                  <span className="text-xs text-gray-400">
+                                    Next: {openingStatus.nextOpen.day} {openingStatus.nextOpen.time}
+                                  </span>
+                                )}
                               </div>
                             </button>
                           );
@@ -261,9 +259,9 @@ export default function OrganisationServicesAccordion({
                   )}
 
                   {/* Service Description */}
-                  {selectedLocation?.service.description && (
+                  {(selectedLocation as ServiceLocation | undefined)?.service?.description && (
                     <div className="mb-4">
-                      <MarkdownContent content={selectedLocation.service.description} />
+                      <MarkdownContent content={(selectedLocation as ServiceLocation).service.description} />
                     </div>
                   )}
 
@@ -316,28 +314,28 @@ export default function OrganisationServicesAccordion({
                   )}
 
                   {/* Opening Times */}
-                  {selectedLocation?.service.openTimes && selectedLocation.service.openTimes.length > 0 && (
+                  {(selectedLocation as ServiceLocation | undefined)?.service?.openTimes && (selectedLocation as ServiceLocation).service.openTimes.length > 0 && (
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <p className="font-semibold">Opening Times:</p>
                         {(() => {
                           const serviceWithDistance = {
-                            ...selectedLocation.service,
+                            ...(selectedLocation as ServiceLocation).service,
                             organisation: {
-                              name: selectedLocation.service.organisation,
-                              slug: selectedLocation.service.organisationSlug,
+                              name: (selectedLocation as ServiceLocation).service.organisation,
+                              slug: (selectedLocation as ServiceLocation).service.organisationSlug,
                               isVerified: false,
                             },
                           };
-                          const openingStatus = isServiceOpenNow(serviceWithDistance);
+                          const openingStatus = isServiceOpenNow(serviceWithDistance as ServiceWithDistance);
                           
                           // Check for phone service
-                          const isPhoneService = selectedLocation.service.subCategory.toLowerCase().includes('telephone') || 
-                                               selectedLocation.service.subCategory.toLowerCase().includes('phone') ||
-                                               selectedLocation.service.subCategory.toLowerCase().includes('helpline');
+                          const isPhoneService = (selectedLocation as ServiceLocation).service.subCategory.toLowerCase().includes('telephone') || 
+                                               (selectedLocation as ServiceLocation).service.subCategory.toLowerCase().includes('phone') ||
+                                               (selectedLocation as ServiceLocation).service.subCategory.toLowerCase().includes('helpline');
                           
                           // Check for 24-hour service
-                          const is24Hour = selectedLocation.service.openTimes.some(slot => {
+                          const is24Hour = (selectedLocation as ServiceLocation).service.openTimes.some((slot) => {
                             const startTime = Number(slot.start);
                             const endTime = Number(slot.end);
                             return startTime === 0 && endTime === 2359; // 00:00 to 23:59
@@ -378,10 +376,10 @@ export default function OrganisationServicesAccordion({
                         {(() => {
                           // Group opening times by day and consolidate multiple sessions
                           const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-                          const dayGroups = new Map();
+                          const dayGroups = new Map<string, Array<{start: string; end: string}>>();
                           
                           // Group slots by day
-                          selectedLocation.service.openTimes.forEach((slot) => {
+                          (selectedLocation as ServiceLocation).service.openTimes.forEach((slot) => {
                             const dayIndex = Number(slot.day);
                             const startTime = Number(slot.start);
                             const endTime = Number(slot.end);
@@ -391,7 +389,7 @@ export default function OrganisationServicesAccordion({
                               if (!dayGroups.has(dayName)) {
                                 dayGroups.set(dayName, []);
                               }
-                              dayGroups.get(dayName).push({
+                              dayGroups.get(dayName)!.push({
                                 start: formatTime(startTime),
                                 end: formatTime(endTime)
                               });
@@ -402,7 +400,7 @@ export default function OrganisationServicesAccordion({
                           const orderedDays = days.filter(day => dayGroups.has(day));
                           
                           return orderedDays.map((dayName) => {
-                            const slots = dayGroups.get(dayName);
+                            const slots = dayGroups.get(dayName) || [];
                             const timeRanges = slots.map(slot => `${slot.start} – ${slot.end}`).join(', ');
                             
                             return (

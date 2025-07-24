@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import OrganisationShell from '@/app/find-help/organisation/[slug]/OrganisationShell';
 import { mockOrganisationDetails, mockMinimalOrganisationDetails } from '../../__mocks__/api-responses';
 import { OrganisationDetails } from '@/utils/organisation';
@@ -12,14 +12,52 @@ jest.mock('@/components/OrganisationPage/OrganisationOverview', () => {
 });
 
 jest.mock('@/components/OrganisationPage/OrganisationLocations', () => {
-  return function MockOrganisationLocations({ organisation }: { organisation: OrganisationDetails }) {
-    return <div data-testid="organisation-locations">Locations: {organisation.addresses.length}</div>;
+  return function MockOrganisationLocations({ organisation, userContext, onMarkerClick }: { 
+    organisation: OrganisationDetails; 
+    userContext?: any; 
+    onMarkerClick?: (markerId: string) => void;
+  }) {
+    return (
+      <div data-testid="organisation-locations">
+        Locations: {organisation.addresses.length}
+        {onMarkerClick && (
+          <button 
+            data-testid="marker-click-trigger" 
+            onClick={() => onMarkerClick('service-loc-0')}
+          >
+            Trigger Marker Click
+          </button>
+        )}
+      </div>
+    );
   };
 });
 
 jest.mock('@/components/OrganisationPage/OrganisationServicesAccordion', () => {
-  return function MockOrganisationServicesAccordion({ organisation }: { organisation: OrganisationDetails }) {
-    return <div data-testid="organisation-services">Services: {organisation.services.length}</div>;
+  return function MockOrganisationServicesAccordion({ 
+    organisation, 
+    userContext, 
+    selectedLocationForService, 
+    setSelectedLocationForService, 
+    openAccordion, 
+    setOpenAccordion 
+  }: { 
+    organisation: OrganisationDetails;
+    userContext?: any;
+    selectedLocationForService?: Record<string, number>;
+    setSelectedLocationForService?: (value: Record<string, number> | ((prev: Record<string, number>) => Record<string, number>)) => void;
+    openAccordion?: string | null;
+    setOpenAccordion?: (value: string | null) => void;
+  }) {
+    return (
+      <div data-testid="organisation-services">
+        Services: {organisation.services.length}
+        {openAccordion && <div data-testid="open-accordion">{openAccordion}</div>}
+        {selectedLocationForService && Object.keys(selectedLocationForService).length > 0 && (
+          <div data-testid="selected-locations">{JSON.stringify(selectedLocationForService)}</div>
+        )}
+      </div>
+    );
   };
 });
 
@@ -168,5 +206,144 @@ describe('OrganisationShell', () => {
     expect(mainElement).toHaveClass('py-6');
     expect(mainElement).toHaveClass('max-w-4xl');
     expect(mainElement).toHaveClass('mx-auto');
+  });
+
+  it('renders with user context and passes it to child components', () => {
+    const userContext = {
+      lat: 53.4808,
+      lng: -2.2426,
+      radius: 5,
+      location: 'Manchester'
+    };
+
+    render(<OrganisationShell organisation={mockOrganisationDetails} userContext={userContext} />);
+    
+    // Verify components are rendered (userContext is passed but not directly visible)
+    expect(screen.getByTestId('organisation-overview')).toBeInTheDocument();
+    expect(screen.getByTestId('organisation-locations')).toBeInTheDocument();
+    expect(screen.getByTestId('organisation-services')).toBeInTheDocument();
+  });
+
+  it('handles map marker click for service location', () => {
+    // Create organisation with services that have proper structure for testing
+    const orgWithServices: OrganisationDetails = {
+      ...mockOrganisationDetails,
+      services: [
+        {
+          id: 'service-1',
+          name: 'Test Service',
+          category: 'housing',
+          subCategory: 'advice',
+          organisation: 'Test Org',
+          organisationSlug: 'test-org',
+          description: 'Test service description',
+          openTimes: [],
+          clientGroups: ['adults'],
+          latitude: 53.4808,
+          longitude: -2.2426,
+          address: {
+            Street: '123 Test St',
+            City: 'Test City',
+            Postcode: 'T1 1ES',
+            Location: { coordinates: [-2.2426, 53.4808] }
+          }
+        }
+      ]
+    };
+
+    render(<OrganisationShell organisation={orgWithServices} />);
+    
+    // Trigger the map marker click
+    const markerTrigger = screen.getByTestId('marker-click-trigger');
+    fireEvent.click(markerTrigger);
+    
+    // Verify the accordion state is updated
+    expect(screen.getByTestId('open-accordion')).toHaveTextContent('housing-advice');
+  });
+
+  it('handles map marker click with no matching service', () => {
+    render(<OrganisationShell organisation={mockOrganisationDetails} />);
+    
+    // Mock a marker click that won't match any service
+    const markerTrigger = screen.getByTestId('marker-click-trigger');
+    fireEvent.click(markerTrigger);
+    
+    // Should not crash and no accordion should be opened
+    expect(screen.queryByTestId('open-accordion')).not.toBeInTheDocument();
+  });
+
+  it('handles map marker click with service but no coordinates', () => {
+    const orgWithServiceNoCoords: OrganisationDetails = {
+      ...mockOrganisationDetails,
+      services: [
+        {
+          id: 'service-1',
+          name: 'Test Service',
+          category: 'housing',
+          subCategory: 'advice',
+          organisation: 'Test Org',
+          organisationSlug: 'test-org',
+          description: 'Test service description',
+          openTimes: [],
+          clientGroups: ['adults'],
+          latitude: 53.4808,
+          longitude: -2.2426,
+          address: {
+            Street: '123 Test St',
+            City: 'Test City',
+            Postcode: 'T1 1ES'
+            // No Location coordinates
+          }
+        }
+      ]
+    };
+
+    render(<OrganisationShell organisation={orgWithServiceNoCoords} />);
+    
+    const markerTrigger = screen.getByTestId('marker-click-trigger');
+    fireEvent.click(markerTrigger);
+    
+    // Should not crash and no accordion should be opened
+    expect(screen.queryByTestId('open-accordion')).not.toBeInTheDocument();
+  });
+
+  it('passes userContext to components with distance calculation', () => {
+    const userContext = {
+      lat: 53.4808,
+      lng: -2.2426,
+      radius: 10,
+      location: 'Manchester'
+    };
+
+    const orgWithLocationServices: OrganisationDetails = {
+      ...mockOrganisationDetails,
+      services: [
+        {
+          id: 'service-1',
+          name: 'Test Service',
+          category: 'housing',
+          subCategory: 'advice',
+          organisation: 'Test Org',
+          organisationSlug: 'test-org',
+          description: 'Test service description',
+          openTimes: [],
+          clientGroups: ['adults'],
+          latitude: 53.5,
+          longitude: -2.3,
+          address: {
+            Street: '123 Test St',
+            City: 'Test City',
+            Postcode: 'T1 1ES',
+            Location: { coordinates: [-2.3, 53.5] }
+          }
+        }
+      ]
+    };
+
+    render(<OrganisationShell organisation={orgWithLocationServices} userContext={userContext} />);
+    
+    // Components should be rendered with userContext
+    expect(screen.getByTestId('organisation-locations')).toBeInTheDocument();
+    expect(screen.getByTestId('organisation-services')).toBeInTheDocument();
   });
 });
