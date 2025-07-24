@@ -57,6 +57,7 @@ interface Props {
   setSelectedLocationForService?: (value: Record<string, number> | ((prev: Record<string, number>) => Record<string, number>)) => void;
   openAccordion?: string | null;
   setOpenAccordion?: (value: string | null) => void;
+  onLocationClick?: (lat: number, lng: number) => void;
 }
 
 export default function OrganisationServicesAccordion({ 
@@ -65,10 +66,12 @@ export default function OrganisationServicesAccordion({
   selectedLocationForService: externalSelectedLocationForService, 
   setSelectedLocationForService: externalSetSelectedLocationForService,
   openAccordion: externalOpenAccordion,
-  setOpenAccordion: externalSetOpenAccordion
+  setOpenAccordion: externalSetOpenAccordion,
+  onLocationClick
 }: Props) {
   const [internalOpenAccordion, setInternalOpenAccordion] = useState<string | null>(null);
   const [internalSelectedLocationForService, setInternalSelectedLocationForService] = useState<Record<string, number>>({});
+  const [loadingContent, setLoadingContent] = useState<string | null>(null);
   
   // Use external state if provided, otherwise use internal state
   const selectedLocationForService = externalSelectedLocationForService ?? internalSelectedLocationForService;
@@ -123,19 +126,35 @@ export default function OrganisationServicesAccordion({
       });
       
       if (!existingLocation) {
-        grouped[category][subcategory].locations.push({
-          address,
-          distance,
-          service: service as FlattenedService
-        });
+        // Only add location if it's within the search radius (if radius is specified)
+        const withinRadius = !userContext?.radius || distance <= userContext.radius;
+        
+        
+        if (withinRadius) {
+          grouped[category][subcategory].locations.push({
+            address,
+            distance,
+            service: service as FlattenedService
+          });
+        }
       }
     });
     
-    // Sort locations within each service by distance
+    // Sort locations within each service by distance and remove empty services/categories
     Object.keys(grouped).forEach(category => {
       Object.keys(grouped[category]).forEach(subcategory => {
         grouped[category][subcategory].locations.sort((a, b) => a.distance - b.distance);
+        
+        // Remove services that have no locations after filtering
+        if (grouped[category][subcategory].locations.length === 0) {
+          delete grouped[category][subcategory];
+        }
       });
+      
+      // Remove categories that have no services after filtering
+      if (Object.keys(grouped[category]).length === 0) {
+        delete grouped[category];
+      }
     });
     
     return grouped;
@@ -220,7 +239,19 @@ export default function OrganisationServicesAccordion({
                             <button
                               key={locationIndex}
                               type="button"
-                              onClick={() => setSelectedLocation(category, subcategory, locationIndex)}
+                              onClick={() => {
+                                setSelectedLocation(category, subcategory, locationIndex);
+                                
+                                // Trigger loading indicator for content update
+                                setLoadingContent(accordionKey);
+                                setTimeout(() => setLoadingContent(null), 800);
+                                
+                                // Call map centering callback if provided
+                                const coordinates = (location.address as Address).Location?.coordinates;
+                                if (onLocationClick && coordinates) {
+                                  onLocationClick(coordinates[1], coordinates[0]); // lat, lng
+                                }
+                              }}
                               className={`w-full flex items-center justify-between px-3 py-2 rounded-lg border text-sm transition-colors ${
                                 isSelected
                                   ? 'bg-blue-50 border-blue-200 text-blue-800'
@@ -260,14 +291,27 @@ export default function OrganisationServicesAccordion({
 
                   {/* Service Description */}
                   {(selectedLocation as ServiceLocation | undefined)?.service?.description && (
-                    <div className="mb-4">
-                      <MarkdownContent content={(selectedLocation as ServiceLocation).service.description} />
+                    <div className="mb-4 relative">
+                      {loadingContent === accordionKey && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                        </div>
+                      )}
+                      <div className={`transition-opacity duration-200 ${loadingContent === accordionKey ? 'opacity-50' : 'opacity-100'}`}>
+                        <MarkdownContent content={(selectedLocation as ServiceLocation).service.description} />
+                      </div>
                     </div>
                   )}
 
                   {/* Address and Map Links */}
                   {selectedLocation && (
-                    <div className="mb-4">
+                    <div className="mb-4 relative">
+                      {loadingContent === accordionKey && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                        </div>
+                      )}
+                      <div className={`transition-opacity duration-200 ${loadingContent === accordionKey ? 'opacity-50' : 'opacity-100'}`}>
                       <p className="font-semibold mb-1">Address:</p>
                       {(() => {
                         const fullAddress = formatAddress(selectedLocation.address);
@@ -310,12 +354,19 @@ export default function OrganisationServicesAccordion({
                           </div>
                         );
                       })()}
+                      </div>
                     </div>
                   )}
 
                   {/* Opening Times */}
                   {(selectedLocation as ServiceLocation | undefined)?.service?.openTimes && (selectedLocation as ServiceLocation).service.openTimes.length > 0 && (
-                    <div>
+                    <div className="relative">
+                      {loadingContent === accordionKey && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                        </div>
+                      )}
+                      <div className={`transition-opacity duration-200 ${loadingContent === accordionKey ? 'opacity-50' : 'opacity-100'}`}>
                       <div className="flex items-center gap-2 mb-1">
                         <p className="font-semibold">Opening Times:</p>
                         {(() => {
@@ -411,6 +462,7 @@ export default function OrganisationServicesAccordion({
                           });
                         })()}
                       </ul>
+                      </div>
                     </div>
                   )}
                 </Accordion>

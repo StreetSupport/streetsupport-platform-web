@@ -9,12 +9,20 @@ interface Marker {
   lng: number;
   title: string;
   organisationSlug: string; // ✅ must match field used in ServiceCard
-  icon?: string;
+  icon?: string | google.maps.Icon;
   organisation?: string;
   serviceName?: string;
   distanceKm?: number;
   link?: string; // Custom link for homepage and other special markers
   onMarkerClick?: (markerId: string) => void; // Custom click handler
+  isSelected?: boolean; // Whether this marker represents a selected location
+  type?: string; // Type of marker (service, user, etc.)
+}
+
+interface UserLocation {
+  lat: number;
+  lng: number;
+  radius?: number;
 }
 
 interface Props {
@@ -22,9 +30,11 @@ interface Props {
   markers: Marker[];
   zoom?: number;
   onMarkerClick?: (markerId: string) => void; // Global click handler
+  onMapReady?: (mapInstance: google.maps.Map) => void; // Callback when map is ready
+  userLocation?: UserLocation | null; // User location context for navigation
 }
 
-export default function GoogleMap({ center, markers, zoom, onMarkerClick }: Props) {
+export default function GoogleMap({ center, markers, zoom, onMarkerClick, onMapReady, userLocation }: Props) {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
@@ -67,7 +77,12 @@ export default function GoogleMap({ center, markers, zoom, onMarkerClick }: Prop
     });
 
     mapInstanceRef.current = map;
-  }, [center, effectiveZoom, isLoaded]);
+    
+    // Call the onMapReady callback if provided
+    if (onMapReady) {
+      onMapReady(map);
+    }
+  }, [center, effectiveZoom, isLoaded, onMapReady]);
 
   useEffect(() => {
     const map = mapInstanceRef.current;
@@ -93,18 +108,47 @@ export default function GoogleMap({ center, markers, zoom, onMarkerClick }: Prop
         onMarkerClick: markerClickHandler,
       } = markerData;
 
+      // Determine marker styling based on type and selection
+      const markerIcon = icon;
+      let zIndex = 100; // Default z-index for service markers
+      let animation = null;
+      
+      if (id === 'user-location' || markerData.type === 'user') {
+        zIndex = 1000; // Higher z-index to appear above other markers
+      }
+      
+      // Add bounce animation for selected service markers
+      if (markerData.isSelected && markerData.type === 'service') {
+        animation = google.maps.Animation.BOUNCE;
+        zIndex = 500; // Higher than normal service markers but lower than user location
+      }
+
       const gMarker = new google.maps.Marker({
         position: { lat, lng },
         map,
         title,
-        icon: icon || undefined,
+        icon: markerIcon || undefined,
+        zIndex: zIndex,
+        animation: animation,
       });
 
       // Determine if we have custom click handlers
       const hasCustomHandler = markerClickHandler || onMarkerClick;
       
-      // Use custom link if provided, otherwise default to organisation page
-      const destination = link || `/find-help/organisation/${organisationSlug}`;
+      // Use custom link if provided, otherwise default to organisation page with location context
+      let destination = link || `/find-help/organisation/${organisationSlug}`;
+      
+      // Add user location parameters to organisation URLs if available
+      if (!link && userLocation?.lat && userLocation?.lng) {
+        const params = new URLSearchParams();
+        params.set('lat', userLocation.lat.toString());
+        params.set('lng', userLocation.lng.toString());
+        if (userLocation.radius) {
+          params.set('radius', userLocation.radius.toString());
+        }
+        destination = `/find-help/organisation/${organisationSlug}?${params.toString()}`;
+      }
+      
       const infoId = `info-${id}`;
 
       // Customize info window content based on marker type and click handlers
@@ -177,7 +221,7 @@ export default function GoogleMap({ center, markers, zoom, onMarkerClick }: Prop
     });
 
     markersRef.current = newMarkers;
-  }, [markers, isLoaded, onMarkerClick]);
+  }, [markers, isLoaded, onMarkerClick, userLocation?.lat, userLocation?.lng, userLocation?.radius]);
 
   if (loadError) {
     return (

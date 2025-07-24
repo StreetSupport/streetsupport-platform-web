@@ -85,6 +85,9 @@ beforeEach(() => {
       event: {
         addListenerOnce: mockAddListenerOnce,
       },
+      Animation: {
+        BOUNCE: 'BOUNCE',
+      },
     },
   };
 });
@@ -257,7 +260,9 @@ describe('GoogleMap', () => {
       position: { lat: 53.1, lng: -0.5 },
       map: expect.any(Object),
       title: 'Test Pin 1',
-      icon: undefined
+      icon: undefined,
+      zIndex: 100,
+      animation: null
     });
     
     // Check second marker (with custom icon)
@@ -265,7 +270,9 @@ describe('GoogleMap', () => {
       position: { lat: 53.2, lng: -0.6 },
       map: expect.any(Object),
       title: 'Test Pin 2',
-      icon: 'http://example.com/icon.png'
+      icon: 'http://example.com/icon.png',
+      zIndex: 100,
+      animation: null
     });
   });
 });

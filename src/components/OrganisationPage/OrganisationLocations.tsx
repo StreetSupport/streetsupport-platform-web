@@ -29,15 +29,21 @@ interface Props {
   organisation: OrganisationDetails;
   userContext?: UserContext;
   onMarkerClick?: (markerId: string) => void;
+  onMapReady?: (mapInstance: google.maps.Map) => void;
+  selectedLocationForService?: Record<string, number>;
 }
 
-export default function OrganisationLocations({ organisation, userContext, onMarkerClick }: Props) {
+export default function OrganisationLocations({ organisation, userContext, onMarkerClick, onMapReady, selectedLocationForService }: Props) {
   // Only count service locations to match the accordion behavior
   const uniqueLocationMap = new Map();
   
+  // Track location indices for proper selection matching
+  const locationIndexMap = new Map<string, number>();
+  let globalLocationIndex = 0;
+  
   // Only add service locations (this matches what the accordion counts)
   const services = organisation.services || [];
-  services.forEach((service, idx) => {
+  services.forEach((service) => {
     const address = service.address;
     if (address?.Location?.coordinates && 
         address.Location.coordinates.length === 2 &&
@@ -54,15 +60,27 @@ export default function OrganisationLocations({ organisation, userContext, onMar
           address.Postcode
         ].filter(Boolean).map(part => decodeText(part!));
         
+        // Store the location index for this coordinate
+        locationIndexMap.set(locationKey, globalLocationIndex);
+        
+        // Check if this location is selected for any service by matching with accordion selection
+        const serviceKey = `${service.category}-${service.subCategory}`;
+        const selectedLocationIndex = selectedLocationForService?.[serviceKey];
+        const isSelected = selectedLocationIndex === globalLocationIndex;
+        
         uniqueLocationMap.set(locationKey, {
-          id: `service-loc-${idx}`,
+          id: `service-loc-${globalLocationIndex}`,
           lat: address.Location.coordinates[1],
           lng: address.Location.coordinates[0],
           title: addressParts.join(', '),
           organisationSlug: organisation.key || 'org-location',
           serviceName: service.subCategory || service.name || 'Service',
           type: 'service',
+          isSelected: isSelected,
+          // Use default red pin - no custom icon for modern look
         });
+        
+        globalLocationIndex++;
       }
     }
   });
@@ -92,7 +110,44 @@ export default function OrganisationLocations({ organisation, userContext, onMar
   }
   
   // Convert to array for rendering
-  const allLocations = Array.from(uniqueLocationMap.values());
+  let allLocations = Array.from(uniqueLocationMap.values());
+  
+  // Filter locations to only show those within search radius if user context is available
+  if (userContext?.lat && userContext?.lng && userContext?.radius) {
+    allLocations = allLocations.filter(location => {
+      // Calculate distance from user location
+      const R = 6371; // Earth's radius in kilometers
+      const dLat = (location.lat - userContext.lat!) * Math.PI / 180;
+      const dLng = (location.lng - userContext.lng!) * Math.PI / 180;
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(userContext.lat! * Math.PI / 180) * Math.cos(location.lat * Math.PI / 180) * 
+        Math.sin(dLng/2) * Math.sin(dLng/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      const distance = R * c;
+      
+      return distance <= userContext.radius!;
+    });
+  }
+
+  // Add user location marker if available
+  if (userContext?.lat && userContext?.lng) {
+    allLocations.unshift({
+      id: 'user-location',
+      lat: userContext.lat,
+      lng: userContext.lng,
+      title: 'You are here',
+      organisationSlug: 'user-location',
+      serviceName: 'Your location',
+      type: 'user',
+      // Use a modern user location icon - bigger size
+      icon: {
+        url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='%234285f4'%3E%3Ccircle cx='16' cy='16' r='12' fill='%234285f4' stroke='white' stroke-width='4'/%3E%3Ccircle cx='16' cy='16' r='4' fill='white'/%3E%3C/svg%3E",
+        scaledSize: new google.maps.Size(32, 32),
+        anchor: new google.maps.Point(16, 16)
+      },
+    });
+  }
 
   // ✅ Always render heading, even if no map
   if (allLocations.length === 0) {
@@ -121,13 +176,16 @@ export default function OrganisationLocations({ organisation, userContext, onMar
     };
   }
 
+  // Count only organisation/service locations (exclude user location marker)
+  const organisationLocationCount = allLocations.filter(loc => loc.id !== 'user-location').length;
+  
   return (
     <section className="mb-6">
       <h2 className="text-xl font-semibold mb-2">Locations</h2>
       <p className="text-sm text-gray-600 mb-3">
-        {allLocations.length} location{allLocations.length !== 1 ? 's' : ''} available for this organisation
+        {organisationLocationCount} location{organisationLocationCount !== 1 ? 's' : ''} available for this organisation
       </p>
-      <GoogleMap center={center} markers={allLocations} zoom={13} onMarkerClick={onMarkerClick} />
+      <GoogleMap center={center} markers={allLocations} zoom={12} onMarkerClick={onMarkerClick} onMapReady={onMapReady} />
     </section>
   );
 }

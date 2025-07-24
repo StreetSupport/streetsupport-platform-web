@@ -37,7 +37,8 @@ interface MapMarker {
   organisationSlug: string;
   serviceName?: string;
   distanceKm?: number;
-  icon?: string;
+  icon?: string | google.maps.Icon;
+  type?: string;
 }
 
 // Grouping interfaces
@@ -146,6 +147,12 @@ export default function FindHelpResults({
     setOpenDescriptionId(prev => prev === id ? null : id);
   }, []);
 
+  // Reset filters handler
+  const handleResetFilters = useCallback(() => {
+    setSelectedCategory('');
+    setSelectedSubCategory('');
+  }, []);
+
   // Combined filtering and grouping logic with debounced values
   const { sortedGroups, filteredServices } = useMemo(() => {
     if (!services || services.length === 0) return { sortedGroups: [], filteredServices: [] };
@@ -192,7 +199,13 @@ export default function FindHelpResults({
         lng: location.lng,
         title: 'You are here',
         organisationSlug: 'user-location',
-        icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+        type: 'user',
+        // Use a modern user location icon - bigger size for consistency
+        icon: {
+          url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='%234285f4'%3E%3Ccircle cx='16' cy='16' r='12' fill='%234285f4' stroke='white' stroke-width='4'/%3E%3Ccircle cx='16' cy='16' r='4' fill='white'/%3E%3C/svg%3E",
+          scaledSize: new google.maps.Size(32, 32),
+          anchor: new google.maps.Point(16, 16)
+        },
       });
     }
 
@@ -216,6 +229,7 @@ export default function FindHelpResults({
             selectedSubCategory={selectedSubCategory}
             setSelectedCategory={setSelectedCategory}
             setSelectedSubCategory={setSelectedSubCategory}
+            onResetFilters={handleResetFilters}
           />
           <div className="flex items-center flex-wrap gap-4 mt-4">
             <div className="flex items-center gap-2">
@@ -257,6 +271,11 @@ export default function FindHelpResults({
               }
               markers={combinedMarkers}
               zoom={13}
+              userLocation={
+                location && location.lat !== undefined && location.lng !== undefined
+                  ? { lat: location.lat, lng: location.lng, radius: location.radius }
+                  : null
+              }
             />
           </div>
         )}
@@ -308,6 +327,11 @@ export default function FindHelpResults({
             }
             markers={combinedMarkers}
             zoom={13}
+            userLocation={
+              location && location.lat !== undefined && location.lng !== undefined
+                ? { lat: location.lat, lng: location.lng, radius: location.radius }
+                : null
+            }
           />
         </div>
       )}

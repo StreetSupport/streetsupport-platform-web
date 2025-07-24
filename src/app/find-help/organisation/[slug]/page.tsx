@@ -105,8 +105,11 @@ function processOrganisationData(data: { organisation: unknown; services: unknow
   };
 }
 
-async function fetchOrganisationData(slug: string, _searchParams?: { [key: string]: string | string[] | undefined }) {
-  const cacheKey = `org-${slug}`;
+async function fetchOrganisationData(slug: string, searchParams?: { [key: string]: string | string[] | undefined }) {
+  // Include location parameters in cache key to avoid stale location data
+  const locationKey = searchParams?.lat && searchParams?.lng ? 
+    `-${searchParams.lat}-${searchParams.lng}-${searchParams.radius || ''}` : '';
+  const cacheKey = `org-${slug}${locationKey}`;
   const cached = organisationCache.get(cacheKey);
   
   // Return cached data if it's fresh
@@ -121,8 +124,16 @@ async function fetchOrganisationData(slug: string, _searchParams?: { [key: strin
   
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   
-  // Build URL - don't require search parameters
+  // Build URL with search parameters for location context
   const url = new URL(`${baseUrl}/api/service-providers/${slug}`);
+  
+  // Add location parameters if available
+  if (searchParams) {
+    const { lat, lng, radius } = searchParams;
+    if (lat && typeof lat === 'string') url.searchParams.set('lat', lat);
+    if (lng && typeof lng === 'string') url.searchParams.set('lng', lng);
+    if (radius && typeof radius === 'string') url.searchParams.set('radius', radius);
+  }
   
   try {
     const res = await fetch(url.toString(), {
