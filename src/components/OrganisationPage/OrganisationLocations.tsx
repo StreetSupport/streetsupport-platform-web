@@ -143,8 +143,8 @@ export default function OrganisationLocations({ organisation, userContext, onMar
       // Use a modern user location icon - bigger size
       icon: {
         url: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='%234285f4'%3E%3Ccircle cx='16' cy='16' r='12' fill='%234285f4' stroke='white' stroke-width='4'/%3E%3Ccircle cx='16' cy='16' r='4' fill='white'/%3E%3C/svg%3E",
-        scaledSize: { width: 32, height: 32 },
-        anchor: { x: 16, y: 16 }
+        scaledSize: new google.maps.Size(32, 32),
+        anchor: new google.maps.Point(16, 16)
       },
     });
   }
