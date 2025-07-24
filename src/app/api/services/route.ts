@@ -264,7 +264,11 @@ export async function GET(req: Request) {
           name: decodeText(service.organisation.name),
           slug: service.organisation.slug,
           isVerified: service.organisation.isVerified
-        } : null
+        } : {
+          name: decodeText(service.ServiceProviderName || ''),
+          slug: service.ServiceProviderKey,
+          isVerified: false
+        }
       };
 
       // Add distance to result if it was calculated by geospatial query

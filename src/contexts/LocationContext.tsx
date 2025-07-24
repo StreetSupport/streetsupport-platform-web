@@ -19,6 +19,7 @@ export interface LocationState {
   postcode?: string;
   source: LocationSource;
   radius?: number;
+  label?: string;
 }
 
 export interface LocationError {
@@ -29,6 +30,7 @@ export interface LocationError {
 interface LocationContextType {
   location: LocationState | null;
   setLocation: (location: LocationState) => void;
+  setLocationFromCoordinates: (coords: { lat: number; lng: number; label?: string; radius?: number; source: LocationSource }) => void;
   updateRadius: (radius: number) => void;
   requestLocation: () => Promise<void>;
   error: LocationError | null;
@@ -144,12 +146,24 @@ export function LocationProvider({ children }: { children: ReactNode }) {
   const updateRadius = useCallback((radius: number) => {
     setLocation(prev => prev ? { ...prev, radius } : null);
   }, []);
+  
+  const setLocationFromCoordinates = useCallback((coords: { lat: number; lng: number; label?: string; radius?: number; source: LocationSource }) => {
+    const newLocation: LocationState = {
+      lat: coords.lat,
+      lng: coords.lng,
+      radius: coords.radius || 5,
+      source: coords.source,
+      label: coords.label
+    };
+    enhancedSetLocation(newLocation);
+  }, [enhancedSetLocation]);
 
   return (
     <LocationContext.Provider 
       value={{ 
         location, 
         setLocation: enhancedSetLocation, 
+        setLocationFromCoordinates,
         updateRadius,
         requestLocation, 
         error, 

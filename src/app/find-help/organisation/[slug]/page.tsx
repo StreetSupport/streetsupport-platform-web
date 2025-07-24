@@ -105,7 +105,7 @@ function processOrganisationData(data: { organisation: unknown; services: unknow
   };
 }
 
-async function fetchOrganisationData(slug: string, searchParams?: { [key: string]: string | string[] | undefined }) {
+async function fetchOrganisationData(slug: string, _searchParams?: { [key: string]: string | string[] | undefined }) {
   const cacheKey = `org-${slug}`;
   const cached = organisationCache.get(cacheKey);
   
@@ -121,15 +121,8 @@ async function fetchOrganisationData(slug: string, searchParams?: { [key: string
   
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   
-  // Build URL with search parameters for location filtering
+  // Build URL - don't require search parameters
   const url = new URL(`${baseUrl}/api/service-providers/${slug}`);
-  if (searchParams) {
-    Object.entries(searchParams).forEach(([key, value]) => {
-      if (value && typeof value === 'string') {
-        url.searchParams.set(key, value);
-      }
-    });
-  }
   
   try {
     const res = await fetch(url.toString(), {

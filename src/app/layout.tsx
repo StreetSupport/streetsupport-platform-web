@@ -4,6 +4,7 @@ import './globals.css';
 
 import Nav from '../components/partials/Nav';
 import { LocationProvider } from '../contexts/LocationContext';
+import FindHelpStateCleanup from '../components/FindHelp/FindHelpStateCleanup';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body>
         <LocationProvider>
+          <FindHelpStateCleanup />
           <Nav />
           {children}
         </LocationProvider>
