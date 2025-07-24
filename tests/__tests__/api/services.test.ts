@@ -17,27 +17,6 @@ jest.mock('@/utils/queryCache', () => ({
   generateKey: jest.fn().mockReturnValue('test-cache-key'),
 }));
 
-// Mock fallback data
-jest.mock('@/data/service-providers.json', () => [
-  {
-    name: 'Fallback Org',
-    slug: 'fallback-org',
-    verified: true,
-    services: [
-      {
-        id: 'fallback-service-1',
-        name: 'Fallback Service',
-        category: 'health',
-        subCategory: 'gp',
-        description: 'Fallback service description',
-        openTimes: [],
-        clientGroups: [],
-        latitude: 53.8008,
-        longitude: -1.5491,
-      },
-    ],
-  },
-], { virtual: true });
 
 const mockServices = [
   {
@@ -587,7 +566,7 @@ describe('GET /api/services', () => {
       expect(Array.isArray(json.results)).toBe(true);
     });
 
-    it('handles geospatial query errors and falls back gracefully', async () => {
+    it('handles geospatial query errors and returns 503', async () => {
       // Arrange
       const mockClient = createMockClient(true); // Will throw on aggregate operations
       (mongodb.getClientPromise as jest.Mock).mockResolvedValue(mockClient);
@@ -597,35 +576,14 @@ describe('GET /api/services', () => {
       const res = await GET(req);
       const json = await res.json();
       
-      // Assert - Should fall back to static data
-      expect(res.status).toBe(200);
-      expect(json.status).toBe('success');
-      expect(Array.isArray(json.results)).toBe(true);
+      // Assert - Should return 503 Service Unavailable
+      expect(res.status).toBe(503);
+      expect(json.status).toBe('error');
+      expect(json.message).toBe('Service temporarily unavailable. Please try again later.');
     });
   });
 
   describe('Distance calculation', () => {
-    it('calculates distance correctly using Haversine formula', async () => {
-      // Test the calculateDistance function indirectly through fallback behavior
-      const originalMock = jest.requireMock('@/utils/mongodb');
-      jest.doMock('@/utils/mongodb', () => ({
-        getClientPromise: async () => {
-          throw new Error('Database connection failed');
-        },
-      }));
-
-      const req = new Request('http://localhost/api/services?lat=53.8008&lng=-1.5491&radius=50');
-      const res = await GET(req);
-      const json = await res.json();
-      
-      expect(res.status).toBe(200);
-      expect(json.status).toBe('success');
-      expect(Array.isArray(json.results)).toBe(true);
-
-      // Restore original mock
-      jest.doMock('@/utils/mongodb', () => originalMock);
-    });
-
     it('rounds distance to 2 decimal places', async () => {
       // Arrange
       const geoServices = mockServices.map(service => ({ ...service, distance: 5000 }));
@@ -648,7 +606,7 @@ describe('GET /api/services', () => {
       jest.clearAllMocks();
     });
 
-    it('handles database connection errors gracefully', async () => {
+    it('handles database connection errors and returns 503', async () => {
       // Arrange
       (mongodb.getClientPromise as jest.Mock).mockRejectedValue(new Error('Database connection failed'));
 
@@ -657,13 +615,13 @@ describe('GET /api/services', () => {
       const res = await GET(req);
       const json = await res.json();
       
-      // Assert - Should fall back to static data
-      expect(res.status).toBe(200);
-      expect(json.status).toBe('success');
-      expect(Array.isArray(json.results)).toBe(true);
+      // Assert - Should return 503 Service Unavailable
+      expect(res.status).toBe(503);
+      expect(json.status).toBe('error');
+      expect(json.message).toBe('Service temporarily unavailable. Please try again later.');
     });
 
-    it('handles database query errors gracefully', async () => {
+    it('handles database query errors and returns 503', async () => {
       // Arrange
       const mockClient = createMockClient(true); // Will throw on query operations
       (mongodb.getClientPromise as jest.Mock).mockResolvedValue(mockClient);
@@ -673,25 +631,15 @@ describe('GET /api/services', () => {
       const res = await GET(req);
       const json = await res.json();
       
-      // Assert - Should fall back to static data
-      expect(res.status).toBe(200);
-      expect(json.status).toBe('success');
-      expect(Array.isArray(json.results)).toBe(true);
+      // Assert - Should return 503 Service Unavailable
+      expect(res.status).toBe(503);
+      expect(json.status).toBe('error');
+      expect(json.message).toBe('Service temporarily unavailable. Please try again later.');
     });
 
-    it('handles provider lookup errors gracefully', async () => {
+    it('handles aggregate pipeline errors and returns 503', async () => {
       // Arrange
-      const mockServicesCollection = createMockServicesCollection();
-      const mockProvidersCollection = createMockProvidersCollection(true); // Will throw on findOne
-      const mockClient = {
-        db: jest.fn().mockReturnValue({
-          collection: jest.fn().mockImplementation((name: string) => {
-            if (name === 'ProvidedServices') return mockServicesCollection;
-            if (name === 'ServiceProviders') return mockProvidersCollection;
-            throw new Error('Unknown collection');
-          }),
-        }),
-      };
+      const mockClient = createMockClient(true); // Will throw on aggregate operations
       (mongodb.getClientPromise as jest.Mock).mockResolvedValue(mockClient);
 
       // Act
@@ -699,33 +647,28 @@ describe('GET /api/services', () => {
       const res = await GET(req);
       const json = await res.json();
       
-      // Assert - Should fall back to static data
-      expect(res.status).toBe(200);
-      expect(json.status).toBe('success');
-      expect(Array.isArray(json.results)).toBe(true);
+      // Assert - Should return 503 Service Unavailable
+      expect(res.status).toBe(503);
+      expect(json.status).toBe('error');
+      expect(json.message).toBe('Service temporarily unavailable. Please try again later.');
     });
 
-    it('handles fallback data errors and returns 500', async () => {
+    it('returns 503 when database fails', async () => {
       // Arrange
       (mongodb.getClientPromise as jest.Mock).mockRejectedValue(new Error('Database connection failed'));
-      
-      // This test is complex to implement with Jest module mocking
-      // The API handles fallback data errors by checking if fallbackProviders is null or not an array
-      // For now, we'll test that the API gracefully falls back to static data when database fails
-      // which is the more common and important error handling scenario
       
       // Act
       const req = new Request('http://localhost/api/services?page=1&limit=5');
       const res = await GET(req);
       const json = await res.json();
       
-      // Assert - Should fall back to static data gracefully
-      expect(res.status).toBe(200);
-      expect(json.status).toBe('success');
-      expect(Array.isArray(json.results)).toBe(true);
+      // Assert - Should return 503 Service Unavailable
+      expect(res.status).toBe(503);
+      expect(json.status).toBe('error');
+      expect(json.message).toBe('Service temporarily unavailable. Please try again later.');
     });
 
-    it('handles geospatial fallback correctly', async () => {
+    it('returns 503 for geospatial queries when database fails', async () => {
       // Arrange
       (mongodb.getClientPromise as jest.Mock).mockRejectedValue(new Error('Database connection failed'));
 
@@ -734,115 +677,26 @@ describe('GET /api/services', () => {
       const res = await GET(req);
       const json = await res.json();
       
-      // Assert - Should use fallback with geospatial filtering
-      expect(res.status).toBe(200);
-      expect(json.status).toBe('success');
-      expect(Array.isArray(json.results)).toBe(true);
-      // Should include distance calculation in fallback
-      if (json.results.length > 0) {
-        expect(json.results[0]).toHaveProperty('distance');
-      }
+      // Assert - Should return 503 Service Unavailable
+      expect(res.status).toBe(503);
+      expect(json.status).toBe('error');
+      expect(json.message).toBe('Service temporarily unavailable. Please try again later.');
     });
 
-    it('handles empty fallback data gracefully', async () => {
+    it('returns consistent 503 error for any database failure', async () => {
       // Arrange
       (mongodb.getClientPromise as jest.Mock).mockRejectedValue(new Error('Database connection failed'));
-      
-      // This test is complex to implement with Jest module mocking since the fallback data
-      // is imported at the top level. Instead, we'll test that the API handles the case
-      // where fallback data exists but has no services (empty services arrays)
       
       // Act
       const req = new Request('http://localhost/api/services?page=1&limit=5');
       const res = await GET(req);
       const json = await res.json();
       
-      // Assert - Should fall back to static data gracefully
-      expect(res.status).toBe(200);
-      expect(json.status).toBe('success');
-      expect(Array.isArray(json.results)).toBe(true);
-      // The mocked fallback data has 1 service, so we expect at least that
-      expect(json.total).toBeGreaterThanOrEqual(0);
+      // Assert - Should return 503 Service Unavailable
+      expect(res.status).toBe(503);
+      expect(json.status).toBe('error');
+      expect(json.message).toBe('Service temporarily unavailable. Please try again later.');
     });
   });
 
-  describe('Fallback behavior', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
-    });
-
-    it('uses fallback data when database is unavailable', async () => {
-      // Arrange
-      (mongodb.getClientPromise as jest.Mock).mockRejectedValue(new Error('Database connection failed'));
-
-      // Act
-      const req = new Request('http://localhost/api/services?page=1&limit=10');
-      const res = await GET(req);
-      const json = await res.json();
-      
-      // Assert
-      expect(res.status).toBe(200);
-      expect(json.status).toBe('success');
-      expect(Array.isArray(json.results)).toBe(true);
-      expect(json.page).toBe(1);
-      expect(json.limit).toBe(10);
-    });
-
-    it('applies pagination to fallback data', async () => {
-      // Arrange
-      (mongodb.getClientPromise as jest.Mock).mockRejectedValue(new Error('Database connection failed'));
-
-      // Act
-      const req = new Request('http://localhost/api/services?page=2&limit=1');
-      const res = await GET(req);
-      const json = await res.json();
-      
-      // Assert
-      expect(res.status).toBe(200);
-      expect(json.status).toBe('success');
-      expect(json.page).toBe(2);
-      expect(json.limit).toBe(1);
-    });
-
-    it('filters fallback data by geospatial criteria', async () => {
-      // Arrange
-      (mongodb.getClientPromise as jest.Mock).mockRejectedValue(new Error('Database connection failed'));
-
-      // Act
-      const req = new Request('http://localhost/api/services?lat=53.8008&lng=-1.5491&radius=1');
-      const res = await GET(req);
-      const json = await res.json();
-      
-      // Assert
-      expect(res.status).toBe(200);
-      expect(json.status).toBe('success');
-      expect(Array.isArray(json.results)).toBe(true);
-      // Results should be filtered by distance and include distance field
-      json.results.forEach(result => {
-        expect(result).toHaveProperty('distance');
-        expect(typeof result.distance).toBe('number');
-        expect(result.distance).toBeLessThanOrEqual(1);
-      });
-    });
-
-    it('sorts fallback data by distance when using geospatial queries', async () => {
-      // Arrange
-      (mongodb.getClientPromise as jest.Mock).mockRejectedValue(new Error('Database connection failed'));
-
-      // Act
-      const req = new Request('http://localhost/api/services?lat=53.8008&lng=-1.5491&radius=100');
-      const res = await GET(req);
-      const json = await res.json();
-      
-      // Assert
-      expect(res.status).toBe(200);
-      expect(json.status).toBe('success');
-      expect(Array.isArray(json.results)).toBe(true);
-      
-      // Check that results are sorted by distance (ascending)
-      for (let i = 1; i < json.results.length; i++) {
-        expect(json.results[i].distance).toBeGreaterThanOrEqual(json.results[i - 1].distance);
-      }
-    });
-  });
 });

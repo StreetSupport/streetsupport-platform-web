@@ -200,7 +200,7 @@ test.describe('Error Handling and Recovery', () => {
     // Mock geolocation permission denied
     await page.context().grantPermissions([]);
     
-    await page.goto('/find-help');
+    await page.goto('http://localhost:3000/find-help');
     
     // Wait for page to load
     await expect(page.getByText('Find Services Near You')).toBeVisible();
@@ -217,7 +217,7 @@ test.describe('Error Handling and Recovery', () => {
     // Check if we're still on the location prompt or if error handling occurred
     // The app should gracefully handle the permission denial in some way
     const locationPromptVisible = await page.getByText('Find Services Near You').isVisible();
-    const errorVisible = await page.getByText(/location access denied|permission denied|denied|error|unable to get location/i).isVisible();
+    const errorVisible = await page.getByText(/location access denied|permission denied|unable to get location|geolocation/i).isVisible();
     const retryVisible = await page.getByRole('button', { name: /try again/i }).isVisible();
     const postcodeVisible = await page.getByRole('button', { name: /use postcode instead|enter postcode instead/i }).isVisible();
     const useLocationVisible = await page.getByRole('button', { name: /use my current location/i }).isVisible();
