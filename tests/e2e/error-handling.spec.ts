@@ -39,9 +39,9 @@ test.describe('Error Handling and Recovery', () => {
     await page.goto('/find-help');
     
     // Use postcode option
-    await page.getByRole('button', { name: /enter postcode instead/i }).click();
+    await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
     await page.getByLabel(/enter your postcode/i).fill(testPostcode);
-    await page.getByRole('button', { name: /find services/i }).click();
+    await page.getByRole('button', { name: /find services by postcode/i }).click();
     
     // Should show network error (since abort triggers network error)
     await expect(page.getByText(/network error/i)).toBeVisible();
@@ -60,9 +60,9 @@ test.describe('Error Handling and Recovery', () => {
     });
 
     await page.goto('/find-help');
-    await page.getByRole('button', { name: /enter postcode instead/i }).click();
+    await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
     await page.getByLabel(/enter your postcode/i).fill(testPostcode);
-    await page.getByRole('button', { name: /find services/i }).click();
+    await page.getByRole('button', { name: /find services by postcode/i }).click();
     
     // Wait for location to be set and services to be requested
     await page.waitForTimeout(1000);
@@ -85,9 +85,9 @@ test.describe('Error Handling and Recovery', () => {
     });
 
     await page.goto('/find-help');
-    await page.getByRole('button', { name: /enter postcode instead/i }).click();
+    await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
     await page.getByLabel(/enter your postcode/i).fill(testPostcode);
-    await page.getByRole('button', { name: /find services/i }).click();
+    await page.getByRole('button', { name: /find services by postcode/i }).click();
     
     // Wait for error to appear
     await page.waitForTimeout(3000);
@@ -95,9 +95,8 @@ test.describe('Error Handling and Recovery', () => {
     // Should show some kind of error message or fallback
     const errorVisible = await page.getByText(/error|unable|failed|server/i).first().isVisible();
     const retryVisible = await page.getByRole('button', { name: /try again|retry/i }).isVisible();
-    const browseAllVisible = await page.getByRole('button', { name: /browse all/i }).isVisible();
     
-    expect(errorVisible || retryVisible || browseAllVisible).toBeTruthy();
+    expect(errorVisible || retryVisible).toBeTruthy();
   });
 
   test('should handle complete network failure gracefully', async ({ page }) => {
@@ -107,17 +106,13 @@ test.describe('Error Handling and Recovery', () => {
     });
 
     await page.goto('/find-help');
-    await page.getByRole('button', { name: /enter postcode instead/i }).click();
+    await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
     await page.getByLabel(/enter your postcode/i).fill(testPostcode);
-    await page.getByRole('button', { name: /find services/i }).click();
+    await page.getByRole('button', { name: /find services by postcode/i }).click();
     
     // Should show network error
     await expect(page.getByText(/network error/i)).toBeVisible();
     await expect(page.getByText(/check your internet connection/i)).toBeVisible();
-    
-    // Should offer retry and browse all options
-    await expect(page.getByRole('button', { name: /retry/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /browse all services/i })).toBeVisible();
   });
 
   test('should handle retry mechanism with exponential backoff', async ({ page }) => {
@@ -129,9 +124,9 @@ test.describe('Error Handling and Recovery', () => {
     });
 
     await page.goto('/find-help');
-    await page.getByRole('button', { name: /enter postcode instead/i }).click();
+    await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
     await page.getByLabel(/enter your postcode/i).fill(testPostcode);
-    await page.getByRole('button', { name: /find services/i }).click();
+    await page.getByRole('button', { name: /find services by postcode/i }).click();
     
     // Wait for error to appear
     await page.waitForTimeout(3000);
@@ -139,9 +134,8 @@ test.describe('Error Handling and Recovery', () => {
     // Should show some kind of error handling - either retry button or error message
     const errorVisible = await page.getByText(/error|failed|network/i).first().isVisible();
     const retryVisible = await page.getByRole('button', { name: /try again|retry/i }).isVisible();
-    const browseAllVisible = await page.getByRole('button', { name: /browse all/i }).isVisible();
     
-    expect(errorVisible || retryVisible || browseAllVisible).toBeTruthy();
+    expect(errorVisible || retryVisible).toBeTruthy();
   });
 
   test('should handle maximum retry attempts reached', async ({ page }) => {
@@ -153,9 +147,9 @@ test.describe('Error Handling and Recovery', () => {
     });
 
     await page.goto('/find-help');
-    await page.getByRole('button', { name: /enter postcode instead/i }).click();
+    await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
     await page.getByLabel(/enter your postcode/i).fill(testPostcode);
-    await page.getByRole('button', { name: /find services/i }).click();
+    await page.getByRole('button', { name: /find services by postcode/i }).click();
     
     // Wait for error to appear
     await page.waitForTimeout(3000);
@@ -163,9 +157,8 @@ test.describe('Error Handling and Recovery', () => {
     // Should show some kind of error handling - either error message or fallback options
     const errorVisible = await page.getByText(/error|failed|network|maximum/i).first().isVisible();
     const retryVisible = await page.getByRole('button', { name: /try again|retry/i }).isVisible();
-    const browseAllVisible = await page.getByRole('button', { name: /browse all/i }).isVisible();
     
-    expect(errorVisible || retryVisible || browseAllVisible).toBeTruthy();
+    expect(errorVisible || retryVisible).toBeTruthy();
   });
 
   test('should handle malformed API responses', async ({ page }) => {
@@ -181,9 +174,9 @@ test.describe('Error Handling and Recovery', () => {
     });
 
     await page.goto('/find-help');
-    await page.getByRole('button', { name: /enter postcode instead/i }).click();
+    await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
     await page.getByLabel(/enter your postcode/i).fill(testPostcode);
-    await page.getByRole('button', { name: /find services/i }).click();
+    await page.getByRole('button', { name: /find services by postcode/i }).click();
     
     // Wait for error to appear
     await page.waitForTimeout(3000);
@@ -191,9 +184,8 @@ test.describe('Error Handling and Recovery', () => {
     // Should handle parsing error gracefully - check for any error message
     const errorVisible = await page.getByText(/failed|error|unable|server/i).first().isVisible();
     const retryVisible = await page.getByRole('button', { name: /try again|retry/i }).isVisible();
-    const browseAllVisible = await page.getByRole('button', { name: /browse all/i }).isVisible();
     
-    expect(errorVisible || retryVisible || browseAllVisible).toBeTruthy();
+    expect(errorVisible || retryVisible).toBeTruthy();
   });
 
   test('should handle geolocation permission errors', async ({ page }) => {
@@ -203,7 +195,7 @@ test.describe('Error Handling and Recovery', () => {
     await page.goto('http://localhost:3000/find-help');
     
     // Wait for page to load
-    await expect(page.getByText('Find Services Near You')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Find Services Near You' })).toBeVisible();
     
     // Check if the location button exists before clicking
     const locationButton = page.getByRole('button', { name: /use my current location/i });
@@ -216,10 +208,10 @@ test.describe('Error Handling and Recovery', () => {
     
     // Check if we're still on the location prompt or if error handling occurred
     // The app should gracefully handle the permission denial in some way
-    const locationPromptVisible = await page.getByText('Find Services Near You').isVisible();
+    const locationPromptVisible = await page.getByRole('heading', { name: 'Find Services Near You' }).isVisible();
     const errorVisible = await page.getByText(/location access denied|permission denied|unable to get location|geolocation/i).isVisible();
     const retryVisible = await page.getByRole('button', { name: /try again/i }).isVisible();
-    const postcodeVisible = await page.getByRole('button', { name: /use postcode instead|enter postcode instead/i }).isVisible();
+    const postcodeVisible = await page.getByRole('button', { name: /use postcode instead|enter postcode or choose a location/i }).isVisible();
     const useLocationVisible = await page.getByRole('button', { name: /use my current location/i }).isVisible();
     const bodyContent = await page.textContent('body');
     
@@ -245,7 +237,7 @@ test.describe('Error Handling and Recovery', () => {
     await page.goto('/find-help');
     
     // Wait for page to load
-    await expect(page.getByText('Find Services Near You')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Find Services Near You' })).toBeVisible();
     
     await page.getByRole('button', { name: /use my current location/i }).click();
     
@@ -253,10 +245,10 @@ test.describe('Error Handling and Recovery', () => {
     await page.waitForTimeout(2000);
     
     // Check if we're still on the location prompt or if error handling occurred
-    const locationPromptVisible = await page.getByText('Find Services Near You').isVisible();
+    const locationPromptVisible = await page.getByRole('heading', { name: 'Find Services Near You' }).isVisible();
     const timeoutVisible = await page.getByText(/location request timed out|timeout|timed out/i).isVisible();
     const errorVisible = await page.getByText(/error|failed/i).isVisible();
-    const postcodeVisible = await page.getByRole('button', { name: /use postcode instead|enter postcode instead/i }).isVisible();
+    const postcodeVisible = await page.getByRole('button', { name: /use postcode instead|enter postcode or choose a location/i }).isVisible();
     
     // At least one of these should be true - either we show an error, timeout message, postcode option, or stay on prompt
     expect(locationPromptVisible || timeoutVisible || errorVisible || postcodeVisible).toBeTruthy();
@@ -274,7 +266,7 @@ test.describe('Error Handling and Recovery', () => {
     await page.goto('/find-help');
     
     // Should still show basic functionality
-    await expect(page.getByText('Find Services Near You')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Find Services Near You' })).toBeVisible();
     
     // If error boundary is triggered, should show fallback UI
     const errorFallback = page.getByText(/something went wrong/i);
@@ -315,9 +307,9 @@ test.describe('Error Handling and Recovery', () => {
     });
 
     await page.goto('/find-help');
-    await page.getByRole('button', { name: /enter postcode instead/i }).click();
+    await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
     await page.getByLabel(/enter your postcode/i).fill(testPostcode);
-    await page.getByRole('button', { name: /find services/i }).click();
+    await page.getByRole('button', { name: /find services by postcode/i }).click();
     
     // Wait for initial success
     await page.waitForTimeout(2000);

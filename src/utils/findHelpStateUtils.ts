@@ -8,6 +8,8 @@ export interface FindHelpSearchState {
   lng: number;
   locationLabel: string;
   radius: number;
+  locationSource?: 'geolocation' | 'postcode' | 'navigation' | 'location';
+  locationSlug?: string;
   
   // Filter states
   selectedCategory: string;
@@ -32,6 +34,7 @@ export interface URLSearchParams {
   cat?: string;
   subcat?: string;
   radius?: string;
+  locationSlug?: string;
 }
 
 const STORAGE_KEY = 'findHelpSearchState';
@@ -49,6 +52,7 @@ export function getURLSearchParams(): URLSearchParams {
     cat: searchParams.get('cat') || undefined,
     subcat: searchParams.get('subcat') || undefined,
     radius: searchParams.get('radius') || undefined,
+    locationSlug: searchParams.get('locationSlug') || undefined,
   };
 }
 
@@ -142,7 +146,8 @@ export function generateBackToSearchURL(
   lng: number,
   category?: string,
   subCategory?: string,
-  radius?: number
+  radius?: number,
+  locationSlug?: string
 ): string {
   const params = new URLSearchParams();
   
@@ -159,6 +164,10 @@ export function generateBackToSearchURL(
   
   if (radius && radius !== 5) { // Don't include default radius
     params.set('radius', radius.toString());
+  }
+  
+  if (locationSlug) {
+    params.set('locationSlug', locationSlug);
   }
   
   return `/find-help?${params.toString()}`;
@@ -181,13 +190,17 @@ export function createSearchState(
     sortOrder: 'distance' | 'alpha';
     showMap: boolean;
     timetableFilters?: { [key: string]: boolean };
-  }
+  },
+  locationSource?: 'geolocation' | 'postcode' | 'navigation' | 'location',
+  locationSlug?: string
 ): FindHelpSearchState {
   return {
     lat,
     lng,
     locationLabel,
     radius,
+    locationSource,
+    locationSlug,
     selectedCategory: filters.selectedCategory,
     selectedSubCategory: filters.selectedSubCategory,
     selectedClientGroups: filters.selectedClientGroups || [],

@@ -46,7 +46,7 @@ test.describe('Location Navigation Context', () => {
     await expect(page.getByText('Find Services Near You')).toBeVisible();
     
     // Test that we can still use the location functionality
-    await page.getByRole('button', { name: /enter postcode instead/i }).click();
+    await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
     await expect(page.getByLabel(/enter your postcode/i)).toBeVisible();
   });
 
@@ -79,7 +79,7 @@ test.describe('Location Navigation Context', () => {
     await expect(page.getByText('Find Services Near You')).toBeVisible();
     
     // Test that we can use the location functionality
-    const postcodeBtn = page.getByRole('button', { name: /enter postcode instead/i });
+    const postcodeBtn = page.getByRole('button', { name: /enter postcode or choose a location/i });
     if (await postcodeBtn.isVisible()) {
       await postcodeBtn.click();
       
@@ -100,7 +100,7 @@ test.describe('Location Navigation Context', () => {
           // Check if we can see the location button again or if we're back to the main prompt
           const locationBtn = page.getByRole('button', { name: /use my current location/i });
           const locationPrompt = page.getByText('Find Services Near You');
-          const postcodeBtn = page.getByRole('button', { name: /enter postcode instead/i });
+          const postcodeBtn = page.getByRole('button', { name: /enter postcode or choose a location/i });
           const bodyContent = await page.textContent('body');
           
           const locationBtnVisible = await locationBtn.isVisible();
@@ -110,7 +110,7 @@ test.describe('Location Navigation Context', () => {
           expect(locationBtnVisible || promptVisible || postcodeBtnVisible || (bodyContent && bodyContent.length > 0)).toBeTruthy();
         } else {
           // If the switch button doesn't exist, verify we can still interact with the form
-          const findServicesBtn = page.getByRole('button', { name: /find services/i });
+          const findServicesBtn = page.getByRole('button', { name: /find services by postcode/i });
           const postcodeInputVisible = await postcodeInput.isVisible();
           const findServicesBtnVisible = await findServicesBtn.isVisible();
           expect(postcodeInputVisible || findServicesBtnVisible).toBeTruthy();

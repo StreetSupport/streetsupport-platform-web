@@ -57,7 +57,7 @@ test.describe('Mobile Responsiveness and Accessibility', () => {
       await expect(page.getByText('Find Services Near You')).toBeVisible();
       
       const locationBtn = page.getByRole('button', { name: /use my current location/i });
-      const postcodeBtn = page.getByRole('button', { name: /enter postcode instead/i });
+      const postcodeBtn = page.getByRole('button', { name: /enter postcode or choose a location/i });
       
       // Buttons should be properly sized for touch
       await expect(locationBtn).toBeVisible();
@@ -88,9 +88,9 @@ test.describe('Mobile Responsiveness and Accessibility', () => {
       await expect(page.getByText('Find Services Near You')).toBeVisible();
       
       // Enter postcode flow
-      await page.getByRole('button', { name: /enter postcode instead/i }).click();
+      await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
       await page.getByLabel(/enter your postcode/i).fill(testPostcode);
-      await page.getByRole('button', { name: /find services/i }).click();
+      await page.getByRole('button', { name: /find services by postcode/i }).click();
       
       // Results should display well on tablet
       await page.waitForTimeout(1000);
@@ -102,9 +102,9 @@ test.describe('Mobile Responsiveness and Accessibility', () => {
       await page.goto('/find-help');
       
       // Complete location flow
-      await page.getByRole('button', { name: /enter postcode instead/i }).click();
+      await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
       await page.getByLabel(/enter your postcode/i).fill(testPostcode);
-      await page.getByRole('button', { name: /find services/i }).click();
+      await page.getByRole('button', { name: /find services by postcode/i }).click();
       
       await page.waitForTimeout(1000);
       
@@ -128,7 +128,7 @@ test.describe('Mobile Responsiveness and Accessibility', () => {
       await page.goto('/find-help');
       
       // Test touch interactions - use click instead of tap for compatibility
-      await page.getByRole('button', { name: /enter postcode instead/i }).click();
+      await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
       
       const postcodeInput = page.getByLabel(/enter your postcode/i);
       await expect(postcodeInput).toBeVisible();
@@ -139,7 +139,7 @@ test.describe('Mobile Responsiveness and Accessibility', () => {
       
       // Test form submission via touch
       await postcodeInput.fill(testPostcode);
-      await page.getByRole('button', { name: /find services/i }).click();
+      await page.getByRole('button', { name: /find services by postcode/i }).click();
       
       await page.waitForTimeout(1000);
       await expect(page.getByText(/services near you/i)).toBeVisible();
@@ -163,7 +163,7 @@ test.describe('Mobile Responsiveness and Accessibility', () => {
       
       // Check button roles and labels
       const locationBtn = page.getByRole('button', { name: /use my current location/i });
-      const postcodeBtn = page.getByRole('button', { name: /enter postcode instead/i });
+      const postcodeBtn = page.getByRole('button', { name: /enter postcode or choose a location/i });
       
       await expect(locationBtn).toBeVisible();
       await expect(postcodeBtn).toBeVisible();
@@ -177,7 +177,7 @@ test.describe('Mobile Responsiveness and Accessibility', () => {
       await expect(postcodeInput).toHaveAttribute('type', 'text');
       
       // Check form submission button
-      const submitBtn = page.getByRole('button', { name: /find services/i });
+      const submitBtn = page.getByRole('button', { name: /find services by postcode/i });
       await expect(submitBtn).toBeVisible();
     });
 
@@ -189,7 +189,7 @@ test.describe('Mobile Responsiveness and Accessibility', () => {
       
       // Check if we can navigate to buttons (focus may not be visible in headless mode)
       const locationBtn = page.getByRole('button', { name: /use my current location/i });
-      const postcodeBtn = page.getByRole('button', { name: /enter postcode instead/i });
+      const postcodeBtn = page.getByRole('button', { name: /enter postcode or choose a location/i });
       
       await expect(locationBtn).toBeVisible();
       await expect(postcodeBtn).toBeVisible();
@@ -217,14 +217,14 @@ test.describe('Mobile Responsiveness and Accessibility', () => {
       await page.goto('/find-help');
       
       // Focus should be managed properly during state changes
-      await page.getByRole('button', { name: /enter postcode instead/i }).click();
+      await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
       
       // Focus should move to postcode input
       const postcodeInput = page.getByLabel(/enter your postcode/i);
       await expect(postcodeInput).toBeVisible();
       
       // Test that submit button is disabled when input is empty
-      const submitBtn = page.getByRole('button', { name: /find services/i });
+      const submitBtn = page.getByRole('button', { name: /find services by postcode/i });
       await expect(submitBtn).toBeDisabled();
       
       // Fill input to enable button
@@ -261,14 +261,14 @@ test.describe('Mobile Responsiveness and Accessibility', () => {
       await expect(page.getByText(/We'll help you find services in your area/)).toBeVisible();
       
       // Enter postcode flow
-      await page.getByRole('button', { name: /enter postcode instead/i }).click();
+      await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
       
       // Form should have proper labels
       const postcodeInput = page.getByLabel(/enter your postcode/i);
       await expect(postcodeInput).toHaveAttribute('id');
       
       // Test that submit button is disabled when input is empty (no error message shown)
-      const submitBtn = page.getByRole('button', { name: /find services/i });
+      const submitBtn = page.getByRole('button', { name: /find services by postcode/i });
       await expect(submitBtn).toBeDisabled();
       
       // Fill invalid postcode to trigger error
@@ -288,9 +288,9 @@ test.describe('Mobile Responsiveness and Accessibility', () => {
       await expect(page.getByRole('button', { name: /use my current location/i })).toBeVisible();
       
       // Test functionality in high contrast
-      await page.getByRole('button', { name: /enter postcode instead/i }).click();
+      await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
       await page.getByLabel(/enter your postcode/i).fill(testPostcode);
-      await page.getByRole('button', { name: /find services/i }).click();
+      await page.getByRole('button', { name: /find services by postcode/i }).click();
       
       await page.waitForTimeout(1000);
       await expect(page.getByText(/services near you/i)).toBeVisible();
@@ -305,9 +305,9 @@ test.describe('Mobile Responsiveness and Accessibility', () => {
       await expect(page.getByText('Find Services Near You')).toBeVisible();
       
       // Test loading states without excessive animation
-      await page.getByRole('button', { name: /enter postcode instead/i }).click();
+      await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
       await page.getByLabel(/enter your postcode/i).fill(testPostcode);
-      await page.getByRole('button', { name: /find services/i }).click();
+      await page.getByRole('button', { name: /find services by postcode/i }).click();
       
       // Wait for loading to complete and check for either loading indicator or results
       await page.waitForTimeout(2000);
@@ -338,9 +338,9 @@ test.describe('Mobile Responsiveness and Accessibility', () => {
       await expect(page.getByRole('button', { name: /use my current location/i })).toBeVisible();
       
       // Functionality should work at high zoom
-      await page.getByRole('button', { name: /enter postcode instead/i }).click();
+      await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
       await page.getByLabel(/enter your postcode/i).fill(testPostcode);
-      await page.getByRole('button', { name: /find services/i }).click();
+      await page.getByRole('button', { name: /find services by postcode/i }).click();
       
       await page.waitForTimeout(1000);
       await expect(page.getByText(/services near you/i)).toBeVisible();

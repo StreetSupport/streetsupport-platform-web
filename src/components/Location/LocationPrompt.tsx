@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useLocation } from '@/contexts/LocationContext';
+import locations from '@/data/locations.json';
 
 interface LocationPromptProps {
   onLocationSet?: () => void;
@@ -16,8 +17,8 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
   const [geocodingError, setGeocodingError] = useState<string | null>(null);
   const [hasRequestedLocation, setHasRequestedLocation] = useState(false);
   const [networkError, setNetworkError] = useState<string | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
-  const [isRetrying, setIsRetrying] = useState(false);
+  const [showLocationDropdown, setShowLocationDropdown] = useState(false);
+  const [selectedLocationSlug, setSelectedLocationSlug] = useState('');
 
   // Check if location is already set from navigation context
   useEffect(() => {
@@ -25,6 +26,14 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
       onLocationSet?.();
     }
   }, [location, onLocationSet]);
+  
+  // Show location dropdown when postcode input is shown
+  useEffect(() => {
+    if (showPostcodeInput) {
+      setShowLocationDropdown(true);
+    }
+  }, [showPostcodeInput]);
+
 
   // Don't auto-request location on mount - let user choose
 
@@ -96,7 +105,6 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
           source: 'postcode',
           radius: 5 // Default radius in km
         });
-        setRetryCount(0); // Reset retry count on success
         onLocationSet?.();
       } else {
         setGeocodingError(data.error || 'Postcode not found');
@@ -130,7 +138,6 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
     setNetworkError(null);
     setHasRequestedLocation(false);
     setShowPostcodeInput(false);
-    setRetryCount(0);
   };
 
   const handleUsePostcode = () => {
@@ -139,33 +146,29 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
     setShowPostcodeInput(true);
   };
 
-  const handleRetryPostcode = async () => {
-    if (retryCount >= 3) {
-      setNetworkError('Maximum retry attempts reached. Please try again later or refresh the page.');
+
+  
+  const handleLocationDropdownSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!selectedLocationSlug) {
       return;
     }
-
-    setIsRetrying(true);
-    setRetryCount(prev => prev + 1);
     
-    // Exponential backoff: 1s, 2s, 4s
-    const delay = Math.pow(2, retryCount) * 1000;
-    
-    setTimeout(async () => {
-      setIsRetrying(false);
-      const syntheticEvent = {
-        preventDefault: () => {},
-      } as React.FormEvent;
-      await handlePostcodeSubmit(syntheticEvent);
-    }, delay);
-  };
-
-  const handleBrowseAllServices = () => {
-    // Navigate to browse all services without location filtering
-    if (typeof window !== 'undefined') {
-      window.location.href = '/find-help?browse=all';
+    const selectedLocation = locations.find(loc => loc.slug === selectedLocationSlug && loc.isPublic);
+    if (selectedLocation) {
+      setLocation({
+        lat: selectedLocation.latitude,
+        lng: selectedLocation.longitude,
+        source: 'location',
+        slug: selectedLocation.slug,
+        label: selectedLocation.name,
+        radius: 5 // Default radius in km
+      });
+      onLocationSet?.();
     }
   };
+  
 
   // If location is already set, show confirmation
   if (location) {
@@ -179,12 +182,13 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
           </div>
           <div className="ml-3">
             <p className="text-sm font-medium text-green-800">
-              Location set: {location.postcode || `${location.lat?.toFixed(4)}, ${location.lng?.toFixed(4)}`}
+              Location set: {location.postcode || location.label || `${location.lat?.toFixed(4)}, ${location.lng?.toFixed(4)}`}
             </p>
             <p className="text-xs text-green-600 mt-1">
               {location.source === 'navigation' && 'Using location from page context'}
               {location.source === 'geolocation' && 'Using your current location'}
               {location.source === 'postcode' && 'Using postcode location'}
+              {location.source === 'location' && 'Using selected location'}
             </p>
           </div>
         </div>
@@ -219,7 +223,7 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
         )}
 
         {/* Location permission error */}
-        {error && !showPostcodeInput && (
+        {error && !showPostcodeInput && !showLocationDropdown && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-4">
             <div className="flex">
               <div className="flex-shrink-0">
@@ -242,14 +246,15 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
                 onClick={handleUsePostcode}
                 className="text-sm bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition-colors"
               >
-                Use Postcode Instead
+                Enter Postcode or Choose a Location
               </button>
             </div>
           </div>
         )}
 
+        
         {/* Initial location request */}
-        {!hasRequestedLocation && !showPostcodeInput && !isLoading && !error && (
+        {!hasRequestedLocation && !showPostcodeInput && !showLocationDropdown && !isLoading && !error && (
           <div className="space-y-4">
             <button
               onClick={handleLocationRequest}
@@ -261,75 +266,59 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
               onClick={handleUsePostcode}
               className="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-md hover:bg-gray-200 transition-colors"
             >
-              Enter Postcode Instead
+              Enter Postcode or Choose a Location
             </button>
           </div>
         )}
 
-        {/* Postcode input form */}
+        {/* Postcode and location selection form */}
         {showPostcodeInput && (
-          <form onSubmit={handlePostcodeSubmit} className="space-y-4" role="form">
-            <div className="text-left">
-              <label htmlFor="postcode" className="block text-sm font-medium text-gray-700 mb-2">
-                Enter your postcode
-              </label>
-              <input
-                id="postcode"
-                type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="e.g., M1 1AE"
-                value={postcodeInput}
-                onChange={(e) => {
-                  setPostcodeInput(e.target.value.toUpperCase());
-                  setGeocodingError(null);
-                }}
-                disabled={isGeocoding}
-                required
-              />
-              {geocodingError && (
-                <p className="mt-2 text-sm text-red-600">{geocodingError}</p>
-              )}
-              {networkError && (
-                <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-md">
-                  <p className="text-sm text-red-600">{networkError}</p>
-                  {retryCount < 3 && !networkError.includes('Maximum retry attempts reached') && (
-                    <div className="mt-2 flex space-x-2">
-                      <button
-                        type="button"
-                        onClick={handleRetryPostcode}
-                        disabled={isRetrying}
-                        className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded hover:bg-red-200 transition-colors disabled:opacity-50"
-                      >
-                        {isRetrying ? 'Retrying...' : `Retry (${3 - retryCount} attempts left)`}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleBrowseAllServices}
-                        className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded hover:bg-blue-200 transition-colors"
-                      >
-                        Browse All Services
-                      </button>
-                    </div>
-                  )}
-                  {(retryCount >= 3 || networkError.includes('Maximum retry attempts reached')) && (
-                    <div className="mt-2 flex space-x-2">
-                      <button
-                        type="button"
-                        onClick={handleBrowseAllServices}
-                        className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded hover:bg-blue-200 transition-colors"
-                      >
-                        Browse All Services
-                      </button>
-                    </div>
-                  )}
+          <div className="space-y-6">
+            <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
                 </div>
-              )}
+                <div className="ml-3">
+                  <p className="text-sm text-blue-800">Choose how you&apos;d like to find services near you:</p>
+                </div>
+              </div>
             </div>
-            
-            <div className="flex space-x-3">
+
+            {/* Postcode input section */}
+            <form onSubmit={handlePostcodeSubmit} className="space-y-4" role="form">
+              <div className="text-left">
+                <label htmlFor="postcode" className="block text-sm font-medium text-gray-700 mb-2">
+                  Option 1: Enter your postcode
+                </label>
+                <input
+                  id="postcode"
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="e.g., M1 1AE"
+                  value={postcodeInput}
+                  onChange={(e) => {
+                    setPostcodeInput(e.target.value.toUpperCase());
+                    setGeocodingError(null);
+                  }}
+                  disabled={isGeocoding}
+                  required
+                />
+                {geocodingError && (
+                  <p className="mt-2 text-sm text-red-600">{geocodingError}</p>
+                )}
+                {networkError && (
+                  <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-md">
+                    <p className="text-sm text-red-600">{networkError}</p>
+                  </div>
+                )}
+              </div>
+              
               <button
                 type="submit"
-                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isGeocoding || !postcodeInput.trim()}
               >
                 {isGeocoding ? (
@@ -338,23 +327,70 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
                     Finding Location...
                   </span>
                 ) : (
-                  'Find Services'
+                  'Find Services by Postcode'
                 )}
               </button>
+            </form>
+
+            {/* Divider */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">or</span>
+              </div>
+            </div>
+
+            {/* Location dropdown section */}
+            <form onSubmit={handleLocationDropdownSubmit} className="space-y-4" role="form">
+              <div className="text-left">
+                <label htmlFor="location-select" className="block text-sm font-medium text-gray-700 mb-2">
+                  Option 2: Select your area
+                </label>
+                <select
+                  id="location-select"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={selectedLocationSlug}
+                  onChange={(e) => setSelectedLocationSlug(e.target.value)}
+                >
+                  <option value="">Choose your area...</option>
+                  {locations
+                    .filter(loc => loc.isPublic)
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map(location => (
+                      <option key={location.slug} value={location.slug}>
+                        {location.name}
+                      </option>
+                    ))
+                  }
+                </select>
+              </div>
               
+              <button
+                type="submit"
+                className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={!selectedLocationSlug}
+              >
+                Find Services in {selectedLocationSlug ? locations.find(l => l.slug === selectedLocationSlug)?.name : 'Selected Area'}
+              </button>
+            </form>
+
+            {/* Navigation links */}
+            <div className="text-center">
               {!error && (
                 <button
                   type="button"
                   onClick={handleLocationRequest}
-                  className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors"
-                  disabled={isGeocoding}
+                  className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
                 >
-                  Use Location Instead
+                  Try location access again
                 </button>
               )}
             </div>
-          </form>
+          </div>
         )}
+
       </div>
     </div>
   );
