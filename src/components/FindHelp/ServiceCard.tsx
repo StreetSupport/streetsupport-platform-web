@@ -172,11 +172,10 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
       <p className="text-sm text-gray-600 mb-2">{formattedCategory}</p>
 
       <div className="text-gray-800 mb-2">
-        {isOpen ? (
-          <LazyMarkdownContent content={service.description} className="prose-sm" />
-        ) : (
-          <p>{preview}</p>
-        )}
+        <LazyMarkdownContent 
+          content={isOpen ? service.description : preview} 
+          className="text-sm" 
+        />
       </div>
       
       {decodedDescription.length > 120 && (

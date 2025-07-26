@@ -185,9 +185,12 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
       {/* Organization Description */}
       {group.orgDescription && (
         <div className="mb-3">
-          {shouldTruncate && !isDescriptionOpen ? (
-            <div>
-              <p className="text-sm text-gray-800 mb-1">{displayDescription}</p>
+          <div>
+            <LazyMarkdownContent 
+              content={isDescriptionOpen ? group.orgDescription : displayDescription} 
+              className="text-sm mb-1" 
+            />
+            {shouldTruncate && (
               <button
                 type="button"
                 onClick={(e) => {
@@ -197,27 +200,10 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
                 }}
                 className="text-blue-600 underline text-sm hover:text-blue-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400"
               >
-                Read more
+                {isDescriptionOpen ? 'Show less' : 'Read more'}
               </button>
-            </div>
-          ) : (
-            <div>
-              <LazyMarkdownContent content={group.orgDescription} className="prose-sm" />
-              {shouldTruncate && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onToggleDescription?.();
-                  }}
-                  className="text-blue-600 underline text-sm hover:text-blue-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400"
-                >
-                  Show less
-                </button>
-              )}
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
 
