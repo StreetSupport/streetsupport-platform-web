@@ -19,6 +19,10 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
   const [networkError, setNetworkError] = useState<string | null>(null);
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [selectedLocationSlug, setSelectedLocationSlug] = useState('');
+  const [showOrgSearch, setShowOrgSearch] = useState(false);
+  const [orgSearchInput, setOrgSearchInput] = useState('');
+  const [isOrgSearching, setIsOrgSearching] = useState(false);
+  const [orgSearchError, setOrgSearchError] = useState<string | null>(null);
 
   // Check if location is already set from navigation context
   useEffect(() => {
@@ -146,6 +150,57 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
     setShowPostcodeInput(true);
   };
 
+  const handleOrgSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const trimmedQuery = orgSearchInput.trim();
+    if (!trimmedQuery) {
+      setOrgSearchError('Please enter an organisation name');
+      return;
+    }
+
+    setIsOrgSearching(true);
+    setOrgSearchError(null);
+
+    try {
+      const response = await fetch(`/api/organisations/search?q=${encodeURIComponent(trimmedQuery)}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          setOrgSearchError('No organisations found matching your search');
+        } else if (response.status >= 500) {
+          setOrgSearchError('Server error. Please try again later.');
+        } else {
+          setOrgSearchError('Search failed. Please try again.');
+        }
+        return;
+      }
+
+      const data = await response.json();
+      
+      if (data.organisations && data.organisations.length > 0) {
+        // If only one result, navigate directly to it
+        if (data.organisations.length === 1) {
+          window.location.href = `/find-help/organisation/${data.organisations[0].slug}`;
+        } else {
+          // Multiple results - navigate to search results page
+          window.location.href = `/find-help/organisations?search=${encodeURIComponent(trimmedQuery)}`;
+        }
+      } else {
+        setOrgSearchError('No organisations found matching your search');
+      }
+    } catch (err) {
+      console.error('Organisation search error:', err);
+      setOrgSearchError('Network error. Please check your connection and try again.');
+    } finally {
+      setIsOrgSearching(false);
+    }
+  };
+
 
   
   const handleLocationDropdownSubmit = (e: React.FormEvent) => {
@@ -211,8 +266,69 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
         </h2>
         
         <p className="text-sm text-gray-600 mb-6">
-          We&apos;ll help you find services in your area. You can share your location or enter your postcode.
+          We&apos;ll help you find services in your area. You can share your location or enter your postcode. You can also{' '}
+          <button
+            onClick={() => setShowOrgSearch(true)}
+            className="text-blue-600 hover:text-blue-800 underline transition-colors"
+          >
+            search for an organisation by name
+          </button>.
         </p>
+
+        {/* Organization search form */}
+        {showOrgSearch && (
+          <form onSubmit={handleOrgSearch} className="space-y-4 mb-6">
+            <div className="text-left">
+              <label htmlFor="org-search" className="block text-sm font-medium text-gray-700 mb-2">
+                Search for an organisation by name
+              </label>
+              <input
+                id="org-search"
+                type="text"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="e.g., Manchester City Mission"
+                value={orgSearchInput}
+                onChange={(e) => {
+                  setOrgSearchInput(e.target.value);
+                  setOrgSearchError(null);
+                }}
+                disabled={isOrgSearching}
+                required
+              />
+              {orgSearchError && (
+                <p className="mt-2 text-sm text-red-600">{orgSearchError}</p>
+              )}
+            </div>
+            
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isOrgSearching || !orgSearchInput.trim()}
+              >
+                {isOrgSearching ? (
+                  <span className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Searching...
+                  </span>
+                ) : (
+                  'Search Organisations'
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowOrgSearch(false);
+                  setOrgSearchInput('');
+                  setOrgSearchError(null);
+                }}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
 
         {/* Loading state */}
         {isLoading && (
