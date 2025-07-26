@@ -192,23 +192,55 @@ export default function OrganisationShell({ organisation, userContext }: Props) 
       if (!grouped[category]) grouped[category] = {};
       if (!grouped[category][subcategory]) {
         grouped[category][subcategory] = {
-          service: service,
+          service: service, // Use first service as template
           locations: []
         };
       }
       
-      grouped[category][subcategory].locations.push({
-        address,
-        distance,
-        service
+      // Only add location if it's unique (deduplicate by coordinates with tolerance for floating point precision)
+      const existingLocation = grouped[category][subcategory].locations.find(loc => {
+        const locCoords = (loc.address as AddressWithLocation)?.Location?.coordinates;
+        if (!locCoords || !coords) {
+          return false; // Don't deduplicate locations without coordinates
+        }
+        
+        // Use a small tolerance for floating point comparison (same as accordion)
+        const tolerance = 0.000001;
+        const latDiff = Math.abs(locCoords[1] - coords[1]);
+        const lngDiff = Math.abs(locCoords[0] - coords[0]);
+        
+        return latDiff < tolerance && lngDiff < tolerance;
       });
+      
+      if (!existingLocation) {
+        // Only add location if it's within the search radius (if radius is specified)
+        const withinRadius = !userContext?.radius || distance <= userContext.radius;
+        
+        if (withinRadius) {
+          grouped[category][subcategory].locations.push({
+            address,
+            distance,
+            service
+          });
+        }
+      }
     });
     
-    // Sort locations within each service by distance
+    // Sort locations within each service by distance and remove empty services/categories
     Object.keys(grouped).forEach(category => {
       Object.keys(grouped[category]).forEach(subcategory => {
         grouped[category][subcategory].locations.sort((a, b) => a.distance - b.distance);
+        
+        // Remove services that have no locations after filtering
+        if (grouped[category][subcategory].locations.length === 0) {
+          delete grouped[category][subcategory];
+        }
       });
+      
+      // Remove categories that have no services after filtering
+      if (Object.keys(grouped[category]).length === 0) {
+        delete grouped[category];
+      }
     });
     
     return grouped;
