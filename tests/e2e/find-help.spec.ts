@@ -19,14 +19,14 @@ async function enterPostcodeInLocationPrompt(page: Page, postcode: string = test
   // Wait for LocationPrompt to load
   await expect(page.getByText('Find Services Near You')).toBeVisible();
   
-  // Click "Enter Postcode Instead" button
-  await page.getByRole('button', { name: /enter postcode instead/i }).click();
+  // Click "Enter Postcode or Choose a Location" button
+  await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
   
   // Fill postcode input
   await page.getByLabel(/enter your postcode/i).fill(postcode);
   
   // Submit form
-  await page.getByRole('button', { name: /find services/i }).click();
+  await page.getByRole('button', { name: /find services by postcode/i }).click();
   
   // Wait for services to load
   await page.waitForTimeout(1000);
@@ -139,7 +139,7 @@ test.describe('Location-Based Service Discovery', () => {
     await expect(page.getByText('Find Services Near You')).toBeVisible();
     await expect(page.getByText(/We'll help you find services in your area/)).toBeVisible();
     await expect(page.getByRole('button', { name: /use my current location/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /enter postcode instead/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /enter postcode or choose a location/i })).toBeVisible();
   });
 
   test('should handle location permission granted flow', async ({ page }) => {
@@ -189,7 +189,7 @@ test.describe('Location-Based Service Discovery', () => {
     } else {
       // If error handling doesn't work as expected, just verify we can still use postcode option
       // Check if the postcode button is already visible (might be the initial state)
-      const initialPostcodeBtn = page.getByRole('button', { name: /enter postcode instead/i });
+      const initialPostcodeBtn = page.getByRole('button', { name: /enter postcode or choose a location/i });
       if (await initialPostcodeBtn.isVisible()) {
         await initialPostcodeBtn.click();
         await expect(page.getByLabel(/enter your postcode/i)).toBeVisible();
@@ -204,10 +204,10 @@ test.describe('Location-Based Service Discovery', () => {
     await page.goto('/find-help');
     
     // Click postcode option
-    await page.getByRole('button', { name: /enter postcode instead/i }).click();
+    await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
     
     // Test empty postcode - button should be disabled
-    const submitBtn = page.getByRole('button', { name: /find services/i });
+    const submitBtn = page.getByRole('button', { name: /find services by postcode/i });
     await expect(submitBtn).toBeDisabled();
     
     // Test invalid format
@@ -236,11 +236,11 @@ test.describe('Location-Based Service Discovery', () => {
     await page.goto('/find-help');
     
     // Click postcode option
-    await page.getByRole('button', { name: /enter postcode instead/i }).click();
+    await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
     
     // Enter postcode that will return 404
     await page.getByLabel(/enter your postcode/i).fill('XX1 1XX');
-    await page.getByRole('button', { name: /find services/i }).click();
+    await page.getByRole('button', { name: /find services by postcode/i }).click();
     
     // Wait for error to appear
     await page.waitForTimeout(2000);
@@ -249,10 +249,9 @@ test.describe('Location-Based Service Discovery', () => {
     const postcodeErrorVisible = await page.getByText(/postcode not found|couldn't find that postcode/i).isVisible();
     const generalErrorVisible = await page.getByText(/error|failed|unable/i).first().isVisible();
     const retryVisible = await page.getByRole('button', { name: /try again|retry/i }).isVisible();
-    const browseAllVisible = await page.getByRole('button', { name: /browse all/i }).isVisible();
     
     // At least one error handling mechanism should be visible
-    expect(postcodeErrorVisible || generalErrorVisible || retryVisible || browseAllVisible).toBeTruthy();
+    expect(postcodeErrorVisible || generalErrorVisible || retryVisible).toBeTruthy();
   });
 
   test('should load and display location-filtered services', async ({ page }) => {
@@ -341,10 +340,9 @@ test.describe('Location-Based Service Discovery', () => {
     const networkErrorVisible = await page.getByText(/network error/i).isVisible();
     const generalErrorVisible = await page.getByText(/error|failed|unable/i).first().isVisible();
     const retryVisible = await page.getByRole('button', { name: /try again|retry/i }).isVisible();
-    const browseAllVisible = await page.getByRole('button', { name: /browse all services/i }).isVisible();
     
     // At least one error handling mechanism should be visible
-    expect(networkErrorVisible || generalErrorVisible || retryVisible || browseAllVisible).toBeTruthy();
+    expect(networkErrorVisible || generalErrorVisible || retryVisible).toBeTruthy();
   });
 
   test('should handle server errors gracefully', async ({ page }) => {
@@ -367,13 +365,13 @@ test.describe('Location-Based Service Discovery', () => {
     await page.goto('/find-help');
     
     // Click postcode option
-    await page.getByRole('button', { name: /enter postcode instead/i }).click();
+    await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
     
     // Fill postcode
     await page.getByLabel(/enter your postcode/i).fill(testPostcode);
     
     // Click submit and check for loading state
-    await page.getByRole('button', { name: /find services/i }).click();
+    await page.getByRole('button', { name: /find services by postcode/i }).click();
     
     // Should show some kind of loading indicator - check for various possible loading texts
     const findingLocationVisible = await page.getByText(/finding location/i).isVisible();
@@ -420,10 +418,10 @@ test.describe('Location-Based Service Discovery', () => {
     
     // Check for proper ARIA labels and roles
     await expect(page.getByRole('button', { name: /use my current location/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /enter postcode instead/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /enter postcode or choose a location/i })).toBeVisible();
     
     // Click postcode option
-    await page.getByRole('button', { name: /enter postcode instead/i }).click();
+    await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
     
     // Check form accessibility
     const postcodeInput = page.getByLabel(/enter your postcode/i);
@@ -438,33 +436,8 @@ test.describe('Location-Based Service Discovery', () => {
     await postcodeInput.fill(testPostcode);
     
     await page.keyboard.press('Tab');
-    const submitBtn = page.getByRole('button', { name: /find services/i });
+    const submitBtn = page.getByRole('button', { name: /find services by postcode/i });
     await expect(submitBtn).toBeEnabled();
   });
 
-  test('should handle browse all services fallback', async ({ page }) => {
-    await page.goto('/find-help');
-    
-    // Click postcode option
-    await page.getByRole('button', { name: /enter postcode instead/i }).click();
-    
-    // Simulate network error
-    await page.route('**/api/geocode**', async (route) => {
-      await route.abort('failed');
-    });
-    
-    // Try to submit postcode
-    await page.getByLabel(/enter your postcode/i).fill(testPostcode);
-    await page.getByRole('button', { name: /find services/i }).click();
-    
-    // Should show network error with browse all option
-    await expect(page.getByText(/network error/i)).toBeVisible();
-    await expect(page.getByRole('button', { name: /browse all services/i })).toBeVisible();
-    
-    // Click browse all services
-    await page.getByRole('button', { name: /browse all services/i }).click();
-    
-    // Should navigate to browse all services
-    await expect(page.url()).toContain('browse=all');
-  });
 });

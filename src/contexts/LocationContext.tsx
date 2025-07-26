@@ -11,12 +11,13 @@ import {
 import { usePathname } from 'next/navigation';
 import locations from '@/data/locations.json';
 
-export type LocationSource = 'geolocation' | 'postcode' | 'navigation';
+export type LocationSource = 'geolocation' | 'postcode' | 'navigation' | 'location';
 
 export interface LocationState {
   lat?: number;
   lng?: number;
   postcode?: string;
+  slug?: string;
   source: LocationSource;
   radius?: number;
   label?: string;
@@ -30,7 +31,7 @@ export interface LocationError {
 interface LocationContextType {
   location: LocationState | null;
   setLocation: (location: LocationState) => void;
-  setLocationFromCoordinates: (coords: { lat: number; lng: number; label?: string; radius?: number; source: LocationSource }) => void;
+  setLocationFromCoordinates: (coords: { lat: number; lng: number; label?: string; radius?: number; source: LocationSource; slug?: string }) => void;
   updateRadius: (radius: number) => void;
   requestLocation: () => Promise<void>;
   error: LocationError | null;
@@ -147,13 +148,14 @@ export function LocationProvider({ children }: { children: ReactNode }) {
     setLocation(prev => prev ? { ...prev, radius } : null);
   }, []);
   
-  const setLocationFromCoordinates = useCallback((coords: { lat: number; lng: number; label?: string; radius?: number; source: LocationSource }) => {
+  const setLocationFromCoordinates = useCallback((coords: { lat: number; lng: number; label?: string; radius?: number; source: LocationSource; slug?: string }) => {
     const newLocation: LocationState = {
       lat: coords.lat,
       lng: coords.lng,
       radius: coords.radius || 5,
       source: coords.source,
-      label: coords.label
+      label: coords.label,
+      slug: coords.slug
     };
     enhancedSetLocation(newLocation);
   }, [enhancedSetLocation]);

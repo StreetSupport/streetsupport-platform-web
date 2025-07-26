@@ -11,8 +11,10 @@ import {
   saveSearchState, 
   loadSearchState, 
   clearSearchState, 
-  isFromOrganisationPage
+  isFromOrganisationPage,
+  createSearchState
 } from '@/utils/findHelpStateUtils';
+import locations from '@/data/locations.json';
 import type { ServiceWithDistance } from '@/types';
 
 // Utility function to process raw service data
@@ -64,8 +66,6 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
   const [error, setError] = useState<string | null>(null);
   const [hasLocationSet, setHasLocationSet] = useState(false);
   const [networkError, setNetworkError] = useState<boolean>(false);
-  const [retryCount, setRetryCount] = useState(0);
-  const [isRetrying, setIsRetrying] = useState(false);
   const [shouldRestoreState, setShouldRestoreState] = useState(false);
   const [initialFilters, setInitialFilters] = useState<{
     selectedCategory: string;
@@ -97,7 +97,8 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
           lng: savedState.lng,
           label: savedState.locationLabel,
           radius: savedState.radius,
-          source: 'navigation'
+          source: savedState.locationSource || 'navigation',
+          slug: savedState.locationSlug
         });
       }
     } else if (urlParams.lat && urlParams.lng) {
@@ -107,12 +108,27 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
       const radius = urlParams.radius ? parseFloat(urlParams.radius) : 5;
       
       if (!isNaN(lat) && !isNaN(lng)) {
+        // Check if we have a location slug to restore the proper label
+        let label = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+        let source: 'geolocation' | 'postcode' | 'navigation' | 'location' = 'navigation';
+        let slug: string | undefined;
+        
+        if (urlParams.locationSlug) {
+          const locationData = locations.find(loc => loc.slug === urlParams.locationSlug && loc.isPublic);
+          if (locationData) {
+            label = locationData.name;
+            source = 'location';
+            slug = locationData.slug;
+          }
+        }
+        
         setLocationFromCoordinates({
           lat,
           lng,
-          label: `${lat.toFixed(4)}, ${lng.toFixed(4)}`,
+          label,
           radius,
-          source: 'navigation'
+          source,
+          slug
         });
         
         setInitialFilters({
@@ -196,7 +212,6 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
       const processedServices: ServiceWithDistance[] = rawArray.map(processServiceData);
 
       setServices(processedServices);
-      setRetryCount(0); // Reset retry count on success
       setNetworkError(false);
     } catch (err) {
       clearTimeout(timeoutId);
@@ -263,46 +278,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
     setHasLocationSet(true);
   }, []);
 
-  const handleRetry = useCallback(async () => {
-    if (!location) return;
 
-    if (retryCount >= 3) {
-      setError('Maximum retry attempts reached. Please refresh the page or try again later.');
-      return;
-    }
-
-    setIsRetrying(true);
-    setRetryCount(prev => prev + 1);
-    
-    // Exponential backoff: 1s, 2s, 4s
-    const delay = Math.pow(2, retryCount) * 1000;
-    
-    setTimeout(async () => {
-      setIsRetrying(false);
-      await fetchServices(location, true);
-    }, delay);
-  }, [location, fetchServices, retryCount]);
-
-  const handleBrowseAllServices = useCallback(() => {
-    // Load all services without location filtering
-    setLoading(true);
-    setError(null);
-    
-    fetch('/api/services?limit=500', { cache: 'no-store' })
-      .then(response => response.json())
-      .then(data => {
-        const rawArray = data.results || [];
-        if (Array.isArray(rawArray)) {
-          const processedServices: ServiceWithDistance[] = rawArray.map(processServiceData);
-          setServices(processedServices);
-          setError(null);
-        }
-      })
-      .catch(_err => {
-        setError('Unable to load services. Please try again later.');
-      })
-      .finally(() => setLoading(false));
-  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -330,8 +306,6 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
       ) : (
         <ErrorBoundary
           errorType={networkError ? 'network' : 'services'}
-          onRetry={handleRetry}
-          showRetry={retryCount < 3}
           fallback={
             <div className="max-w-4xl mx-auto p-4">
               <div className="bg-red-50 border border-red-200 rounded-md p-4">
@@ -340,26 +314,11 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
                   We&apos;re having trouble loading services. Please try again.
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {retryCount < 3 && (
-                    <button
-                      onClick={handleRetry}
-                      disabled={isRetrying}
-                      className="text-sm bg-red-100 text-red-800 px-3 py-1 rounded-md hover:bg-red-200 transition-colors disabled:opacity-50"
-                    >
-                      {isRetrying ? 'Retrying...' : `Try Again (${3 - retryCount} attempts left)`}
-                    </button>
-                  )}
                   <button
                     onClick={() => setHasLocationSet(false)}
                     className="text-sm bg-gray-100 text-gray-800 px-3 py-1 rounded-md hover:bg-gray-200 transition-colors"
                   >
                     Change Location
-                  </button>
-                  <button
-                    onClick={handleBrowseAllServices}
-                    className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-md hover:bg-blue-200 transition-colors"
-                  >
-                    Browse All Services
                   </button>
                 </div>
               </div>
@@ -379,24 +338,29 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
                 lng: location?.lng?.toString(),
                 cat: state.selectedCategory || undefined,
                 subcat: state.selectedSubCategory || undefined,
-                radius: (location?.radius && location.radius !== 5) ? location.radius.toString() : undefined
+                radius: (location?.radius && location.radius !== 5) ? location.radius.toString() : undefined,
+                locationSlug: location?.source === 'location' ? location.slug : undefined
               });
               
               // Save to sessionStorage if location is available
               if (location && location.lat !== undefined && location.lng !== undefined) {
-                saveSearchState({
-                  lat: location.lat,
-                  lng: location.lng,
-                  locationLabel: location.label || `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}`,
-                  radius: location.radius || 5,
-                  selectedCategory: state.selectedCategory,
-                  selectedSubCategory: state.selectedSubCategory,
-                  selectedClientGroups: [],
-                  openNow: false,
-                  sortOrder: state.sortOrder,
-                  showMap: state.showMap,
-                  fromResultsPage: true
-                });
+                const searchState = createSearchState(
+                  location.lat,
+                  location.lng,
+                  location.label || `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}`,
+                  location.radius || 5,
+                  {
+                    selectedCategory: state.selectedCategory,
+                    selectedSubCategory: state.selectedSubCategory,
+                    selectedClientGroups: [],
+                    openNow: false,
+                    sortOrder: state.sortOrder,
+                    showMap: state.showMap
+                  },
+                  location.source,
+                  location.slug
+                );
+                saveSearchState(searchState);
               }
             }}
           />
