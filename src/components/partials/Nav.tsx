@@ -16,7 +16,10 @@ export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLocationsOpen, setIsLocationsOpen] = useState(false);
   const [mobileLocationsOpen, setMobileLocationsOpen] = useState(false);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [mobileAboutOpen, setMobileAboutOpen] = useState(false);
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const aboutCloseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   function handleMouseEnter() {
     if (closeTimeoutRef.current) {
@@ -31,10 +34,29 @@ export default function Nav() {
     }, 100);
   }
 
+  function handleAboutMouseEnter() {
+    if (aboutCloseTimeoutRef.current) {
+      clearTimeout(aboutCloseTimeoutRef.current);
+    }
+    setIsAboutOpen(true);
+  }
+
+  function handleAboutMouseLeave() {
+    aboutCloseTimeoutRef.current = setTimeout(() => {
+      setIsAboutOpen(false);
+    }, 100);
+  }
+
   // ✅ Handler to close all menus on link click
   function handleLocationClick() {
     setIsLocationsOpen(false);
     setMobileLocationsOpen(false);
+    setMenuOpen(false);
+  }
+
+  function handleAboutClick() {
+    setIsAboutOpen(false);
+    setMobileAboutOpen(false);
     setMenuOpen(false);
   }
 
@@ -93,8 +115,79 @@ export default function Nav() {
               )}
             </div>
 
-            <Link href="/about" className="text-neutral-800 hover:text-blue-600">About</Link>
-            <Link href="/contact" className="text-neutral-800 hover:text-blue-600">Contact</Link>
+            <Link href="/resources" className="text-neutral-800 hover:text-blue-600">Resources</Link>
+            <Link href="/news" className="text-neutral-800 hover:text-blue-600">News</Link>
+
+            <div
+              className="relative"
+              onMouseEnter={handleAboutMouseEnter}
+              onMouseLeave={handleAboutMouseLeave}
+            >
+              <button className="text-neutral-800 hover:text-blue-600 focus:outline-none">
+                About
+              </button>
+
+              {isAboutOpen && (
+                <div className="absolute left-1/2 -translate-x-1/2 z-50 mt-2 w-48 bg-white border border-neutral-200 rounded shadow-md">
+                  <ul className="py-2">
+                    <li>
+                      <Link
+                        href="/about/our-team"
+                        className="block px-4 py-2 text-sm text-neutral-800 hover:bg-neutral-100"
+                        onClick={handleAboutClick}
+                      >
+                        Our Team
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/about/our-trustees"
+                        className="block px-4 py-2 text-sm text-neutral-800 hover:bg-neutral-100"
+                        onClick={handleAboutClick}
+                      >
+                        Our Trustees
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/about/privacy-and-data"
+                        className="block px-4 py-2 text-sm text-neutral-800 hover:bg-neutral-100"
+                        onClick={handleAboutClick}
+                      >
+                        Privacy and Data
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/about/jobs"
+                        className="block px-4 py-2 text-sm text-neutral-800 hover:bg-neutral-100"
+                        onClick={handleAboutClick}
+                      >
+                        Jobs
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/about/impact"
+                        className="block px-4 py-2 text-sm text-neutral-800 hover:bg-neutral-100"
+                        onClick={handleAboutClick}
+                      >
+                        Impact
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/contact"
+                        className="block px-4 py-2 text-sm text-neutral-800 hover:bg-neutral-100"
+                        onClick={handleAboutClick}
+                      >
+                        Contact
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -128,8 +221,74 @@ export default function Nav() {
             </ul>
           )}
 
-          <Link href="/about" className="block text-neutral-800 hover:text-blue-600">About</Link>
-          <Link href="/contact" className="block text-neutral-800 hover:text-blue-600">Contact</Link>
+          <Link href="/resources" className="block text-neutral-800 hover:text-blue-600">Resources</Link>
+          <Link href="/news" className="block text-neutral-800 hover:text-blue-600">News</Link>
+
+          <button
+            onClick={() => setMobileAboutOpen(prev => !prev)}
+            className="w-full text-left text-neutral-800 hover:text-blue-600 text-sm font-semibold mt-2"
+          >
+            About
+          </button>
+
+          {mobileAboutOpen && (
+            <ul className="mt-1 space-y-1 ml-4">
+              <li>
+                <Link
+                  href="/about/our-team"
+                  className="block text-neutral-800 hover:text-blue-600 text-sm"
+                  onClick={handleAboutClick}
+                >
+                  Our Team
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/about/our-trustees"
+                  className="block text-neutral-800 hover:text-blue-600 text-sm"
+                  onClick={handleAboutClick}
+                >
+                  Our Trustees
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/about/privacy-and-data"
+                  className="block text-neutral-800 hover:text-blue-600 text-sm"
+                  onClick={handleAboutClick}
+                >
+                  Privacy and Data
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/about/jobs"
+                  className="block text-neutral-800 hover:text-blue-600 text-sm"
+                  onClick={handleAboutClick}
+                >
+                  Jobs
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/about/impact"
+                  className="block text-neutral-800 hover:text-blue-600 text-sm"
+                  onClick={handleAboutClick}
+                >
+                  Impact
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/contact"
+                  className="block text-neutral-800 hover:text-blue-600 text-sm"
+                  onClick={handleAboutClick}
+                >
+                  Contact
+                </Link>
+              </li>
+            </ul>
+          )}
         </div>
       )}
     </nav>
