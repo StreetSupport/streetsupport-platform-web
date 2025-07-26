@@ -58,7 +58,8 @@ export default function OrganisationShell({ organisation, userContext }: Props) 
         savedState.lng,
         savedState.selectedCategory,
         savedState.selectedSubCategory,
-        savedState.radius
+        savedState.radius,
+        savedState.locationSlug
       );
       setBackToSearchURL(backURL);
     }

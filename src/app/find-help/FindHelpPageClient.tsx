@@ -72,6 +72,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
     selectedSubCategory: string;
     sortOrder: 'distance' | 'alpha';
     showMap: boolean;
+    currentPage?: number;
   } | null>(null);
 
   // Initialize state from URL and sessionStorage on mount
@@ -87,7 +88,8 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
         selectedCategory: savedState.selectedCategory,
         selectedSubCategory: savedState.selectedSubCategory,
         sortOrder: savedState.sortOrder,
-        showMap: savedState.showMap
+        showMap: savedState.showMap,
+        currentPage: 1
       });
       
       // Restore location from saved state
@@ -135,7 +137,8 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
           selectedCategory: urlParams.cat || '',
           selectedSubCategory: urlParams.subcat || '',
           sortOrder: 'distance',
-          showMap: false
+          showMap: false,
+          currentPage: 1
         });
       }
     } else {

@@ -23,6 +23,8 @@ interface ProgressiveServiceGridProps {
   openDescriptionId: string | null;
   onToggleDescription: (id: string) => void;
   batchSize?: number;
+  initialPage?: number;
+  onPageChange?: (page: number) => void;
 }
 
 /**
@@ -34,10 +36,13 @@ export default function ProgressiveServiceGrid({
   showMap,
   openDescriptionId,
   onToggleDescription,
-  batchSize = 50
+  batchSize = 50,
+  initialPage = 1,
+  onPageChange
 }: ProgressiveServiceGridProps) {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(initialPage);
   const [loadingCardId, setLoadingCardId] = useState<string | null>(null);
+  const [shouldScrollOnPageChange, setShouldScrollOnPageChange] = useState(false);
   const itemsPerPage = batchSize;
   const gridRef = useRef<HTMLDivElement>(null);
   
@@ -47,19 +52,33 @@ export default function ProgressiveServiceGrid({
   const endIndex = startIndex + itemsPerPage;
   const visibleGroups = groups.slice(startIndex, endIndex);
   
+  // Update page when initialPage changes (from restored state)
+  useEffect(() => {
+    setCurrentPage(initialPage);
+  }, [initialPage]);
+
   // Reset page when groups change
   useEffect(() => {
     setCurrentPage(1);
     setLoadingCardId(null); // Clear loading state when groups change
+    setShouldScrollOnPageChange(false); // Don't scroll when groups change (filter/search)
   }, [groups]);
-  
-  // Scroll to top of results when page changes
+
+  // Call onPageChange callback when currentPage changes
   useEffect(() => {
-    if (gridRef.current) {
-      // Scroll to the grid container
-      gridRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (onPageChange) {
+      onPageChange(currentPage);
     }
-  }, [currentPage]);
+  }, [currentPage, onPageChange]);
+  
+  // Only scroll when pagination is used (not on initial load or filter changes)
+  useEffect(() => {
+    if (shouldScrollOnPageChange && gridRef.current) {
+      // Scroll to the top of the service cards container
+      gridRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setShouldScrollOnPageChange(false); // Reset flag after scrolling
+    }
+  }, [currentPage, shouldScrollOnPageChange]);
   
   // Generate page numbers to display
   // Handle card click to show loading state
@@ -135,7 +154,11 @@ export default function ProgressiveServiceGrid({
         <div className="flex items-center justify-center gap-2 mt-6 py-4">
           {/* Previous button */}
           <button
-            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            onClick={() => {
+              const newPage = Math.max(1, currentPage - 1);
+              setShouldScrollOnPageChange(true);
+              setCurrentPage(newPage);
+            }}
             disabled={currentPage === 1}
             className="btn-base btn-tertiary btn-sm"
             aria-label="Previous page"
@@ -151,7 +174,11 @@ export default function ProgressiveServiceGrid({
               ) : (
                 <button
                   key={page}
-                  onClick={() => setCurrentPage(Number(page))}
+                  onClick={() => {
+                    const newPage = Number(page);
+                    setShouldScrollOnPageChange(true);
+                    setCurrentPage(newPage);
+                  }}
                   className={`px-3 py-1 text-sm rounded-md border ${
                     currentPage === page
                       ? 'bg-brand-a text-brand-q border-brand-a'
@@ -168,7 +195,11 @@ export default function ProgressiveServiceGrid({
           
           {/* Next button */}
           <button
-            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+            onClick={() => {
+              const newPage = Math.min(totalPages, currentPage + 1);
+              setShouldScrollOnPageChange(true);
+              setCurrentPage(newPage);
+            }}
             disabled={currentPage === totalPages}
             className="btn-base btn-tertiary btn-sm"
             aria-label="Next page"

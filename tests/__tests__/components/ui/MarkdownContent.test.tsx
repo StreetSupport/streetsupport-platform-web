@@ -115,4 +115,80 @@ More information below.
     expect(container.innerHTML).not.toContain('<em>Simple bullet</em>');
     expect(container.innerHTML).toContain('<li>Simple bullet</li>');
   });
+
+  it('should handle complex content with multiple bullet point patterns', () => {
+    const content = `
+Dental services include:
+* Emergency dental care
+* Routine checkups
+* Teeth cleaning
+
+We also provide the following:
+Preventive care
+Fillings and restorations
+Oral health education
+
+Additional services:
+- Root canal treatment
+- Extractions
+    `.trim();
+
+    const { container } = render(<MarkdownContent content={content} />);
+    
+    // Should have bullet lists for asterisk bullets
+    expect(container.innerHTML).toContain('<li>Emergency dental care</li>');
+    expect(container.innerHTML).toContain('<li>Routine checkups</li>');
+    expect(container.innerHTML).toContain('<li>Teeth cleaning</li>');
+    
+    // Should have bullets for "following:" pattern
+    expect(container.innerHTML).toContain('<li>Preventive care</li>');
+    expect(container.innerHTML).toContain('<li>Fillings and restorations</li>');
+    expect(container.innerHTML).toContain('<li>Oral health education</li>');
+    
+    // Should have bullets for dash bullets
+    expect(container.innerHTML).toContain('<li>Root canal treatment</li>');
+    expect(container.innerHTML).toContain('<li>Extractions</li>');
+  });
+
+  it('should correctly distinguish between bullet asterisks and italic asterisks', () => {
+    const content = `
+* This is a bullet point
+This is *italic* text
+Another *word* in italics
+* Another bullet point
+    `.trim();
+
+    const { container } = render(<MarkdownContent content={content} />);
+    
+    // Should have bullet points
+    expect(container.innerHTML).toContain('<li>This is a bullet point</li>');
+    expect(container.innerHTML).toContain('<li>Another bullet point</li>');
+    
+    // Should have italic text (asterisks with no spaces around)
+    expect(container.innerHTML).toContain('This is <em>italic</em> text');
+    expect(container.innerHTML).toContain('Another <em>word</em> in italics');
+    
+    // Should NOT treat bullet asterisks as italic
+    expect(container.innerHTML).not.toContain('<em>This is a bullet point</em>');
+    expect(container.innerHTML).not.toContain('<em>Another bullet point</em>');
+  });
+
+  it('should handle various bullet point formats including HTML entities', () => {
+    const content = `
+* Standard bullet
+&ast; HTML entity bullet
+  * Indented bullet
+• Unicode bullet
+‣ Triangle bullet
+    `.trim();
+
+    const { container } = render(<MarkdownContent content={content} />);
+    
+    // Should convert all variations to bullet lists
+    expect(container.innerHTML).toContain('<li>Standard bullet</li>');
+    expect(container.innerHTML).toContain('<li>HTML entity bullet</li>');
+    expect(container.innerHTML).toContain('<li>Indented bullet</li>');
+    expect(container.innerHTML).toContain('<li>Unicode bullet</li>');
+    expect(container.innerHTML).toContain('<li>Triangle bullet</li>');
+  });
 });

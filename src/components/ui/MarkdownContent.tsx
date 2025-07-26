@@ -63,7 +63,13 @@ function processSimpleMarkdown(text: string): string {
   
   let finalResult = result.join('\n')
     // Handle explicit bullet points with asterisk (* item) and dash (- item)
-    .replace(/^[*-]\s+(.+)$/gm, '<li>$1</li>');
+    // Support multiple spaces after the bullet marker and handle HTML entities
+    .replace(/^[*\u2022\u2023\u25E6\u25AA\u25AB\u25CF\u25CB-]\s+(.+)$/gm, '<li>$1</li>')
+    // Also handle cases where there might be extra whitespace
+    .replace(/^\s*[*\u2022\u2023\u25E6\u25AA\u25AB\u25CF\u25CB-]\s+(.+)$/gm, '<li>$1</li>')
+    // Handle HTML entity asterisks
+    .replace(/^&ast;\s+(.+)$/gm, '<li>$1</li>')
+    .replace(/^\s*&ast;\s+(.+)$/gm, '<li>$1</li>');
     
   // Only wrap loose li elements that are NOT already inside ul tags
   const finalLines = finalResult.split('\n');
@@ -93,6 +99,8 @@ function processSimpleMarkdown(text: string): string {
     // Handle italic markdown *text* and _text* (after bullet points to avoid conflicts)
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
     .replace(/_(.*?)_/g, '<em>$1</em>')
+    // Clean up any malformed italic tags created from bullet points
+    .replace(/<li><em>([^<]*)<\/em><\/li>/g, '<li>$1</li>')
     // Handle simple links [text](url)
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener noreferrer">$1</a>')
     // Clean up extra line breaks around lists

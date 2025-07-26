@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import Link from 'next/link';
 import rawLocations from '@/data/locations.json';
+import { clearSearchState } from '@/utils/findHelpStateUtils';
 
 interface Location {
   id: number;
@@ -60,6 +61,12 @@ export default function Nav() {
     setMenuOpen(false);
   }
 
+  function handleFindHelpClick() {
+    // Clear any saved search state to ensure fresh start
+    clearSearchState();
+    setMenuOpen(false);
+  }
+
   return (
     <nav className="bg-white border-b border-neutral-200">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -83,7 +90,7 @@ export default function Nav() {
           </button>
 
           <div className="hidden md:flex space-x-6 items-center">
-            <Link href="/find-help" className="text-neutral-800 hover:text-blue-600">Find Help</Link>
+            <Link href="/find-help" className="text-neutral-800 hover:text-blue-600" onClick={handleFindHelpClick}>Find Help</Link>
 
             <div
               className="relative"
@@ -194,7 +201,7 @@ export default function Nav() {
 
       {menuOpen && (
         <div className="md:hidden px-4 pb-4 space-y-2">
-          <Link href="/find-help" className="block text-neutral-800 hover:text-blue-600">Find Help</Link>
+          <Link href="/find-help" className="block text-neutral-800 hover:text-blue-600" onClick={handleFindHelpClick}>Find Help</Link>
 
           <button
             onClick={() => setMobileLocationsOpen(prev => !prev)}

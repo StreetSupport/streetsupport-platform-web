@@ -19,12 +19,14 @@ interface Props {
     selectedSubCategory: string;
     sortOrder: 'distance' | 'alpha';
     showMap: boolean;
+    currentPage?: number;
   } | null;
   onStateUpdate?: (state: {
     selectedCategory: string;
     selectedSubCategory: string;
     sortOrder: 'distance' | 'alpha';
     showMap: boolean;
+    currentPage: number;
   }) => void;
 }
 
@@ -124,6 +126,7 @@ export default function FindHelpResults({
   const [sortOrder, setSortOrder] = useState<'distance' | 'alpha'>(initialFilters?.sortOrder || 'distance');
   const [selectedCategory, setSelectedCategory] = useState(initialFilters?.selectedCategory || '');
   const [selectedSubCategory, setSelectedSubCategory] = useState(initialFilters?.selectedSubCategory || '');
+  const [currentPage, setCurrentPage] = useState(initialFilters?.currentPage || 1);
   const [openDescriptionId, setOpenDescriptionId] = useState<string | null>(null);
 
   // Debounce filter values to prevent excessive re-renders
@@ -137,10 +140,11 @@ export default function FindHelpResults({
         selectedCategory: debouncedSelectedCategory,
         selectedSubCategory: debouncedSelectedSubCategory,
         sortOrder,
-        showMap
+        showMap,
+        currentPage
       });
     }
-  }, [debouncedSelectedCategory, debouncedSelectedSubCategory, sortOrder, showMap, onStateUpdate]);
+  }, [debouncedSelectedCategory, debouncedSelectedSubCategory, sortOrder, showMap, currentPage, onStateUpdate]);
 
   // Centralized read more state management
   const handleToggleDescription = useCallback((id: string) => {
@@ -151,6 +155,7 @@ export default function FindHelpResults({
   const handleResetFilters = useCallback(() => {
     setSelectedCategory('');
     setSelectedSubCategory('');
+    setCurrentPage(1); // Reset to first page when filters are reset
   }, []);
 
   // Combined filtering and grouping logic with debounced values
@@ -311,7 +316,9 @@ export default function FindHelpResults({
               showMap={showMap}
               openDescriptionId={openDescriptionId}
               onToggleDescription={handleToggleDescription}
-              batchSize={20}
+              batchSize={21}
+              initialPage={currentPage}
+              onPageChange={setCurrentPage}
             />
           )}
         </div>

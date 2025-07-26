@@ -1,0 +1,74 @@
+[
+  {
+    "id": "5880c8de870542184ca165ef",
+    "key": "leeds",
+    "name": "Leeds",
+    "slug": "leeds",
+    "latitude": 53.8021636002607,
+    "longitude": -1.54851721145257,
+    "isPublic": true
+  },
+  {
+    "id": "5c55fe9823c7a0408e8e695c",
+    "key": "reading",
+    "name": "Reading",
+    "slug": "reading",
+    "latitude": 51.4529758,
+    "longitude": -0.9810887,
+    "isPublic": true
+  },
+  {
+    "id": "5a162d9b67e8c43e48e5e2ce",
+    "key": "manchester",
+    "name": "Manchester",
+    "slug": "manchester",
+    "latitude": 53.4808,
+    "longitude": -2.2426,
+    "isPublic": true
+  },
+  {
+    "id": "5880c8de870542184ca165f0",
+    "key": "birmingham",
+    "name": "Birmingham",
+    "slug": "birmingham",
+    "latitude": 52.486243,
+    "longitude": -1.890401,
+    "isPublic": true
+  },
+  {
+    "id": "5c55fe9823c7a0408e8e695d",
+    "key": "liverpool",
+    "name": "Liverpool",
+    "slug": "liverpool",
+    "latitude": 53.4084,
+    "longitude": -2.9916,
+    "isPublic": true
+  },
+  {
+    "id": "5880c8de870542184ca165f1",
+    "key": "nottingham",
+    "name": "Nottingham",
+    "slug": "nottingham",
+    "latitude": 52.9548,
+    "longitude": -1.1581,
+    "isPublic": true
+  },
+  {
+    "id": "5a162d9b67e8c43e48e5e2cf",
+    "key": "brighton-and-hove",
+    "name": "Brighton & Hove",
+    "slug": "brighton-and-hove",
+    "latitude": 50.8225,
+    "longitude": -0.1372,
+    "isPublic": true
+  },
+  {
+    "id": "5c55fe9823c7a0408e8e695e",
+    "key": "bournemouth",
+    "name": "Bournemouth",
+    "slug": "bournemouth",
+    "latitude": 50.7192,
+    "longitude": -1.8808,
+    "isPublic": true
+  }
+]

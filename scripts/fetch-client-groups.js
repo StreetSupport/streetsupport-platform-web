@@ -9,8 +9,18 @@ dotenv.config();
 
 async function main() {
   const uri = process.env.MONGODB_URI;
-  if (!uri) {
-    throw new Error('Missing MONGODB_URI in environment');
+  const outputPath = path.join('./src/data/client-groups.json');
+  
+  if (!uri || process.env.USE_FALLBACK === 'true') {
+    console.log('⚠️  MONGODB_URI not available, using fallback data...');
+    
+    // Copy fallback data to expected location
+    const fallbackPath = path.join('./public/data/client-groups-fallback.json');
+    const fallbackData = fs.readFileSync(fallbackPath, 'utf8');
+    fs.writeFileSync(outputPath, fallbackData);
+    
+    console.log(`✅ Fallback client groups data copied to ${outputPath}`);
+    return;
   }
 
   const client = new MongoClient(uri);
@@ -31,7 +41,6 @@ async function main() {
       name: g.Name,
     }));
 
-    const outputPath = path.join('./src/data/client-groups.json');
     fs.writeFileSync(outputPath, JSON.stringify(cleaned, null, 2));
 
     console.log(`✅ Client groups saved to ${outputPath}`);
