@@ -22,9 +22,72 @@
   --color-brand-s: #E1B500;
 }
 
-/* Your test style */
-.btn-test {
-  @apply px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700;
+/* Button System - Using Brand Colors Only */
+
+/* Base button styles */
+.btn-base {
+  @apply inline-flex items-center justify-center font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-a focus:ring-offset-2 focus:ring-offset-brand-q disabled:opacity-60 disabled:cursor-not-allowed;
+}
+
+/* Button Types */
+.btn-primary {
+  @apply bg-brand-a text-brand-q hover:bg-brand-b active:bg-brand-c;
+}
+
+.btn-secondary {
+  @apply bg-brand-q text-brand-a border border-brand-a hover:bg-brand-i active:bg-brand-i;
+}
+
+.btn-success {
+  @apply bg-brand-b text-brand-q hover:bg-brand-c active:bg-brand-p;
+}
+
+.btn-warning {
+  @apply bg-brand-j text-brand-k hover:bg-brand-s active:bg-brand-s;
+}
+
+.btn-danger {
+  @apply bg-brand-g text-brand-q hover:opacity-90 active:opacity-80;
+}
+
+.btn-neutral {
+  @apply bg-brand-f text-brand-q hover:bg-brand-k active:bg-brand-l;
+}
+
+.btn-tertiary {
+  @apply bg-transparent text-brand-k border border-brand-k hover:bg-brand-q active:bg-brand-i;
+}
+
+/* Button Sizes */
+.btn-lg {
+  @apply px-6 py-3 text-base;
+}
+
+.btn-md {
+  @apply px-4 py-2 text-sm;
+}
+
+.btn-sm {
+  @apply px-3 py-1.5 text-xs;
+}
+
+.btn-icon {
+  @apply p-2;
+}
+
+/* Disabled state override */
+.btn-base:disabled {
+  @apply bg-brand-q text-brand-f border-brand-f;
+}
+
+/* Loading state */
+.btn-loading {
+  @apply relative;
+}
+
+.btn-loading::before {
+  content: '';
+  @apply absolute inset-0 bg-current opacity-10 rounded-md;
 }
 
 /* Remove default marker in Chrome, Safari, Edge */

@@ -76,7 +76,7 @@ export default function FindHelpEntry() {
           />
           <button
             type="submit"
-            className="bg-blue-600 text-white py-2 rounded disabled:opacity-50"
+            className="btn-base btn-primary btn-md"
             disabled={isGeocoding}
           >
             {isGeocoding ? 'Locating...' : 'Continue'}

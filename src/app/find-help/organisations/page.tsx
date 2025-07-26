@@ -79,7 +79,7 @@ export default async function OrganisationsSearchPage(props: Props) {
             </p>
             <Link 
               href="/find-help"
-              className="inline-block mt-3 text-sm bg-red-100 text-red-800 px-3 py-1 rounded-md hover:bg-red-200 transition-colors"
+              className="btn-base btn-neutral btn-sm mt-3"
             >
               Back to Find Help
             </Link>
@@ -186,7 +186,7 @@ export default async function OrganisationsSearchPage(props: Props) {
                   
                   <Link
                     href={`/find-help/organisation/${org.slug}`}
-                    className="ml-4 inline-flex items-center px-4 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition-colors"
+                    className="btn-base btn-secondary btn-md ml-4"
                   >
                     View Details
                     <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

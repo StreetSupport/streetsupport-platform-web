@@ -303,12 +303,12 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
             <div className="flex gap-2">
               <button
                 type="submit"
-                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-base btn-primary btn-md flex-1"
                 disabled={isOrgSearching || !orgSearchInput.trim()}
               >
                 {isOrgSearching ? (
                   <span className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-q mr-2"></div>
                     Searching...
                   </span>
                 ) : (
@@ -322,7 +322,7 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
                   setOrgSearchInput('');
                   setOrgSearchError(null);
                 }}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                className="btn-base btn-tertiary btn-md"
               >
                 Cancel
               </button>
@@ -354,13 +354,13 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
             <div className="mt-4 flex space-x-3">
               <button
                 onClick={handleTryAgain}
-                className="text-sm bg-yellow-100 text-yellow-800 px-3 py-1 rounded-md hover:bg-yellow-200 transition-colors"
+                className="btn-base btn-warning btn-sm"
               >
                 Try Again
               </button>
               <button
                 onClick={handleUsePostcode}
-                className="text-sm bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition-colors"
+                className="btn-base btn-primary btn-sm"
               >
                 Enter Postcode or Choose a Location
               </button>
@@ -374,13 +374,13 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
           <div className="space-y-4">
             <button
               onClick={handleLocationRequest}
-              className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium"
+              className="btn-base btn-primary btn-lg w-full"
             >
               Use My Current Location
             </button>
             <button
               onClick={handleUsePostcode}
-              className="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-md hover:bg-gray-200 transition-colors"
+              className="btn-base btn-secondary btn-lg w-full"
             >
               Enter Postcode or Choose a Location
             </button>
@@ -434,12 +434,12 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
               
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-base btn-primary btn-md w-full"
                 disabled={isGeocoding || !postcodeInput.trim()}
               >
                 {isGeocoding ? (
                   <span className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-q mr-2"></div>
                     Finding Location...
                   </span>
                 ) : (
@@ -485,7 +485,7 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
               
               <button
                 type="submit"
-                className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-base btn-success btn-md w-full"
                 disabled={!selectedLocationSlug}
               >
                 Find Services in {selectedLocationSlug ? locations.find(l => l.slug === selectedLocationSlug)?.name : 'Selected Area'}
@@ -498,7 +498,7 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
                 <button
                   type="button"
                   onClick={handleLocationRequest}
-                  className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                  className="btn-base btn-tertiary btn-sm"
                 >
                   Try location access again
                 </button>

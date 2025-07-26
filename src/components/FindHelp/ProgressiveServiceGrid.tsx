@@ -137,7 +137,7 @@ export default function ProgressiveServiceGrid({
           <button
             onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
-            className="px-3 py-1 text-sm rounded-md border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-base btn-tertiary btn-sm"
             aria-label="Previous page"
           >
             Previous
@@ -154,8 +154,8 @@ export default function ProgressiveServiceGrid({
                   onClick={() => setCurrentPage(Number(page))}
                   className={`px-3 py-1 text-sm rounded-md border ${
                     currentPage === page
-                      ? 'bg-blue-600 text-white border-blue-600'
-                      : 'border-gray-300 hover:bg-gray-50'
+                      ? 'bg-brand-a text-brand-q border-brand-a'
+                      : 'border-brand-k hover:bg-brand-q'
                   }`}
                   aria-label={`Go to page ${page}`}
                   aria-current={currentPage === page ? 'page' : undefined}
@@ -170,7 +170,7 @@ export default function ProgressiveServiceGrid({
           <button
             onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
             disabled={currentPage === totalPages}
-            className="px-3 py-1 text-sm rounded-md border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-base btn-tertiary btn-sm"
             aria-label="Next page"
           >
             Next

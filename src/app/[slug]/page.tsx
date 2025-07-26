@@ -40,7 +40,7 @@ export default async function LocationPage(props) {
           </h2>
           <Link
             href="/find-help"
-            className="inline-block bg-blue-600 text-white px-6 py-3 rounded shadow hover:bg-blue-700 transition"
+            className="btn-base btn-primary btn-lg"
           >
             Find Help
           </Link>
@@ -62,7 +62,7 @@ export default async function LocationPage(props) {
           </p>
           <Link
             href={`/${location.slug}/advice`}
-            className="inline-block bg-red-600 text-white px-6 py-3 rounded shadow hover:bg-red-700 transition"
+            className="btn-base btn-warning btn-lg"
           >
             See more emergency advice
           </Link>

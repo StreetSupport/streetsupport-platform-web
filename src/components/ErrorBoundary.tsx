@@ -84,7 +84,7 @@ export class ErrorBoundary extends Component<Props, State> {
               <div className="mt-3 flex flex-wrap gap-2">
                 <button
                   onClick={() => window.location.reload()}
-                  className="text-sm bg-gray-100 text-gray-800 px-3 py-1 rounded-md hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                  className="btn-base btn-neutral btn-sm"
                   data-testid="refresh-button"
                 >
                   Refresh Page

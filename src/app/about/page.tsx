@@ -15,7 +15,7 @@ export default function AboutPage() {
       </ul>
       <Link
         href="/find-help"
-        className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+        className="btn-base btn-primary btn-md"
       >
         Find Help Now
       </Link>

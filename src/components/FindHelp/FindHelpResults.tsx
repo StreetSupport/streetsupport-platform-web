@@ -254,7 +254,7 @@ export default function FindHelpResults({
             </div>
             <button
               onClick={() => setShowMap(!showMap)}
-              className="text-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 ml-auto"
+              className="btn-base btn-primary btn-sm ml-auto"
             >
               {showMap ? 'Hide map' : 'Show map'}
             </button>
