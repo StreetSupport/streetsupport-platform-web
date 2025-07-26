@@ -68,63 +68,89 @@ export default function OrganisationShell({ organisation, userContext }: Props) 
   const handleMapMarkerClick = (markerId: string) => {
     // Parse marker ID to extract location coordinates
     if (markerId.startsWith('service-loc-')) {
-      // Find the service location that matches this marker
-      const services = organisation.services || [];
-      const matchingService = services.find((service, idx) => `service-loc-${idx}` === markerId);
+      // Extract the location index from the marker ID
+      const locationIndex = parseInt(markerId.replace('service-loc-', ''), 10);
       
-      if (matchingService) {
-        // Find all services at this location and update their selection
-        const targetCoords = (matchingService.address as AddressWithLocation)?.Location?.coordinates;
-        if (targetCoords) {
-          let firstServiceKey: string | null = null;
+      // Build the same location mapping as OrganisationLocations to find the coordinates
+      const services = organisation.services || [];
+      const uniqueLocationMap = new Map();
+      let globalLocationIndex = 0;
+      
+      // Recreate the same logic as OrganisationLocations to get the correct coordinates
+      services.forEach((service) => {
+        const address = service.address;
+        if (address?.Location?.coordinates && 
+            address.Location.coordinates.length === 2 &&
+            typeof address.Location.coordinates[0] === 'number' &&
+            typeof address.Location.coordinates[1] === 'number') {
           
-          services.forEach((service) => {
-            const serviceCoords = (service.address as AddressWithLocation)?.Location?.coordinates;
-            if (serviceCoords && 
-                serviceCoords[0] === targetCoords[0] && 
-                serviceCoords[1] === targetCoords[1]) {
+          const locationKey = `${address.Location.coordinates[0]}-${address.Location.coordinates[1]}`;
+          
+          // Only add if this location doesn't already exist (deduplicate)
+          if (!uniqueLocationMap.has(locationKey)) {
+            uniqueLocationMap.set(locationKey, {
+              index: globalLocationIndex,
+              coordinates: address.Location.coordinates,
+              service: service
+            });
+            globalLocationIndex++;
+          }
+        }
+      });
+      
+      // Find the location data for the clicked marker
+      const locationData = Array.from(uniqueLocationMap.values()).find(loc => loc.index === locationIndex);
+      
+      if (locationData) {
+        const targetCoords = locationData.coordinates;
+        let firstServiceKey: string | null = null;
+        
+        services.forEach((service) => {
+          const serviceCoords = (service.address as AddressWithLocation)?.Location?.coordinates;
+          if (serviceCoords && 
+              serviceCoords[0] === targetCoords[0] && 
+              serviceCoords[1] === targetCoords[1]) {
+            
+            const serviceWithNames = service as unknown as ServiceWithCategoryNames;
+            const category = serviceWithNames.category || 'Other';
+            const subcategory = serviceWithNames.subCategory || 'Other';
+            const serviceKey = `${category}-${subcategory}`;
+            
+            // Store the first service key to open its accordion
+            if (!firstServiceKey) {
+              firstServiceKey = serviceKey;
+            }
+            
+            // Find the index of this location in the service's locations array
+            const categoryGroupedServices = getCategoryGroupedServices();
+            const serviceData = categoryGroupedServices[category]?.[subcategory];
+            if (serviceData) {
+              const locationIndex = serviceData.locations.findIndex(loc => {
+                const coords = (loc.address as AddressWithLocation)?.Location?.coordinates;
+                return coords && coords[0] === targetCoords[0] && coords[1] === targetCoords[1];
+              });
               
-              const serviceWithNames = service as unknown as ServiceWithCategoryNames;
-              const category = serviceWithNames.category || 'Other';
-              const subcategory = serviceWithNames.subCategory || 'Other';
-              const serviceKey = `${category}-${subcategory}`;
-              
-              // Store the first service key to open its accordion
-              if (!firstServiceKey) {
-                firstServiceKey = serviceKey;
-              }
-              
-              // Find the index of this location in the service's locations array
-              const categoryGroupedServices = getCategoryGroupedServices();
-              const serviceData = categoryGroupedServices[category]?.[subcategory];
-              if (serviceData) {
-                const locationIndex = serviceData.locations.findIndex(loc => {
-                  const coords = (loc.address as AddressWithLocation)?.Location?.coordinates;
-                  return coords && coords[0] === targetCoords[0] && coords[1] === targetCoords[1];
-                });
-                
-                if (locationIndex >= 0) {
-                  setSelectedLocationForService(prev => ({
-                    ...prev,
-                    [serviceKey]: locationIndex
-                  }));
-                }
+              if (locationIndex >= 0) {
+                setSelectedLocationForService(prev => ({
+                  ...prev,
+                  [serviceKey]: locationIndex
+                }));
               }
             }
-          });
-          
-          // Open the accordion for the first service at this location
-          if (firstServiceKey) {
-            setOpenAccordion(firstServiceKey);
-            
-            // Scroll to the services section after a short delay to ensure the accordion opens
-            setTimeout(() => {
-              const servicesSection = document.querySelector('[data-testid="services-accordion"]');
-              if (servicesSection) {
-                servicesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }
-            }, 100);
           }
+        });
+        
+        // Open the accordion for the first service at this location
+        if (firstServiceKey) {
+          setOpenAccordion(firstServiceKey);
+          
+          // Scroll to the services section after a short delay to ensure the accordion opens
+          setTimeout(() => {
+            const servicesSection = document.querySelector('[data-testid="services-accordion"]');
+            if (servicesSection) {
+              servicesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }, 100);
         }
       }
     }

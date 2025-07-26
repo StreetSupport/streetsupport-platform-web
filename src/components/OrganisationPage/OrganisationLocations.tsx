@@ -63,10 +63,43 @@ export default function OrganisationLocations({ organisation, userContext, onMar
         // Store the location index for this coordinate
         locationIndexMap.set(locationKey, globalLocationIndex);
         
-        // Check if this location is selected for any service by matching with accordion selection
-        const serviceKey = `${service.category}-${service.subCategory}`;
-        const selectedLocationIndex = selectedLocationForService?.[serviceKey];
-        const isSelected = selectedLocationIndex === globalLocationIndex;
+        // Check if this location is selected for any service by matching coordinates
+        let isSelected = false;
+        if (selectedLocationForService) {
+          // Check all service keys to see if any have this location selected
+          Object.entries(selectedLocationForService).forEach(([serviceKey, selectedIndex]) => {
+            const [category, subcategory] = serviceKey.split('-');
+            if (service.category === category && service.subCategory === subcategory) {
+              // This location is selected if it matches the selected index for this service
+              // We need to count the location index within this specific service's locations
+              const serviceLocations = services.filter(s => 
+                s.category === category && 
+                s.subCategory === subcategory &&
+                s.address?.Location?.coordinates
+              );
+              
+              // Find this location's index within the service's deduplicated locations
+              let locationIndex = 0;
+              const currentLocationKey = `${address.Location.coordinates[0]}-${address.Location.coordinates[1]}`;
+              const seenLocations = new Set();
+              
+              for (const serviceLocation of serviceLocations) {
+                const coords = serviceLocation.address?.Location?.coordinates;
+                if (coords) {
+                  const key = `${coords[0]}-${coords[1]}`;
+                  if (!seenLocations.has(key)) {
+                    if (key === currentLocationKey) {
+                      isSelected = locationIndex === selectedIndex;
+                      break;
+                    }
+                    seenLocations.add(key);
+                    locationIndex++;
+                  }
+                }
+              }
+            }
+          });
+        }
         
         uniqueLocationMap.set(locationKey, {
           id: `service-loc-${globalLocationIndex}`,
