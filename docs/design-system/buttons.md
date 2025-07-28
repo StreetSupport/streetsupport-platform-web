@@ -29,8 +29,16 @@ This document defines the button hierarchy and styling for the Street Support pl
 **Class: `btn-primary`**
 - **Colour**: `brand-a` background with `brand-q` text
 - **Usage**: Main CTAs, form submissions, primary navigation
-- **Examples**: "Find Services", "Search", "Submit", "Get Help Now"
+- **Examples**: "Search", "Submit", "Learn More"
 - **Hover**: `brand-b` background
+
+### Find Help CTAs (Special Case)
+**Class: `btn-find-help` or custom styling**
+- **Colour**: `brand-d` (orange) background with white text
+- **Usage**: Find Help buttons on hero banners and location pages
+- **Examples**: "Find Help Now", "Get Support"
+- **Hover**: Darker orange or `brand-s` background
+- **Note**: Uses orange instead of green to avoid clashing with hero banners and provide better visual hierarchy
 
 ### Secondary Actions (Supporting)
 **Class: `btn-secondary`**

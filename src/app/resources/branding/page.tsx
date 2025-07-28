@@ -9,22 +9,22 @@ export default function BrandingPage() {
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-3">
             <li className="inline-flex items-center">
-              <Link href="/" className="text-gray-700 hover:text-blue-600">
+              <Link href="/" className="text-brand-l hover:text-brand-a">
                 Home
               </Link>
             </li>
             <li>
               <div className="flex items-center">
-                <span className="mx-2 text-gray-400">/</span>
-                <Link href="/resources" className="text-gray-700 hover:text-blue-600">
+                <span className="mx-2 text-brand-f">/</span>
+                <Link href="/resources" className="text-brand-l hover:text-brand-a">
                   Resources
                 </Link>
               </div>
             </li>
             <li aria-current="page">
               <div className="flex items-center">
-                <span className="mx-2 text-gray-400">/</span>
-                <span className="text-gray-500">Branding</span>
+                <span className="mx-2 text-brand-f">/</span>
+                <span className="text-brand-f">Branding</span>
               </div>
             </li>
           </ol>
@@ -33,8 +33,8 @@ export default function BrandingPage() {
 
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-4">Street Support Branding</h1>
-        <p className="text-xl text-gray-700">Guidelines to adapt and align with the Street Support Network identity.</p>
+        <h1 className="heading-1 mb-4">Street Support Branding</h1>
+        <p className="text-lead">Guidelines to adapt and align with the Street Support Network identity.</p>
       </div>
 
       {/* Content */}
@@ -93,13 +93,13 @@ export default function BrandingPage() {
 
         <hr className="my-8 border-gray-300" />
 
-        <h2 className="text-2xl font-semibold mb-4">Some other useful resources</h2>
+        <h2 className="heading-3 mb-4">Some other useful resources</h2>
         <ul className="list-disc pl-6 space-y-2">
           <li>
-            <Link href="/resources/partnership-comms" className="text-blue-600 hover:text-blue-800 underline">Partnership Communications</Link>
+            <Link href="/resources/partnership-comms" className="text-brand-a hover:text-brand-a underline">Partnership Communications</Link>
           </li>
           <li>
-            <Link href="/resources/marketing" className="text-blue-600 hover:text-blue-800 underline">Marketing</Link>
+            <Link href="/resources/marketing" className="text-brand-a hover:text-brand-a underline">Marketing</Link>
           </li>
         </ul>
       </div>

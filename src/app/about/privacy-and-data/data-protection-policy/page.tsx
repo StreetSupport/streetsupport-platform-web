@@ -8,30 +8,30 @@ export default function DataProtectionPolicyPage() {
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-3">
             <li className="inline-flex items-center">
-              <Link href="/" className="text-gray-700 hover:text-blue-600">
+              <Link href="/" className="text-brand-l hover:text-brand-a">
                 Home
               </Link>
             </li>
             <li>
               <div className="flex items-center">
-                <span className="mx-2 text-gray-400">/</span>
-                <Link href="/about" className="text-gray-700 hover:text-blue-600">
+                <span className="mx-2 text-brand-f">/</span>
+                <Link href="/about" className="text-brand-l hover:text-brand-a">
                   About Street Support
                 </Link>
               </div>
             </li>
             <li>
               <div className="flex items-center">
-                <span className="mx-2 text-gray-400">/</span>
-                <Link href="/about/privacy-and-data" className="text-gray-700 hover:text-blue-600">
+                <span className="mx-2 text-brand-f">/</span>
+                <Link href="/about/privacy-and-data" className="text-brand-l hover:text-brand-a">
                   Privacy and Data
                 </Link>
               </div>
             </li>
             <li aria-current="page">
               <div className="flex items-center">
-                <span className="mx-2 text-gray-400">/</span>
-                <span className="text-gray-500">Data Protection Policy</span>
+                <span className="mx-2 text-brand-f">/</span>
+                <span className="text-brand-f">Data Protection Policy</span>
               </div>
             </li>
           </ol>
@@ -40,18 +40,18 @@ export default function DataProtectionPolicyPage() {
 
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Data Protection Policy</h1>
+        <h1 className="heading-2">Data Protection Policy</h1>
       </div>
 
       {/* Content */}
       <div className="prose max-w-none">
-        <h2 className="text-2xl font-semibold mb-4">1. Purpose</h2>
+        <h2 className="heading-3 mb-4">1. Purpose</h2>
         <p>Street Support Network (Street Support Network) is committed to protecting the personal data of its employees, volunteers, partners, and service users. This policy outlines how we comply with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018, ensuring that personal data is handled lawfully, transparently, and securely.</p>
 
-        <h2 className="text-2xl font-semibold mb-4">2. Scope</h2>
+        <h2 className="heading-3 mb-4">2. Scope</h2>
         <p>This policy applies to all personal data processed by Street Support Network, including data relating to employees, volunteers, partners, and service users. It covers both electronic and physical records across all Street Support Network operations, including data processed through the Street Support Network Virtual Assistant (VA).</p>
 
-        <h2 className="text-2xl font-semibold mb-4">3. Key Principles</h2>
+        <h2 className="heading-3 mb-4">3. Key Principles</h2>
         <p>Street Support Network processes personal data in line with the following principles:</p>
         <ol className="list-decimal pl-6 space-y-4">
           <li>
@@ -98,7 +98,7 @@ export default function DataProtectionPolicyPage() {
           </li>
         </ol>
 
-        <h2 className="text-2xl font-semibold mb-4">4. Roles and Responsibilities</h2>
+        <h2 className="heading-3 mb-4">4. Roles and Responsibilities</h2>
         <ul className="list-disc pl-6 space-y-4">
           <li>
             <strong>Employees and Volunteers:</strong>
@@ -115,7 +115,7 @@ export default function DataProtectionPolicyPage() {
           </li>
         </ul>
 
-        <h2 className="text-2xl font-semibold mb-4">5. Lawful Basis for Processing</h2>
+        <h2 className="heading-3 mb-4">5. Lawful Basis for Processing</h2>
         <p>Street Support Network processes personal data under one or more of the following lawful bases:</p>
         <ul className="list-disc pl-6 space-y-1">
           <li>Consent: Individuals have given clear consent.</li>
@@ -125,7 +125,7 @@ export default function DataProtectionPolicyPage() {
         </ul>
         <p>For the Virtual Assistant, processing is based on legitimate interest (for matching individuals with services) and explicit consent (for special category data such as health or support needs).</p>
 
-        <h2 className="text-2xl font-semibold mb-4">6. Data Transfers & Third-Party Processing</h2>
+        <h2 className="heading-3 mb-4">6. Data Transfers & Third-Party Processing</h2>
         <p>Street Support Network works with third-party providers to ensure the highest level of data security and compliance. This includes our partnership with IBM Watsonx, which powers the Virtual Assistant (VA).</p>
         <ul className="list-disc pl-6 space-y-1">
           <li>No personally identifiable information (PII) is collected or stored by the VA.</li>
@@ -136,7 +136,7 @@ export default function DataProtectionPolicyPage() {
         </ul>
         <p>Street Support Network reviews third-party compliance documentation regularly to ensure ongoing adherence to data protection standards.</p>
 
-        <h2 className="text-2xl font-semibold mb-4">7. Data Subject Rights & Subject Access Requests (SARs)</h2>
+        <h2 className="heading-3 mb-4">7. Data Subject Rights & Subject Access Requests (SARs)</h2>
         <p>Individuals have the following rights regarding their personal data:</p>
         <ul className="list-disc pl-6 space-y-1">
           <li><strong>Right to Access:</strong> Request access to their personal data (Subject Access Requests must be responded to within one month).</li>
@@ -148,7 +148,7 @@ export default function DataProtectionPolicyPage() {
         </ul>
         <p>For the Virtual Assistant, as no personally identifiable data is stored, SAR requests will be met with confirmation that Street Support Network does not retain user data from the VA. This will be clearly communicated in the privacy notice and VA interface.</p>
 
-        <h2 className="text-2xl font-semibold mb-4">8. Data Security</h2>
+        <h2 className="heading-3 mb-4">8. Data Security</h2>
         <p>Street Support Network implements strong security measures, including:</p>
         <ul className="list-disc pl-6 space-y-1">
           <li>Street Support Network uses appropriate technical and organizational measures to safeguard personal data.</li>
@@ -158,7 +158,7 @@ export default function DataProtectionPolicyPage() {
         </ul>
         <p>For any concerns related to data security or compliance, please contact the Data Protection Lead (DPL) at <a href="mailto:admin@streetsupport.net" className="text-blue-600 hover:text-blue-800 underline">admin@streetsupport.net</a>.</p>
 
-        <h2 className="text-2xl font-semibold mb-4">9. Data Retention</h2>
+        <h2 className="heading-3 mb-4">9. Data Retention</h2>
         <p>Street Support Network retains personal data only as long as necessary for the purposes for which it was collected. A detailed retention schedule is maintained below and reviewed regularly.</p>
         
         <div className="overflow-x-auto">
@@ -218,7 +218,7 @@ export default function DataProtectionPolicyPage() {
           </table>
         </div>
 
-        <h2 className="text-2xl font-semibold mb-4">10. Data Breaches</h2>
+        <h2 className="heading-3 mb-4">10. Data Breaches</h2>
         <p>In the event of a data breach:</p>
         <ol className="list-decimal pl-6 space-y-1">
           <li>Notify the DPL immediately.</li>
@@ -226,13 +226,13 @@ export default function DataProtectionPolicyPage() {
           <li>Affected individuals will be informed if the breach poses a significant risk to their rights.</li>
         </ol>
 
-        <h2 className="text-2xl font-semibold mb-4">11. Training</h2>
+        <h2 className="heading-3 mb-4">11. Training</h2>
         <p>All employees and volunteers are provided with basic data protection training to ensure they understand their responsibilities.</p>
 
-        <h2 className="text-2xl font-semibold mb-4">12. Privacy Notices</h2>
+        <h2 className="heading-3 mb-4">12. Privacy Notices</h2>
         <p>Street Support Network provides clear and accessible privacy notices explaining how personal data is collected, used, and stored.</p>
 
-        <h2 className="text-2xl font-semibold mb-4">13. Monitoring and Review</h2>
+        <h2 className="heading-3 mb-4">13. Monitoring and Review</h2>
         <p>This policy is reviewed annually or when significant changes to data protection laws occur.</p>
         <p>For any questions or concerns, please contact <a href="mailto:admin@streetsupport.net" className="text-blue-600 hover:text-blue-800 underline">admin@streetsupport.net</a>.</p>
         <p>This policy ensures that Street Support Network remains compliant with UK GDPR while protecting the privacy and security of all individuals interacting with our services, including the Virtual Assistant.</p>

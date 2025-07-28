@@ -228,7 +228,7 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
   // If location is already set, show confirmation
   if (location) {
     return (
-      <div className={`bg-green-50 border border-green-200 rounded-lg p-4 ${className}`}>
+      <div className={`bg-brand-i border border-brand-b rounded-lg p-4 ${className}`}>
         <div className="flex items-center">
           <div className="flex-shrink-0">
             <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
@@ -252,24 +252,24 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
   }
 
   return (
-    <div className={`bg-white border border-gray-200 rounded-lg p-6 ${className}`}>
+    <div className={`card p-6 ${className}`}>
       <div className="text-center">
         <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
-          <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="h-6 w-6 text-brand-a" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
         </div>
         
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">
+        <h2 className="heading-5">
           Find Services Near You
         </h2>
         
-        <p className="text-sm text-gray-600 mb-6">
+        <p className="text-small mb-6">
           We&apos;ll help you find services in your area. You can share your location or enter your postcode. You can also{' '}
           <button
             onClick={() => setShowOrgSearch(true)}
-            className="text-blue-600 hover:text-blue-800 underline transition-colors"
+            className="text-brand-a hover:text-brand-b underline transition-colors"
           >
             search for an organisation by name
           </button>.
@@ -279,13 +279,13 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
         {showOrgSearch && (
           <form onSubmit={handleOrgSearch} className="space-y-4 mb-6">
             <div className="text-left">
-              <label htmlFor="org-search" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="org-search" className="block text-small font-medium text-brand-l mb-2">
                 Search for an organisation by name
               </label>
               <input
                 id="org-search"
                 type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-brand-q rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-transparent"
                 placeholder="e.g., Manchester City Mission"
                 value={orgSearchInput}
                 onChange={(e) => {
@@ -334,7 +334,7 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
         {isLoading && (
           <div className="flex items-center justify-center py-4" role="status" aria-label="Loading">
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-            <span className="ml-2 text-sm text-gray-600">Getting your location...</span>
+            <span className="ml-2 text-small">Getting your location...</span>
           </div>
         )}
 
@@ -393,12 +393,12 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
             <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                  <svg className="h-5 w-5 text-brand-b" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm text-blue-800">Choose how you&apos;d like to find services near you:</p>
+                  <p className="text-small text-brand-c">Choose how you&apos;d like to find services near you:</p>
                 </div>
               </div>
             </div>
@@ -406,13 +406,13 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
             {/* Postcode input section */}
             <form onSubmit={handlePostcodeSubmit} className="space-y-4" role="form">
               <div className="text-left">
-                <label htmlFor="postcode" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="postcode" className="block text-small font-medium text-brand-l mb-2">
                   Option 1: Enter your postcode
                 </label>
                 <input
                   id="postcode"
                   type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-brand-q rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-transparent"
                   placeholder="e.g., M1 1AE"
                   value={postcodeInput}
                   onChange={(e) => {
@@ -451,22 +451,22 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
             {/* Divider */}
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
+                <div className="w-full border-t border-brand-q" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">or</span>
+                <span className="px-2 bg-white text-brand-f">or</span>
               </div>
             </div>
 
             {/* Location dropdown section */}
             <form onSubmit={handleLocationDropdownSubmit} className="space-y-4" role="form">
               <div className="text-left">
-                <label htmlFor="location-select" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="location-select" className="block text-small font-medium text-brand-l mb-2">
                   Option 2: Select your area
                 </label>
                 <select
                   id="location-select"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-brand-q rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-transparent"
                   value={selectedLocationSlug}
                   onChange={(e) => setSelectedLocationSlug(e.target.value)}
                 >

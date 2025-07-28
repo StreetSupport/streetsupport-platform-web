@@ -8,22 +8,22 @@ export default function JobsPage() {
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-3">
             <li className="inline-flex items-center">
-              <Link href="/" className="text-gray-700 hover:text-blue-600">
+              <Link href="/" className="text-brand-l hover:text-brand-a">
                 Home
               </Link>
             </li>
             <li>
               <div className="flex items-center">
-                <span className="mx-2 text-gray-400">/</span>
-                <Link href="/about" className="text-gray-700 hover:text-blue-600">
+                <span className="mx-2 text-brand-f">/</span>
+                <Link href="/about" className="text-brand-l hover:text-brand-a">
                   About
                 </Link>
               </div>
             </li>
             <li aria-current="page">
               <div className="flex items-center">
-                <span className="mx-2 text-gray-400">/</span>
-                <span className="text-gray-500">Jobs</span>
+                <span className="mx-2 text-brand-f">/</span>
+                <span className="text-brand-f">Jobs</span>
               </div>
             </li>
           </ol>
@@ -32,24 +32,24 @@ export default function JobsPage() {
 
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Jobs</h1>
+        <h1 className="heading-2">Jobs</h1>
       </div>
 
       {/* Content */}
       <div className="prose max-w-none">
-        <p>We are a small team with a big mission - jobs that we are currently recruiting for are listed below. We also rely on volunteers, so if you are interested please get in touch with your skills and availability at <a href="mailto:admin@streetsupport.net" className="text-blue-600 hover:text-blue-800 underline">admin@streetsupport.net</a>.</p>
+        <p>We are a small team with a big mission - jobs that we are currently recruiting for are listed below. We also rely on volunteers, so if you are interested please get in touch with your skills and availability at <a href="mailto:admin@streetsupport.net" className="text-brand-a hover:text-brand-b underline">admin@streetsupport.net</a>.</p>
 
-        <h2 className="text-2xl font-semibold mb-4">Current Vacancies</h2>
+        <h2 className="heading-3 mb-4">Current Vacancies</h2>
         <ul className="list-disc pl-6 mb-8">
-          <li><a href="/about/jobs/trustee/trustee-vacancy-advert.pdf" className="text-blue-600 hover:text-blue-800 underline">Trustee</a>.</li>
+          <li><a href="/about/jobs/trustee/trustee-vacancy-advert.pdf" className="text-brand-a hover:text-brand-b underline">Trustee</a>.</li>
         </ul>
 
         {/* Divider */}
-        <hr className="my-8 border-gray-300" />
+        <hr className="my-8 border-brand-q" />
 
-        <h2 className="text-2xl font-semibold mb-4">Volunteering</h2>
+        <h2 className="heading-3 mb-4">Volunteering</h2>
         <ul className="list-disc pl-6 mb-8">
-          <li><a href="/about/jobs/data-integrity/" className="text-blue-600 hover:text-blue-800 underline">Data Integrity Volunteer</a></li>
+          <li><a href="/about/jobs/data-integrity/" className="text-brand-a hover:text-brand-b underline">Data Integrity Volunteer</a></li>
         </ul>
       </div>
     </div>

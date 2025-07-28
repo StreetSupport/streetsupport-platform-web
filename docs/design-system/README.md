@@ -130,7 +130,7 @@ Flexible content containers for service information:
 - **brand-c** (`#086049`): Deep green - hover states, emphasis
 
 ### Accent Colors
-- **brand-d** (`#ffa200`): Warm orange - highlights, attention
+- **brand-d** (`#ffa200`): Warm orange - Find Help CTAs, attention-grabbing actions
 - **brand-e** (`#ffde00`): Bright yellow - hover states, notifications
 - **brand-j** (`#e1c116`): Gold - warnings, important notices
 
@@ -248,5 +248,36 @@ Flexible content containers for service information:
 - [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
 - [Inclusive Design Principles](https://inclusivedesignprinciples.org/)
 - [Government Digital Service Design Principles](https://www.gov.uk/guidance/government-design-principles)
+
+## Recent Updates (2025)
+
+### Navigation Enhancements
+- **Grouped Location Dropdowns**: Locations now grouped by Greater Manchester and West Midlands regions for better organisation
+- **Logo Integration**: Street Support logo now displayed in navigation header
+- **Breadcrumb Styling**: Updated to white background with subtle borders for better accessibility
+
+### Button System Updates
+- **Find Help CTA Colour**: Changed from green (brand-a) to orange (brand-d) to improve visual hierarchy and avoid clashing with hero banners
+- **Enhanced Hover Effects**: Improved button interactions with transform effects and better shadows
+
+### Card System Improvements
+- **Consistent Heights**: Card grids now use flexbox to ensure uniform card heights
+- **Enhanced Shadows**: Improved card shadows for better depth and visual separation
+- **Hover Transitions**: Added subtle transform effects on hover for better user feedback
+
+### New Components
+- **Social Sharing Component**: Reusable social share component for Bluesky, Facebook, and X (Twitter)
+- **Real Statistics Integration**: Dynamic data fetching for organisation and service counts
+- **Partner Logo Sections**: Structured display of supporter logos by location
+
+### Accessibility Improvements
+- **WCAG AA Compliance**: All new components meet accessibility standards
+- **Keyboard Navigation**: Enhanced focus states and keyboard interaction patterns
+- **Screen Reader Support**: Improved ARIA labels and semantic HTML structure
+
+### Performance Optimisations
+- **CSS Efficiency**: Streamlined CSS with better organisation and reduced redundancy
+- **Mobile-First Responsive**: Improved mobile experience with touch-friendly interactions
+- **Loading States**: Better user feedback during data fetching operations
 
 This design system serves as the foundation for creating trustworthy, accessible, and effective interfaces that help connect vulnerable populations with essential support services.

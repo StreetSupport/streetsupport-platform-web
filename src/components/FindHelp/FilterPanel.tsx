@@ -55,12 +55,12 @@ export default function FilterPanel({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
-        <label htmlFor="category" className="text-sm font-medium">
+        <label htmlFor="category" className="text-small font-medium">
           Category:
         </label>
         <select
           id="category"
-          className="border px-2 py-1 rounded"
+          className="border border-brand-q px-2 py-1 rounded focus:ring-2 focus:ring-brand-a focus:border-brand-a"
           value={selectedCategory}
           onChange={(e) => {
             setSelectedCategory(e.target.value);
@@ -76,12 +76,12 @@ export default function FilterPanel({
         </select>
       </div>
       <div className="flex items-center gap-2">
-        <label htmlFor="subCategory" className="text-sm font-medium">
+        <label htmlFor="subCategory" className="text-small font-medium">
           Subcategory:
         </label>
         <select
           id="subCategory"
-          className="border px-2 py-1 rounded"
+          className="border border-brand-q px-2 py-1 rounded focus:ring-2 focus:ring-brand-a focus:border-brand-a"
           value={selectedSubCategory}
           onChange={(e) => setSelectedSubCategory(e.target.value)}
           disabled={!selectedCategory}
@@ -96,7 +96,7 @@ export default function FilterPanel({
         {hasActiveFilters && (
           <button
             onClick={onResetFilters}
-            className="text-xs px-2 py-1 text-gray-600 hover:text-gray-800 border border-gray-300 rounded hover:bg-gray-50 transition-colors ml-2"
+            className="btn-base btn-tertiary btn-sm ml-2"
             title="Reset all filters"
           >
             Reset filters

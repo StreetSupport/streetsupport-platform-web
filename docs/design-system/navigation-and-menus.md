@@ -194,6 +194,30 @@ Navigation is critical for helping users quickly find essential services, especi
 .dropdown-trigger[aria-expanded="true"] .dropdown-icon {
   transform: rotate(180deg);
 }
+
+/* Grouped Location Sections */
+.location-group {
+  margin-bottom: var(--spacing-4);
+}
+
+.location-group:last-child {
+  margin-bottom: 0;
+}
+
+.location-group-title {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-brand-k);
+  padding: var(--spacing-2) var(--spacing-3);
+  margin-bottom: var(--spacing-1);
+  border-bottom: 1px solid var(--color-brand-q);
+}
+
+.location-group-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--spacing-1);
+}
 ```
 
 ### Dropdown Panel
@@ -484,9 +508,9 @@ Navigation is critical for helping users quickly find essential services, especi
 ### Standard Breadcrumbs
 ```css
 .breadcrumb {
-  background-color: var(--color-brand-q);
-  border-bottom: 1px solid var(--color-brand-i);
-  padding: var(--spacing-3) 0;
+  background-color: white;
+  border-bottom: 1px solid var(--color-brand-q);
+  padding: var(--spacing-2) 0;
 }
 
 .breadcrumb-container {
@@ -762,17 +786,52 @@ Navigation is critical for helping users quickly find essential services, especi
         {isOpen && (
           <div className="dropdown-panel" role="menu">
             <div className="dropdown-content">
-              <div className="dropdown-grid">
-                {locations.map(location => (
-                  <Link 
-                    key={location.slug}
-                    href={`/${location.slug}`}
-                    className="dropdown-item"
-                    role="menuitem"
-                  >
-                    {location.name}
-                  </Link>
-                ))}
+              <div className="location-group">
+                <div className="location-group-title">Greater Manchester</div>
+                <div className="location-group-items">
+                  {greaterManchesterLocations.map(location => (
+                    <Link 
+                      key={location}
+                      href={`/${location.toLowerCase()}`}
+                      className="dropdown-item"
+                      role="menuitem"
+                    >
+                      {location}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="location-group">
+                <div className="location-group-title">West Midlands</div>
+                <div className="location-group-items">
+                  {westMidlandsLocations.map(location => (
+                    <Link 
+                      key={location}
+                      href={`/${location.toLowerCase()}`}
+                      className="dropdown-item"
+                      role="menuitem"
+                    >
+                      {location}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="location-group">
+                <div className="location-group-title">Other Locations</div>
+                <div className="location-group-items">
+                  {otherLocations.map(location => (
+                    <Link 
+                      key={location.slug}
+                      href={`/${location.slug}`}
+                      className="dropdown-item"
+                      role="menuitem"
+                    >
+                      {location.name}
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

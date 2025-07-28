@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import './globals.css';
 
 import Nav from '../components/partials/Nav';
-import Footer from '../components/partials/Footer';
+import SiteFooter from '../components/partials/SiteFooter';
 import CustomHead from '../components/Head/Head';
 import { LocationProvider } from '../contexts/LocationContext';
 import FindHelpStateCleanup from '../components/FindHelp/FindHelpStateCleanup';
@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <FindHelpStateCleanup />
           <Nav />
           {children}
-          <Footer />
+          <SiteFooter />
         </LocationProvider>
       </body>
     </html>

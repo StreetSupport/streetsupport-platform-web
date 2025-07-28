@@ -9,6 +9,74 @@ Cards and content components are the primary way users interact with service inf
 - **Action-Oriented**: Clear next steps for users seeking help
 - **Content Flexibility**: Graceful handling of varying content lengths
 
+## Social Sharing Component
+
+### Social Share
+```css
+.social-share {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  margin: var(--spacing-6) 0;
+}
+
+.social-share-label {
+  font-size: 0.875rem;
+  color: var(--color-brand-l);
+  font-weight: 500;
+}
+
+.social-share-link,
+.social-share-button {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  color: var(--color-brand-h);
+  text-decoration: none;
+  font-size: 0.875rem;
+  padding: var(--spacing-1);
+  border-radius: 4px;
+  transition: color 0.2s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.social-share-link:hover,
+.social-share-button:hover {
+  color: var(--color-brand-a);
+}
+
+.social-share-link:focus,
+.social-share-button:focus {
+  outline: none;
+  color: var(--color-brand-a);
+  box-shadow: 0 0 0 2px rgba(56, 174, 142, 0.2);
+}
+
+.social-share-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Responsive text visibility */
+@media (max-width: 640px) {
+  .social-share-text {
+    display: none;
+  }
+}
+```
+
+### Usage Example
+```tsx
+<SocialShare 
+  title="Resource Title"
+  url="/current-page-url"
+  className="justify-center"
+  showText={true}
+/>
+```
+
 ## Base Card System
 
 ### Standard Card
@@ -18,14 +86,15 @@ Cards and content components are the primary way users interact with service inf
   border: 1px solid var(--color-brand-q);
   border-radius: 8px;
   padding: var(--spacing-6);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   transition: all 0.2s ease;
   position: relative;
 }
 
 .card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   border-color: var(--color-brand-a);
+  transform: translateY(-1px);
 }
 
 .card:focus-within {
@@ -47,6 +116,33 @@ Cards and content components are the primary way users interact with service inf
 /* Compact card for lists */
 .card-compact {
   padding: var(--spacing-4);
+}
+
+/* Cards with consistent heights in grids */
+.card-grid .card {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-content {
+  flex-grow: 1;
+}
+
+.card-actions {
+  margin-top: auto;
+}
+
+/* Ensures all cards in a grid have equal height */
+.card-grid {
+  display: grid;
+  gap: var(--spacing-6);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+@media (max-width: 640px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Featured card with emphasis */

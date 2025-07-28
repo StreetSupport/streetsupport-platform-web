@@ -8,22 +8,22 @@ export default function ChartersPage() {
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-3">
             <li className="inline-flex items-center">
-              <Link href="/" className="text-gray-700 hover:text-blue-600">
+              <Link href="/" className="text-brand-l hover:text-brand-a">
                 Home
               </Link>
             </li>
             <li>
               <div className="flex items-center">
-                <span className="mx-2 text-gray-400">/</span>
-                <Link href="/resources" className="text-gray-700 hover:text-blue-600">
+                <span className="mx-2 text-brand-f">/</span>
+                <Link href="/resources" className="text-brand-l hover:text-brand-a">
                   Resources
                 </Link>
               </div>
             </li>
             <li aria-current="page">
               <div className="flex items-center">
-                <span className="mx-2 text-gray-400">/</span>
-                <span className="text-gray-500">Charters</span>
+                <span className="mx-2 text-brand-f">/</span>
+                <span className="text-brand-f">Charters</span>
               </div>
             </li>
           </ol>
@@ -32,17 +32,17 @@ export default function ChartersPage() {
 
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-4">Homelessness Charters</h1>
-        <p className="text-xl text-gray-700">What is a Homelessness Charter, and do you need one?</p>
+        <h1 className="heading-1 mb-4">Homelessness Charters</h1>
+        <p className="text-lead">What is a Homelessness Charter, and do you need one?</p>
       </div>
 
       {/* Content */}
       <div className="prose max-w-none">
-        <h2 className="text-2xl font-semibold mb-4">So what is a homelessness charter?</h2>
+        <h2 className="heading-3 mb-4">So what is a homelessness charter?</h2>
         <p className="mb-4">A homelessness charter is an agreement to abide by a set of principles to work towards achieving a shared mission.</p>
         <p className="mb-6">It's a location-specific, public commitment that is written up and then signed by voluntary, faith, private and public sector organisations in the same location.</p>
 
-        <h2 className="text-2xl font-semibold mb-4">How might my location benefit from having a homelessness charter?</h2>
+        <h2 className="heading-3 mb-4">How might my location benefit from having a homelessness charter?</h2>
         <p className="mb-4">Simply - to make sure everyone is on the same page (literally!).</p>
         <p className="mb-4">A charter facilitates everyone working together 'nicely'</p>
         <p className="mb-4">A charter might ask organisations to commit to:</p>
@@ -54,7 +54,7 @@ export default function ChartersPage() {
         <p className="mb-4">It's a way of getting people together to ensure a focused approach to tackling homelessness in a location.</p>
         <p className="mb-6">Another reason you might have a charter is to clearly set out your locations ambitions for tackling homelessness. Are you setting out to end homelessness, or are you setting out to end rough sleeping? Where the scope is so broad, it's important to be specific about the task in hand.</p>
 
-        <h2 className="text-2xl font-semibold mb-4">How do I go about producing one for my location?</h2>
+        <h2 className="heading-3 mb-4">How do I go about producing one for my location?</h2>
         <p className="mb-4">Well we reckon there's not much point in reinventing the wheel.</p>
         <p className="mb-4">Having said that, locations vary, and charters do, too.</p>
         <p className="mb-4">We suggest rifling through these. Be a magpie, pick and choose aspects (feel free to copy and paste) to pull together something that you think will work best for your location.</p>
@@ -86,16 +86,16 @@ export default function ChartersPage() {
           </a>
         </div>
 
-        <h2 className="text-2xl font-semibold mb-4">Some other useful resources</h2>
+        <h2 className="heading-3 mb-4">Some other useful resources</h2>
         <ul className="list-disc pl-6 space-y-2">
           <li>
-            <Link href="/resources/alternative-giving" className="text-blue-600 hover:text-blue-800 underline">Alternative Giving</Link>
+            <Link href="/resources/alternative-giving" className="text-brand-a hover:text-brand-a underline">Alternative Giving</Link>
           </li>
           <li>
-            <Link href="/resources/effective-volunteering" className="text-blue-600 hover:text-blue-800 underline">Effective Volunteering</Link>
+            <Link href="/resources/effective-volunteering" className="text-brand-a hover:text-brand-a underline">Effective Volunteering</Link>
           </li>
           <li>
-            <Link href="/resources/street-feeding-groups" className="text-blue-600 hover:text-blue-800 underline">Street Feeding Groups</Link>
+            <Link href="/resources/street-feeding-groups" className="text-brand-a hover:text-brand-a underline">Street Feeding Groups</Link>
           </li>
         </ul>
       </div>
