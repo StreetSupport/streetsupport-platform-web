@@ -68,7 +68,7 @@ export default function AboutPage() {
         <p>Our network includes organisations from all over the UK and across loads of different sectors that provide useful services for people who are experiencing, or at risk of experiencing homelessness. Because some of our users can be in quite vulnerable situations, we have to be really careful that where we're pointing them is the right direction. Because of this, we do have a standards toolkit. If you're curious, you can see the criteria we use in Manchester.</p>
         <Link 
           href="/manchester/standards-toolkit/" 
-          className="btn-base btn-warning btn-md mt-4 mb-6"
+          className="inline-flex items-center justify-center px-6 py-3 bg-brand-a text-white font-semibold rounded-md hover:bg-brand-b active:bg-brand-c transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-a focus:ring-offset-2 mt-4 mb-6"
         >
           Information for organisations
         </Link>

@@ -176,7 +176,8 @@ export default function SiteFooter() {
                 <p className="text-brand-f text-sm mb-2">For urgent help:</p>
                 <a 
                   href="tel:999" 
-                  className="text-brand-g hover:opacity-80 text-base font-semibold transition-opacity duration-200"
+                  className="!text-brand-g hover:opacity-80 text-base font-semibold transition-opacity duration-200"
+                  style={{ color: '#a90000 !important' }}
                 >
                   Emergency: 999
                 </a>

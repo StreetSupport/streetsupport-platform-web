@@ -354,7 +354,7 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
             <div className="mt-4 flex space-x-3">
               <button
                 onClick={handleTryAgain}
-                className="btn-base btn-warning btn-sm"
+                className="inline-flex items-center justify-center px-4 py-2 bg-brand-a text-white font-medium rounded-md hover:bg-brand-b active:bg-brand-c transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-a focus:ring-offset-2"
               >
                 Try Again
               </button>

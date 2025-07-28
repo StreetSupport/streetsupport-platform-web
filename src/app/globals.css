@@ -31,7 +31,7 @@
 
 /* Button Types */
 .btn-primary {
-  @apply bg-brand-a text-brand-q hover:bg-brand-b active:bg-brand-c;
+  @apply bg-brand-a text-white hover:bg-brand-b hover:text-white active:bg-brand-c active:text-white;
 }
 
 .btn-secondary {
@@ -39,19 +39,19 @@
 }
 
 .btn-success {
-  @apply bg-brand-b text-brand-q hover:bg-brand-c active:bg-brand-p;
+  @apply bg-brand-b text-white hover:bg-brand-c hover:text-white active:bg-brand-p active:text-white;
 }
 
 .btn-warning {
-  @apply bg-brand-j text-brand-k hover:bg-brand-s active:bg-brand-s;
+  @apply bg-brand-j text-white hover:bg-brand-s hover:text-white active:bg-brand-s active:text-white;
 }
 
 .btn-danger {
-  @apply bg-brand-g text-brand-q hover:opacity-90 active:opacity-80;
+  @apply bg-brand-g text-white hover:bg-red-700 hover:text-white active:bg-red-800 active:text-white;
 }
 
 .btn-neutral {
-  @apply bg-brand-f text-brand-q hover:bg-brand-k active:bg-brand-l;
+  @apply bg-brand-f text-white hover:bg-brand-k hover:text-white active:bg-brand-l active:text-white;
 }
 
 .btn-tertiary {
@@ -192,7 +192,9 @@
 
 /* Navigation System */
 .nav-container {
-  @apply bg-brand-q border-b border-brand-f;
+  @apply bg-brand-q border-b border-brand-f shadow-md relative;
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1), 0 1px 3px -1px rgba(0, 0, 0, 0.08);
+  z-index: 50;
 }
 
 .nav-links {
@@ -739,6 +741,17 @@ a {
 /* Override for nav links which have their own styling */
 .nav-link {
   @apply text-brand-k hover:text-brand-a transition-colors duration-200 font-medium;
+}
+
+/* Override for button links to ensure white text */
+a.inline-flex[class*="bg-brand-"] {
+  @apply !text-white;
+}
+a.inline-flex[class*="bg-brand-"]:hover {
+  @apply !text-white;
+}
+a.inline-flex[class*="bg-brand-"]:active {
+  @apply !text-white;
 }
 
 /* Loading border animation for service cards */
