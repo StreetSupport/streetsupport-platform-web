@@ -2,42 +2,47 @@ import Link from 'next/link';
 
 export default function AlternativeGivingPage() {
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      {/* Breadcrumbs */}
-      <div className="mb-8">
-        <nav className="flex" aria-label="Breadcrumb">
-          <ol className="inline-flex items-center space-x-1 md:space-x-3">
-            <li className="inline-flex items-center">
-              <Link href="/" className="text-brand-l hover:text-brand-a">
-                Home
-              </Link>
-            </li>
-            <li>
-              <div className="flex items-center">
-                <span className="mx-2 text-brand-f">/</span>
-                <Link href="/resources" className="text-brand-l hover:text-brand-a">
-                  Resources
+    <>
+      <div className="max-w-4xl mx-auto p-6">
+        {/* Breadcrumbs */}
+        <div className="mb-8">
+          <nav className="flex" aria-label="Breadcrumb">
+            <ol className="inline-flex items-center space-x-1 md:space-x-3">
+              <li className="inline-flex items-center">
+                <Link href="/" className="text-brand-l hover:text-brand-a">
+                  Home
                 </Link>
-              </div>
-            </li>
-            <li aria-current="page">
-              <div className="flex items-center">
-                <span className="mx-2 text-brand-f">/</span>
-                <span className="text-brand-f">Alternative Giving</span>
-              </div>
-            </li>
-          </ol>
-        </nav>
+              </li>
+              <li>
+                <div className="flex items-center">
+                  <span className="mx-2 text-brand-f">/</span>
+                  <Link href="/resources" className="text-brand-l hover:text-brand-a">
+                    Resources
+                  </Link>
+                </div>
+              </li>
+              <li aria-current="page">
+                <div className="flex items-center">
+                  <span className="mx-2 text-brand-f">/</span>
+                  <span className="text-brand-f">Alternative Giving</span>
+                </div>
+              </li>
+            </ol>
+          </nav>
+        </div>
       </div>
 
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="heading-1 mb-4">Alternative Giving Funds</h1>
-        <p className="text-lead">What it means to give differently, and why you should be thinking about it.</p>
+      <div className="bg-brand-i py-12">
+        <div className="max-w-4xl mx-auto px-6">
+          <h1 className="heading-1 mb-4 text-white">Alternative Giving Funds</h1>
+          <p className="text-lead text-white">What it means to give differently, and why you should be thinking about it.</p>
+        </div>
       </div>
 
-      {/* Content */}
-      <div className="prose max-w-none">
+      <div className="max-w-4xl mx-auto p-6">
+        {/* Content */}
+        <div className="prose max-w-none">
         <h2 className="heading-3 mb-4">What is an alternative giving fund?</h2>
         <p className="mb-6">An Alternative Giving fund is a pot of money used to invest in the futures of people experiencing, or at risk of experiencing homelessness. It's a way for members of the public to give money knowing that it will help someone who is vulnerable or experiencing homelessness.</p>
 
@@ -105,7 +110,8 @@ export default function AlternativeGivingPage() {
             <Link href="/resources/street-feeding-groups" className="text-brand-a hover:text-brand-a underline">Street Feeding Groups</Link>
           </li>
         </ul>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

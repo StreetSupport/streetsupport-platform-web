@@ -3,9 +3,9 @@ import Image from 'next/image';
 
 export default function OurTrusteesPage() {
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <>
       {/* Breadcrumbs */}
-      <div className="mb-8">
+      <div className="mb-8 px-6">
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-3">
             <li className="inline-flex items-center">
@@ -32,12 +32,15 @@ export default function OurTrusteesPage() {
       </div>
 
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="heading-2">Our Trustees and Advisors</h1>
+      <div className="bg-brand-i py-12">
+        <div className="max-w-4xl mx-auto px-6">
+          <h1 className="heading-2 text-white">Our Trustees and Advisors</h1>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="prose max-w-none">
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="prose max-w-none">
         <p className="text-lead mb-8">
           Alongside our core team, we have fantastic Trustees and Advisors with a range of skills & experiences to guide our decisions.
         </p>
@@ -115,7 +118,8 @@ export default function OurTrusteesPage() {
             </div>
           </div>
         </article>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

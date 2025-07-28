@@ -3,39 +3,45 @@ import Image from 'next/image';
 
 export default function BrandingPage() {
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      {/* Breadcrumbs */}
-      <div className="mb-8">
-        <nav className="flex" aria-label="Breadcrumb">
-          <ol className="inline-flex items-center space-x-1 md:space-x-3">
-            <li className="inline-flex items-center">
-              <Link href="/" className="text-brand-l hover:text-brand-a">
-                Home
-              </Link>
-            </li>
-            <li>
-              <div className="flex items-center">
-                <span className="mx-2 text-brand-f">/</span>
-                <Link href="/resources" className="text-brand-l hover:text-brand-a">
-                  Resources
+    <>
+      <div className="max-w-4xl mx-auto p-6">
+        {/* Breadcrumbs */}
+        <div className="mb-8">
+          <nav className="flex" aria-label="Breadcrumb">
+            <ol className="inline-flex items-center space-x-1 md:space-x-3">
+              <li className="inline-flex items-center">
+                <Link href="/" className="text-brand-l hover:text-brand-a">
+                  Home
                 </Link>
-              </div>
-            </li>
-            <li aria-current="page">
-              <div className="flex items-center">
-                <span className="mx-2 text-brand-f">/</span>
-                <span className="text-brand-f">Branding</span>
-              </div>
-            </li>
-          </ol>
-        </nav>
+              </li>
+              <li>
+                <div className="flex items-center">
+                  <span className="mx-2 text-brand-f">/</span>
+                  <Link href="/resources" className="text-brand-l hover:text-brand-a">
+                    Resources
+                  </Link>
+                </div>
+              </li>
+              <li aria-current="page">
+                <div className="flex items-center">
+                  <span className="mx-2 text-brand-f">/</span>
+                  <span className="text-brand-f">Branding</span>
+                </div>
+              </li>
+            </ol>
+          </nav>
+        </div>
       </div>
 
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="heading-1 mb-4">Street Support Branding</h1>
-        <p className="text-lead">Guidelines to adapt and align with the Street Support Network identity.</p>
+      <div className="bg-brand-i py-12">
+        <div className="max-w-4xl mx-auto px-6">
+          <h1 className="heading-1 mb-4 text-white">Street Support Branding</h1>
+          <p className="text-lead text-white">Guidelines to adapt and align with the Street Support Network identity.</p>
+        </div>
       </div>
+
+      <div className="max-w-4xl mx-auto p-6">
 
       {/* Content */}
       <div className="prose max-w-none">
@@ -102,7 +108,8 @@ export default function BrandingPage() {
             <Link href="/resources/marketing" className="text-brand-a hover:text-brand-a underline">Marketing</Link>
           </li>
         </ul>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

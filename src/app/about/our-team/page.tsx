@@ -3,9 +3,9 @@ import Image from 'next/image';
 
 export default function OurTeamPage() {
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <>
       {/* Breadcrumbs */}
-      <div className="mb-8">
+      <div className="mb-8 px-6">
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-3">
             <li className="inline-flex items-center">
@@ -31,12 +31,19 @@ export default function OurTeamPage() {
         </nav>
       </div>
 
+      {/* Header */}
+      <div className="bg-brand-i py-12">
+        <div className="max-w-6xl mx-auto px-6">
+          <h1 className="heading-2 text-white mb-4">Our Core Team</h1>
+        </div>
+      </div>
+
       {/* Core Team Section */}
-      <div className="mb-16">
-        <h1 className="heading-2 mb-4">Our Core Team</h1>
-        <p className="text-lead mb-8">
-          We're your everyday people, your first port of call. We cover a fair bit between us, so please get in touch with whatever you need.
-        </p>
+      <div className="max-w-6xl mx-auto p-6">
+        <div className="mb-16">
+          <p className="text-lead mb-8">
+            We're your everyday people, your first port of call. We cover a fair bit between us, so please get in touch with whatever you need.
+          </p>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div className="card card-compact text-center">
@@ -297,6 +304,7 @@ export default function OurTeamPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

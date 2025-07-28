@@ -2,9 +2,9 @@ import Link from 'next/link';
 
 export default function AIGovernancePage() {
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <>
       {/* Breadcrumbs */}
-      <div className="mb-8">
+      <div className="mb-8 px-6">
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-3">
             <li className="inline-flex items-center">
@@ -39,12 +39,15 @@ export default function AIGovernancePage() {
       </div>
 
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="heading-2">AI Governance Plan</h1>
+      <div className="bg-brand-i py-12">
+        <div className="max-w-4xl mx-auto px-6">
+          <h1 className="heading-2 text-white">AI Governance Plan</h1>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="prose max-w-none space-y-8">
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="prose max-w-none space-y-8">
         <section>
           <h2 className="heading-3 mb-4">Executive Summary</h2>
           <p>This AI Governance Plan outlines the principles and strategies to ensure the ethical, responsible, and secure integration of AI into our digital platform via IBM Watsonx Assistant. It is rooted in the five pillars of responsible AI: Fairness, Transparency, Accountability, Privacy, and Security. These principles guide our commitment to serving our beneficiaries with integrity, safeguarding user trust, and aligning our work with the charity's mission.</p>
@@ -168,7 +171,8 @@ export default function AIGovernancePage() {
           </ul>
           <p className="italic mt-4">Last updated: 2nd April 2025</p>
         </section>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

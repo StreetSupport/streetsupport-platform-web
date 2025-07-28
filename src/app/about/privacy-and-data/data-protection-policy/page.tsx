@@ -2,9 +2,9 @@ import Link from 'next/link';
 
 export default function DataProtectionPolicyPage() {
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <>
       {/* Breadcrumbs */}
-      <div className="mb-8">
+      <div className="mb-8 px-6">
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-3">
             <li className="inline-flex items-center">
@@ -39,12 +39,15 @@ export default function DataProtectionPolicyPage() {
       </div>
 
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="heading-2">Data Protection Policy</h1>
+      <div className="bg-brand-i py-12">
+        <div className="max-w-4xl mx-auto px-6">
+          <h1 className="heading-2 text-white">Data Protection Policy</h1>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="prose max-w-none">
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="prose max-w-none">
         <h2 className="heading-3 mb-4">1. Purpose</h2>
         <p>Street Support Network (Street Support Network) is committed to protecting the personal data of its employees, volunteers, partners, and service users. This policy outlines how we comply with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018, ensuring that personal data is handled lawfully, transparently, and securely.</p>
 
@@ -237,7 +240,8 @@ export default function DataProtectionPolicyPage() {
         <p>For any questions or concerns, please contact <a href="mailto:admin@streetsupport.net" className="text-blue-600 hover:text-blue-800 underline">admin@streetsupport.net</a>.</p>
         <p>This policy ensures that Street Support Network remains compliant with UK GDPR while protecting the privacy and security of all individuals interacting with our services, including the Virtual Assistant.</p>
         <p className="italic mt-6">Last updated: 2nd April 2025</p>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

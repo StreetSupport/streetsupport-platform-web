@@ -2,9 +2,9 @@ import Link from 'next/link';
 
 export default function TermsAndConditionsPage() {
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <>
       {/* Breadcrumbs */}
-      <div className="mb-8">
+      <div className="mb-8 px-6">
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-3">
             <li className="inline-flex items-center">
@@ -39,13 +39,16 @@ export default function TermsAndConditionsPage() {
       </div>
 
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="heading-2">Using the Street Support Network Virtual Assistant – What You Need to Know</h1>
-        <p className="mt-4 text-lead">We built the Virtual Assistant to make it easier for you to find the right support when you need it. It asks a few simple questions and points you toward services that might be able to help. But there are a few things you should know before using it.</p>
+      <div className="bg-brand-i py-12">
+        <div className="max-w-4xl mx-auto px-6">
+          <h1 className="heading-2 text-white">Using the Street Support Network Virtual Assistant – What You Need to Know</h1>
+          <p className="mt-4 text-lead text-white">We built the Virtual Assistant to make it easier for you to find the right support when you need it. It asks a few simple questions and points you toward services that might be able to help. But there are a few things you should know before using it.</p>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="prose max-w-none">
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="prose max-w-none">
         <h2 className="heading-3 mb-4">Finding Services, Not Guarantees</h2>
         <p>The Virtual Assistant does its best to match you with services based on the information you provide. But:</p>
         <ul className="list-disc pl-6 space-y-1">
@@ -82,7 +85,8 @@ export default function TermsAndConditionsPage() {
         </ul>
 
         <p className="italic mt-8">Last updated: 2nd April 2025</p>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

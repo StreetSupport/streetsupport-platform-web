@@ -2,9 +2,9 @@ import Link from 'next/link';
 
 export default function ImpactPage() {
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <>
       {/* Breadcrumbs */}
-      <div className="mb-8">
+      <div className="mb-8 px-6">
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-3">
             <li className="inline-flex items-center">
@@ -31,12 +31,15 @@ export default function ImpactPage() {
       </div>
 
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="heading-2">Impact</h1>
+      <div className="bg-brand-i py-12">
+        <div className="max-w-6xl mx-auto px-6">
+          <h1 className="heading-2 text-white">Impact</h1>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="text-center">
+      <div className="max-w-6xl mx-auto p-6">
+        <div className="text-center">
         <p className="text-lead mb-8">
           Our mission is to make it easier for anyone experiencing homelessness to get the help they need. We connect organisations that provide services, with individuals and businesses that want to do something to help. Here are the latest key facts and examples of how Street Support is making an impact.
         </p>
@@ -119,7 +122,8 @@ export default function ImpactPage() {
             </div>
           </div>
         </section>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

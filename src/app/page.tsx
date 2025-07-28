@@ -16,9 +16,9 @@ export default function Home() {
       />
 
       {/* Where we are section */}
-      <section className="section-spacing px-4 bg-brand-i">
+      <section className="section-spacing px-4 bg-white">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div>
               <h2 className="heading-2">
                 Where we are

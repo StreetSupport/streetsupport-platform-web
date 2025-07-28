@@ -2,9 +2,9 @@ import Link from 'next/link';
 
 export default function CookiePolicyPage() {
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <>
       {/* Breadcrumbs */}
-      <div className="mb-8">
+      <div className="mb-8 px-6">
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-3">
             <li className="inline-flex items-center">
@@ -39,13 +39,16 @@ export default function CookiePolicyPage() {
       </div>
 
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="heading-2">Cookie Policy</h1>
-        <p className="mt-2"><span className="italic">Effective date: 25/04/2025</span></p>
+      <div className="bg-brand-i py-12">
+        <div className="max-w-4xl mx-auto px-6">
+          <h1 className="heading-2 text-white">Cookie Policy</h1>
+          <p className="mt-2 text-white"><span className="italic">Effective date: 25/04/2025</span></p>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="prose max-w-none">
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="prose max-w-none">
         <h2 className="heading-3 mb-4">Types of Cookies We Use</h2>
         <ol className="list-decimal pl-6 space-y-6">
           <li>
@@ -107,7 +110,8 @@ export default function CookiePolicyPage() {
 
         <h2 className="heading-3 mb-4">Contact Us</h2>
         <p>If you have any questions about this Cookie Policy or how we use cookies, please contact us at: <a href="mailto:admin@streetsupport.net" className="text-brand-a hover:text-brand-b underline">admin@streetsupport.net</a></p>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

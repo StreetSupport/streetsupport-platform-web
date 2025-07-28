@@ -2,9 +2,9 @@ import Link from 'next/link';
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <>
       {/* Breadcrumbs */}
-      <div className="mb-8">
+      <div className="mb-8 px-6">
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-3">
             <li className="inline-flex items-center">
@@ -39,12 +39,15 @@ export default function PrivacyPolicyPage() {
       </div>
 
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="heading-2">Privacy Policy</h1>
+      <div className="bg-brand-i py-12">
+        <div className="max-w-4xl mx-auto px-6">
+          <h1 className="heading-2 text-white">Privacy Policy</h1>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="prose max-w-none">
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="prose max-w-none">
         <p>Your privacy matters. Here's how we handle your data across our website, Virtual Assistant, and other digital tools. We follow UK GDPR and data protection laws to make sure your information is safe and handled properly.</p>
 
         <h2 className="heading-3 mb-4">What Data We Collect and Why</h2>
@@ -129,7 +132,8 @@ export default function PrivacyPolicyPage() {
         <p>You can also raise concerns with the Information Commissioner's Office (ICO) at <a href="https://www.ico.org.uk" className="text-blue-600 hover:text-blue-800 underline">www.ico.org.uk</a>.</p>
         <p>We review this policy regularly to keep it up to date. If we make big changes, we'll let you know.</p>
         <p className="font-semibold">Last updated: 2nd April 2025</p>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

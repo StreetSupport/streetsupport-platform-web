@@ -2,9 +2,9 @@ import Link from 'next/link';
 
 export default function AboutPage() {
   return (
-    <div className="content-container p-6">
+    <>
       {/* Breadcrumbs */}
-      <div className="mb-8">
+      <div className="mb-8 px-6">
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-3">
             <li className="inline-flex items-center">
@@ -23,12 +23,15 @@ export default function AboutPage() {
       </div>
 
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="heading-2">About Street Support</h1>
+      <div className="bg-brand-i py-12">
+        <div className="content-container px-6">
+          <h1 className="heading-2 text-white">About Street Support</h1>
+        </div>
       </div>
 
       {/* Main Content */}
-      <div className="prose max-w-none">
+      <div className="content-container p-6">
+        <div className="prose max-w-none">
         <p>Street Support Network connects local people and organisations in order to support those who need it the most.</p>
         <p>This website is an online hub to find out about homelessness, see what support is available, and see what you can do to help.</p>
         <p>There are three primary reasons you might use our website:</p>
@@ -80,6 +83,6 @@ export default function AboutPage() {
           <a href="https://bsky.app/profile/streetsupport.net" className="text-brand-a hover:text-brand-b underline"> Bluesky feed</a>, or you can
           <a href="https://streetsupport.us12.list-manage.com/subscribe?u=da9a1d4bb2b1a69a981456972&id=c966413ba3" className="text-brand-a hover:text-brand-b underline"> subscribe to our newsletter</a>.</p>
       </div>
-    </div>
+    </>
   );
 }

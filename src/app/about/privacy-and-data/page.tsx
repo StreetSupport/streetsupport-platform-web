@@ -2,9 +2,9 @@ import Link from 'next/link';
 
 export default function PrivacyAndDataPage() {
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <>
       {/* Breadcrumbs */}
-      <div className="mb-8">
+      <div className="mb-8 px-6">
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-3">
             <li className="inline-flex items-center">
@@ -31,12 +31,15 @@ export default function PrivacyAndDataPage() {
       </div>
 
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="heading-2">Your Privacy, Your Data, and Responsible AI</h1>
+      <div className="bg-brand-i py-12">
+        <div className="max-w-4xl mx-auto px-6">
+          <h1 className="heading-2 text-white">Your Privacy, Your Data, and Responsible AI</h1>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="prose max-w-none">
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="prose max-w-none">
         <p>At Street Support Network, we believe that trust is everything. If you're using our platform, you should know exactly what happens with your data, how we keep it safe, and how we use AI in a fair and responsible way. No complicated jargon, no hidden details—just clear, honest information about what we do and why it matters.</p>
 
         <h2 className="heading-3 mb-4">How We Handle Your Data</h2>
@@ -99,7 +102,8 @@ export default function PrivacyAndDataPage() {
         <h3 className="heading-5 mb-4">Got Questions? We're Here to Help.</h3>
         <p>Your data and privacy matter to us, and we want to make sure you feel confident and informed. If you have any questions about how we handle your information, just drop us a message at <a href="mailto:admin@streetsupport.net" className="text-brand-a hover:text-brand-b underline">admin@streetsupport.net</a>.</p>
         <p>We're committed to making our platform as safe, fair, and accessible as possible—because that's what you deserve.</p>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
