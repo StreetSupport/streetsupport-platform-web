@@ -71,7 +71,7 @@ export default function Nav() {
   return (
     <nav className="nav-container">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
+        <div className="flex justify-between h-20 items-center">
           <Link href="/" className="flex items-center">
             <Image
               src="/assets/img/StreetSupport_logo_land.png"
@@ -137,9 +137,9 @@ export default function Nav() {
               onMouseEnter={handleAboutMouseEnter}
               onMouseLeave={handleAboutMouseLeave}
             >
-              <button className="nav-link focus:outline-none">
+              <Link href="/about" className="nav-link" onClick={handleAboutClick}>
                 About
-              </button>
+              </Link>
 
               {isAboutOpen && (
                 <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-white border border-brand-f rounded-md shadow-lg z-50">

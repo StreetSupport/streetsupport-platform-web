@@ -3,39 +3,41 @@ import Link from 'next/link';
 export default function DataProtectionPolicyPage() {
   return (
     <>
-      {/* Breadcrumbs */}
-      <div className="mb-8 px-6">
-        <nav className="flex" aria-label="Breadcrumb">
-          <ol className="inline-flex items-center space-x-1 md:space-x-3">
-            <li className="inline-flex items-center">
-              <Link href="/" className="text-brand-l hover:text-brand-a">
-                Home
-              </Link>
-            </li>
-            <li>
-              <div className="flex items-center">
-                <span className="mx-2 text-brand-f">/</span>
-                <Link href="/about" className="text-brand-l hover:text-brand-a">
-                  About Street Support
+      <div className="max-w-4xl mx-auto p-6">
+        {/* Breadcrumbs */}
+        <div className="mb-8">
+          <nav className="flex" aria-label="Breadcrumb">
+            <ol className="inline-flex items-center space-x-1 md:space-x-3">
+              <li className="inline-flex items-center">
+                <Link href="/" className="text-brand-l hover:text-brand-a">
+                  Home
                 </Link>
-              </div>
-            </li>
-            <li>
-              <div className="flex items-center">
-                <span className="mx-2 text-brand-f">/</span>
-                <Link href="/about/privacy-and-data" className="text-brand-l hover:text-brand-a">
-                  Privacy and Data
-                </Link>
-              </div>
-            </li>
-            <li aria-current="page">
-              <div className="flex items-center">
-                <span className="mx-2 text-brand-f">/</span>
-                <span className="text-brand-f">Data Protection Policy</span>
-              </div>
-            </li>
-          </ol>
-        </nav>
+              </li>
+              <li>
+                <div className="flex items-center">
+                  <span className="mx-2 text-brand-f">/</span>
+                  <Link href="/about" className="text-brand-l hover:text-brand-a">
+                    About Street Support
+                  </Link>
+                </div>
+              </li>
+              <li>
+                <div className="flex items-center">
+                  <span className="mx-2 text-brand-f">/</span>
+                  <Link href="/about/privacy-and-data" className="text-brand-l hover:text-brand-a">
+                    Privacy and Data
+                  </Link>
+                </div>
+              </li>
+              <li aria-current="page">
+                <div className="flex items-center">
+                  <span className="mx-2 text-brand-f">/</span>
+                  <span className="text-brand-f">Data Protection Policy</span>
+                </div>
+              </li>
+            </ol>
+          </nav>
+        </div>
       </div>
 
       {/* Header */}

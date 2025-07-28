@@ -20,21 +20,33 @@ export default async function AdvicePage(props) {
   return (
     <main className="space-y-8">
       {/* Breadcrumbs */}
-      <nav className="bg-gray-50 py-2">
-        <div className="max-w-7xl mx-auto px-4">
-          <ol className="flex space-x-2 text-sm text-gray-700">
-            <li>
-              <Link href="/" className="hover:underline">Home</Link>
-              <span className="mx-1">/</span>
-            </li>
-            <li>
-              <Link href={`/${location.slug}`} className="hover:underline">{location.name}</Link>
-              <span className="mx-1">/</span>
-            </li>
-            <li>Advice</li>
-          </ol>
+      <div className="bg-brand-n py-4">
+        <div className="max-w-7xl mx-auto px-6">
+          <nav className="flex" aria-label="Breadcrumb">
+            <ol className="inline-flex items-center space-x-1 md:space-x-3">
+              <li className="inline-flex items-center">
+                <Link href="/" className="text-white hover:text-brand-q">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <div className="flex items-center">
+                  <span className="mx-2 text-white">/</span>
+                  <Link href={`/${location.slug}`} className="text-white hover:text-brand-q">
+                    {location.name}
+                  </Link>
+                </div>
+              </li>
+              <li aria-current="page">
+                <div className="flex items-center">
+                  <span className="mx-2 text-white">/</span>
+                  <span className="text-white">Advice</span>
+                </div>
+              </li>
+            </ol>
+          </nav>
         </div>
-      </nav>
+      </div>
 
       {/* Page Header */}
       <section className="bg-white py-8">

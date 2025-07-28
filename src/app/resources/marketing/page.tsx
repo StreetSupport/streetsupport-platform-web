@@ -3,28 +3,28 @@ import Link from 'next/link';
 export default function MarketingPage() {
   return (
     <>
-      <div className="max-w-4xl mx-auto p-6">
-        {/* Breadcrumbs */}
-        <div className="mb-8">
+      {/* Breadcrumbs */}
+      <div className="bg-brand-n py-4">
+        <div className="max-w-4xl mx-auto px-6">
           <nav className="flex" aria-label="Breadcrumb">
             <ol className="inline-flex items-center space-x-1 md:space-x-3">
               <li className="inline-flex items-center">
-                <Link href="/" className="text-brand-l hover:text-brand-a">
+                <Link href="/" className="text-white hover:text-brand-q">
                   Home
                 </Link>
               </li>
               <li>
                 <div className="flex items-center">
-                  <span className="mx-2 text-brand-f">/</span>
-                  <Link href="/resources" className="text-brand-l hover:text-brand-a">
+                  <span className="mx-2 text-white">/</span>
+                  <Link href="/resources" className="text-white hover:text-brand-q">
                     Resources
                   </Link>
                 </div>
               </li>
               <li aria-current="page">
                 <div className="flex items-center">
-                  <span className="mx-2 text-brand-f">/</span>
-                  <span className="text-brand-f">Marketing</span>
+                  <span className="mx-2 text-white">/</span>
+                  <span className="text-white">Marketing</span>
                 </div>
               </li>
             </ol>

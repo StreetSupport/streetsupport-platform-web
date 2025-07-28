@@ -2,33 +2,37 @@ import Link from 'next/link';
 
 export default function ContactPage() {
   return (
-    <div className="content-container p-6">
+    <>
       {/* Breadcrumbs */}
-      <div className="mb-8">
-        <nav className="flex" aria-label="Breadcrumb">
-          <ol className="inline-flex items-center space-x-1 md:space-x-3">
-            <li className="inline-flex items-center">
-              <Link href="/" className="text-brand-k hover:text-brand-a">
-                Home
-              </Link>
-            </li>
-            <li>
-              <div className="flex items-center">
-                <span className="mx-2 text-brand-f">/</span>
-                <Link href="/about" className="text-brand-k hover:text-brand-a">
-                  About
+      <div className="bg-brand-n py-4">
+        <div className="content-container px-6">
+          <nav className="flex" aria-label="Breadcrumb">
+            <ol className="inline-flex items-center space-x-1 md:space-x-3">
+              <li className="inline-flex items-center">
+                <Link href="/" className="text-white hover:text-brand-q">
+                  Home
                 </Link>
-              </div>
-            </li>
-            <li aria-current="page">
-              <div className="flex items-center">
-                <span className="mx-2 text-brand-f">/</span>
-                <span className="text-brand-f">Contact</span>
-              </div>
-            </li>
-          </ol>
-        </nav>
+              </li>
+              <li>
+                <div className="flex items-center">
+                  <span className="mx-2 text-white">/</span>
+                  <Link href="/about" className="text-white hover:text-brand-q">
+                    About
+                  </Link>
+                </div>
+              </li>
+              <li aria-current="page">
+                <div className="flex items-center">
+                  <span className="mx-2 text-white">/</span>
+                  <span className="text-white">Contact</span>
+                </div>
+              </li>
+            </ol>
+          </nav>
+        </div>
       </div>
+
+      <div className="content-container px-6 py-12">
 
       {/* Header */}
       <div className="mb-8">
@@ -89,6 +93,7 @@ export default function ContactPage() {
           <a href="https://x.com/streetsupportuk" className="text-brand-a hover:text-brand-b underline"> X</a>,
           <a href="https://www.facebook.com/streetsupport/" className="text-brand-a hover:text-brand-b underline"> Facebook</a> or subscribe to our <a href="http://eepurl.com/gvtAjT" className="text-brand-a hover:text-brand-b underline">UK Network mailing list</a>.</p>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

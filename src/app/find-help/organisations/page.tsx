@@ -93,7 +93,37 @@ export default async function OrganisationsSearchPage(props: Props) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Breadcrumbs */}
+      <div className="bg-brand-n py-4">
+        <div className="max-w-4xl mx-auto px-6">
+          <nav className="flex" aria-label="Breadcrumb">
+            <ol className="inline-flex items-center space-x-1 md:space-x-3">
+              <li className="inline-flex items-center">
+                <Link href="/" className="text-white hover:text-brand-q">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <div className="flex items-center">
+                  <span className="mx-2 text-white">/</span>
+                  <Link href="/find-help" className="text-white hover:text-brand-q">
+                    Find Help
+                  </Link>
+                </div>
+              </li>
+              <li aria-current="page">
+                <div className="flex items-center">
+                  <span className="mx-2 text-white">/</span>
+                  <span className="text-white">Organisations</span>
+                </div>
+              </li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+
       <div className="max-w-4xl mx-auto p-4 pt-8">
+
         <div className="mb-6">
           <Link 
             href="/find-help"
@@ -198,6 +228,7 @@ export default async function OrganisationsSearchPage(props: Props) {
             ))}
           </div>
         )}
+      </div>
       </div>
     </div>
   );

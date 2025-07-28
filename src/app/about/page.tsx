@@ -4,22 +4,24 @@ export default function AboutPage() {
   return (
     <>
       {/* Breadcrumbs */}
-      <div className="mb-8 px-6">
-        <nav className="flex" aria-label="Breadcrumb">
-          <ol className="inline-flex items-center space-x-1 md:space-x-3">
-            <li className="inline-flex items-center">
-              <Link href="/" className="text-brand-k hover:text-brand-a">
-                Home
-              </Link>
-            </li>
-            <li aria-current="page">
-              <div className="flex items-center">
-                <span className="mx-2 text-brand-f">/</span>
-                <span className="text-brand-f">About Street Support</span>
-              </div>
-            </li>
-          </ol>
-        </nav>
+      <div className="bg-brand-n py-4">
+        <div className="content-container px-6">
+          <nav className="flex" aria-label="Breadcrumb">
+            <ol className="inline-flex items-center space-x-1 md:space-x-3">
+              <li className="inline-flex items-center">
+                <Link href="/" className="text-white hover:text-brand-q">
+                  Home
+                </Link>
+              </li>
+              <li aria-current="page">
+                <div className="flex items-center">
+                  <span className="mx-2 text-white">/</span>
+                  <span className="text-white">About Street Support</span>
+                </div>
+              </li>
+            </ol>
+          </nav>
+        </div>
       </div>
 
       {/* Header */}
@@ -30,7 +32,7 @@ export default function AboutPage() {
       </div>
 
       {/* Main Content */}
-      <div className="content-container p-6">
+      <div className="content-container px-6 py-12">
         <div className="prose max-w-none">
         <p>Street Support Network connects local people and organisations in order to support those who need it the most.</p>
         <p>This website is an online hub to find out about homelessness, see what support is available, and see what you can do to help.</p>
@@ -82,6 +84,7 @@ export default function AboutPage() {
           <a href="https://www.facebook.com/streetsupport/" className="text-brand-a hover:text-brand-b underline"> Facebook page</a>,
           <a href="https://bsky.app/profile/streetsupport.net" className="text-brand-a hover:text-brand-b underline"> Bluesky feed</a>, or you can
           <a href="https://streetsupport.us12.list-manage.com/subscribe?u=da9a1d4bb2b1a69a981456972&id=c966413ba3" className="text-brand-a hover:text-brand-b underline"> subscribe to our newsletter</a>.</p>
+        </div>
       </div>
     </>
   );

@@ -4,30 +4,32 @@ export default function ImpactPage() {
   return (
     <>
       {/* Breadcrumbs */}
-      <div className="mb-8 px-6">
-        <nav className="flex" aria-label="Breadcrumb">
-          <ol className="inline-flex items-center space-x-1 md:space-x-3">
-            <li className="inline-flex items-center">
-              <Link href="/" className="text-brand-l hover:text-brand-a">
-                Home
-              </Link>
-            </li>
-            <li>
-              <div className="flex items-center">
-                <span className="mx-2 text-brand-f">/</span>
-                <Link href="/about" className="text-brand-l hover:text-brand-a">
-                  About
+      <div className="bg-brand-n py-4">
+        <div className="max-w-6xl mx-auto px-6">
+          <nav className="flex" aria-label="Breadcrumb">
+            <ol className="inline-flex items-center space-x-1 md:space-x-3">
+              <li className="inline-flex items-center">
+                <Link href="/" className="text-white hover:text-brand-q">
+                  Home
                 </Link>
-              </div>
-            </li>
-            <li aria-current="page">
-              <div className="flex items-center">
-                <span className="mx-2 text-brand-f">/</span>
-                <span className="text-brand-f">Impact</span>
-              </div>
-            </li>
-          </ol>
-        </nav>
+              </li>
+              <li>
+                <div className="flex items-center">
+                  <span className="mx-2 text-white">/</span>
+                  <Link href="/about" className="text-white hover:text-brand-q">
+                    About
+                  </Link>
+                </div>
+              </li>
+              <li aria-current="page">
+                <div className="flex items-center">
+                  <span className="mx-2 text-white">/</span>
+                  <span className="text-white">Impact</span>
+                </div>
+              </li>
+            </ol>
+          </nav>
+        </div>
       </div>
 
       {/* Header */}

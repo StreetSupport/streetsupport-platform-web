@@ -3,28 +3,28 @@ import Link from 'next/link';
 export default function ChartersPage() {
   return (
     <>
-      <div className="max-w-4xl mx-auto p-6">
-        {/* Breadcrumbs */}
-        <div className="mb-8">
+      {/* Breadcrumbs */}
+      <div className="bg-brand-n py-4">
+        <div className="max-w-4xl mx-auto px-6">
           <nav className="flex" aria-label="Breadcrumb">
             <ol className="inline-flex items-center space-x-1 md:space-x-3">
               <li className="inline-flex items-center">
-                <Link href="/" className="text-brand-l hover:text-brand-a">
+                <Link href="/" className="text-white hover:text-brand-q">
                   Home
                 </Link>
               </li>
               <li>
                 <div className="flex items-center">
-                  <span className="mx-2 text-brand-f">/</span>
-                  <Link href="/resources" className="text-brand-l hover:text-brand-a">
+                  <span className="mx-2 text-white">/</span>
+                  <Link href="/resources" className="text-white hover:text-brand-q">
                     Resources
                   </Link>
                 </div>
               </li>
               <li aria-current="page">
                 <div className="flex items-center">
-                  <span className="mx-2 text-brand-f">/</span>
-                  <span className="text-brand-f">Charters</span>
+                  <span className="mx-2 text-white">/</span>
+                  <span className="text-white">Charters</span>
                 </div>
               </li>
             </ol>
@@ -69,25 +69,25 @@ export default function ChartersPage() {
         <hr className="my-8 border-gray-300" />
 
         <p className="font-semibold mb-6">Some charters that we have supported:</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <a href="https://mhp.org.uk/charter/" target="_blank" rel="noopener noreferrer" className="block">
-            <article className="bg-purple-600 text-white p-6 rounded-lg hover:bg-purple-700 transition-colors">
-              <h3 className="text-xl font-semibold">Manchester Charter</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <a href="https://mhp.org.uk/charter/" target="_blank" rel="noopener noreferrer" className="block transition-transform hover:scale-105">
+            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+              <h3 className="heading-5 text-white">Manchester Charter</h3>
             </article>
           </a>
-          <a href="/leeds/charter" className="block">
-            <article className="bg-purple-600 text-white p-6 rounded-lg hover:bg-purple-700 transition-colors">
-              <h3 className="text-xl font-semibold">Leeds Charter</h3>
+          <a href="/leeds/charter" className="block transition-transform hover:scale-105">
+            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+              <h3 className="heading-5 text-white">Leeds Charter</h3>
             </article>
           </a>
-          <a href="/southampton/charter" className="block">
-            <article className="bg-purple-600 text-white p-6 rounded-lg hover:bg-purple-700 transition-colors">
-              <h3 className="text-xl font-semibold">Southampton Charter</h3>
+          <a href="/southampton/charter" className="block transition-transform hover:scale-105">
+            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+              <h3 className="heading-5 text-white">Southampton Charter</h3>
             </article>
           </a>
-          <a href="/derbyshire/derbyshire-homelessness-charter.pdf" className="block">
-            <article className="bg-purple-600 text-white p-6 rounded-lg hover:bg-purple-700 transition-colors">
-              <h3 className="text-xl font-semibold">Derbyshire Charter</h3>
+          <a href="/derbyshire/derbyshire-homelessness-charter.pdf" className="block transition-transform hover:scale-105">
+            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+              <h3 className="heading-5 text-white">Derbyshire Charter</h3>
             </article>
           </a>
         </div>

@@ -4,20 +4,20 @@ import Image from 'next/image';
 export default function ResourcesPage() {
   return (
     <>
-      <div className="max-w-7xl mx-auto">
-        {/* Breadcrumbs */}
-        <div className="px-6 py-4">
+      {/* Breadcrumbs */}
+      <div className="bg-brand-n py-4">
+        <div className="max-w-7xl mx-auto px-6">
           <nav className="flex" aria-label="Breadcrumb">
             <ol className="inline-flex items-center space-x-1 md:space-x-3">
               <li className="inline-flex items-center">
-                <Link href="/" className="text-brand-l hover:text-brand-a">
+                <Link href="/" className="text-white hover:text-brand-q">
                   Home
                 </Link>
               </li>
               <li aria-current="page">
                 <div className="flex items-center">
-                  <span className="mx-2 text-brand-f">/</span>
-                  <span className="text-brand-f">Resources</span>
+                  <span className="mx-2 text-white">/</span>
+                  <span className="text-white">Resources</span>
                 </div>
               </li>
             </ol>

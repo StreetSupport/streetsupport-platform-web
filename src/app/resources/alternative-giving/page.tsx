@@ -3,28 +3,28 @@ import Link from 'next/link';
 export default function AlternativeGivingPage() {
   return (
     <>
-      <div className="max-w-4xl mx-auto p-6">
-        {/* Breadcrumbs */}
-        <div className="mb-8">
+      {/* Breadcrumbs */}
+      <div className="bg-brand-n py-4">
+        <div className="max-w-4xl mx-auto px-6">
           <nav className="flex" aria-label="Breadcrumb">
             <ol className="inline-flex items-center space-x-1 md:space-x-3">
               <li className="inline-flex items-center">
-                <Link href="/" className="text-brand-l hover:text-brand-a">
+                <Link href="/" className="text-white hover:text-brand-q">
                   Home
                 </Link>
               </li>
               <li>
                 <div className="flex items-center">
-                  <span className="mx-2 text-brand-f">/</span>
-                  <Link href="/resources" className="text-brand-l hover:text-brand-a">
+                  <span className="mx-2 text-white">/</span>
+                  <Link href="/resources" className="text-white hover:text-brand-q">
                     Resources
                   </Link>
                 </div>
               </li>
               <li aria-current="page">
                 <div className="flex items-center">
-                  <span className="mx-2 text-brand-f">/</span>
-                  <span className="text-brand-f">Alternative Giving</span>
+                  <span className="mx-2 text-white">/</span>
+                  <span className="text-white">Alternative Giving</span>
                 </div>
               </li>
             </ol>
@@ -68,30 +68,30 @@ export default function AlternativeGivingPage() {
         </ul>
 
         <p className="font-semibold mb-6">Alternative giving funds we have supported:</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-          <Link href="/luton" className="block">
-            <article className="bg-purple-600 text-white p-6 rounded-lg hover:bg-purple-700 transition-colors">
-              <h3 className="text-xl font-semibold">Big Change Luton</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <Link href="/luton" className="block transition-transform hover:scale-105">
+            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+              <h3 className="heading-5 text-white">Big Change Luton</h3>
             </article>
           </Link>
-          <Link href="/liverpool" className="block">
-            <article className="bg-purple-600 text-white p-6 rounded-lg hover:bg-purple-700 transition-colors">
-              <h3 className="text-xl font-semibold">Change Liverpool</h3>
+          <Link href="/liverpool" className="block transition-transform hover:scale-105">
+            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+              <h3 className="heading-5 text-white">Change Liverpool</h3>
             </article>
           </Link>
-          <Link href="/manchester/realchangemcr" className="block">
-            <article className="bg-purple-600 text-white p-6 rounded-lg hover:bg-purple-700 transition-colors">
-              <h3 className="text-xl font-semibold">Real Change Manchester</h3>
+          <Link href="/manchester/realchangemcr" className="block transition-transform hover:scale-105">
+            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+              <h3 className="heading-5 text-white">Real Change Manchester</h3>
             </article>
           </Link>
-          <Link href="/cambridgeshire" className="block">
-            <article className="bg-purple-600 text-white p-6 rounded-lg hover:bg-purple-700 transition-colors">
-              <h3 className="text-xl font-semibold">Street Aid Cambridge</h3>
+          <Link href="/cambridgeshire" className="block transition-transform hover:scale-105">
+            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+              <h3 className="heading-5 text-white">Street Aid Cambridge</h3>
             </article>
           </Link>
-          <Link href="/nottingham/street-aid" className="block">
-            <article className="bg-purple-600 text-white p-6 rounded-lg hover:bg-purple-700 transition-colors">
-              <h3 className="text-xl font-semibold">Street Aid Nottingham</h3>
+          <Link href="/nottingham/street-aid" className="block transition-transform hover:scale-105">
+            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+              <h3 className="heading-5 text-white">Street Aid Nottingham</h3>
             </article>
           </Link>
         </div>

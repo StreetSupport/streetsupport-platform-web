@@ -55,18 +55,27 @@ export default async function LocationPage(props) {
   const homeBackground = "/assets/img/home-header-background.png";
 
   return (
-    <main className="space-y-12">
-      <nav className="bg-brand-q py-2">
-        <div className="max-w-7xl mx-auto px-4">
-          <ol className="flex space-x-2 text-sm text-brand-l">
-            <li>
-              <Link href="/" className="hover:text-brand-a hover:underline">Home</Link>
-              <span className="mx-1">/</span>
-            </li>
-            <li>{location.name}</li>
-          </ol>
+    <main>
+      {/* Breadcrumbs */}
+      <div className="bg-brand-n py-4">
+        <div className="max-w-7xl mx-auto px-6">
+          <nav className="flex" aria-label="Breadcrumb">
+            <ol className="inline-flex items-center space-x-1 md:space-x-3">
+              <li className="inline-flex items-center">
+                <Link href="/" className="text-white hover:text-brand-q">
+                  Home
+                </Link>
+              </li>
+              <li aria-current="page">
+                <div className="flex items-center">
+                  <span className="mx-2 text-white">/</span>
+                  <span className="text-white">{location.name}</span>
+                </div>
+              </li>
+            </ol>
+          </nav>
         </div>
-      </nav>
+      </div>
 
       <Hero
         backgroundImage={homeBackground}
@@ -78,18 +87,18 @@ export default async function LocationPage(props) {
         ctaLink="/find-help"
       />
 
-      <section className="bg-yellow-50 py-12">
+      <section className="bg-brand-i py-12 mt-12">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <div className="flex justify-center mb-4">
           </div>
-          <h2 className="text-2xl font-bold mb-2">Help someone sleeping rough</h2>
-          <p className="mb-2">
-            If you are worried about someone you’ve seen sleeping rough anywhere in {location.name}, you can inform 
-            <a href="https://thestreetlink.org.uk" className="text-brand-a hover:text-brand-b underline"> StreetLink</a>.
+          <h2 className="text-2xl font-bold mb-2 text-white">Help someone sleeping rough</h2>
+          <p className="mb-2 text-white">
+            If you are worried about someone you've seen sleeping rough anywhere in {location.name}, you can inform 
+            <a href="https://thestreetlink.org.uk" className="text-white hover:text-brand-q underline font-semibold"> StreetLink</a>.
           </p>
-          <p className="mb-4">
+          <p className="mb-4 text-white">
             If the person is in immediate danger or needs urgent care, please call 
-            <a href="tel:999" className="text-brand-g hover:opacity-80 underline"> 999</a>.
+            <a href="tel:999" className="text-red-600 hover:text-red-700 underline font-semibold"> 999</a>.
           </p>
           <Link
             href={`/${location.slug}/advice`}
