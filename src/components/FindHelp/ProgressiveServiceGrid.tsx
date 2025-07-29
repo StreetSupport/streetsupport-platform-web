@@ -25,6 +25,7 @@ interface ProgressiveServiceGridProps {
   batchSize?: number;
   initialPage?: number;
   onPageChange?: (page: number) => void;
+  scrollTargetRef?: React.RefObject<HTMLDivElement>;
 }
 
 /**
@@ -38,7 +39,8 @@ export default function ProgressiveServiceGrid({
   onToggleDescription,
   batchSize = 50,
   initialPage = 1,
-  onPageChange
+  onPageChange,
+  scrollTargetRef
 }: ProgressiveServiceGridProps) {
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [loadingCardId, setLoadingCardId] = useState<string | null>(null);
@@ -73,12 +75,12 @@ export default function ProgressiveServiceGrid({
   
   // Only scroll when pagination is used (not on initial load or filter changes)
   useEffect(() => {
-    if (shouldScrollOnPageChange && gridRef.current) {
-      // Scroll to the top of the service cards container
-      gridRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (shouldScrollOnPageChange && scrollTargetRef?.current) {
+      // Scroll to the "Services near you" header without smooth scrolling
+      scrollTargetRef.current.scrollIntoView({ behavior: 'instant', block: 'start' });
       setShouldScrollOnPageChange(false); // Reset flag after scrolling
     }
-  }, [currentPage, shouldScrollOnPageChange]);
+  }, [currentPage, shouldScrollOnPageChange, scrollTargetRef]);
   
   // Generate page numbers to display
   // Handle card click to show loading state
@@ -122,7 +124,7 @@ export default function ProgressiveServiceGrid({
 
   return (
     <>
-      <div ref={gridRef} className={`gap-4 ${showMap ? 'flex flex-col' : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
+      <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {visibleGroups.map((group) => (
           <div
             key={group.orgId}
@@ -160,7 +162,7 @@ export default function ProgressiveServiceGrid({
               setCurrentPage(newPage);
             }}
             disabled={currentPage === 1}
-            className="btn-base btn-tertiary btn-sm"
+            className="btn-base btn-tertiary btn-sm transition-all duration-200 cursor-pointer hover:scale-105 hover:shadow-sm disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
             aria-label="Previous page"
           >
             Previous
@@ -179,10 +181,10 @@ export default function ProgressiveServiceGrid({
                     setShouldScrollOnPageChange(true);
                     setCurrentPage(newPage);
                   }}
-                  className={`px-3 py-1 text-sm rounded-md border ${
+                  className={`px-3 py-1 text-sm rounded-md border transition-all duration-200 cursor-pointer ${
                     currentPage === page
                       ? 'bg-brand-a text-brand-q border-brand-a'
-                      : 'border-brand-k hover:bg-brand-q'
+                      : 'border-brand-k hover:bg-brand-q hover:border-brand-a hover:scale-105 hover:shadow-sm'
                   }`}
                   aria-label={`Go to page ${page}`}
                   aria-current={currentPage === page ? 'page' : undefined}
@@ -201,7 +203,7 @@ export default function ProgressiveServiceGrid({
               setCurrentPage(newPage);
             }}
             disabled={currentPage === totalPages}
-            className="btn-base btn-tertiary btn-sm"
+            className="btn-base btn-tertiary btn-sm transition-all duration-200 cursor-pointer hover:scale-105 hover:shadow-sm disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
             aria-label="Next page"
           >
             Next

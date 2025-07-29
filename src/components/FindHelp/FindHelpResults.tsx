@@ -121,6 +121,7 @@ export default function FindHelpResults({
 }: Props) {
   const { location, updateRadius } = useLocation();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const filtersHeaderRef = useRef<HTMLDivElement>(null);
   
   const [showMap, setShowMap] = useState(initialFilters?.showMap || false);
   const [sortOrder, setSortOrder] = useState<'distance' | 'alpha'>(initialFilters?.sortOrder || 'distance');
@@ -218,9 +219,10 @@ export default function FindHelpResults({
   }, [filteredServices, location]);
 
   return (
-    <section className="flex flex-col lg:flex-row items-start px-4 sm:px-6 md:px-8 py-6 gap-6 max-w-7xl mx-auto h-auto lg:h-[calc(100vh-4rem)]">
-      <div className={`w-full ${showMap ? 'lg:w-1/2' : 'lg:w-full'} flex flex-col h-auto lg:h-full`}>
-        <div className="mb-4">
+    <section className="section-spacing">
+      <div className="page-container">
+        <div className="w-full flex flex-col gap-6">
+        <div ref={filtersHeaderRef} className="mb-4">
           <div className="flex justify-between items-baseline mb-2">
             <h1 className="text-xl font-bold">Services near you</h1>
             {!loading && !error && sortedGroups.length > 0 && (
@@ -267,7 +269,7 @@ export default function FindHelpResults({
         </div>
 
         {showMap && (
-          <div className="block lg:hidden w-full mb-4" data-testid="map-container">
+          <div className="w-full mb-4" data-testid="map-container">
             <GoogleMap
               center={
                 location && location.lat !== undefined && location.lng !== undefined
@@ -285,7 +287,7 @@ export default function FindHelpResults({
           </div>
         )}
 
-        <div ref={scrollContainerRef} className="flex-1 overflow-y-visible lg:overflow-y-auto pr-2">
+        <div ref={scrollContainerRef} className="flex-1">
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" role="status" aria-label="Loading"></div>
@@ -319,29 +321,12 @@ export default function FindHelpResults({
               batchSize={21}
               initialPage={currentPage}
               onPageChange={setCurrentPage}
+              scrollTargetRef={filtersHeaderRef}
             />
           )}
         </div>
-      </div>
-
-      {showMap && (
-        <div className="hidden lg:block w-full lg:w-1/2 mt-8 lg:mt-0 lg:sticky lg:top-[6.5rem] min-h-[400px]" data-testid="map-container">
-          <GoogleMap
-            center={
-              location && location.lat !== undefined && location.lng !== undefined
-                ? { lat: location.lat, lng: location.lng }
-                : null
-            }
-            markers={combinedMarkers}
-            zoom={13}
-            userLocation={
-              location && location.lat !== undefined && location.lng !== undefined
-                ? { lat: location.lat, lng: location.lng, radius: location.radius }
-                : null
-            }
-          />
         </div>
-      )}
+      </div>
     </section>
   );
 }

@@ -77,6 +77,8 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
       decodedOrgName,
       preview,
       formattedCategory,
+      categoryName,
+      subCategoryName,
       openingStatus,
       distanceText
     };
@@ -89,6 +91,8 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
     decodedOrgName,
     preview,
     formattedCategory,
+    categoryName,
+    subCategoryName,
     openingStatus,
     distanceText
   } = memoizedData;
@@ -114,7 +118,7 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
       } : {}}
     >
       <div className="flex justify-between items-start mb-2">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {service.organisation?.isVerified && (
             <span
               className="service-tag verified"
@@ -151,26 +155,36 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
         
         {/* Distance */}
         {distanceText && (
-          <span className="text-caption">{distanceText}</span>
+          <span className="text-caption !text-black">{distanceText}</span>
         )}
       </div>
 
       {/* Show organization name as primary title */}
       {decodedOrgName && (
-        <h2 className="card-title">{decodedOrgName}</h2>
+        <h2 className="card-title !text-black">{decodedOrgName}</h2>
       )}
 
       {/* Only show service name if it's different from organization name */}
       {decodedName && decodedName !== decodedOrgName && (
-        <h3 className="text-base font-medium mb-1 text-brand-l">{decodedName}</h3>
+        <h3 className="text-base font-medium mb-1 !text-black">{decodedName}</h3>
       )}
 
-      <p className="text-small mb-2">{formattedCategory}</p>
+      {/* Category and subcategory pills */}
+      <div className="mb-3">
+        <div className="flex flex-wrap gap-1">
+          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+            {categoryName}
+          </span>
+          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium !bg-brand-n !text-white">
+            {subCategoryName}
+          </span>
+        </div>
+      </div>
 
-      <div className="text-brand-l mb-2">
+      <div className="!text-black mb-2">
         <LazyMarkdownContent 
           content={isOpen ? service.description : preview} 
-          className="text-sm" 
+          className="text-sm !text-black" 
         />
       </div>
       
@@ -183,7 +197,7 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
               e.stopPropagation();
               onToggle();
             }}
-            className="btn-base btn-tertiary btn-sm"
+            className="btn-base btn-tertiary btn-sm transition-all duration-200 cursor-pointer hover:scale-105 hover:shadow-sm"
           >
             {isOpen ? 'Show less' : 'Read more'}
           </button>
@@ -192,8 +206,8 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
 
       {service.openTimes && service.openTimes.length > 0 ? (
         <div className="mt-3">
-          <p className="text-small font-semibold mb-1">Opening Times:</p>
-          <ul className="list-disc pl-5 text-sm">
+          <p className="text-small font-semibold mb-1 !text-black">Opening Times:</p>
+          <ul className="list-disc pl-5 text-sm !text-black">
             {(() => {
               // Group opening times by day and consolidate multiple sessions
               const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -241,12 +255,12 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
         </div>
       ) : (
         <div className="mt-3">
-          <p className="text-caption">No opening times available</p>
+          <p className="text-caption !text-black">No opening times available</p>
         </div>
       )}
 
       {!openingStatus.isOpen && openingStatus.nextOpen && (
-        <div className="text-small mt-2">
+        <div className="text-small mt-2 !text-black">
           Next open: {openingStatus.nextOpen.day} {openingStatus.nextOpen.time}
         </div>
       )}

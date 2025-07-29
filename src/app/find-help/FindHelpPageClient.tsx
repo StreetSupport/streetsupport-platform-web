@@ -288,11 +288,11 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
     <div className="min-h-screen bg-gray-50">
       {/* Breadcrumbs */}
       <div className="bg-brand-n py-4">
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="content-container px-6">
           <nav className="flex" aria-label="Breadcrumb">
             <ol className="inline-flex items-center space-x-1 md:space-x-3">
               <li className="inline-flex items-center">
-                <Link href="/" className="text-white hover:text-brand-q">
+                <Link href="/" className="!text-brand-e hover:!text-brand-e !important">
                   Home
                 </Link>
               </li>

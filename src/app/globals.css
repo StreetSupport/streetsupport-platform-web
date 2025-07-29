@@ -138,7 +138,7 @@
 
 /* Card System */
 .card {
-  @apply bg-white border border-brand-q rounded-md shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5;
+  @apply bg-white border border-brand-q rounded-md shadow-sm transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02];
 }
 
 .card-featured {
@@ -227,7 +227,7 @@
 
 /* Service Tags */
 .service-tag {
-  @apply inline-flex items-center px-2 py-1 rounded text-xs font-medium;
+  @apply inline-flex items-center justify-center px-3 py-1.5 rounded-full text-xs font-medium gap-1;
 }
 
 .service-tag.emergency {
@@ -235,7 +235,7 @@
 }
 
 .service-tag.verified {
-  @apply bg-brand-b text-white;
+  @apply bg-white text-brand-b border border-brand-b;
 }
 
 .service-tag.open {
