@@ -231,40 +231,47 @@ export default function FindHelpResults({
               </p>
             )}
           </div>
-          <FilterPanel
-            selectedCategory={selectedCategory}
-            selectedSubCategory={selectedSubCategory}
-            setSelectedCategory={setSelectedCategory}
-            setSelectedSubCategory={setSelectedSubCategory}
-            onResetFilters={handleResetFilters}
-          />
-          <div className="flex items-center flex-wrap gap-4 mt-4">
-            <div className="flex items-center gap-2">
-              <label htmlFor="sortOrder" className="text-sm font-medium">Sort by:</label>
-              <select
-                id="sortOrder"
-                className="border px-2 py-1 rounded"
-                value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value as 'distance' | 'alpha')}
-              >
-                <option value="distance">Distance</option>
-                <option value="alpha">Alphabetical</option>
-              </select>
+          <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
+            <FilterPanel
+              selectedCategory={selectedCategory}
+              selectedSubCategory={selectedSubCategory}
+              setSelectedCategory={setSelectedCategory}
+              setSelectedSubCategory={setSelectedSubCategory}
+              onResetFilters={handleResetFilters}
+            />
+            
+            <div className="border-t border-brand-a pt-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div>
+                  <label htmlFor="sortOrder" className="block text-sm font-medium text-brand-l mb-2">Sort by</label>
+                  <select
+                    id="sortOrder"
+                    className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-brand-a bg-white"
+                    value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value as 'distance' | 'alpha')}
+                  >
+                    <option value="distance">Distance</option>
+                    <option value="alpha">Alphabetical</option>
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="radius-filter" className="block text-sm font-medium text-brand-l mb-2">Search radius</label>
+                  <RadiusFilter
+                    selectedRadius={location?.radius || 5}
+                    onRadiusChange={updateRadius}
+                    className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-brand-a bg-white"
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => setShowMap(!showMap)}
+                    className="btn-base btn-primary btn-sm"
+                  >
+                    {showMap ? 'Hide map' : 'Show map'}
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <label htmlFor="radius-filter" className="text-sm font-medium">Search radius:</label>
-              <RadiusFilter
-                selectedRadius={location?.radius || 5}
-                onRadiusChange={updateRadius}
-                className="border px-2 py-1 rounded"
-              />
-            </div>
-            <button
-              onClick={() => setShowMap(!showMap)}
-              className="btn-base btn-primary btn-sm ml-auto"
-            >
-              {showMap ? 'Hide map' : 'Show map'}
-            </button>
           </div>
         </div>
 

@@ -3,6 +3,7 @@ import locations from '@/data/locations.json';
 import { notFound } from 'next/navigation';
 import Hero from '@/components/ui/Hero';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import LocationFindHelp from '@/components/Location/LocationFindHelp';
 
 export const dynamic = 'force-dynamic';
 
@@ -94,27 +95,22 @@ export default async function LocationPage(props) {
         </div>
       </section>
 
-      {/* ✅ Main Intro & Find Help Placeholder */}
+      {/* Find Help Tools */}
       <section className="py-12">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-2xl font-semibold mb-4">
-            You’re in {location.name}
-          </h2>
-          <p className="text-body">
-            This section will include search and support tools for finding help in {location.name}.
-          </p>
-          <div className="w-full h-64 bg-brand-q flex items-center justify-center text-brand-f">
-            [ Find Help Component Placeholder ]
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-semibold mb-4">
+              Find Support in {location.name}
+            </h2>
+            <p className="text-body max-w-3xl mx-auto">
+              Search for support services available near you. Use the filters below to find specific types of help, and see what's available on the map.
+            </p>
           </div>
-        </div>
-      </section>
-
-      <section className="py-12 bg-brand-q">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-2xl font-semibold mb-4">Map</h2>
-          <div className="w-full h-96 bg-brand-i flex items-center justify-center text-brand-f">
-            [ Map Placeholder ]
-          </div>
+          <LocationFindHelp 
+            locationName={location.name}
+            latitude={location.latitude}
+            longitude={location.longitude}
+          />
         </div>
       </section>
 

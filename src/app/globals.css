@@ -22,6 +22,82 @@
   --color-brand-s: #E1B500;
 }
 
+/* Loading animations */
+@keyframes loading-border {
+  0% {
+    border-color: var(--color-brand-a);
+    box-shadow: 0 0 5px rgba(56, 174, 142, 0.3);
+  }
+  25% {
+    border-color: var(--color-brand-b);
+    box-shadow: 0 0 10px rgba(11, 155, 117, 0.5);
+  }
+  50% {
+    border-color: var(--color-brand-a);
+    box-shadow: 0 0 15px rgba(56, 174, 142, 0.7);
+  }
+  75% {
+    border-color: var(--color-brand-b);
+    box-shadow: 0 0 10px rgba(11, 155, 117, 0.5);
+  }
+  100% {
+    border-color: var(--color-brand-a);
+    box-shadow: 0 0 5px rgba(56, 174, 142, 0.3);
+  }
+}
+
+@keyframes loading-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.01);
+  }
+}
+
+@keyframes loading-shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+/* Loading card styles */
+.loading-card {
+  position: relative;
+  border: 2px solid var(--color-brand-a) !important;
+  animation: loading-border 2s ease-in-out infinite, loading-pulse 1.5s ease-in-out infinite;
+  overflow: hidden;
+}
+
+.loading-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(56, 174, 142, 0.1),
+    transparent
+  );
+  background-size: 200px 100%;
+  animation: loading-shimmer 1.5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.loading-card > * {
+  position: relative;
+  z-index: 2;
+}
+
 /* Button System - Using Brand Colors Only */
 
 /* Base button styles */

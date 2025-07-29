@@ -105,17 +105,8 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
           onCardClick();
         }
       }}
-      className={`card card-compact ${isLoading ? 'animate-pulse border-transparent' : ''}`}
+      className={`card card-compact ${isLoading ? 'loading-card' : ''}`}
       aria-label={`View details for ${decodedName}`}
-      style={isLoading ? {
-        backgroundImage: `
-          linear-gradient(white, white),
-          conic-gradient(from 0deg, #10b981 0deg, #10b981 60deg, rgba(16, 185, 129, 0.3) 90deg, transparent 120deg, transparent 240deg, rgba(16, 185, 129, 0.3) 270deg, #10b981 300deg, #10b981 360deg)
-        `,
-        backgroundOrigin: 'border-box',
-        backgroundClip: 'padding-box, border-box',
-        animation: 'loading-border 1.5s ease-in-out infinite'
-      } : {}}
     >
       <div className="flex justify-between items-start mb-2">
         <div className="flex items-center gap-2 flex-wrap">
