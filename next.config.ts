@@ -11,12 +11,6 @@ const nextConfig = {
     // Enable modern image formats for better compression
     formats: ['image/avif', 'image/webp'],
     
-    // Default quality for images (75 is good balance of quality/size)
-    quality: 75,
-    
-    // Enable placeholder blur for better loading experience
-    placeholder: 'blur',
-    
     // Device sizes for responsive images
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
     
