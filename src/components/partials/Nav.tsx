@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import rawLocations from '@/data/locations.json';
@@ -21,8 +21,86 @@ export default function Nav() {
   const [mobileLocationsOpen, setMobileLocationsOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [mobileAboutOpen, setMobileAboutOpen] = useState(false);
+  const [focusedLocationIndex, setFocusedLocationIndex] = useState(-1);
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const aboutCloseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const locationsButtonRef = useRef<HTMLButtonElement>(null);
+  const locationsDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Group locations alphabetically
+  const groupedLocations = {
+    'A-F': locations.filter(loc => loc.name[0] >= 'A' && loc.name[0] <= 'F').sort((a, b) => a.name.localeCompare(b.name)),
+    'G-M': locations.filter(loc => loc.name[0] >= 'G' && loc.name[0] <= 'M').sort((a, b) => a.name.localeCompare(b.name)),
+    'N-S': locations.filter(loc => loc.name[0] >= 'N' && loc.name[0] <= 'S').sort((a, b) => a.name.localeCompare(b.name)),
+    'T-Z': locations.filter(loc => loc.name[0] >= 'T' && loc.name[0] <= 'Z').sort((a, b) => a.name.localeCompare(b.name))
+  };
+
+  const sortedLocations = locations.sort((a, b) => a.name.localeCompare(b.name));
+
+  // Handle keyboard navigation
+  const handleLocationsKeyDown = (e: React.KeyboardEvent) => {
+    if (!isLocationsOpen) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        setIsLocationsOpen(true);
+        setFocusedLocationIndex(0);
+      }
+      return;
+    }
+
+    switch (e.key) {
+      case 'Escape':
+        e.preventDefault();
+        setIsLocationsOpen(false);
+        setFocusedLocationIndex(-1);
+        locationsButtonRef.current?.focus();
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        setFocusedLocationIndex(prev => (prev + 1) % sortedLocations.length);
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setFocusedLocationIndex(prev => prev <= 0 ? sortedLocations.length - 1 : prev - 1);
+        break;
+      case 'Home':
+        e.preventDefault();
+        setFocusedLocationIndex(0);
+        break;
+      case 'End':
+        e.preventDefault();
+        setFocusedLocationIndex(sortedLocations.length - 1);
+        break;
+      case 'Enter':
+      case ' ':
+        if (focusedLocationIndex >= 0) {
+          const focusedLocation = sortedLocations[focusedLocationIndex];
+          if (focusedLocation) {
+            window.location.href = `/${focusedLocation.slug}`;
+          }
+        }
+        break;
+    }
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (locationsDropdownRef.current && !locationsDropdownRef.current.contains(event.target as Node) &&
+          locationsButtonRef.current && !locationsButtonRef.current.contains(event.target as Node)) {
+        setIsLocationsOpen(false);
+        setFocusedLocationIndex(-1);
+      }
+    };
+
+    if (isLocationsOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isLocationsOpen]);
 
   function handleMouseEnter() {
     if (closeTimeoutRef.current) {
@@ -105,27 +183,57 @@ export default function Nav() {
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
-              <button className="nav-link focus:outline-none">
+              <button 
+                ref={locationsButtonRef}
+                id="locations-button"
+                className="nav-link focus:outline-none focus:ring-2 focus:ring-brand-a rounded"
+                onKeyDown={handleLocationsKeyDown}
+                aria-haspopup="menu"
+                aria-expanded={isLocationsOpen}
+                aria-controls="locations-dropdown"
+              >
                 Locations
               </button>
 
               {isLocationsOpen && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[600px] bg-white border border-brand-f rounded-md shadow-lg z-50 p-4">
-                  <ul className="columns-1 sm:columns-2 md:columns-3 gap-4">
-                    {locations
-                      .sort((a, b) => a.name.localeCompare(b.name))
-                      .map(location => (
-                        <li key={location.id} className="break-inside-avoid mb-1">
-                          <Link
-                            href={`/${location.slug}`}
-                            className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded"
-                            onClick={handleLocationClick}
-                          >
-                            {location.name}
-                          </Link>
-                        </li>
-                      ))}
-                  </ul>
+                <div 
+                  ref={locationsDropdownRef}
+                  id="locations-dropdown"
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[500px] bg-white border border-brand-f rounded-md shadow-lg z-50 p-4"
+                  role="menu"
+                  aria-labelledby="locations-button"
+                  onKeyDown={handleLocationsKeyDown}
+                >
+                  <div className="grid grid-cols-2 gap-6">
+                    {Object.entries(groupedLocations).map(([groupName, groupLocations]) => (
+                      <div key={groupName} className="space-y-2">
+                        <h3 className="text-xs font-semibold text-brand-f uppercase tracking-wide border-b border-brand-q pb-1">
+                          {groupName}
+                        </h3>
+                        <ul className="space-y-1">
+                          {groupLocations.map((location, index) => {
+                            const globalIndex = sortedLocations.findIndex(loc => loc.id === location.id);
+                            const isFocused = globalIndex === focusedLocationIndex;
+                            return (
+                              <li key={location.id}>
+                                <Link
+                                  href={`/${location.slug}`}
+                                  className={`block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded ${
+                                    isFocused ? 'bg-brand-i text-brand-k ring-2 ring-brand-a' : ''
+                                  }`}
+                                  onClick={handleLocationClick}
+                                  role="menuitem"
+                                  tabIndex={-1}
+                                >
+                                  {location.name}
+                                </Link>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -148,7 +256,7 @@ export default function Nav() {
                     <li>
                       <Link
                         href="/about/our-team"
-                        className="block px-4 py-2 text-sm text-brand-l hover:bg-brand-i hover:text-brand-k transition-colors duration-200"
+                        className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded"
                         onClick={handleAboutClick}
                       >
                         Our Team
@@ -157,7 +265,7 @@ export default function Nav() {
                     <li>
                       <Link
                         href="/about/our-trustees"
-                        className="block px-4 py-2 text-sm text-brand-l hover:bg-brand-i hover:text-brand-k transition-colors duration-200"
+                        className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded"
                         onClick={handleAboutClick}
                       >
                         Our Trustees
@@ -166,7 +274,7 @@ export default function Nav() {
                     <li>
                       <Link
                         href="/about/privacy-and-data"
-                        className="block px-4 py-2 text-sm text-brand-l hover:bg-brand-i hover:text-brand-k transition-colors duration-200"
+                        className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded"
                         onClick={handleAboutClick}
                       >
                         Privacy and Data
@@ -175,7 +283,7 @@ export default function Nav() {
                     <li>
                       <Link
                         href="/about/jobs"
-                        className="block px-4 py-2 text-sm text-brand-l hover:bg-brand-i hover:text-brand-k transition-colors duration-200"
+                        className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded"
                         onClick={handleAboutClick}
                       >
                         Jobs
@@ -184,7 +292,7 @@ export default function Nav() {
                     <li>
                       <Link
                         href="/about/impact"
-                        className="block px-4 py-2 text-sm text-brand-l hover:bg-brand-i hover:text-brand-k transition-colors duration-200"
+                        className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded"
                         onClick={handleAboutClick}
                       >
                         Impact
@@ -193,7 +301,7 @@ export default function Nav() {
                     <li>
                       <Link
                         href="/contact"
-                        className="block px-4 py-2 text-sm text-brand-l hover:bg-brand-i hover:text-brand-k transition-colors duration-200"
+                        className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded"
                         onClick={handleAboutClick}
                       >
                         Contact
@@ -213,27 +321,38 @@ export default function Nav() {
 
           <button
             onClick={() => setMobileLocationsOpen(prev => !prev)}
-            className="w-full text-left mobile-nav-link text-small font-semibold mt-2"
+            className="w-full text-left mobile-nav-link text-small font-semibold mt-2 focus:outline-none focus:ring-2 focus:ring-brand-a rounded"
+            aria-expanded={mobileLocationsOpen}
+            aria-controls="mobile-locations-menu"
+            aria-haspopup="menu"
           >
             Locations
           </button>
 
           {mobileLocationsOpen && (
-            <ul className="mt-2 space-y-1 ml-4">
-              {locations
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map(location => (
-                  <li key={location.id}>
-                    <Link
-                      href={`/${location.slug}`}
-                      className="block py-2 px-3 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200"
-                      onClick={handleLocationClick}
-                    >
-                      {location.name}
-                    </Link>
-                  </li>
-                ))}
-            </ul>
+            <div id="mobile-locations-menu" role="menu" className="mt-2 ml-4">
+              {Object.entries(groupedLocations).map(([groupName, groupLocations]) => (
+                <div key={groupName} className="mb-4">
+                  <h3 className="text-xs font-semibold text-brand-f uppercase tracking-wide mb-2 px-3">
+                    {groupName}
+                  </h3>
+                  <ul className="space-y-1">
+                    {groupLocations.map(location => (
+                      <li key={location.id}>
+                        <Link
+                          href={`/${location.slug}`}
+                          className="block py-2 px-3 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded focus:outline-none focus:ring-2 focus:ring-brand-a min-h-[44px] flex items-center"
+                          onClick={handleLocationClick}
+                          role="menuitem"
+                        >
+                          {location.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
           )}
 
           <Link href="/resources" className="mobile-nav-link">Resources</Link>

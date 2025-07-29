@@ -14,30 +14,66 @@ export default function SiteFooter() {
     setIsSubmitting(true);
     
     try {
-      // Create form data
-      const formData = new FormData();
-      formData.append('EMAIL', email);
-      formData.append('u', 'da9a1d4bb2b1a69a981456972');
-      formData.append('id', 'c966413ba3');
-      
-      // Submit to Mailchimp
-      const response = await fetch('https://streetsupport.us12.list-manage.com/subscribe/post-json?u=da9a1d4bb2b1a69a981456972&id=c966413ba3&c=?', {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          EMAIL: email,
-          u: 'da9a1d4bb2b1a69a981456972',
-          id: 'c966413ba3'
-        })
+      // Use JSONP approach for Mailchimp subscription
+      const callbackName = `mailchimpCallback_${Date.now()}`;
+      const params = new URLSearchParams({
+        u: 'da9a1d4bb2b1a69a981456972',
+        id: 'c966413ba3',
+        EMAIL: email,
+        c: callbackName
       });
       
-      setStatus('success');
-      setEmail('');
+      // Create a promise that resolves when the JSONP callback is called
+      const jsonpPromise = new Promise<{ result: string; msg: string }>((resolve, reject) => {
+        // Set up the callback function
+        (window as any)[callbackName] = (data: { result: string; msg: string }) => {
+          resolve(data);
+          // Clean up
+          delete (window as any)[callbackName];
+          document.head.removeChild(script);
+        };
+        
+        // Create and append the script tag
+        const script = document.createElement('script');
+        script.src = `https://streetsupport.us12.list-manage.com/subscribe/post-json?${params.toString()}`;
+        script.onerror = () => {
+          reject(new Error('Network error'));
+          delete (window as any)[callbackName];
+          document.head.removeChild(script);
+        };
+        document.head.appendChild(script);
+        
+        // Set a timeout to prevent hanging
+        setTimeout(() => {
+          if ((window as any)[callbackName]) {
+            reject(new Error('Timeout'));
+            delete (window as any)[callbackName];
+            if (document.head.contains(script)) {
+              document.head.removeChild(script);
+            }
+          }
+        }, 10000);
+      });
+      
+      const result = await jsonpPromise;
+      
+      if (result.result === 'success') {
+        setStatus('success');
+        setEmail('');
+        // Reset status after 5 seconds
+        setTimeout(() => setStatus('idle'), 5000);
+      } else {
+        // Handle Mailchimp error messages
+        console.error('Mailchimp error:', result.msg);
+        setStatus('error');
+        // Reset status after 5 seconds
+        setTimeout(() => setStatus('idle'), 5000);
+      }
     } catch (error) {
+      console.error('Newsletter subscription error:', error);
       setStatus('error');
+      // Reset status after 5 seconds
+      setTimeout(() => setStatus('idle'), 5000);
     } finally {
       setIsSubmitting(false);
     }
@@ -100,7 +136,8 @@ export default function SiteFooter() {
                     placeholder="Enter your email address"
                     required
                     disabled={isSubmitting}
-                    className="w-full px-4 py-3 border border-brand-f rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-transparent text-brand-k placeholder-brand-f text-sm"
+                    className="w-full px-4 py-3 border border-brand-f rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-transparent text-brand-q placeholder-brand-f text-sm"
+                    suppressHydrationWarning
                   />
                 </div>
                 <button

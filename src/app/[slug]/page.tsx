@@ -79,11 +79,11 @@ export default async function LocationPage(props) {
           <h2 className="text-2xl font-bold mb-4 text-black">Help someone sleeping rough</h2>
           <p className="mb-3 text-black">
             If you are worried about someone you've seen sleeping rough anywhere in {location.name}, you can inform 
-            <a href="https://thestreetlink.org.uk" className="text-brand-a hover:text-brand-b underline font-semibold"> StreetLink</a>.
+            <a href="https://thestreetlink.org.uk" className="text-brand-a hover:text-brand-b underline font-semibold">StreetLink</a>.
           </p>
           <p className="mb-6 text-black">
             If the person is in immediate danger or needs urgent care, please call 
-            <a href="tel:999" className="text-red-600 hover:text-red-700 underline font-semibold"> 999</a>.
+            <a href="tel:999" className="text-red-600 hover:text-red-700 underline font-semibold">999</a>.
           </p>
           <Link
             href={`/${location.slug}/advice`}
@@ -136,11 +136,11 @@ export default async function LocationPage(props) {
           <h2 className="text-2xl font-semibold mb-4">Get in touch</h2>
           <p className="mb-4">
             If you’d like to get involved or have suggestions, please contact us at 
-            <a href={`mailto:${slug}@streetsupport.net`} className="text-brand-a hover:text-brand-b underline"> {slug}@streetsupport.net</a>.
+            <a href={`mailto:${slug}@streetsupport.net`} className="text-brand-a hover:text-brand-b underline">{slug}@streetsupport.net</a>.
           </p>
           <p>
             We are looking for businesses and organisations to 
-            <Link href="/give-help/business-support/" className="text-brand-a hover:text-brand-b underline"> support us</Link> so we can keep improving this resource.
+            <Link href="/give-help/business-support/" className="text-brand-a hover:text-brand-b underline">support us</Link> so we can keep improving this resource.
           </p>
         </div>
       </section>

@@ -92,9 +92,9 @@ export default function AboutPage() {
               <section>
                 <h2 className="heading-2 mb-6 text-brand-l">Find out more</h2>
                 <p className="text-body">You can find out more about our progress on our
-                  <a href="https://www.facebook.com/streetsupport/" className="text-brand-a hover:text-brand-b underline"> Facebook page</a>,
-                  <a href="https://bsky.app/profile/streetsupport.net" className="text-brand-a hover:text-brand-b underline"> Bluesky feed</a>, or you can
-                  <a href="https://streetsupport.us12.list-manage.com/subscribe?u=da9a1d4bb2b1a69a981456972&id=c966413ba3" className="text-brand-a hover:text-brand-b underline"> subscribe to our newsletter</a>.</p>
+                  <a href="https://www.facebook.com/streetsupport/" className="text-brand-a hover:text-brand-b underline">Facebook page</a>,
+                  <a href="https://bsky.app/profile/streetsupport.net" className="text-brand-a hover:text-brand-b underline">Bluesky feed</a>, or you can
+                  <a href="https://streetsupport.us12.list-manage.com/subscribe?u=da9a1d4bb2b1a69a981456972&id=c966413ba3" className="text-brand-a hover:text-brand-b underline">subscribe to our newsletter</a>.</p>
               </section>
             </div>
           </div>

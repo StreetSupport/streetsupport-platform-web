@@ -24,13 +24,13 @@ export default function ContactPage() {
         <div className="text-center mb-8 p-4 bg-brand-e border border-brand-j rounded">
           <p className="font-semibold">
             <strong>Please note that we do not run any frontline services. Please check for suitable organisations in the
-              <Link href="/find-help/" className="text-brand-a hover:text-brand-b underline"> Find Help</Link> section if you are experiencing homelessness and need support.</strong>
+              <Link href="/find-help/" className="text-brand-a hover:text-brand-b underline">Find Help</Link> section if you are experiencing homelessness and need support.</strong>
           </p>
         </div>
 
         <h2 className="heading-4">General enquiries</h2>
         <p className="mb-8">If you have any questions, ideas, or would like to know more about us, you can get in touch at
-          <a href="mailto:info@streetsupport.net" className="text-brand-a hover:text-brand-b underline"> info@streetsupport.net</a>.</p>
+          <a href="mailto:info@streetsupport.net" className="text-brand-a hover:text-brand-b underline">info@streetsupport.net</a>.</p>
 
         <h2 className="heading-4">Locations</h2>
         <p className="mb-4">For questions specific to one of our locations, please contact our city admins at one of the following addresses:</p>
@@ -70,8 +70,8 @@ export default function ContactPage() {
 
         <h2 className="heading-4">Join the conversation</h2>
         <p>You can join the conversation on
-          <a href="https://x.com/streetsupportuk" className="text-brand-a hover:text-brand-b underline"> X</a>,
-          <a href="https://www.facebook.com/streetsupport/" className="text-brand-a hover:text-brand-b underline"> Facebook</a> or subscribe to our <a href="http://eepurl.com/gvtAjT" className="text-brand-a hover:text-brand-b underline">UK Network mailing list</a>.</p>
+          <a href="https://x.com/streetsupportuk" className="text-brand-a hover:text-brand-b underline">X</a>,
+          <a href="https://www.facebook.com/streetsupport/" className="text-brand-a hover:text-brand-b underline">Facebook</a> or subscribe to our <a href="http://eepurl.com/gvtAjT" className="text-brand-a hover:text-brand-b underline">UK Network mailing list</a>.</p>
       </div>
       </div>
     </>

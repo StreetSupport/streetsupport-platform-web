@@ -68,17 +68,17 @@ export default async function Home() {
             <div>
               <div className="text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.organisations}</div>
               <div className="text-xl md:text-2xl font-light">Organisations</div>
-              <div className="text-lg md:text-xl font-light">Listed</div>
+              <div className="text-lg md:text-xl font-light text-brand-k">Listed</div>
             </div>
             <div>
               <div className="text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.services}</div>
               <div className="text-xl md:text-2xl font-light">Services</div>
-              <div className="text-lg md:text-xl font-light">Provided</div>
+              <div className="text-lg md:text-xl font-light text-brand-k">Provided</div>
             </div>
             <div>
               <div className="text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.partnerships}</div>
               <div className="text-xl md:text-2xl font-light">Homelessness Partnerships</div>
-              <div className="text-lg md:text-xl font-light">Supported</div>
+              <div className="text-lg md:text-xl font-light text-brand-k">Supported</div>
             </div>
           </div>
         </div>
