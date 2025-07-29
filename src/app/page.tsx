@@ -3,7 +3,31 @@ import Link from 'next/link';
 import HomepageMap from '@/components/Homepage/HomepageMap';
 import Hero from '@/components/ui/Hero';
 
-export default function Home() {
+async function getStatistics() {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/stats`, {
+      next: { revalidate: 60 } // Revalidate every 60 seconds
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch statistics');
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching statistics:', error);
+    // Return default values if fetch fails
+    return {
+      organisations: 0,
+      services: 0,
+      partnerships: 0
+    };
+  }
+}
+
+export default async function Home() {
+  const stats = await getStatistics();
   return (
     <main className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -40,14 +64,21 @@ export default function Home() {
       {/* Statistics Section */}
       <section className="section-spacing px-4 bg-brand-a text-white">
         <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
-              <div className="text-5xl md:text-6xl font-bold mb-2 text-brand-d">1815</div>
+              <div className="text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.organisations}</div>
               <div className="text-xl md:text-2xl font-light">Organisations</div>
+              <div className="text-lg md:text-xl font-light">Listed</div>
             </div>
             <div>
-              <div className="text-5xl md:text-6xl font-bold mb-2 text-brand-d">4567</div>
+              <div className="text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.services}</div>
               <div className="text-xl md:text-2xl font-light">Services</div>
+              <div className="text-lg md:text-xl font-light">Provided</div>
+            </div>
+            <div>
+              <div className="text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.partnerships}</div>
+              <div className="text-xl md:text-2xl font-light">Homelessness Partnerships</div>
+              <div className="text-lg md:text-xl font-light">Supported</div>
             </div>
           </div>
         </div>

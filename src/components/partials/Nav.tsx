@@ -7,12 +7,13 @@ import rawLocations from '@/data/locations.json';
 import { clearSearchState } from '@/utils/findHelpStateUtils';
 
 interface Location {
-  id: number;
+  id: string;
   name: string;
   slug: string;
+  isPublic: boolean;
 }
 
-const locations = rawLocations as unknown as Location[];
+const locations = rawLocations.filter(loc => loc.isPublic) as Location[];
 
 export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
