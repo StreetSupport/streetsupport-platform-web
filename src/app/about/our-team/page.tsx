@@ -16,13 +16,14 @@ export default function OurTeamPage() {
       {/* Header */}
       <div className="bg-brand-i py-12">
         <div className="max-w-6xl mx-auto px-6">
-          <h1 className="heading-2 text-white mb-4">Our Core Team</h1>
+          <h1 className="heading-2 text-white mb-4">The Street Support Network Team</h1>
         </div>
       </div>
 
       {/* Core Team Section */}
       <div className="max-w-6xl mx-auto p-6">
         <div className="mb-16">
+          <h1 className="heading-3 text-white mb-4">Our Core Team</h1>
           <p className="text-lead mb-8">
             We're your everyday people, your first port of call. We cover a fair bit between us, so please get in touch with whatever you need.
           </p>
@@ -98,7 +99,7 @@ export default function OurTeamPage() {
 
       {/* Partnership Coordinators Section */}
       <div className="mb-16">
-        <h1 className="heading-2 mb-4">Our Partnership Co-ordinators</h1>
+        <h1 className="heading-3 mb-4">Our Partnership Co-ordinators</h1>
         <p className="text-lead mb-8">
           Based within their respective areas but with one foot in our door, our partnership coordinators work alongside us to build local networks and continually support the homelessness sector in their locations.
         </p>
@@ -130,7 +131,7 @@ export default function OurTeamPage() {
 
       {/* Location Contacts Section */}
       <div className="mb-16">
-        <h1 className="heading-2 mb-4">Our location's contacts</h1>
+        <h1 className="heading-3 mb-4">Our location's contacts</h1>
         <p className="text-lead mb-8">
           We're so lucky to be supported by a host of brilliant people who manage their local Street Support networks. If your query is about a specific location, get in touch with them - you'll be in great hands.
         </p>

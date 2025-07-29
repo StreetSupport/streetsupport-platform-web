@@ -1,47 +1,28 @@
 import Link from 'next/link';
+import Breadcrumbs from '@/components/ui/Breadcrumbs';
 
 export default function ImpactPage() {
   return (
     <>
-      {/* Breadcrumbs */}
-      <div className="bg-brand-n py-4">
-        <div className="max-w-6xl mx-auto px-6">
-          <nav className="flex" aria-label="Breadcrumb">
-            <ol className="inline-flex items-center space-x-1 md:space-x-3">
-              <li className="inline-flex items-center">
-                <Link href="/" className="text-white hover:text-brand-q">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <div className="flex items-center">
-                  <span className="mx-2 text-white">/</span>
-                  <Link href="/about" className="text-white hover:text-brand-q">
-                    About
-                  </Link>
-                </div>
-              </li>
-              <li aria-current="page">
-                <div className="flex items-center">
-                  <span className="mx-2 text-white">/</span>
-                  <span className="text-white">Impact</span>
-                </div>
-              </li>
-            </ol>
-          </nav>
-        </div>
-      </div>
+      <Breadcrumbs 
+        items={[
+          { href: "/", label: "Home" },
+          { href: "/about", label: "About Street Support" },
+          { label: "Impact", current: true }
+        ]} 
+      />
 
       {/* Header */}
-      <div className="bg-brand-i py-12">
-        <div className="max-w-6xl mx-auto px-6">
-          <h1 className="heading-2 text-white">Impact</h1>
+      <section className="bg-brand-i py-12">
+        <div className="page-container">
+          <h1 className="heading-1 text-white">Impact</h1>
         </div>
-      </div>
+      </section>
 
       {/* Content */}
-      <div className="max-w-6xl mx-auto p-6">
-        <div className="text-center">
+      <section className="section-spacing">
+        <div className="page-container">
+          <div className="text-center">
         <p className="text-lead mb-8">
           Our mission is to make it easier for anyone experiencing homelessness to get the help they need. We connect organisations that provide services, with individuals and businesses that want to do something to help. Here are the latest key facts and examples of how Street Support is making an impact.
         </p>
@@ -124,8 +105,9 @@ export default function ImpactPage() {
             </div>
           </div>
         </section>
+          </div>
         </div>
-      </div>
+      </section>
     </>
   );
 }

@@ -1,145 +1,128 @@
 import Link from 'next/link';
+import Breadcrumbs from '@/components/ui/Breadcrumbs';
 
 export default function DataProtectionPolicyPage() {
   return (
     <>
-      {/* Breadcrumbs */}
-      <div className="bg-brand-n py-4">
-        <div className="max-w-4xl mx-auto px-6">
-          <nav className="flex" aria-label="Breadcrumb">
-            <ol className="inline-flex items-center space-x-1 md:space-x-3">
-              <li className="inline-flex items-center">
-                <Link href="/" className="text-white hover:text-brand-q">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <div className="flex items-center">
-                  <span className="mx-2 text-white">/</span>
-                  <Link href="/about" className="text-white hover:text-brand-q">
-                    About Street Support
-                  </Link>
-                </div>
-              </li>
-              <li>
-                <div className="flex items-center">
-                  <span className="mx-2 text-white">/</span>
-                  <Link href="/about/privacy-and-data" className="text-white hover:text-brand-q">
-                    Privacy and Data
-                  </Link>
-                </div>
-              </li>
-              <li aria-current="page">
-                <div className="flex items-center">
-                  <span className="mx-2 text-white">/</span>
-                  <span className="text-white">Data Protection Policy</span>
-                </div>
-              </li>
-            </ol>
-          </nav>
-        </div>
-      </div>
+      <Breadcrumbs 
+        items={[
+          { href: "/", label: "Home" },
+          { href: "/about", label: "About Street Support" },
+          { href: "/about/privacy-and-data", label: "Privacy and Data" },
+          { label: "Data Protection Policy", current: true }
+        ]} 
+      />
 
       {/* Header */}
-      <div className="bg-brand-i py-12">
-        <div className="max-w-4xl mx-auto px-6">
-          <h1 className="heading-2 text-white">Data Protection Policy</h1>
+      <section className="bg-brand-i py-12">
+        <div className="content-container">
+          <h1 className="heading-1 text-white">Data Protection Policy</h1>
         </div>
-      </div>
+      </section>
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="prose max-w-none">
-        <h2 className="heading-3 mb-4">1. Purpose</h2>
-        <p>Street Support Network (Street Support Network) is committed to protecting the personal data of its employees, volunteers, partners, and service users. This policy outlines how we comply with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018, ensuring that personal data is handled lawfully, transparently, and securely.</p>
+      <section className="section-spacing">
+        <div className="content-container">
+          <div className="prose-content max-w-none">
+            <div className="space-y-12">
+              <section>
+                <h2 className="heading-2 mb-6 text-brand-l">1. Purpose</h2>
+                <p className="text-body">Street Support Network (Street Support Network) is committed to protecting the personal data of its employees, volunteers, partners, and service users. This policy outlines how we comply with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018, ensuring that personal data is handled lawfully, transparently, and securely.</p>
+              </section>
 
-        <h2 className="heading-3 mb-4">2. Scope</h2>
-        <p>This policy applies to all personal data processed by Street Support Network, including data relating to employees, volunteers, partners, and service users. It covers both electronic and physical records across all Street Support Network operations, including data processed through the Street Support Network Virtual Assistant (VA).</p>
+              <section>
+                <h2 className="heading-2 mb-6 text-brand-l">2. Scope</h2>
+                <p className="text-body">This policy applies to all personal data processed by Street Support Network, including data relating to employees, volunteers, partners, and service users. It covers both electronic and physical records across all Street Support Network operations, including data processed through the Street Support Network Virtual Assistant (VA).</p>
+              </section>
 
-        <h2 className="heading-3 mb-4">3. Key Principles</h2>
-        <p>Street Support Network processes personal data in line with the following principles:</p>
-        <ol className="list-decimal pl-6 space-y-4">
-          <li>
-            <strong>Lawfulness, Fairness, and Transparency:</strong>
-            <ul className="list-disc pl-6 mt-2">
-              <li>Personal data is processed lawfully and in a transparent manner.</li>
-            </ul>
-          </li>
-          <li>
-            <strong>Purpose Limitation:</strong>
-            <ul className="list-disc pl-6 mt-2">
-              <li>Data is collected for specific, explicit, and legitimate purposes and not further processed in a way incompatible with those purposes.</li>
-            </ul>
-          </li>
-          <li>
-            <strong>Data Minimisation:</strong>
-            <ul className="list-disc pl-6 mt-2">
-              <li>Only data necessary for the purposes described is collected and processed.</li>
-            </ul>
-          </li>
-          <li>
-            <strong>Accuracy:</strong>
-            <ul className="list-disc pl-6 mt-2">
-              <li>Data is accurate and kept up-to-date. Inaccurate data is rectified or deleted promptly.</li>
-            </ul>
-          </li>
-          <li>
-            <strong>Storage Limitation:</strong>
-            <ul className="list-disc pl-6 mt-2">
-              <li>Personal data is retained only for as long as necessary and securely destroyed thereafter.</li>
-            </ul>
-          </li>
-          <li>
-            <strong>Security:</strong>
-            <ul className="list-disc pl-6 mt-2">
-              <li>Appropriate measures protect data against unauthorized access, loss, or destruction.</li>
-            </ul>
-          </li>
-          <li>
-            <strong>Accountability:</strong>
-            <ul className="list-disc pl-6 mt-2">
-              <li>Street Support Network demonstrates compliance with data protection obligations through appropriate policies, training, and documentation.</li>
-            </ul>
-          </li>
-        </ol>
+              <section>
+                <h2 className="heading-2 mb-6 text-brand-l">3. Key Principles</h2>
+                <p className="text-body mb-6">Street Support Network processes personal data in line with the following principles:</p>
+                <div className="space-y-6">
+                  <div className="border-l-4 border-brand-e pl-6">
+                    <h3 className="heading-4 mb-2 text-brand-l">Lawfulness, Fairness, and Transparency</h3>
+                    <p className="text-body">Personal data is processed lawfully and in a transparent manner.</p>
+                  </div>
+                  <div className="border-l-4 border-brand-e pl-6">
+                    <h3 className="heading-4 mb-2 text-brand-l">Purpose Limitation</h3>
+                    <p className="text-body">Data is collected for specific, explicit, and legitimate purposes and not further processed in a way incompatible with those purposes.</p>
+                  </div>
+                  <div className="border-l-4 border-brand-e pl-6">
+                    <h3 className="heading-4 mb-2 text-brand-l">Data Minimisation</h3>
+                    <p className="text-body">Only data necessary for the purposes described is collected and processed.</p>
+                  </div>
+                  <div className="border-l-4 border-brand-e pl-6">
+                    <h3 className="heading-4 mb-2 text-brand-l">Accuracy</h3>
+                    <p className="text-body">Data is accurate and kept up-to-date. Inaccurate data is rectified or deleted promptly.</p>
+                  </div>
+                  <div className="border-l-4 border-brand-e pl-6">
+                    <h3 className="heading-4 mb-2 text-brand-l">Storage Limitation</h3>
+                    <p className="text-body">Personal data is retained only for as long as necessary and securely destroyed thereafter.</p>
+                  </div>
+                  <div className="border-l-4 border-brand-e pl-6">
+                    <h3 className="heading-4 mb-2 text-brand-l">Security</h3>
+                    <p className="text-body">Appropriate measures protect data against unauthorized access, loss, or destruction.</p>
+                  </div>
+                  <div className="border-l-4 border-brand-e pl-6">
+                    <h3 className="heading-4 mb-2 text-brand-l">Accountability</h3>
+                    <p className="text-body">Street Support Network demonstrates compliance with data protection obligations through appropriate policies, training, and documentation.</p>
+                  </div>
+                </div>
+              </section>
 
-        <h2 className="heading-3 mb-4">4. Roles and Responsibilities</h2>
-        <ul className="list-disc pl-6 space-y-4">
-          <li>
-            <strong>Employees and Volunteers:</strong>
-            <ul className="list-disc pl-6 mt-2">
-              <li>All staff and volunteers must handle personal data responsibly and in line with this policy.</li>
-              <li>Report any data breaches or concerns to the designated contact immediately.</li>
-            </ul>
-          </li>
-          <li>
-            <strong>Data Protection Lead (DPL):</strong>
-            <ul className="list-disc pl-6 mt-2">
-              <li>As a small charity, Street Support Network does not require a Data Protection Officer but designates a member of staff as the Data Protection Lead. The DPL oversees compliance, manages data requests, and handles data breaches. The DPL is the Managing Director of Street Support Network.</li>
-            </ul>
-          </li>
-        </ul>
+              <section>
+                <h2 className="heading-2 mb-6 text-brand-l">4. Roles and Responsibilities</h2>
+                <div className="space-y-6">
+                  <div className="bg-brand-q p-6 rounded-lg">
+                    <h3 className="heading-4 mb-3 text-brand-l">Employees and Volunteers</h3>
+                    <ul className="list-disc pl-6 space-y-2 text-body">
+                      <li>All staff and volunteers must handle personal data responsibly and in line with this policy.</li>
+                      <li>Report any data breaches or concerns to the designated contact immediately.</li>
+                    </ul>
+                  </div>
+                  <div className="bg-brand-q p-6 rounded-lg">
+                    <h3 className="heading-4 mb-3 text-brand-l">Data Protection Lead (DPL)</h3>
+                    <p className="text-body">As a small charity, Street Support Network does not require a Data Protection Officer but designates a member of staff as the Data Protection Lead. The DPL oversees compliance, manages data requests, and handles data breaches. The DPL is the Managing Director of Street Support Network.</p>
+                  </div>
+                </div>
+              </section>
 
-        <h2 className="heading-3 mb-4">5. Lawful Basis for Processing</h2>
-        <p>Street Support Network processes personal data under one or more of the following lawful bases:</p>
-        <ul className="list-disc pl-6 space-y-1">
-          <li>Consent: Individuals have given clear consent.</li>
-          <li>Contract: Data is necessary to fulfill a contract or agreement.</li>
-          <li>Legal Obligation: Processing is necessary to comply with legal requirements.</li>
-          <li>Legitimate Interests: Processing is necessary for Street Support Network's legitimate interests and does not override individuals' rights.</li>
-        </ul>
-        <p>For the Virtual Assistant, processing is based on legitimate interest (for matching individuals with services) and explicit consent (for special category data such as health or support needs).</p>
+              <section>
+                <h2 className="heading-2 mb-6 text-brand-l">5. Lawful Basis for Processing</h2>
+                <p className="text-body mb-4">Street Support Network processes personal data under one or more of the following lawful bases:</p>
+                <div className="grid md:grid-cols-2 gap-4 mb-6">
+                  <div className="border border-brand-q p-4 rounded-lg">
+                    <h4 className="font-semibold text-brand-l mb-2">Consent</h4>
+                    <p className="text-body text-sm">Individuals have given clear consent.</p>
+                  </div>
+                  <div className="border border-brand-q p-4 rounded-lg">
+                    <h4 className="font-semibold text-brand-l mb-2">Contract</h4>
+                    <p className="text-body text-sm">Data is necessary to fulfill a contract or agreement.</p>
+                  </div>
+                  <div className="border border-brand-q p-4 rounded-lg">
+                    <h4 className="font-semibold text-brand-l mb-2">Legal Obligation</h4>
+                    <p className="text-body text-sm">Processing is necessary to comply with legal requirements.</p>
+                  </div>
+                  <div className="border border-brand-q p-4 rounded-lg">
+                    <h4 className="font-semibold text-brand-l mb-2">Legitimate Interests</h4>
+                    <p className="text-body text-sm">Processing is necessary for Street Support Network's legitimate interests and does not override individuals' rights.</p>
+                  </div>
+                </div>
+                <p className="text-body">For the Virtual Assistant, processing is based on legitimate interest (for matching individuals with services) and explicit consent (for special category data such as health or support needs).</p>
+              </section>
 
-        <h2 className="heading-3 mb-4">6. Data Transfers & Third-Party Processing</h2>
-        <p>Street Support Network works with third-party providers to ensure the highest level of data security and compliance. This includes our partnership with IBM Watsonx, which powers the Virtual Assistant (VA).</p>
-        <ul className="list-disc pl-6 space-y-1">
-          <li>No personally identifiable information (PII) is collected or stored by the VA.</li>
-          <li>Any data processed is handled using private variables and is deleted after the session ends.</li>
-          <li>Anonymised data may be retained for statistical analysis but cannot be linked back to individuals.</li>
-          <li>IBM Watsonx follows the UK extension of the Data Privacy Framework, ensuring compliance with UK GDPR and international data protection laws.</li>
-          <li>Data is stored securely within the UK/EU, and no personal data is transferred outside these jurisdictions.</li>
-        </ul>
-        <p>Street Support Network reviews third-party compliance documentation regularly to ensure ongoing adherence to data protection standards.</p>
+              <section>
+                <h2 className="heading-2 mb-6 text-brand-l">6. Data Transfers & Third-Party Processing</h2>
+                <p className="text-body mb-4">Street Support Network works with third-party providers to ensure the highest level of data security and compliance. This includes our partnership with IBM Watsonx, which powers the Virtual Assistant (VA).</p>
+                <ul className="list-disc pl-6 space-y-3 text-body">
+                  <li>No personally identifiable information (PII) is collected or stored by the VA.</li>
+                  <li>Any data processed is handled using private variables and is deleted after the session ends.</li>
+                  <li>Anonymised data may be retained for statistical analysis but cannot be linked back to individuals.</li>
+                  <li>IBM Watsonx follows the UK extension of the Data Privacy Framework, ensuring compliance with UK GDPR and international data protection laws.</li>
+                  <li>Data is stored securely within the UK/EU, and no personal data is transferred outside these jurisdictions.</li>
+                </ul>
+                <p className="text-body mt-4">Street Support Network reviews third-party compliance documentation regularly to ensure ongoing adherence to data protection standards.</p>
+              </section>
 
         <h2 className="heading-3 mb-4">7. Data Subject Rights & Subject Access Requests (SARs)</h2>
         <p>Individuals have the following rights regarding their personal data:</p>
@@ -241,9 +224,13 @@ export default function DataProtectionPolicyPage() {
         <p>This policy is reviewed annually or when significant changes to data protection laws occur.</p>
         <p>For any questions or concerns, please contact <a href="mailto:admin@streetsupport.net" className="text-blue-600 hover:text-blue-800 underline">admin@streetsupport.net</a>.</p>
         <p>This policy ensures that Street Support Network remains compliant with UK GDPR while protecting the privacy and security of all individuals interacting with our services, including the Virtual Assistant.</p>
-        <p className="italic mt-6">Last updated: 2nd April 2025</p>
+              <div className="mt-16 pt-8 border-t border-brand-q">
+                <p className="text-sm text-brand-f italic">Last updated: 2nd April 2025</p>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
     </>
   );
 }

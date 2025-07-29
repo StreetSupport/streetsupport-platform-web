@@ -118,7 +118,7 @@ export default function Nav() {
                         <li key={location.id} className="break-inside-avoid mb-1">
                           <Link
                             href={`/${location.slug}`}
-                            className="block px-2 py-1 text-sm text-brand-l hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded"
+                            className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded"
                             onClick={handleLocationClick}
                           >
                             {location.name}
@@ -226,7 +226,7 @@ export default function Nav() {
                   <li key={location.id}>
                     <Link
                       href={`/${location.slug}`}
-                      className="block py-2 px-3 text-sm text-brand-l hover:bg-brand-i hover:text-brand-k transition-colors duration-200"
+                      className="block py-2 px-3 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200"
                       onClick={handleLocationClick}
                     >
                       {location.name}

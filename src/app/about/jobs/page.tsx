@@ -1,47 +1,28 @@
 import Link from 'next/link';
+import Breadcrumbs from '@/components/ui/Breadcrumbs';
 
 export default function JobsPage() {
   return (
     <>
-      {/* Breadcrumbs */}
-      <div className="bg-brand-n py-4">
-        <div className="max-w-4xl mx-auto px-6">
-          <nav className="flex" aria-label="Breadcrumb">
-            <ol className="inline-flex items-center space-x-1 md:space-x-3">
-              <li className="inline-flex items-center">
-                <Link href="/" className="text-white hover:text-brand-q">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <div className="flex items-center">
-                  <span className="mx-2 text-white">/</span>
-                  <Link href="/about" className="text-white hover:text-brand-q">
-                    About
-                  </Link>
-                </div>
-              </li>
-              <li aria-current="page">
-                <div className="flex items-center">
-                  <span className="mx-2 text-white">/</span>
-                  <span className="text-white">Jobs</span>
-                </div>
-              </li>
-            </ol>
-          </nav>
-        </div>
-      </div>
+      <Breadcrumbs 
+        items={[
+          { href: "/", label: "Home" },
+          { href: "/about", label: "About Street Support" },
+          { label: "Jobs", current: true }
+        ]} 
+      />
 
       {/* Header */}
-      <div className="bg-brand-i py-12">
-        <div className="max-w-4xl mx-auto px-6">
-          <h1 className="heading-2 text-white">Jobs</h1>
+      <section className="bg-brand-i py-12">
+        <div className="content-container">
+          <h1 className="heading-1 text-white">Jobs</h1>
         </div>
-      </div>
+      </section>
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="prose max-w-none">
+      <section className="section-spacing">
+        <div className="content-container">
+          <div className="prose-content">
         <p>We are a small team with a big mission - jobs that we are currently recruiting for are listed below. We also rely on volunteers, so if you are interested please get in touch with your skills and availability at <a href="mailto:admin@streetsupport.net" className="text-brand-a hover:text-brand-b underline">admin@streetsupport.net</a>.</p>
 
         <h2 className="heading-3 mb-4">Current Vacancies</h2>
@@ -56,8 +37,9 @@ export default function JobsPage() {
         <ul className="list-disc pl-6 mb-8">
           <li><a href="/about/jobs/data-integrity/" className="text-brand-a hover:text-brand-b underline">Data Integrity Volunteer</a></li>
         </ul>
+          </div>
         </div>
-      </div>
+      </section>
     </>
   );
 }
