@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import SocialShare from '@/components/ui/SocialShare';
 
 export default function DataProtectionPolicyPage() {
   return (
@@ -229,6 +230,7 @@ export default function DataProtectionPolicyPage() {
               </div>
             </div>
           </div>
+          <SocialShare />
         </div>
       </section>
     </>

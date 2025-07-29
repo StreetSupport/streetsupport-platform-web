@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import SocialShare from '@/components/ui/SocialShare';
 
 export default function ResourcesPage() {
   return (
@@ -194,6 +195,8 @@ export default function ResourcesPage() {
             </article>
           </div>
         </section>
+        
+        <SocialShare shareText="Check out these helpful resources on Street Support Network" />
         </div>
       </div>
     </>

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import SocialShare from '@/components/ui/SocialShare';
 
 export default function JobsPage() {
   return (
@@ -38,6 +39,7 @@ export default function JobsPage() {
           <li><a href="/about/jobs/data-integrity/" className="text-brand-a hover:text-brand-b underline">Data Integrity Volunteer</a></li>
         </ul>
           </div>
+          <SocialShare />
         </div>
       </section>
     </>

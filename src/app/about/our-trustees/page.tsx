@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import SocialShare from '@/components/ui/SocialShare';
 
 export default function OurTrusteesPage() {
   return (
@@ -101,6 +102,7 @@ export default function OurTrusteesPage() {
           </div>
         </article>
         </div>
+        <SocialShare />
       </div>
     </>
   );

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import SocialShare from '@/components/ui/SocialShare';
 
 export default function PartnershipCommsPage() {
   return (
@@ -48,6 +49,7 @@ export default function PartnershipCommsPage() {
           </li>
         </ul>
         </div>
+        <SocialShare />
       </div>
     </>
   );

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import SocialShare from '@/components/ui/SocialShare';
 
 export default function OurTeamPage() {
   return (
@@ -287,6 +288,7 @@ export default function OurTeamPage() {
           </div>
         </div>
       </div>
+        <SocialShare />
       </div>
     </>
   );

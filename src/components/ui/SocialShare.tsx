@@ -4,13 +4,19 @@ import React, { useEffect, useState } from 'react';
 import { Cloud } from 'lucide-react';
 import { SiFacebook, SiX } from 'react-icons/si';
 
-export default function OrganisationFooter() {
+interface SocialShareProps {
+  className?: string;
+  shareText?: string;
+}
+
+export default function SocialShare({ 
+  className = "mt-6 text-sm text-gray-600", 
+  shareText = "Help is out there – check out this page on Street Support Network"
+}: SocialShareProps) {
   const [currentUrl, setCurrentUrl] = useState('');
   const [currentTitle, setCurrentTitle] = useState('');
 
   useEffect(() => {
-    // Add a comment to explain the SSR check
-    /* istanbul ignore else */
     if (typeof window !== 'undefined') {
       setCurrentUrl(window.location.href);
       setCurrentTitle(document.title);
@@ -19,7 +25,7 @@ export default function OrganisationFooter() {
 
   const shareOnBluesky = () => {
     const text = encodeURIComponent(
-      `Help is out there – check out this page on Street Support Network: ${currentTitle} ${currentUrl}`
+      `${shareText}: ${currentTitle} ${currentUrl}`
     );
     const shareUrl = `https://bsky.app/intent/compose?text=${text}`;
     window.open(shareUrl, 'blank', 'width=600,height=300');
@@ -29,14 +35,12 @@ export default function OrganisationFooter() {
     currentUrl
   )}`;
   const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-    `Help is out there - check out this page on Street Support Network: ${currentTitle} ${currentUrl}`
+    `${shareText}: ${currentTitle} ${currentUrl}`
   )}`;
 
   return (
-    <footer className="mt-6 text-sm text-gray-600">
-      {/** ✅ This is always rendered, immediately */}
-
-      <div className="mb-4 flex items-center gap-4">
+    <div className={className}>
+      <div className="mb-4 flex items-center justify-center gap-4">
         <span>Share this page:</span>
         <button
           onClick={shareOnBluesky}
@@ -64,6 +68,6 @@ export default function OrganisationFooter() {
           <span className="sr-only md:not-sr-only">Share on X</span>
         </a>
       </div>
-    </footer>
+    </div>
   );
 }

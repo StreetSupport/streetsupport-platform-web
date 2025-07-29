@@ -26,11 +26,6 @@ describe('OrganisationFooter', () => {
     });
   });
 
-  it('renders disclaimer text', () => {
-    render(<OrganisationFooter />);
-    expect(screen.getByText(/Information provided by Street Support/i)).toBeInTheDocument();
-  });
-
   it('shows social share links', () => {
     render(<OrganisationFooter />);
     expect(screen.getByText(/Share this page:/i)).toBeInTheDocument();

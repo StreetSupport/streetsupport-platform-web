@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import SocialShare from '@/components/ui/SocialShare';
 
 export default function AboutPage() {
   return (
@@ -27,7 +28,7 @@ export default function AboutPage() {
                 <p className="text-lead mb-8">Street Support Network connects local people and organisations in order to support those who need it the most. This website is an online hub to find out about homelessness, see what support is available, and see what you can do to help.</p>
                 
                 <div className="bg-brand-q p-8 rounded-lg mb-8">
-                  <h3 className="heading-4 mb-6 text-brand-l">Three primary reasons you might use our website:</h3>
+                  <h3 className="heading-4 mb-6 text-brand-l">The primary reasons you might use our website:</h3>
                   <div className="space-y-4">
                     <div className="flex items-start space-x-4">
                       <div className="flex-shrink-0 w-8 h-8 bg-brand-a rounded-full flex items-center justify-center">
@@ -97,6 +98,7 @@ export default function AboutPage() {
               </section>
             </div>
           </div>
+          <SocialShare />
         </div>
       </section>
     </>

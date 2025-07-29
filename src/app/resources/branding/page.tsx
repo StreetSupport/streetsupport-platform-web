@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import SocialShare from '@/components/ui/SocialShare';
 
 export default function BrandingPage() {
   return (
@@ -89,6 +90,7 @@ export default function BrandingPage() {
           </li>
         </ul>
         </div>
+        <SocialShare />
       </div>
     </>
   );

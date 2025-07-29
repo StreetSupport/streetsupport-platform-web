@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import SocialShare from '@/components/ui/SocialShare';
 
 export default function AIGovernancePage() {
   return (
@@ -148,6 +149,7 @@ export default function AIGovernancePage() {
           <p className="italic mt-4">Last updated: 2nd April 2025</p>
         </section>
           </div>
+          <SocialShare />
         </div>
       </section>
     </>

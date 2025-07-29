@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import SocialShare from '@/components/ui/SocialShare';
 
 export default function UserGuidesPage() {
   return (
@@ -80,6 +81,7 @@ export default function UserGuidesPage() {
           </section>
         </div>
         </div>
+        <SocialShare />
       </div>
     </>
   );

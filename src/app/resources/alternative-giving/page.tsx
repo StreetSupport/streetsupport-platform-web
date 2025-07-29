@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import SocialShare from '@/components/ui/SocialShare';
 
 export default function AlternativeGivingPage() {
   return (
@@ -90,6 +91,8 @@ export default function AlternativeGivingPage() {
             <Link href="/resources/street-feeding-groups" className="text-brand-a hover:text-brand-a underline">Street Feeding Groups</Link>
           </li>
         </ul>
+        
+        <SocialShare />
         </div>
       </div>
     </>

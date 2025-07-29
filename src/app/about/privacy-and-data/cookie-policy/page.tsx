@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import SocialShare from '@/components/ui/SocialShare';
 
 export default function CookiePolicyPage() {
   return (
@@ -113,6 +114,7 @@ export default function CookiePolicyPage() {
         <h2 className="heading-3 mb-4">Contact Us</h2>
         <p>If you have any questions about this Cookie Policy or how we use cookies, please contact us at: <a href="mailto:admin@streetsupport.net" className="text-brand-a hover:text-brand-b underline">admin@streetsupport.net</a></p>
         </div>
+        <SocialShare />
       </div>
     </>
   );

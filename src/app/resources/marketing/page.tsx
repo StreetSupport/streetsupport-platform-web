@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import SocialShare from '@/components/ui/SocialShare';
 
 export default function MarketingPage() {
   return (
@@ -52,6 +53,7 @@ export default function MarketingPage() {
           </li>
         </ul>
         </div>
+        <SocialShare />
       </div>
     </>
   );
