@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import locations from '@/data/locations.json';
 import AdvicePageClient from './AdvicePageClient';
+import Breadcrumbs from '@/components/ui/Breadcrumbs';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,34 +20,13 @@ export default async function AdvicePage(props) {
 
   return (
     <main className="space-y-8">
-      {/* Breadcrumbs */}
-      <div className="bg-brand-n py-4">
-        <div className="max-w-7xl mx-auto px-6">
-          <nav className="flex" aria-label="Breadcrumb">
-            <ol className="inline-flex items-center space-x-1 md:space-x-3">
-              <li className="inline-flex items-center">
-                <Link href="/" className="text-white hover:text-brand-q">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <div className="flex items-center">
-                  <span className="mx-2 text-white">/</span>
-                  <Link href={`/${location.slug}`} className="text-white hover:text-brand-q">
-                    {location.name}
-                  </Link>
-                </div>
-              </li>
-              <li aria-current="page">
-                <div className="flex items-center">
-                  <span className="mx-2 text-white">/</span>
-                  <span className="text-white">Advice</span>
-                </div>
-              </li>
-            </ol>
-          </nav>
-        </div>
-      </div>
+      <Breadcrumbs 
+        items={[
+          { href: "/", label: "Home" },
+          { href: `/${location.slug}`, label: location.name },
+          { label: "Advice", current: true }
+        ]} 
+      />
 
       {/* Page Header */}
       <section className="bg-white py-8">

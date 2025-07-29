@@ -1,29 +1,16 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import Breadcrumbs from '@/components/ui/Breadcrumbs';
 
 export default function ResourcesPage() {
   return (
     <>
-      {/* Breadcrumbs */}
-      <div className="bg-brand-n py-4">
-        <div className="max-w-7xl mx-auto px-6">
-          <nav className="flex" aria-label="Breadcrumb">
-            <ol className="inline-flex items-center space-x-1 md:space-x-3">
-              <li className="inline-flex items-center">
-                <Link href="/" className="text-white hover:text-brand-q">
-                  Home
-                </Link>
-              </li>
-              <li aria-current="page">
-                <div className="flex items-center">
-                  <span className="mx-2 text-white">/</span>
-                  <span className="text-white">Resources</span>
-                </div>
-              </li>
-            </ol>
-          </nav>
-        </div>
-      </div>
+      <Breadcrumbs 
+        items={[
+          { href: "/", label: "Home" },
+          { label: "Resources", current: true }
+        ]} 
+      />
 
       {/* Header */}
       <div className="bg-brand-i py-12">

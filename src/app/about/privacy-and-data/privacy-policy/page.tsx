@@ -1,44 +1,17 @@
 import Link from 'next/link';
+import Breadcrumbs from '@/components/ui/Breadcrumbs';
 
 export default function PrivacyPolicyPage() {
   return (
     <>
-      {/* Breadcrumbs */}
-      <div className="bg-brand-n py-4">
-        <div className="max-w-4xl mx-auto px-6">
-          <nav className="flex" aria-label="Breadcrumb">
-            <ol className="inline-flex items-center space-x-1 md:space-x-3">
-              <li className="inline-flex items-center">
-                <Link href="/" className="text-white hover:text-brand-q">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <div className="flex items-center">
-                  <span className="mx-2 text-white">/</span>
-                  <Link href="/about" className="text-white hover:text-brand-q">
-                    About Street Support
-                  </Link>
-                </div>
-              </li>
-              <li>
-                <div className="flex items-center">
-                  <span className="mx-2 text-white">/</span>
-                  <Link href="/about/privacy-and-data" className="text-white hover:text-brand-q">
-                    Privacy and Data
-                  </Link>
-                </div>
-              </li>
-              <li aria-current="page">
-                <div className="flex items-center">
-                  <span className="mx-2 text-white">/</span>
-                  <span className="text-white">Privacy Policy</span>
-                </div>
-              </li>
-            </ol>
-          </nav>
-        </div>
-      </div>
+      <Breadcrumbs 
+        items={[
+          { href: "/", label: "Home" },
+          { href: "/about", label: "About Street Support" },
+          { href: "/about/privacy-and-data", label: "Privacy and Data" },
+          { label: "Privacy Policy", current: true }
+        ]} 
+      />
 
       {/* Header */}
       <div className="bg-brand-i py-12">

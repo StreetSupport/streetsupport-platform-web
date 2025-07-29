@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useLocation } from '@/contexts/LocationContext';
+import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import LocationPrompt from '@/components/Location/LocationPrompt';
 import FindHelpResults from '@/components/FindHelp/FindHelpResults';
 import ErrorBoundary from '@/components/ErrorBoundary';
@@ -286,26 +287,12 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Breadcrumbs */}
-      <div className="bg-brand-n py-4">
-        <div className="content-container px-6">
-          <nav className="flex" aria-label="Breadcrumb">
-            <ol className="inline-flex items-center space-x-1 md:space-x-3">
-              <li className="inline-flex items-center">
-                <Link href="/" className="!text-brand-e hover:!text-brand-e !important">
-                  Home
-                </Link>
-              </li>
-              <li aria-current="page">
-                <div className="flex items-center">
-                  <span className="mx-2 text-white">/</span>
-                  <span className="text-white">Find Help</span>
-                </div>
-              </li>
-            </ol>
-          </nav>
-        </div>
-      </div>
+      <Breadcrumbs 
+        items={[
+          { href: "/", label: "Home" },
+          { label: "Find Help", current: true }
+        ]} 
+      />
       
       {!hasLocationSet ? (
         <div className="max-w-2xl mx-auto p-4 pt-8">
