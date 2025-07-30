@@ -116,7 +116,7 @@ export default function LocationFindHelp({ locationName, latitude, longitude }: 
         lat: latitude.toString(),
         lng: longitude.toString(),
         radius: '5', // 5km radius
-        limit: '200', // Get all services in area
+        limit: '1000', // Get all services in area
       });
 
       const response = await fetch(`/api/services?${params.toString()}`, {
