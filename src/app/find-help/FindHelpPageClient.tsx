@@ -179,17 +179,8 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
         limit: '500',
       });
 
-      // Add category filter from search params or initial filters if provided
-      const category = searchParams.cat || initialFilters?.selectedCategory;
-      if (category && typeof category === 'string') {
-        params.append('category', category);
-      }
-      
-      // Add subcategory filter if provided
-      const subcategory = searchParams.subcat;
-      if (subcategory && typeof subcategory === 'string') {
-        params.append('subcategory', subcategory);
-      }
+      // Don't apply category/subcategory filters in the API call
+      // We'll filter client-side to allow users to change filters dynamically
 
       const response = await fetch(`/api/services?${params.toString()}`, {
         cache: 'no-store',
@@ -276,7 +267,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
     } finally {
       setLoading(false);
     }
-  }, [searchParams.cat, searchParams.subcat, initialFilters?.selectedCategory]);
+  }, []);
 
   // Fetch services when location is set
   useEffect(() => {
