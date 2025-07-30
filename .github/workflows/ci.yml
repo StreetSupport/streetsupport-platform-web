@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, staging ]
+  pull_request:
+    branches: [ main, staging ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run type checking
+      run: npx tsc --noEmit
+
+    - name: Run unit tests
+      run: npm test
+
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+
+    - name: Run E2E tests
+      run: npx playwright test --config=./config/playwright.config.ts
+      env:
+        # Enable API mocks for E2E tests when MongoDB is not available
+        USE_API_MOCKS: true
+        # Note: MONGODB_URI is not provided in PRs for security
+        # The tests will automatically use mocks when this is missing
+
+    - name: Upload Playwright Report
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: playwright-report-${{ matrix.node-version }}
+        path: config/playwright-report/
+        retention-days: 30
+
+    - name: Build application
+      run: npm run build
+      env:
+        # Provide basic env vars for build
+        NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+        # MongoDB URI not required for build since API routes handle missing DB gracefully
+
+  # Optional: Run tests with real database for main branch
+  integration-test:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+
+    - name: Run E2E tests with real database
+      run: npx playwright test --config=./config/playwright.config.ts
+      env:
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+        # When MONGODB_URI is provided, mocks will be disabled automatically

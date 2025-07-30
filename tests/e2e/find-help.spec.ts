@@ -1,6 +1,7 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, TEST_POSTCODE } from './fixtures/base-test';
+import { Page } from '@playwright/test';
 
-const testPostcode = 'M1 1AE';
+const testPostcode = TEST_POSTCODE;
 
 // Helper functions for location-based service discovery tests
 async function mockGeolocationDenied(page: Page) {

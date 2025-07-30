@@ -1,33 +1,8 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, TEST_POSTCODE } from './fixtures/base-test';
 
 // Test comprehensive error handling scenarios
 test.describe('Error Handling and Recovery', () => {
-  const testPostcode = 'M1 1AE';
-
-  async function setupBasicMocks(page: Page) {
-    // Mock successful geocoding
-    await page.route('**/api/geocode**', async (route) => {
-      const url = new URL(route.request().url());
-      const postcode = url.searchParams.get('postcode');
-      
-      if (postcode === testPostcode) {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify({
-            location: { lat: 53.4808, lng: -2.2426 },
-            postcode: testPostcode
-          })
-        });
-      } else {
-        await route.fulfill({
-          status: 404,
-          contentType: 'application/json',
-          body: JSON.stringify({ error: 'Postcode not found' })
-        });
-      }
-    });
-  }
+  const testPostcode = TEST_POSTCODE;
 
   test('should handle geocoding API timeout', async ({ page }) => {
     // Mock timeout scenario by aborting the request
@@ -48,8 +23,6 @@ test.describe('Error Handling and Recovery', () => {
   });
 
   test('should handle services API rate limiting', async ({ page }) => {
-    await setupBasicMocks(page);
-    
     // Mock rate limiting response
     await page.route('**/api/services**', async (route) => {
       await route.fulfill({
@@ -73,7 +46,6 @@ test.describe('Error Handling and Recovery', () => {
   });
 
   test('should handle services API server errors with fallback', async ({ page }) => {
-    await setupBasicMocks(page);
     
     // Mock server error for services API
     await page.route('**/api/services**', async (route) => {
@@ -116,7 +88,6 @@ test.describe('Error Handling and Recovery', () => {
   });
 
   test('should handle retry mechanism with exponential backoff', async ({ page }) => {
-    await setupBasicMocks(page);
     
     // Mock network failure for services API
     await page.route('**/api/services**', async (route) => {
@@ -139,7 +110,6 @@ test.describe('Error Handling and Recovery', () => {
   });
 
   test('should handle maximum retry attempts reached', async ({ page }) => {
-    await setupBasicMocks(page);
     
     // Always fail services API
     await page.route('**/api/services**', async (route) => {
@@ -162,7 +132,6 @@ test.describe('Error Handling and Recovery', () => {
   });
 
   test('should handle malformed API responses', async ({ page }) => {
-    await setupBasicMocks(page);
     
     // Mock malformed response
     await page.route('**/api/services**', async (route) => {
@@ -278,8 +247,6 @@ test.describe('Error Handling and Recovery', () => {
   });
 
   test('should maintain functionality during intermittent connectivity', async ({ page }) => {
-    await setupBasicMocks(page);
-    
     let isOnline = true;
     await page.route('**/api/services**', async (route) => {
       if (!isOnline) {

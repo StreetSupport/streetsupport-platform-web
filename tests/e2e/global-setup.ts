@@ -1,6 +1,17 @@
 import { chromium, FullConfig } from '@playwright/test';
 
 async function globalSetup(config: FullConfig) {
+  // Check MongoDB availability and set mock flag
+  const hasMongoDB = !!process.env.MONGODB_URI;
+  
+  if (!hasMongoDB) {
+    console.warn('🔧 MongoDB URI not found - enabling API mocks for tests');
+    process.env.USE_API_MOCKS = 'true';
+  } else {
+    console.warn('🗄️ MongoDB URI found - using real database for tests');
+    process.env.USE_API_MOCKS = 'false';
+  }
+
   // Launch browser for setup
   const browser = await chromium.launch();
   const context = await browser.newContext();
@@ -39,7 +50,8 @@ async function globalSetup(config: FullConfig) {
       }
     }
     
-    console.warn('✓ Development server is ready');
+    const mockStatus = process.env.USE_API_MOCKS === 'true' ? 'enabled' : 'disabled';
+    console.warn(`✓ Development server is ready (API mocks: ${mockStatus})`);
   } catch (error) {
     console.error('✗ Failed to connect to development server:', error instanceof Error ? error.message : String(error));
     throw error;
