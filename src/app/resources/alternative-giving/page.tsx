@@ -51,27 +51,27 @@ export default function AlternativeGivingPage() {
         <p className="font-semibold mb-6">Alternative giving funds we have supported:</p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <Link href="/luton" className="block transition-transform hover:scale-105">
-            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+            <article className="card !bg-brand-i text-white hover:!bg-brand-q transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
               <h3 className="heading-5 text-white">Big Change Luton</h3>
             </article>
           </Link>
           <Link href="/liverpool" className="block transition-transform hover:scale-105">
-            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+            <article className="card !bg-brand-i text-white hover:!bg-brand-q transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
               <h3 className="heading-5 text-white">Change Liverpool</h3>
             </article>
           </Link>
           <Link href="/manchester/realchangemcr" className="block transition-transform hover:scale-105">
-            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+            <article className="card !bg-brand-i text-white hover:!bg-brand-q transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
               <h3 className="heading-5 text-white">Real Change Manchester</h3>
             </article>
           </Link>
           <Link href="/cambridgeshire" className="block transition-transform hover:scale-105">
-            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+            <article className="card !bg-brand-i text-white hover:!bg-brand-q transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
               <h3 className="heading-5 text-white">Street Aid Cambridge</h3>
             </article>
           </Link>
           <Link href="/nottingham/street-aid" className="block transition-transform hover:scale-105">
-            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+            <article className="card !bg-brand-i text-white hover:!bg-brand-q transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
               <h3 className="heading-5 text-white">Street Aid Nottingham</h3>
             </article>
           </Link>

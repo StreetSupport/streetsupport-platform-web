@@ -57,22 +57,22 @@ export default function BrandingPage() {
         <p className="font-semibold mb-6">Some useful branding resources:</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <a href="https://www.canva.com/design/DAFuiMajX10/_3f7uzlnKt9qSAiVMWCbeg/view?utm_content=DAFuiMajX10&utm_campaign=designshare&utm_medium=link&utm_source=viewer" target="_blank" rel="noopener noreferrer" className="block transition-transform hover:scale-105">
-            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+            <article className="card !bg-brand-i text-white hover:!bg-brand-q transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
               <h3 className="heading-5 text-white">Brand Values</h3>
             </article>
           </a>
           <a href="https://www.canva.com/design/DAE1JPTaABY/ybCmN4o1SFTZWZC8BZ7cKw/edit?utm_content=DAE1JPTaABY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" target="_blank" rel="noopener noreferrer" className="block transition-transform hover:scale-105">
-            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+            <article className="card !bg-brand-i text-white hover:!bg-brand-q transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
               <h3 className="heading-5 text-white">Basic Brand Guidelines</h3>
             </article>
           </a>
           <a href="https://www.canva.com/design/DAE3xKEHWus/39m9xn1mNO63x5A8Tt2-mA/view?utm_content=DAE3xKEHWus&utm_campaign=designshare&utm_medium=link&utm_source=homepage_design_menu" target="_blank" rel="noopener noreferrer" className="block transition-transform hover:scale-105">
-            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+            <article className="card !bg-brand-i text-white hover:!bg-brand-q transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
               <h3 className="heading-5 text-white">Tone of Voice</h3>
             </article>
           </a>
           <a href="https://www.canva.com/design/DAFf_eB43B0/YLzIVzZVEjHyj7X6REIE4Q/view?utm_content=DAFf_eB43B0&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink" target="_blank" rel="noopener noreferrer" className="block transition-transform hover:scale-105">
-            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+            <article className="card !bg-brand-i text-white hover:!bg-brand-q transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
               <h3 className="heading-5 text-white">Location's Guide to Social Media</h3>
             </article>
           </a>

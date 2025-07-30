@@ -52,22 +52,22 @@ export default function ChartersPage() {
         <p className="font-semibold mb-6">Some charters that we have supported:</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <a href="https://mhp.org.uk/charter/" target="_blank" rel="noopener noreferrer" className="block transition-transform hover:scale-105">
-            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+            <article className="card !bg-brand-i text-white hover:!bg-brand-q transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
               <h3 className="heading-5 text-white">Manchester Charter</h3>
             </article>
           </a>
           <a href="/leeds/charter" className="block transition-transform hover:scale-105">
-            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+            <article className="card !bg-brand-i text-white hover:!bg-brand-q transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
               <h3 className="heading-5 text-white">Leeds Charter</h3>
             </article>
           </a>
           <a href="/southampton/charter" className="block transition-transform hover:scale-105">
-            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+            <article className="card !bg-brand-i text-white hover:!bg-brand-q transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
               <h3 className="heading-5 text-white">Southampton Charter</h3>
             </article>
           </a>
           <a href="/derbyshire/derbyshire-homelessness-charter.pdf" className="block transition-transform hover:scale-105">
-            <article className="card bg-brand-i text-white hover:bg-brand-n transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
+            <article className="card !bg-brand-i text-white hover:!bg-brand-q transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
               <h3 className="heading-5 text-white">Derbyshire Charter</h3>
             </article>
           </a>
