@@ -308,7 +308,7 @@ export default function LocationFindHelp({ locationName, latitude, longitude }: 
           <GoogleMap
             center={{ lat: latitude, lng: longitude }}
             markers={mapMarkers}
-            zoom={12}
+            zoom={13}
             showUserLocation={false}
             className="w-full h-full rounded-lg border border-brand-f"
           />

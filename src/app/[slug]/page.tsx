@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation';
 import Hero from '@/components/ui/Hero';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import LocationFindHelp from '@/components/Location/LocationFindHelp';
+import LocationStatistics from '@/components/Location/LocationStatistics';
+import LocationNews from '@/components/Location/LocationNews';
 
 export const dynamic = 'force-dynamic';
 
@@ -116,14 +118,14 @@ export default async function LocationPage(props) {
 
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-brand-q p-8 text-center">
-            <h2 className="text-xl font-semibold mb-4">Impact Statistics</h2>
-            <p>[ Statistics Placeholder ]</p>
-          </div>
-          <div className="bg-brand-q p-8 text-center">
-            <h2 className="text-xl font-semibold mb-4">Latest News</h2>
-            <p>[ News Placeholder ]</p>
-          </div>
+          <LocationStatistics 
+            locationSlug={slug}
+            locationName={location.name}
+          />
+          <LocationNews 
+            locationSlug={slug}
+            locationName={location.name}
+          />
         </div>
       </section>
 
