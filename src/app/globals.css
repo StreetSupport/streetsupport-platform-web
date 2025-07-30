@@ -107,7 +107,7 @@
 
 /* Button Types */
 .btn-primary {
-  @apply bg-brand-a text-white hover:bg-brand-b hover:text-white active:bg-brand-c active:text-white;
+  @apply bg-brand-a text-white hover:bg-brand-b active:bg-brand-c transition-colors duration-200;
 }
 
 .btn-secondary {

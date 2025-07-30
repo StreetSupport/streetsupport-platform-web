@@ -112,7 +112,7 @@ function parseRSSFeed(xml: string, locationSlug?: string, feedId?: string): News
   
   try {
     // Simple XML parsing for RSS items - handle multiple title and description formats
-    const itemRegex = /<item>(.*?)<\/item>/g;
+    const itemRegex = /<item>(.*?)<\/item>/gs;
     
     let match;
     let id = 1;
