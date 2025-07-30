@@ -112,7 +112,7 @@ export default function Nav() {
   function handleMouseLeave() {
     closeTimeoutRef.current = setTimeout(() => {
       setIsLocationsOpen(false);
-    }, 100);
+    }, 300);
   }
 
   function handleAboutMouseEnter() {
@@ -125,7 +125,7 @@ export default function Nav() {
   function handleAboutMouseLeave() {
     aboutCloseTimeoutRef.current = setTimeout(() => {
       setIsAboutOpen(false);
-    }, 100);
+    }, 300);
   }
 
   // ✅ Handler to close all menus on link click
@@ -197,7 +197,11 @@ export default function Nav() {
               </button>
 
               {isLocationsOpen && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[500px] z-50">
+                <div 
+                  className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[500px] z-50"
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                >
                   <div 
                     ref={locationsDropdownRef}
                     id="locations-dropdown"
@@ -262,7 +266,11 @@ export default function Nav() {
               </button>
 
               {isAboutOpen && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-48 z-50">
+                <div 
+                  className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-48 z-50"
+                  onMouseEnter={handleAboutMouseEnter}
+                  onMouseLeave={handleAboutMouseLeave}
+                >
                   <div className="bg-white border border-brand-f rounded-md shadow-lg">
                   <ul className="py-2">
                     <li>

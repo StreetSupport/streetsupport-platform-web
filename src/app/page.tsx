@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import HomepageMap from '@/components/Homepage/HomepageMap';
+import LocationDropdown from '@/components/Homepage/LocationDropdown';
 import Hero from '@/components/ui/Hero';
 
 async function getStatistics() {
@@ -51,9 +52,10 @@ export default async function Home() {
               <p className="text-body">
                 Street Support Network is currently active in several locations across the UK.
               </p>
-              <p className="text-body mb-8">
-                Want to see what is happening near you? Select one location to visit their page.
+              <p className="text-body mb-6">
+                Want to see what is happening near you? Select a location from the dropdown below or click on the map.
               </p>
+              <LocationDropdown />
             </div>
             <div className="w-full">
               <HomepageMap />
