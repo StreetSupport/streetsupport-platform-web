@@ -19,11 +19,29 @@ export async function GET() {
     
     const orgKeys = publishedOrgs.map(org => org.Key);
     
-    // Count services from published organisations only
-    const servicesCount = await db.collection('ProvidedServices').countDocuments({
-      ServiceProviderKey: { $in: orgKeys },
-      IsPublished: true
-    });
+    // Count unique services grouped by organisation + category + subcategory
+    const uniqueServices = await db.collection('ProvidedServices').aggregate([
+      {
+        $match: {
+          ServiceProviderKey: { $in: orgKeys },
+          IsPublished: true
+        }
+      },
+      {
+        $group: {
+          _id: {
+            provider: '$ServiceProviderKey',
+            category: '$ParentCategoryKey',
+            subcategory: '$SubCategoryKey'
+          }
+        }
+      },
+      {
+        $count: 'total'
+      }
+    ]).toArray();
+    
+    const servicesCount = uniqueServices[0]?.total || 0;
     
     // Count public cities/locations (partnerships)
     const locationsCount = await db.collection('Cities').countDocuments({
@@ -46,13 +64,17 @@ export async function GET() {
       // Count organisations from JSON (all are considered public in fallback)
       const organisationsCount = serviceProviders.length;
       
-      // Count services from organisations
-      let servicesCount = 0;
+      // Count unique services grouped by organisation + category + subcategory
+      const uniqueServiceKeys = new Set<string>();
       serviceProviders.forEach((provider: any) => {
         if (provider.services && Array.isArray(provider.services)) {
-          servicesCount += provider.services.length;
+          provider.services.forEach((service: any) => {
+            const uniqueKey = `${provider.key}-${service.category}-${service.subcategory}`;
+            uniqueServiceKeys.add(uniqueKey);
+          });
         }
       });
+      const servicesCount = uniqueServiceKeys.size;
       
       // Count locations that are public
       const publicLocations = locations.filter((location: any) => 

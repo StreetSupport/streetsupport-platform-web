@@ -31,11 +31,29 @@ export async function GET(req: Request, context: LocationStatsParams) {
     
     const organisationKeys = organisations.map(org => org.Key);
     
-    // Count services provided by these organisations
-    const serviceCount = await servicesCol.countDocuments({
-      IsPublished: true,
-      ServiceProviderKey: { $in: organisationKeys }
-    });
+    // Count unique services grouped by organisation + category + subcategory
+    const uniqueServices = await servicesCol.aggregate([
+      {
+        $match: {
+          IsPublished: true,
+          ServiceProviderKey: { $in: organisationKeys }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            provider: '$ServiceProviderKey',
+            category: '$ParentCategoryKey',
+            subcategory: '$SubCategoryKey'
+          }
+        }
+      },
+      {
+        $count: 'total'
+      }
+    ]).toArray();
+    
+    const serviceCount = uniqueServices[0]?.total || 0;
     
     const stats = {
       organisations: organisations.length,
