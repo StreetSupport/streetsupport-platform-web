@@ -271,59 +271,79 @@ test.describe('Location-Based Service Discovery', () => {
   test('should allow filtering services by category', async ({ page }) => {
     await enterPostcodeInLocationPrompt(page);
     
-    // Wait for services to load - check for any services, not specific ones
+    // Wait for services to load and page to stabilize
     await page.waitForTimeout(2000);
     
-    // Check if category filter exists and has options
+    // First verify that we have services displayed
+    await expect(page.getByText(/Test Health Service|Test Support Service|services near you/i).first()).toBeVisible();
+    
+    // Check if category filter exists
     const categorySelect = page.locator('#category');
     
-    // If category select doesn't exist, skip this test
+    // If category select doesn't exist, the page might not have filtering - that's OK
     if (!(await categorySelect.isVisible())) {
-      console.warn('Category filter not available, skipping test');
+      console.warn('Category filter not available - page may not support filtering');
+      // Just verify the page still shows content
+      await expect(page.getByText(/services near you|Test.*Service/i).first()).toBeVisible();
       return;
     }
     
     // Get available options
     const options = await categorySelect.locator('option').allTextContents();
+    console.log('Available category options:', options);
     
-    // If there are no options to filter by, skip the test
+    // If there are no filterable options, just verify the page works
     if (options.length <= 1) {
-      console.warn('No category options available for filtering, skipping test');
+      console.warn('No category options available for filtering');
+      await expect(page.getByText(/services near you|Test.*Service/i).first()).toBeVisible();
       return;
     }
     
+    // Record initial state
+    const initialServiceCount = await page.locator('[data-testid="service-card"]').count();
+    console.log('Initial service count:', initialServiceCount);
+    
     // Try to select a category that exists in the options
+    let selectedOption = '';
     if (options.some(option => option.toLowerCase().includes('health'))) {
-      // Find the health option and select by value or text
-      const healthOption = options.find(option => option.toLowerCase().includes('health'));
-      if (healthOption) {
-        await categorySelect.selectOption(healthOption);
-      }
+      selectedOption = options.find(option => option.toLowerCase().includes('health')) || '';
+      await categorySelect.selectOption(selectedOption);
     } else if (options.some(option => option.toLowerCase().includes('support'))) {
-      // Find the support option and select by value or text
-      const supportOption = options.find(option => option.toLowerCase().includes('support'));
-      if (supportOption) {
-        await categorySelect.selectOption(supportOption);
-      }
+      selectedOption = options.find(option => option.toLowerCase().includes('support')) || '';
+      await categorySelect.selectOption(selectedOption);
     } else if (options.length > 1) {
       // Select the second option (first is usually "All categories")
+      selectedOption = options[1];
       await categorySelect.selectOption({ index: 1 });
     }
     
+    console.log('Selected filter option:', selectedOption);
+    
     // Wait for filtering to take effect
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(1500);
     
-    // Verify that the page still functions after filtering - check for any service content or no results message
-    const serviceCards = page.locator('[data-testid="service-card"], .service-card, [class*="service"]');
-    const noResultsMessage = page.getByText(/no services found|no results|no services available/i);
-    const servicesContainer = page.locator('[data-testid="services-list"], .services-list, [class*="services"]');
+    // After filtering, the page should either:
+    // 1. Show filtered services, OR 
+    // 2. Show a "no results" message, OR
+    // 3. Still show the services container with some content
     
-    const hasServiceCards = await serviceCards.count() > 0;
-    const hasNoResultsMessage = await noResultsMessage.isVisible();
-    const hasServicesContainer = await servicesContainer.isVisible();
+    // Check for any of these valid states
+    const hasVisibleServices = await page.locator('[data-testid="service-card"]').count() > 0;
+    const hasServicesText = await page.getByText(/Test.*Service/i).first().isVisible().catch(() => false);
+    const hasServicesNearYou = await page.getByText(/services near you/i).isVisible().catch(() => false);
+    const hasNoResults = await page.getByText(/no services found|no results|no services available/i).isVisible().catch(() => false);
     
-    // At least one of these should be true - either we have services, a no results message, or a services container
-    expect(hasServiceCards || hasNoResultsMessage || hasServicesContainer).toBeTruthy();
+    console.log('Post-filter state:', {
+      hasVisibleServices,
+      hasServicesText,
+      hasServicesNearYou,
+      hasNoResults,
+      finalServiceCount: await page.locator('[data-testid="service-card"]').count()
+    });
+    
+    // The page should show some kind of valid state after filtering
+    const hasValidState = hasVisibleServices || hasServicesText || hasServicesNearYou || hasNoResults;
+    expect(hasValidState).toBeTruthy();
   });
 
   test('should handle network errors with retry functionality', async ({ page }) => {

@@ -174,13 +174,14 @@ export const test = base.extend<MockSetupFixtures>({
 });
 ```
 
-#### 5. GitHub Actions Integration (`.github/workflows/ci.yml`)
+#### 5. GitHub Actions Integration (`.github/workflows/test-and-deploy.yml`)
+The existing workflow automatically enables mocks when `MONGODB_URI` is unavailable:
 ```yaml
 - name: Run E2E tests
   run: npx playwright test --config=./config/playwright.config.ts
   env:
-    USE_API_MOCKS: true
-    # Note: MONGODB_URI not provided in PRs for security
+    # MongoDB URI not provided in PRs for security
+    # MSW mocks activate automatically when unavailable
 ```
 
 ### Benefits Realised

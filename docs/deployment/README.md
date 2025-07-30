@@ -7,12 +7,15 @@ This directory contains CI/CD pipeline documentation, deployment strategies, and
 ### [GitHub Actions Workflow](./WORKFLOW.md)
 **Purpose**: Complete CI/CD pipeline documentation for automated testing and deployment
 
+**File**: `.github/workflows/test-and-deploy.yml`
+
 **Key Features**:
 - Two-stage workflow: Test → Deploy
 - Fork PR vs trusted PR handling
 - Automatic data fetching with fallbacks
 - Slack and Trello integrations
 - Security-first secret management
+- MSW-style E2E testing with automatic mock activation
 
 **Status**: ✅ Active production workflow
 
