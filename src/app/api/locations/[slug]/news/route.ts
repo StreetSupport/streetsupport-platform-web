@@ -28,7 +28,7 @@ export async function GET(req: Request, context: LocationNewsParams) {
     const locationFeedUrl = `https://news.streetsupport.net/location/${slug}/feed/`;
     const generalFeedUrl = 'https://news.streetsupport.net/feed/';
 
-    let allNews: any[] = [];
+    let allNews: NewsItem[] = [];
     let hasLocationSpecificContent = false;
 
     // Try location-specific feed first
@@ -47,7 +47,7 @@ export async function GET(req: Request, context: LocationNewsParams) {
         }
       }
     } catch (error) {
-      console.log(`Failed to fetch location-specific feed:`, error);
+      console.warn(`Failed to fetch location-specific feed:`, error);
     }
 
     // If no location-specific content, fetch general feed as fallback
@@ -64,7 +64,7 @@ export async function GET(req: Request, context: LocationNewsParams) {
           allNews = news;
         }
       } catch (error) {
-        console.log(`Failed to fetch general feed:`, error);
+        console.warn(`Failed to fetch general feed:`, error);
       }
     }
 
@@ -112,7 +112,7 @@ function parseRSSFeed(xml: string, locationSlug?: string, feedId?: string): News
   
   try {
     // Simple XML parsing for RSS items - handle multiple title and description formats
-    const itemRegex = /<item>(.*?)<\/item>/gs;
+    const itemRegex = /<item>(.*?)<\/item>/g;
     
     let match;
     let id = 1;
@@ -125,30 +125,30 @@ function parseRSSFeed(xml: string, locationSlug?: string, feedId?: string): News
       
       // Try multiple title formats
       const titlePatterns = [
-        /<title><!\[CDATA\[(.*?)\]\]><\/title>/s,
-        /<title>(.*?)<\/title>/s
+        /<title><!\[CDATA\[(.*?)\]\]><\/title>/,
+        /<title>(.*?)<\/title>/
       ];
       
       const linkPatterns = [
-        /<link>(.*?)<\/link>/s,
-        /<link><!\[CDATA\[(.*?)\]\]><\/link>/s
+        /<link>(.*?)<\/link>/,
+        /<link><!\[CDATA\[(.*?)\]\]><\/link>/
       ];
       
       const descriptionPatterns = [
-        /<description><!\[CDATA\[(.*?)\]\]><\/description>/s,
-        /<description>(.*?)<\/description>/s,
-        /<content:encoded><!\[CDATA\[(.*?)\]\]><\/content:encoded>/s
+        /<description><!\[CDATA\[(.*?)\]\]><\/description>/,
+        /<description>(.*?)<\/description>/,
+        /<content:encoded><!\[CDATA\[(.*?)\]\]><\/content:encoded>/
       ];
       
       const pubDatePatterns = [
-        /<pubDate>(.*?)<\/pubDate>/s,
-        /<dc:date>(.*?)<\/dc:date>/s
+        /<pubDate>(.*?)<\/pubDate>/,
+        /<dc:date>(.*?)<\/dc:date>/
       ];
       
       const authorPatterns = [
-        /<dc:creator><!\[CDATA\[(.*?)\]\]><\/dc:creator>/s,
-        /<dc:creator>(.*?)<\/dc:creator>/s,
-        /<author>(.*?)<\/author>/s
+        /<dc:creator><!\[CDATA\[(.*?)\]\]><\/dc:creator>/,
+        /<dc:creator>(.*?)<\/dc:creator>/,
+        /<author>(.*?)<\/author>/
       ];
       
       // Extract data using the first matching pattern

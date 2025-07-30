@@ -43,22 +43,22 @@ export default function AboutPage() {
                         <span className="text-white font-semibold text-sm">2</span>
                       </div>
                       <div>
-                        <p className="text-body">To <a href="https://news.streetsupport.net/" target="_blank" className="text-brand-a hover:text-brand-b underline font-semibold">Learn</a>: Understand more about homelessness in your area, what is being done, and where the challenges and opportunities are.</p>
+                        <p className="text-body">To <a href="https://news.streetsupport.net/" target="_blank" rel="noreferrer" className="text-brand-a hover:text-brand-b underline font-semibold">Learn</a>: Understand more about homelessness in your area, what is being done, and where the challenges and opportunities are.</p>
                       </div>
                     </div>
                   </div>
                 </div>
                 
                 <p className="text-body mb-4">We also work offline, connecting people to co-produce better solutions, facilitating conversation and co-ordinating action.</p>
-                <p className="text-body mb-4">We're a people-led network, where individuals with personal insight into homelessness and poverty, decision makers and people with resources co-create effective solutions together.</p>
+                <p className="text-body mb-4">We&apos;re a people-led network, where individuals with personal insight into homelessness and poverty, decision makers and people with resources co-create effective solutions together.</p>
                 <p className="text-body mb-4">Through research, collaboration, human-centered design and creative technology, we work to develop tools and improve systems.</p>
-                <p className="text-body">If you'd like to find out more about why we do what we do, check out this piece that our co-founder, Viv Slack, has written about <Link href="/about/how-this-started/" className="text-brand-a hover:text-brand-b underline">how it all started</Link>.</p>
+                <p className="text-body">If you&apos;d like to find out more about why we do what we do, check out this piece that our co-founder, Viv Slack, has written about <Link href="/about/how-this-started/" className="text-brand-a hover:text-brand-b underline">how it all started</Link>.</p>
               </section>
 
               <section>
                 <h2 className="heading-2 mb-6 text-brand-l">Our Organisation</h2>
                 <p className="text-body mb-4">Street Support Network Ltd is a Registered Charity [1177546]. We have been funded by donations from local philanthropists and friends, small grants, and business sponsorship.</p>
-                <p className="text-body">In order to continue developing and growing our network, we're always on the lookout for businesses to partner with us. If you are interested in learning more about what that might look like, check out our <Link href="/give-help/business-support" className="text-brand-a hover:text-brand-b underline">Business Partnerships</Link> page.</p>
+                <p className="text-body">In order to continue developing and growing our network, we&apos;re always on the lookout for businesses to partner with us. If you are interested in learning more about what that might look like, check out our <Link href="/give-help/business-support" className="text-brand-a hover:text-brand-b underline">Business Partnerships</Link> page.</p>
               </section>
 
               <section>
@@ -75,7 +75,7 @@ export default function AboutPage() {
 
               <section>
                 <h2 className="heading-2 mb-6 text-brand-l">Organisations</h2>
-                <p className="text-body mb-6">Our network includes organisations from all over the UK and across loads of different sectors that provide useful services for people who are experiencing, or at risk of experiencing homelessness. Because some of our users can be in quite vulnerable situations, we have to be really careful that where we're pointing them is the right direction. Because of this, we do have a standards toolkit. If you're curious, you can see the criteria we use in Manchester.</p>
+                <p className="text-body mb-6">Our network includes organisations from all over the UK and across loads of different sectors that provide useful services for people who are experiencing, or at risk of experiencing homelessness. Because some of our users can be in quite vulnerable situations, we have to be really careful that where we&apos;re pointing them is the right direction. Because of this, we do have a standards toolkit. If you&apos;re curious, you can see the criteria we use in Manchester.</p>
                 <Link 
                   href="/manchester/standards-toolkit/" 
                   className="btn-base btn-primary btn-lg"
@@ -86,7 +86,7 @@ export default function AboutPage() {
 
               <section>
                 <h2 className="heading-2 mb-6 text-brand-l">Information Quality</h2>
-                <p className="text-body">All the service information on the site is provided by organisations in our network, so while we really try to make sure it's kept up to date, we can't always guarantee the accuracy of information that is entered by third parties. Please <Link href="/about/contact" className="text-brand-a hover:text-brand-b underline">get in touch</Link> if you spot anything that is incorrect or missing.</p>
+                <p className="text-body">All the service information on the site is provided by organisations in our network, so while we really try to make sure it&apos;s kept up to date, we can&apos;t always guarantee the accuracy of information that is entered by third parties. Please <Link href="/about/contact" className="text-brand-a hover:text-brand-b underline">get in touch</Link> if you spot anything that is incorrect or missing.</p>
               </section>
 
               <section>

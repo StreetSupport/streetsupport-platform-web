@@ -6,17 +6,17 @@ const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!;
 let isLoadingPromise: Promise<typeof google> | null = null;
 
 export const loadGoogleMaps = async (): Promise<typeof google> => {
-  console.log('Loading Google Maps with API key:', apiKey ? 'Present' : 'Missing');
+  console.warn('Loading Google Maps with API key:', apiKey ? 'Present' : 'Missing');
   
   // If Google Maps is already loaded, return immediately
   if (typeof window !== 'undefined' && window.google && window.google.maps && window.google.maps.Map) {
-    console.log('Google Maps already loaded');
+    console.warn('Google Maps already loaded');
     return window.google;
   }
   
   // If already loading, return the existing promise
   if (isLoadingPromise) {
-    console.log('Google Maps loading in progress, waiting...');
+    console.warn('Google Maps loading in progress, waiting...');
     return isLoadingPromise;
   }
   
@@ -24,7 +24,7 @@ export const loadGoogleMaps = async (): Promise<typeof google> => {
     // Check if script is already in the DOM
     const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
     if (existingScript) {
-      console.log('Google Maps script already exists, waiting for load...');
+      console.warn('Google Maps script already exists, waiting for load...');
       // Wait for it to load
       const checkLoaded = () => {
         if (window.google && window.google.maps && window.google.maps.Map) {
@@ -44,11 +44,11 @@ export const loadGoogleMaps = async (): Promise<typeof google> => {
     script.defer = true;
     
     script.onload = () => {
-      console.log('Google Maps script loaded');
+      console.warn('Google Maps script loaded');
       // Wait for google.maps to be fully available
       const checkAvailable = () => {
         if (window.google && window.google.maps && window.google.maps.Map) {
-          console.log('Google Maps API fully available');
+          console.warn('Google Maps API fully available');
           resolve(window.google);
         } else {
           setTimeout(checkAvailable, 50);

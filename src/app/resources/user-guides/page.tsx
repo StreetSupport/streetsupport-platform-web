@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import SocialShare from '@/components/ui/SocialShare';
 
@@ -26,7 +25,7 @@ export default function UserGuidesPage() {
       {/* Content */}
       <div className="prose max-w-none">
         <h2 className="heading-3 mb-4">Street Support Admin User Guides</h2>
-        <p className="mb-8">Our user guides are here to help you manage and update organisation information on Street Support Network with ease and confidence. Whether you're an administrator for an organistion, a location, or a data integrity volunteer, these guides are designed to make the process simple, clear, and effective.</p>
+        <p className="mb-8">Our user guides are here to help you manage and update organisation information on Street Support Network with ease and confidence. Whether you&apos;re an administrator for an organistion, a location, or a data integrity volunteer, these guides are designed to make the process simple, clear, and effective.</p>
 
         <div className="space-y-8">
           {/* Adding an Organisation Guide */}
@@ -49,7 +48,7 @@ export default function UserGuidesPage() {
           {/* Location and Volunteer Admin Guide */}
           <section>
             <h2 className="heading-3 mb-4">Location and Volunteer Admin User Guide</h2>
-            <p className="mb-4">For those managing multiple organisations within an area or volunteers managing multiple locations, these guides provide a detailed, step-by-step approach to adding, editing, and maintaining organisation profiles. We've made sure that the process is straightforward so you can keep information current and trustworthy with minimal effort.</p>
+            <p className="mb-4">For those managing multiple organisations within an area or volunteers managing multiple locations, these guides provide a detailed, step-by-step approach to adding, editing, and maintaining organisation profiles. We&apos;ve made sure that the process is straightforward so you can keep information current and trustworthy with minimal effort.</p>
             <a 
               href="/resources/user-guides/admin-user-guide.pdf" 
               target="_blank" 

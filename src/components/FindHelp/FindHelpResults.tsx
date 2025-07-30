@@ -123,7 +123,7 @@ export default function FindHelpResults({
 }: Props) {
   const { location, updateRadius } = useLocation();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const filtersHeaderRef = useRef<HTMLDivElement>(null);
+  const filtersHeaderRef = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
   
   const [showMap, setShowMap] = useState(initialFilters?.showMap || false);
   const [sortOrder, setSortOrder] = useState<'distance' | 'alpha'>(initialFilters?.sortOrder || 'distance');

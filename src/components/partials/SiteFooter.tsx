@@ -26,10 +26,10 @@ export default function SiteFooter() {
       // Create a promise that resolves when the JSONP callback is called
       const jsonpPromise = new Promise<{ result: string; msg: string }>((resolve, reject) => {
         // Set up the callback function
-        (window as any)[callbackName] = (data: { result: string; msg: string }) => {
+        (window as unknown as Record<string, unknown>)[callbackName] = (data: { result: string; msg: string }) => {
           resolve(data);
           // Clean up
-          delete (window as any)[callbackName];
+          delete (window as unknown as Record<string, unknown>)[callbackName];
           document.head.removeChild(script);
         };
         
@@ -38,16 +38,16 @@ export default function SiteFooter() {
         script.src = `https://streetsupport.us12.list-manage.com/subscribe/post-json?${params.toString()}`;
         script.onerror = () => {
           reject(new Error('Network error'));
-          delete (window as any)[callbackName];
+          delete (window as unknown as Record<string, unknown>)[callbackName];
           document.head.removeChild(script);
         };
         document.head.appendChild(script);
         
         // Set a timeout to prevent hanging
         setTimeout(() => {
-          if ((window as any)[callbackName]) {
+          if ((window as unknown as Record<string, unknown>)[callbackName]) {
             reject(new Error('Timeout'));
-            delete (window as any)[callbackName];
+            delete (window as unknown as Record<string, unknown>)[callbackName];
             if (document.head.contains(script)) {
               document.head.removeChild(script);
             }
@@ -162,7 +162,7 @@ export default function SiteFooter() {
               )}
               
               <p className="mt-4 text-brand-f text-xs leading-relaxed">
-                We respect your privacy and won't share your email address.
+                We respect your privacy and won&apos;t share your email address.
               </p>
             </div>
 

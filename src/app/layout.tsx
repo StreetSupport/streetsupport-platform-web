@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Metadata } from 'next';
-import Script from 'next/script';
+// import Script from 'next/script'; // Unused import
 import './globals.css';
 
 import Nav from '../components/partials/Nav';

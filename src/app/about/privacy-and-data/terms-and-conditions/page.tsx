@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import SocialShare from '@/components/ui/SocialShare';
 
@@ -32,27 +31,27 @@ export default function TermsAndConditionsPage() {
                 <h2 className="heading-2 mb-6 text-brand-l">Finding Services, Not Guarantees</h2>
                 <p className="text-body mb-4">The Virtual Assistant does its best to match you with services based on the information you provide. But:</p>
                 <ul className="list-disc pl-6 space-y-3 text-body">
-                  <li>It can't guarantee that a service will be available or meet your exact needs.</li>
+                  <li>It can&apos;t guarantee that a service will be available or meet your exact needs.</li>
                   <li>Some services change their criteria, availability, or policies, and we might not have the latest updates.</li>
-                  <li>If something isn't quite right, we encourage you to contact the service directly to check.</li>
+                  <li>If something isn&apos;t quite right, we encourage you to contact the service directly to check.</li>
                 </ul>
               </section>
 
               <section>
-                <h2 className="heading-2 mb-6 text-brand-l">We Don't Run These Services</h2>
+                <h2 className="heading-2 mb-6 text-brand-l">We Don&apos;t Run These Services</h2>
                 <p className="text-body mb-4">The organisations we recommend are independent. That means:</p>
                 <ul className="list-disc pl-6 space-y-3 text-body">
-                  <li>We don't control how they operate or the decisions they make.</li>
-                  <li>We can't promise they'll offer support, and we're not responsible for their actions.</li>
-                  <li>If you have a concern about a service, it's best to raise it with them directly.</li>
+                  <li>We don&apos;t control how they operate or the decisions they make.</li>
+                  <li>We can&apos;t promise they&apos;ll offer support, and we&apos;re not responsible for their actions.</li>
+                  <li>If you have a concern about a service, it&apos;s best to raise it with them directly.</li>
                 </ul>
               </section>
 
               <section>
                 <h2 className="heading-2 mb-6 text-brand-l">Your Privacy Matters</h2>
                 <ul className="list-disc pl-6 space-y-3 text-body">
-                  <li>We don't ask for or store personal details like your name, address, or contact info.</li>
-                  <li>Your answers help us find the best services for you, but they're not saved once your session ends.</li>
+                  <li>We don&apos;t ask for or store personal details like your name, address, or contact info.</li>
+                  <li>Your answers help us find the best services for you, but they&apos;re not saved once your session ends.</li>
                   <li>We do keep anonymised data to understand what support people are looking for and improve services over time.</li>
                 </ul>
               </section>
@@ -75,8 +74,8 @@ export default function TermsAndConditionsPage() {
               <section>
                 <h2 className="heading-2 mb-6 text-brand-l">Your Choice, Always</h2>
                 <ul className="list-disc pl-6 space-y-3 text-body">
-                  <li>Using the Virtual Assistant is completely optional. If you'd rather not answer questions, you can still use our interactive map to find services on your own.</li>
-                  <li>By using the Virtual Assistant, you agree to these terms. If you don't want to continue, just close the chat. We hope this tool helps you find the support you need.</li>
+                  <li>Using the Virtual Assistant is completely optional. If you&apos;d rather not answer questions, you can still use our interactive map to find services on your own.</li>
+                  <li>By using the Virtual Assistant, you agree to these terms. If you don&apos;t want to continue, just close the chat. We hope this tool helps you find the support you need.</li>
                 </ul>
               </section>
 

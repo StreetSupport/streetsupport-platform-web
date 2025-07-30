@@ -349,15 +349,6 @@ export default function OrganisationServicesAccordion({
                       <div className={`transition-opacity duration-200 ${loadingContent === accordionKey ? 'opacity-50' : 'opacity-100'}`}>
                         {(() => {
                           const service = (selectedLocation as ServiceLocation).service;
-                          const serviceWithDistance = {
-                            ...service,
-                            organisation: {
-                              name: service.organisation,
-                              slug: service.organisationSlug,
-                              isVerified: false,
-                            },
-                          };
-                          const openingStatus = isServiceOpenNow(serviceWithDistance as ServiceWithDistance);
                           
                           // Check for phone service
                           const isPhoneService = service.subCategory.toLowerCase().includes('telephone') || 

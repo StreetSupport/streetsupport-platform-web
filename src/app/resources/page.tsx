@@ -25,13 +25,13 @@ export default function ResourcesPage() {
         {/* Content */}
         <div className="px-6 py-12">
         <div className="prose max-w-none mb-12">
-          <p>We've created this resource library to help anyone working to support people experiencing homelessness. You'll find practical guides, policies, and resources to help you to maximise the impact of your work within your location.</p>
+          <p>We&apos;ve created this resource library to help anyone working to support people experiencing homelessness. You&apos;ll find practical guides, policies, and resources to help you to maximise the impact of your work within your location.</p>
         </div>
 
         {/* Resources for Everyone */}
         <section className="mb-16">
           <h2 className="heading-2">Resources for Everyone</h2>
-          <p className="text-body mb-8">This section is for anyone looking to make a difference. Whether you're an individual, a business, or part of a community group, you'll find best practice guides and information to help support people experiencing homelessness.</p>
+          <p className="text-body mb-8">This section is for anyone looking to make a difference. Whether you&apos;re an individual, a business, or part of a community group, you&apos;ll find best practice guides and information to help support people experiencing homelessness.</p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Alternative Giving */}

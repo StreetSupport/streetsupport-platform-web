@@ -75,7 +75,7 @@ export default async function OrganisationsSearchPage(props: Props) {
           <div className="bg-red-50 border border-red-200 rounded-md p-4">
             <h1 className="text-lg font-semibold text-red-800 mb-2">Search Error</h1>
             <p className="text-red-700">
-              We're having trouble searching for organisations right now. Please try again later.
+              We&apos;re having trouble searching for organisations right now. Please try again later.
             </p>
             <Link 
               href="/find-help"
@@ -136,7 +136,7 @@ export default async function OrganisationsSearchPage(props: Props) {
           </Link>
           
           <h1 className="text-2xl font-bold text-gray-900">
-            Search Results for "{query}"
+            Search Results for &quot;{query}&quot;
           </h1>
           <p className="text-gray-600 mt-1">
             {count === 0 ? 'No organisations found' : `${count} organisation${count !== 1 ? 's' : ''} found`}
@@ -154,7 +154,7 @@ export default async function OrganisationsSearchPage(props: Props) {
               <div className="ml-3">
                 <h3 className="text-sm font-medium text-yellow-800">No organisations found</h3>
                 <p className="mt-2 text-sm text-yellow-700">
-                  We couldn't find any organisations matching "{query}". Try:
+                  We couldn&apos;t find any organisations matching &quot;{query}&quot;. Try:
                 </p>
                 <ul className="mt-2 text-sm text-yellow-700 list-disc list-inside">
                   <li>Checking your spelling</li>
@@ -228,7 +228,6 @@ export default async function OrganisationsSearchPage(props: Props) {
             ))}
           </div>
         )}
-      </div>
       </div>
     </div>
   );

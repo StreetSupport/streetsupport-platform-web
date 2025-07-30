@@ -1,4 +1,4 @@
-import Link from 'next/link';
+// import Link from 'next/link'; // Unused import
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 
 export default function LocationsPage() {

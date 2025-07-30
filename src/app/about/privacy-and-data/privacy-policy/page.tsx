@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import SocialShare from '@/components/ui/SocialShare';
 
@@ -27,7 +26,7 @@ export default function PrivacyPolicyPage() {
           <div className="prose-content max-w-none">
             <div className="space-y-12">
               <section>
-                <p className="text-lead mb-8">Your privacy matters. Here's how we handle your data across our website, Virtual Assistant, and other digital tools. We follow UK GDPR and data protection laws to make sure your information is safe and handled properly.</p>
+                <p className="text-lead mb-8">Your privacy matters. Here&apos;s how we handle your data across our website, Virtual Assistant, and other digital tools. We follow UK GDPR and data protection laws to make sure your information is safe and handled properly.</p>
               </section>
 
               <section>
@@ -36,21 +35,21 @@ export default function PrivacyPolicyPage() {
                 <ul className="list-disc pl-6 space-y-3 text-body">
                   <li><strong>When you visit our website,</strong> we track general usage data (like which pages are most popular) to improve the site. We do this through cookies and analytics tools, and you can opt-out anytime.</li>
                   <li><strong>If you sign up for updates or contact us,</strong> we may collect your name, email, or phone number to stay in touch.</li>
-                  <li><strong>When you use the Virtual Assistant,</strong> you answer questions so we can find services that match your needs. But we <strong>don't</strong> collect or store personal details like your name, address, or contact info.</li>
+                  <li><strong>When you use the Virtual Assistant,</strong> you answer questions so we can find services that match your needs. But we <strong>don&apos;t</strong> collect or store personal details like your name, address, or contact info.</li>
                 </ul>
-                <p className="text-body mt-4">The only data we keep from the Virtual Assistant is fully anonymised and used to improve services. If you'd rather not provide any details, you can still use our website and interactive map to find support.</p>
+                <p className="text-body mt-4">The only data we keep from the Virtual Assistant is fully anonymised and used to improve services. If you&apos;d rather not provide any details, you can still use our website and interactive map to find support.</p>
               </section>
 
               <section>
                 <h2 className="heading-2 mb-6 text-brand-l">Our Legal Basis for Processing Your Data</h2>
                 <p className="text-body mb-4">We only process your data when we have a valid reason to do so under UK GDPR.</p>
                 <ul className="list-disc pl-6 space-y-3 text-body">
-                  <li>For the Virtual Assistant, we use legitimate interest as our basis, as this processing is necessary to provide you with relevant support recommendations – which is what you're asking us to do.</li>
-                  <li>When sensitive information (like health needs) might be shared through the Virtual Assistant, we rely on your explicit consent, even though we don't collect or store personally identifying details.</li>
-                  <li>If you sign up for updates or newsletters, we'll only send these with your consent, which you can withdraw anytime.</li>
+                  <li>For the Virtual Assistant, we use legitimate interest as our basis, as this processing is necessary to provide you with relevant support recommendations – which is what you&apos;re asking us to do.</li>
+                  <li>When sensitive information (like health needs) might be shared through the Virtual Assistant, we rely on your explicit consent, even though we don&apos;t collect or store personally identifying details.</li>
+                  <li>If you sign up for updates or newsletters, we&apos;ll only send these with your consent, which you can withdraw anytime.</li>
                   <li>When you use our services directly, we may process data under the basis of contract to fulfill our agreement with you.</li>
                 </ul>
-                <p className="text-body mt-4">In all cases, we only collect what's necessary and keep your privacy at the centre of what we do.</p>
+                <p className="text-body mt-4">In all cases, we only collect what&apos;s necessary and keep your privacy at the centre of what we do.</p>
               </section>
 
               <section>
@@ -60,7 +59,7 @@ export default function PrivacyPolicyPage() {
                   <li>Connect people to relevant services and support.</li>
                   <li>Improve our website, Virtual Assistant, and other digital tools.</li>
                   <li>Understand service demand through anonymised data to help local authorities and partners plan better support.</li>
-                  <li>Send updates (if you've chosen to receive them).</li>
+                  <li>Send updates (if you&apos;ve chosen to receive them).</li>
                   <li>Keep our systems secure and running smoothly.</li>
                 </ul>
                 <p className="text-body mt-4">We <strong>never</strong> sell, misuse, or share your data for marketing purposes.</p>
@@ -88,8 +87,8 @@ export default function PrivacyPolicyPage() {
                   <li>The right to data portability.</li>
                   <li>Restricting or objecting to how we use your data</li>
                 </ul>
-                <p className="text-body mt-4">But since the Virtual Assistant doesn't store personal data, if you submit a Subject Access Request, we'll confirm that no identifiable records exist.</p>
-                <p className="text-body mt-4">For other data we hold, contact <a href="mailto:admin@streetsupport.net" className="text-brand-a hover:text-brand-b underline">admin@streetsupport.net</a>, and we'll get back to you (within one month at the latest)</p>
+                <p className="text-body mt-4">But since the Virtual Assistant doesn&apos;t store personal data, if you submit a Subject Access Request, we&apos;ll confirm that no identifiable records exist.</p>
+                <p className="text-body mt-4">For other data we hold, contact <a href="mailto:admin@streetsupport.net" className="text-brand-a hover:text-brand-b underline">admin@streetsupport.net</a>, and we&apos;ll get back to you (within one month at the latest)</p>
               </section>
 
               <section>
@@ -104,11 +103,11 @@ export default function PrivacyPolicyPage() {
 
               <section>
                 <h2 className="heading-2 mb-6 text-brand-l">Data Transfers and Security</h2>
-                <p className="text-body mb-4">We take security seriously. Here's what we do:</p>
+                <p className="text-body mb-4">We take security seriously. Here&apos;s what we do:</p>
                 <ul className="list-disc pl-6 space-y-3 text-body">
                   <li><strong>Strict access controls</strong> so only authorised staff can handle sensitive information.</li>
-                  <li><strong>Regular privacy reviews</strong> to make sure we're always compliant.</li>
-                  <li><strong>Data is stored within the UK/EU,</strong> and we don't transfer personal data outside these regions unless it's protected under recognised frameworks.</li>
+                  <li><strong>Regular privacy reviews</strong> to make sure we&apos;re always compliant.</li>
+                  <li><strong>Data is stored within the UK/EU,</strong> and we don&apos;t transfer personal data outside these regions unless it&apos;s protected under recognised frameworks.</li>
                 </ul>
 
                 <div className="mt-6">
@@ -119,16 +118,16 @@ export default function PrivacyPolicyPage() {
                     <li>How long you stayed on our site.</li>
                     <li>The type of device you used.</li>
                   </ul>
-                  <p className="text-body mt-4">This data isn't linked to anything that can personally identify you. If you'd rather not be tracked, you can turn off cookies in your browser or use a plugin to opt-out.</p>
+                  <p className="text-body mt-4">This data isn&apos;t linked to anything that can personally identify you. If you&apos;d rather not be tracked, you can turn off cookies in your browser or use a plugin to opt-out.</p>
                 </div>
               </section>
 
               <section>
                 <h2 className="heading-2 mb-6 text-brand-l">Questions or Concerns?</h2>
-                <p className="text-body mb-4">If you've got questions about this policy or your data, let us know. We're here to help.</p>
-                <p className="text-body mb-4">While Street Support Network is not required to have a designated Data Protection Officer under UK GDPR regulations, we take your privacy seriously. For any data protection concerns or inquiries, please contact our team at <a href="mailto:admin@streetsupport.net" className="text-brand-a hover:text-brand-b underline">admin@streetsupport.net</a> and we'll look into it.</p>
-                <p className="text-body mb-4">You can also raise concerns with the Information Commissioner's Office (ICO) at <a href="https://www.ico.org.uk" className="text-blue-600 hover:text-blue-800 underline">www.ico.org.uk</a>.</p>
-                <p className="text-body">We review this policy regularly to keep it up to date. If we make big changes, we'll let you know.</p>
+                <p className="text-body mb-4">If you&apos;ve got questions about this policy or your data, let us know. We&apos;re here to help.</p>
+                <p className="text-body mb-4">While Street Support Network is not required to have a designated Data Protection Officer under UK GDPR regulations, we take your privacy seriously. For any data protection concerns or inquiries, please contact our team at <a href="mailto:admin@streetsupport.net" className="text-brand-a hover:text-brand-b underline">admin@streetsupport.net</a> and we&apos;ll look into it.</p>
+                <p className="text-body mb-4">You can also raise concerns with the Information Commissioner&apos;s Office (ICO) at <a href="https://www.ico.org.uk" className="text-blue-600 hover:text-blue-800 underline">www.ico.org.uk</a>.</p>
+                <p className="text-body">We review this policy regularly to keep it up to date. If we make big changes, we&apos;ll let you know.</p>
               </section>
               <div className="mt-16 pt-8 border-t border-brand-q">
                 <p className="text-sm text-brand-f italic">Last updated: 2nd April 2025</p>

@@ -61,7 +61,7 @@ function processSimpleMarkdown(text: string): string {
     result.push(`<ul style="list-style-type: disc; padding-left: 1.5rem; margin: 0.5rem 0;">${listItems}</ul>`);
   }
   
-  let finalResult = result.join('\n')
+  const finalResult = result.join('\n')
     // Handle explicit bullet points with asterisk (* item) and dash (- item)
     // Support multiple spaces after the bullet marker and handle HTML entities
     .replace(/^[*\u2022\u2023\u25E6\u25AA\u25AB\u25CF\u25CB-]\s+(.+)$/gm, '<li>$1</li>')

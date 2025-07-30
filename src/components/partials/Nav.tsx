@@ -212,7 +212,7 @@ export default function Nav() {
                           {groupName}
                         </h3>
                         <ul className="space-y-1">
-                          {groupLocations.map((location, index) => {
+                          {groupLocations.map((location, _index) => {
                             const globalIndex = sortedLocations.findIndex(loc => loc.id === location.id);
                             const isFocused = globalIndex === focusedLocationIndex;
                             return (

@@ -225,7 +225,7 @@ export default function GoogleMap({ center, markers, zoom, onMarkerClick, onMapR
 
   if (loadError) {
     return (
-      <div className="w-full h-[500px] rounded border bg-gray-100 flex items-center justify-center">
+      <div className="w-full h-full min-h-96 rounded border bg-gray-100 flex items-center justify-center">
         <div className="text-center p-4">
           <p className="text-red-600 mb-2">Map Error</p>
           <p className="text-gray-600 text-sm">{loadError}</p>
@@ -236,7 +236,7 @@ export default function GoogleMap({ center, markers, zoom, onMarkerClick, onMapR
 
   if (!isLoaded) {
     return (
-      <div className="w-full h-[500px] rounded border bg-gray-100 flex items-center justify-center">
+      <div className="w-full h-full min-h-96 rounded border bg-gray-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
           <p className="text-gray-600">Loading map...</p>
@@ -245,5 +245,5 @@ export default function GoogleMap({ center, markers, zoom, onMarkerClick, onMapR
     );
   }
 
-  return <div ref={mapRef} className="w-full h-[500px] rounded border" />;
+  return <div ref={mapRef} className="w-full h-full min-h-96 rounded border" />;
 }

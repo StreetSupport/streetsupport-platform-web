@@ -36,7 +36,7 @@ export default function JobsPage() {
 
         <h2 className="heading-3 mb-4">Volunteering</h2>
         <ul className="list-disc pl-6 mb-8">
-          <li><a href="/about/jobs/data-integrity/" className="text-brand-a hover:text-brand-b underline">Data Integrity Volunteer</a></li>
+          <li><Link href="/about/jobs/data-integrity/" className="text-brand-a hover:text-brand-b underline">Data Integrity Volunteer</Link></li>
         </ul>
           </div>
           <SocialShare />

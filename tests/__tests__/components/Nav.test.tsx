@@ -3,23 +3,24 @@ import userEvent from '@testing-library/user-event';
 import Nav from '@/components/partials/Nav';
 
 jest.mock('@/data/locations.json', () => [
-  { id: 1, name: 'Birmingham', slug: 'birmingham' },
-  { id: 2, name: 'Manchester', slug: 'manchester' },
+  { id: '1', name: 'Birmingham', slug: 'birmingham', isPublic: true },
+  { id: '2', name: 'Manchester', slug: 'manchester', isPublic: true },
 ]);
 
 describe('Nav', () => {
   it('renders main navigation links', () => {
     render(<Nav />);
-    expect(screen.getByText('Street Support')).toBeInTheDocument();
-    expect(screen.getByText('Find Help')).toBeInTheDocument();
-    expect(screen.getByText('About')).toBeInTheDocument();
-    expect(screen.getByText('Contact')).toBeInTheDocument();
+    expect(screen.getByAltText('Street Support Network')).toBeInTheDocument();
+    expect(screen.getAllByText('Find Help').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('About').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Resources').length).toBeGreaterThan(0);
   });
 
   it('shows desktop Locations dropdown on hover', async () => {
     render(<Nav />);
-    const button = screen.getByText('Locations');
-    fireEvent.mouseEnter(button);
+    const buttons = screen.getAllByText('Locations');
+    const desktopButton = buttons[0]; // First one should be the desktop version
+    fireEvent.mouseEnter(desktopButton);
     expect(await screen.findByText('Birmingham')).toBeVisible();
     expect(screen.getByText('Manchester')).toBeVisible();
   });

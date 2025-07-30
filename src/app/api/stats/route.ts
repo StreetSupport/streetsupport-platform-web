@@ -58,18 +58,18 @@ export async function GET() {
     
     // Fallback to JSON data if database is not available
     try {
-      const serviceProviders = require('@/data/service-providers.json');
-      const locations = require('@/data/locations.json');
+      const serviceProviders = await import('@/data/service-providers.json');
+      const locations = await import('@/data/locations.json');
       
       // Count organisations from JSON (all are considered public in fallback)
-      const organisationsCount = serviceProviders.length;
+      const organisationsCount = serviceProviders.default.length;
       
       // Count unique services grouped by organisation + category + subcategory
       const uniqueServiceKeys = new Set<string>();
-      serviceProviders.forEach((provider: any) => {
+      serviceProviders.default.forEach((provider: { id: string; services?: { category: string; subCategory: string }[] }) => {
         if (provider.services && Array.isArray(provider.services)) {
-          provider.services.forEach((service: any) => {
-            const uniqueKey = `${provider.key}-${service.category}-${service.subcategory}`;
+          provider.services.forEach((service: { category: string; subCategory: string }) => {
+            const uniqueKey = `${provider.id}-${service.category}-${service.subCategory}`;
             uniqueServiceKeys.add(uniqueKey);
           });
         }
@@ -77,7 +77,7 @@ export async function GET() {
       const servicesCount = uniqueServiceKeys.size;
       
       // Count locations that are public
-      const publicLocations = locations.filter((location: any) => 
+      const publicLocations = locations.default.filter((location: { isPublic: boolean }) => 
         location.isPublic === true
       );
       

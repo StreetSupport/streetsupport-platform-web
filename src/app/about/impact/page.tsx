@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import SocialShare from '@/components/ui/SocialShare';
 

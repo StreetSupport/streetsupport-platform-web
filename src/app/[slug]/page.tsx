@@ -107,7 +107,7 @@ export default async function LocationPage(props) {
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h2 className="text-2xl font-bold mb-4 text-black">Help someone sleeping rough</h2>
           <p className="mb-3 text-black">
-            If you are worried about someone you've seen sleeping rough anywhere in {location.name}, you can inform{' '}
+            If you are worried about someone you&apos;ve seen sleeping rough anywhere in {location.name}, you can inform{' '}
             <a href="https://thestreetlink.org.uk" className="text-brand-a hover:text-brand-b underline font-semibold">StreetLink</a>.
           </p>
           <p className="mb-6 text-black">
@@ -131,7 +131,7 @@ export default async function LocationPage(props) {
               Find Support in {location.name}
             </h2>
             <p className="text-body max-w-3xl mx-auto">
-              Search for support services available near you. Use the filters below to find specific types of help, and see what's available on the map.
+              Search for support services available near you. Use the filters below to find specific types of help, and see what&apos;s available on the map.
             </p>
           </div>
           <LocationFindHelp 
@@ -159,7 +159,7 @@ export default async function LocationPage(props) {
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h2 className="text-2xl font-semibold mb-4">Get in touch</h2>
           <p className="mb-4">
-            If you'd like to get involved or have suggestions, please contact us at{' '}
+            If you&apos;d like to get involved or have suggestions, please contact us at{' '}
             <a href={`mailto:${contactEmail}`} className="text-brand-a hover:text-brand-b underline">{contactEmail}</a>.
           </p>
           <p>

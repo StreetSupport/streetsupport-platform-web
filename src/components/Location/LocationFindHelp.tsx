@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDebounce } from '@/hooks/useDebounce';
 import GoogleMap from '@/components/MapComponent/GoogleMap';
@@ -61,10 +61,13 @@ function processServiceData(item: unknown): ServiceWithDistance {
       slug: String(serviceItem.ServiceProviderKey || ''),
       isVerified: false,
     },
+    organisationSlug: serviceItem.organisation ? 
+      String((serviceItem.organisation as Record<string, unknown>).slug || '') :
+      String(serviceItem.ServiceProviderKey || ''),
     address: serviceItem.Address as Record<string, unknown> || {},
     openTimes,
     distance: Number(serviceItem.distance || 0),
-    clientGroups: serviceItem.ClientGroups || [],
+    clientGroups: Array.isArray(serviceItem.ClientGroups) ? serviceItem.ClientGroups : [],
   };
 }
 
@@ -107,7 +110,7 @@ export default function LocationFindHelp({ locationName, latitude, longitude }: 
   }, [selectedSubCategory, subCategories]);
 
   // Load all services in 5km radius on initial load
-  const loadAllServices = async () => {
+  const loadAllServices = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -143,12 +146,12 @@ export default function LocationFindHelp({ locationName, latitude, longitude }: 
     } finally {
       setLoading(false);
     }
-  };
+  }, [latitude, longitude]);
 
   // Load services on mount
   useEffect(() => {
     loadAllServices();
-  }, [latitude, longitude]);
+  }, [loadAllServices]);
 
   // Filter services based on selected filters
   const filteredServices = useMemo(() => {
@@ -309,8 +312,6 @@ export default function LocationFindHelp({ locationName, latitude, longitude }: 
             center={{ lat: latitude, lng: longitude }}
             markers={mapMarkers}
             zoom={13}
-            showUserLocation={false}
-            className="w-full h-full rounded-lg border border-brand-f"
           />
         )}
       </div>

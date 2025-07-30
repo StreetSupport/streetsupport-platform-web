@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import SocialShare from '@/components/ui/SocialShare';
 
@@ -106,7 +105,7 @@ export default function DataProtectionPolicyPage() {
                   </div>
                   <div className="border border-brand-q p-4 rounded-lg">
                     <h4 className="font-semibold text-brand-l mb-2">Legitimate Interests</h4>
-                    <p className="text-body text-sm">Processing is necessary for Street Support Network's legitimate interests and does not override individuals' rights.</p>
+                    <p className="text-body text-sm">Processing is necessary for Street Support Network&apos;s legitimate interests and does not override individuals&apos; rights.</p>
                   </div>
                 </div>
                 <p className="text-body">For the Virtual Assistant, processing is based on legitimate interest (for matching individuals with services) and explicit consent (for special category data such as health or support needs).</p>
@@ -211,7 +210,7 @@ export default function DataProtectionPolicyPage() {
         <p>In the event of a data breach:</p>
         <ol className="list-decimal pl-6 space-y-1">
           <li>Notify the DPL immediately.</li>
-          <li>The DPL will assess the breach and, if required, report it to the Information Commissioner's Office (ICO) within 72 hours.</li>
+          <li>The DPL will assess the breach and, if required, report it to the Information Commissioner&apos;s Office (ICO) within 72 hours.</li>
           <li>Affected individuals will be informed if the breach poses a significant risk to their rights.</li>
         </ol>
 

@@ -37,7 +37,7 @@ export default function NewsPage() {
                 <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">Platform Update</span>
               </div>
               <p className="text-gray-700 mb-3">
-                We're excited to announce our expansion into Birmingham, Leeds, Liverpool, Sheffield, and Bristol, bringing our platform to thousands more people in need of support services.
+                We&apos;re excited to announce our expansion into Birmingham, Leeds, Liverpool, Sheffield, and Bristol, bringing our platform to thousands more people in need of support services.
               </p>
               <Link href="/news/platform-expansion-2024" className="text-blue-600 hover:text-blue-800 text-sm font-medium">
                 Read more →
@@ -77,7 +77,7 @@ export default function NewsPage() {
                 <span className="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded">Feature Launch</span>
               </div>
               <p className="text-gray-700 mb-3">
-                We've launched enhanced accessibility features including voice navigation, text-to-speech, and simplified interfaces to better serve users with diverse needs and abilities.
+                We&apos;ve launched enhanced accessibility features including voice navigation, text-to-speech, and simplified interfaces to better serve users with diverse needs and abilities.
               </p>
               <Link href="/news/mobile-app-accessibility-update" className="text-blue-600 hover:text-blue-800 text-sm font-medium">
                 Read more →
@@ -143,11 +143,11 @@ export default function NewsPage() {
           <h2 className="text-2xl font-semibold mb-4">In the Media</h2>
           <div className="space-y-3">
             <div className="border-l-4 border-gray-300 pl-4">
-              <p className="text-sm text-gray-600">"Street Support's innovative approach to connecting homeless people with services has transformed how we think about digital inclusion in social care."</p>
+              <p className="text-sm text-gray-600">&quot;Street Support&apos;s innovative approach to connecting homeless people with services has transformed how we think about digital inclusion in social care.&quot;</p>
               <cite className="text-xs text-gray-500">— Social Care Today, March 2024</cite>
             </div>
             <div className="border-l-4 border-gray-300 pl-4">
-              <p className="text-sm text-gray-600">"The platform's expansion across the UK represents a significant step forward in addressing homelessness through technology."</p>
+              <p className="text-sm text-gray-600">&quot;The platform&apos;s expansion across the UK represents a significant step forward in addressing homelessness through technology.&quot;</p>
               <cite className="text-xs text-gray-500">— Third Sector Magazine, February 2024</cite>
             </div>
           </div>

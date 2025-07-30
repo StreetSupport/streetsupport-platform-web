@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Image from 'next/image';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import SocialShare from '@/components/ui/SocialShare';
@@ -44,7 +43,7 @@ export default function OurTrusteesPage() {
             <div>
               <h2 className="heading-5 mb-4">Catherine Lynagh</h2>
               <p className="text-brand-l leading-relaxed">
-                I provide support to Viv and Gary on business matters such as legal and finance, raising funds and strategy. Previously I was finance director for a housing association and more recently I provided consultancy services in that sector. My experience of the challenges around tackling homelessness attracted me to the great work that Street Support does and in particular it's inclusive and collaborative approach.
+                I provide support to Viv and Gary on business matters such as legal and finance, raising funds and strategy. Previously I was finance director for a housing association and more recently I provided consultancy services in that sector. My experience of the challenges around tackling homelessness attracted me to the great work that Street Support does and in particular it&apos;s inclusive and collaborative approach.
               </p>
             </div>
           </div>
@@ -63,7 +62,7 @@ export default function OurTrusteesPage() {
             <div>
               <h2 className="heading-5 mb-4">Julie Cook</h2>
               <p className="text-brand-l leading-relaxed">
-                I have worked in the housing & homelessness sector for over 30 years after graduating with a Housing Degree from Sheffield Hallam way back in the 80's, starting out as a front line Homelessness Officer and progressing in local government to heading up a Housing & Benefits Service. I am now enjoying part time work in the charitable sector, most recently with Homeless Link. I'm still passionate about tackling homelessness and the need for collaboration and partnership amongst all those in the sector. I am also a Trustee of Housing Justice.
+                I have worked in the housing & homelessness sector for over 30 years after graduating with a Housing Degree from Sheffield Hallam way back in the 80&apos;s, starting out as a front line Homelessness Officer and progressing in local government to heading up a Housing & Benefits Service. I am now enjoying part time work in the charitable sector, most recently with Homeless Link. I&apos;m still passionate about tackling homelessness and the need for collaboration and partnership amongst all those in the sector. I am also a Trustee of Housing Justice.
               </p>
             </div>
           </div>
@@ -89,13 +88,13 @@ export default function OurTrusteesPage() {
               <h2 className="heading-5 mb-4">Charles Gray - Finance & Business Admin</h2>
               <div className="text-brand-l leading-relaxed space-y-4">
                 <p>
-                  I'm responsible for managing the Finances and Business Admininstration for Street Support. This includes producing the management accounts, processing invoices and making payments. I get involved with Grant applications and the admin associated with our charitable status. I also assist the directors and trustees with business advice.
+                  I&apos;m responsible for managing the Finances and Business Admininstration for Street Support. This includes producing the management accounts, processing invoices and making payments. I get involved with Grant applications and the admin associated with our charitable status. I also assist the directors and trustees with business advice.
                 </p>
                 <p>
                   I was previously Managing Director and Finance Director for a logistics company and come from a finance background having qualified as a Chartered Accountant.
                 </p>
                 <p>
-                  For some time I have wanted to step back from corporate life and apply my experience to more charitable purposes. I was delighted to get the opportunity to assist Street Support from its inception. I was really impressed with the founders' enthusiasm and dedication to deliver real solutions to relieve the hardships caused by homelessness. They have achieved so much from such a low level of resources and it has been a pleasure to support them along the way.
+                  For some time I have wanted to step back from corporate life and apply my experience to more charitable purposes. I was delighted to get the opportunity to assist Street Support from its inception. I was really impressed with the founders&apos; enthusiasm and dedication to deliver real solutions to relieve the hardships caused by homelessness. They have achieved so much from such a low level of resources and it has been a pleasure to support them along the way.
                 </p>
               </div>
             </div>

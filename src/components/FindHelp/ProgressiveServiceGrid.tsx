@@ -34,7 +34,7 @@ interface ProgressiveServiceGridProps {
  */
 export default function ProgressiveServiceGrid({
   groups,
-  showMap,
+  showMap: _showMap,
   openDescriptionId,
   onToggleDescription,
   batchSize = 50,

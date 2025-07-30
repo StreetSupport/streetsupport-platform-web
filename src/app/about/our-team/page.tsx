@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Image from 'next/image';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import SocialShare from '@/components/ui/SocialShare';
@@ -26,7 +25,7 @@ export default function OurTeamPage() {
         <div className="mb-16">
           <h1 className="heading-3 text-white mb-4">Our Core Team</h1>
           <p className="text-lead mb-8">
-            We're your everyday people, your first port of call. We cover a fair bit between us, so please get in touch with whatever you need.
+            We&apos;re your everyday people, your first port of call. We cover a fair bit between us, so please get in touch with whatever you need.
           </p>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -132,9 +131,9 @@ export default function OurTeamPage() {
 
       {/* Location Contacts Section */}
       <div className="mb-16">
-        <h1 className="heading-3 mb-4">Our location's contacts</h1>
+        <h1 className="heading-3 mb-4">Our location&apos;s contacts</h1>
         <p className="text-lead mb-8">
-          We're so lucky to be supported by a host of brilliant people who manage their local Street Support networks. If your query is about a specific location, get in touch with them - you'll be in great hands.
+          We&apos;re so lucky to be supported by a host of brilliant people who manage their local Street Support networks. If your query is about a specific location, get in touch with them - you&apos;ll be in great hands.
         </p>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -216,7 +215,7 @@ export default function OurTeamPage() {
             <h2 className="heading-5 mb-2">Tim Archibold</h2>
             <h3 className="heading-6 text-brand-a mb-3">Luton</h3>
             <p className="text-brand-l mb-4">
-              Tim joined Signposts in July 2016 as Operations Manager and took over as CEO in July 2020. He brings with him over 13 year's experience working in the sector, having held a senior leadership role with NOAH Enterprise and Luton Borough Council prior to joining the Signposts team.
+              Tim joined Signposts in July 2016 as Operations Manager and took over as CEO in July 2020. He brings with him over 13 year&apos;s experience working in the sector, having held a senior leadership role with NOAH Enterprise and Luton Borough Council prior to joining the Signposts team.
             </p>
             <a 
               href="mailto:luton@streetsupport.net"
@@ -269,14 +268,14 @@ export default function OurTeamPage() {
           <div>
             <h2 className="heading-3 mb-2">Oleksandr Seliuchenko - Freelance Developer</h2>
             <p className="text-brand-l">
-              In recent years, Sasha has helped us out with a lot specific development tasks and projects. He always seems to be there when we need him and we're hugely grateful for his support.
+              In recent years, Sasha has helped us out with a lot specific development tasks and projects. He always seems to be there when we need him and we&apos;re hugely grateful for his support.
             </p>
           </div>
 
           <div>
             <h2 className="heading-3 mb-2">Alex Atkinson - Designer</h2>
             <p className="text-brand-l">
-              Alex is an experienced designer, generously giving his time for free to Street Support Network - we couldn't have done this without him!
+              Alex is an experienced designer, generously giving his time for free to Street Support Network - we couldn&apos;t have done this without him!
             </p>
           </div>
 

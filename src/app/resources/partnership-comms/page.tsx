@@ -26,9 +26,9 @@ export default function PartnershipCommsPage() {
       {/* Content */}
       <div className="prose max-w-none">
         <h2 className="heading-3 mb-4">Partnership Communications</h2>
-        <p className="mb-4">We love the 'network' aspect of what we do and we hope you will too. Working in this sector can be frustrating and isolating, but by joining us you'll also be joining a ready-made support network.</p>
-        <p className="mb-4">Street Support is active in 31 locations across the UK, and we encourage everyone to play an active part in our Network. Whether that's connecting with each other on LinkedIn, featuring in our newsletter or attending and speaking in our quarterly Network Meetings, we're here to facilitate it.</p>
-        <p className="mb-8">We're always looking for opportunities to engage with and support our locations, so if there's something you'd like to work together on, just say the word.</p>
+        <p className="mb-4">We love the &apos;network&apos; aspect of what we do and we hope you will too. Working in this sector can be frustrating and isolating, but by joining us you&apos;ll also be joining a ready-made support network.</p>
+        <p className="mb-4">Street Support is active in 31 locations across the UK, and we encourage everyone to play an active part in our Network. Whether that&apos;s connecting with each other on LinkedIn, featuring in our newsletter or attending and speaking in our quarterly Network Meetings, we&apos;re here to facilitate it.</p>
+        <p className="mb-8">We&apos;re always looking for opportunities to engage with and support our locations, so if there&apos;s something you&apos;d like to work together on, just say the word.</p>
 
         <h2 className="heading-3 mb-4">Other useful partnership communications resources</h2>
         <ul className="list-disc pl-6 space-y-2 mb-8">

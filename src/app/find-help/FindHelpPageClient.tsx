@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
+// import Link from 'next/link'; // Unused import
 import { useLocation } from '@/contexts/LocationContext';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import LocationPrompt from '@/components/Location/LocationPrompt';
@@ -61,7 +61,7 @@ interface FindHelpPageClientProps {
   searchParams: { [key: string]: string | string[] | undefined };
 }
 
-export default function FindHelpPageClient({ searchParams }: FindHelpPageClientProps) {
+export default function FindHelpPageClient({ searchParams: _searchParams }: FindHelpPageClientProps) {
   const { location, setLocationFromCoordinates, clearLocation } = useLocation();
   const [services, setServices] = useState<ServiceWithDistance[]>([]);
   const [loading, setLoading] = useState(false);

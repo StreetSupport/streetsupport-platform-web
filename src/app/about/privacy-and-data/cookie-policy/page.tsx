@@ -96,7 +96,7 @@ export default function CookiePolicyPage() {
 
         <h2 className="text-2xl font-semibold mb-4 mt-8">Managing Your Cookie Preferences</h2>
         <p>You can control your cookie preferences through our cookie banner or through your browser settings. The cookie banner will appear when you first visit our site, giving you the option to accept or reject non-essential cookies.</p>
-        <p>If you wish to adjust your preferences at any time, you can do so by clicking the "Cookie Settings" link in the footer of our website or through your browser settings.</p>
+        <p>If you wish to adjust your preferences at any time, you can do so by clicking the &quot;Cookie Settings&quot; link in the footer of our website or through your browser settings.</p>
 
         <h2 className="heading-3 mb-4">How to Control Cookies in Your Browser</h2>
         <p>Most web browsers allow you to control cookies through their settings. You can set your browser to block all cookies or to alert you when cookies are being sent. However, please note that blocking all cookies may affect the functionality of our website.</p>
@@ -109,7 +109,7 @@ export default function CookiePolicyPage() {
         </ul>
 
         <h2 className="heading-3 mb-4">Changes to This Cookie Policy</h2>
-        <p>We may update our Cookie Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. When we make changes, we will update the "Effective Date" at the top of this page. Please review this policy periodically for any updates.</p>
+        <p>We may update our Cookie Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. When we make changes, we will update the &quot;Effective Date&quot; at the top of this page. Please review this policy periodically for any updates.</p>
 
         <h2 className="heading-3 mb-4">Contact Us</h2>
         <p>If you have any questions about this Cookie Policy or how we use cookies, please contact us at: <a href="mailto:admin@streetsupport.net" className="text-brand-a hover:text-brand-b underline">admin@streetsupport.net</a></p>

@@ -112,7 +112,7 @@ export default function OrganisationOverview({ organisation }: Props) {
                 Information not yet verified
               </h3>
               <p className="text-sm text-amber-700">
-                This organisation hasn't yet confirmed this information, so please contact them before attending. 
+                This organisation hasn&apos;t yet confirmed this information, so please contact them before attending. 
                 If this information is out of date, let us know at{' '}
                 <a 
                   href="mailto:admin@streetsupport.net" 

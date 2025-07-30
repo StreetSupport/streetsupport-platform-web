@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import locations from '@/data/locations.json';
 import AdvicePageClient from './AdvicePageClient';

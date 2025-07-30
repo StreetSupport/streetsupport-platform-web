@@ -26,10 +26,10 @@ export default function BrandingPage() {
 
       {/* Content */}
       <div className="prose max-w-none">
-        <p className="mb-4">Street Support Network's brand centres around our values - objectivity, quality, love, integrity, sustainability and communication. For more about each, please see the document below.</p>
-        <p className="mb-4">We like our branding to be simple to maximise its accessibility to all. When we produce presentations and graphics, they have as few words as possible and are in Museo Sans - our clear to read font. If you're looking at producing anything like this yourself, please use our Brand Guideline's document to help you. It talks about what should be included in external communications, how we use imagery and a brief guide on our tone of voice.</p>
-        <p className="mb-4">Whether we're writing emails or social media posts, the way we speak to people is really important to us, so we've produced a detailed document with hows and whys. Again, it all comes back to our values.</p>
-        <p className="mb-6">All the work we produce has our logo on it. There are two versions of this, one with Street Support Network's name and the other just the Street Support Network icon.</p>
+        <p className="mb-4">Street Support Network&apos;s brand centres around our values - objectivity, quality, love, integrity, sustainability and communication. For more about each, please see the document below.</p>
+        <p className="mb-4">We like our branding to be simple to maximise its accessibility to all. When we produce presentations and graphics, they have as few words as possible and are in Museo Sans - our clear to read font. If you&apos;re looking at producing anything like this yourself, please use our Brand Guideline&apos;s document to help you. It talks about what should be included in external communications, how we use imagery and a brief guide on our tone of voice.</p>
+        <p className="mb-4">Whether we&apos;re writing emails or social media posts, the way we speak to people is really important to us, so we&apos;ve produced a detailed document with hows and whys. Again, it all comes back to our values.</p>
+        <p className="mb-6">All the work we produce has our logo on it. There are two versions of this, one with Street Support Network&apos;s name and the other just the Street Support Network icon.</p>
         
         <div className="flex flex-col md:flex-row gap-6 justify-center items-center mb-8">
           <Image 
@@ -73,7 +73,7 @@ export default function BrandingPage() {
           </a>
           <a href="https://www.canva.com/design/DAFf_eB43B0/YLzIVzZVEjHyj7X6REIE4Q/view?utm_content=DAFf_eB43B0&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink" target="_blank" rel="noopener noreferrer" className="block transition-transform hover:scale-105">
             <article className="card !bg-brand-i text-white hover:!bg-brand-q transition-all duration-200 p-6 h-full flex items-center justify-center text-center shadow-lg rounded-lg">
-              <h3 className="heading-5 text-white">Location's Guide to Social Media</h3>
+              <h3 className="heading-5 text-white">Location&apos;s Guide to Social Media</h3>
             </article>
           </a>
         </div>
