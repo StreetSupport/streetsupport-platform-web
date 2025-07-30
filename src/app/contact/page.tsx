@@ -49,6 +49,9 @@ export default function ContactPage() {
             <a href="mailto:edinburgh@streetsupport.net" className="text-brand-a hover:text-brand-b underline">edinburgh@streetsupport.net</a>
           </li>
           <li>
+            <a href="mailto:greatermanchester@streetsupport.net" className="text-brand-a hover:text-brand-b underline">greatermanchester@streetsupport.net</a>
+          </li>
+          <li>
             <a href="mailto:luton@streetsupport.net" className="text-brand-a hover:text-brand-b underline">luton@streetsupport.net</a>
           </li>
           <li>

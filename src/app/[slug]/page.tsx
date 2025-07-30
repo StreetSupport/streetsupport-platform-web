@@ -43,6 +43,31 @@ function getLocationBackgroundImage(slug: string): string {
   return `/assets/img/home-header-background.png`;
 }
 
+// Helper function to get location contact email
+function getLocationContactEmail(slug: string): string {
+  // West Midlands locations
+  const westMidlandsLocations = [
+    'birmingham', 'coventry', 'dudley', 'sandwell', 'solihull', 'walsall', 'wolverhampton'
+  ];
+  
+  // Greater Manchester locations
+  const greaterManchesterLocations = [
+    'manchester', 'bolton', 'bury', 'oldham', 'rochdale', 'salford', 
+    'stockport', 'tameside', 'trafford', 'wigan-and-leigh'
+  ];
+  
+  if (westMidlandsLocations.includes(slug)) {
+    return 'westmidlands@streetsupport.net';
+  }
+  
+  if (greaterManchesterLocations.includes(slug)) {
+    return 'greatermanchester@streetsupport.net';
+  }
+  
+  // Default to location-specific email
+  return `${slug}@streetsupport.net`;
+}
+
 // @ts-expect-error Next dynamic param inference workaround
 export default async function LocationPage(props) {
   const { slug } = await props.params;
@@ -57,6 +82,7 @@ export default async function LocationPage(props) {
 
   const locationImage = getLocationBackgroundImage(slug);
   const homeBackground = "/assets/img/home-header-background.png";
+  const contactEmail = getLocationContactEmail(slug);
 
   return (
     <main>
@@ -134,7 +160,7 @@ export default async function LocationPage(props) {
           <h2 className="text-2xl font-semibold mb-4">Get in touch</h2>
           <p className="mb-4">
             If you'd like to get involved or have suggestions, please contact us at{' '}
-            <a href={`mailto:${slug}@streetsupport.net`} className="text-brand-a hover:text-brand-b underline">{slug}@streetsupport.net</a>.
+            <a href={`mailto:${contactEmail}`} className="text-brand-a hover:text-brand-b underline">{contactEmail}</a>.
           </p>
           <p>
             We are looking for businesses and organisations to{' '}
