@@ -197,11 +197,12 @@ export default function Nav() {
               </button>
 
               {isLocationsOpen && (
-                <div 
-                  ref={locationsDropdownRef}
-                  id="locations-dropdown"
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[500px] bg-white border border-brand-f rounded-md shadow-lg z-50 p-4"
-                  role="menu"
+                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[500px] z-50">
+                  <div 
+                    ref={locationsDropdownRef}
+                    id="locations-dropdown"
+                    className="bg-white border border-brand-f rounded-md shadow-lg p-4"
+                    role="menu"
                   aria-labelledby="locations-button"
                   onKeyDown={handleLocationsKeyDown}
                 >
@@ -235,6 +236,7 @@ export default function Nav() {
                       </div>
                     ))}
                   </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -260,7 +262,8 @@ export default function Nav() {
               </button>
 
               {isAboutOpen && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-white border border-brand-f rounded-md shadow-lg z-50">
+                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-48 z-50">
+                  <div className="bg-white border border-brand-f rounded-md shadow-lg">
                   <ul className="py-2">
                     <li>
                       <Link
@@ -317,6 +320,7 @@ export default function Nav() {
                       </Link>
                     </li>
                   </ul>
+                  </div>
                 </div>
               )}
             </div>
