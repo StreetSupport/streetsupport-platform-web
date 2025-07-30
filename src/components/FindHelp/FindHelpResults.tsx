@@ -28,6 +28,7 @@ interface Props {
     showMap: boolean;
     currentPage: number;
   }) => void;
+  onChangeLocation?: () => void;
 }
 
 interface MapMarker {
@@ -117,7 +118,8 @@ export default function FindHelpResults({
   error = null, 
   shouldRestoreState: _shouldRestoreState = false,
   initialFilters = null,
-  onStateUpdate
+  onStateUpdate,
+  onChangeLocation
 }: Props) {
   const { location, updateRadius } = useLocation();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -223,8 +225,30 @@ export default function FindHelpResults({
       <div className="page-container">
         <div className="w-full flex flex-col gap-6">
         <div ref={filtersHeaderRef} className="mb-4">
-          <div className="flex justify-between items-baseline mb-2">
-            <h1 className="text-xl font-bold">Services near you</h1>
+          <div className="flex justify-between items-center mb-2">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <h1 className="text-xl font-bold">Services near you</h1>
+              {location && (
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <span className="inline-flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    {location.label || `${location.lat?.toFixed(4)}, ${location.lng?.toFixed(4)}`}
+                  </span>
+                  {onChangeLocation && (
+                    <button
+                      onClick={onChangeLocation}
+                      className="text-brand-a hover:text-brand-b underline transition-colors"
+                      title="Change location"
+                    >
+                      Change
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
             {!loading && !error && sortedGroups.length > 0 && (
               <p className="text-sm text-gray-600">
                 {filteredServices.length} service{filteredServices.length !== 1 ? 's' : ''} from {sortedGroups.length} organisation{sortedGroups.length !== 1 ? 's' : ''}

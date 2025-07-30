@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import HomepageMap from '@/components/Homepage/HomepageMap';
 import Hero from '@/components/ui/Hero';
 
@@ -91,6 +92,27 @@ export default async function Home() {
             In collaboration with...
           </h2>
           <div className="h-1 w-24 bg-brand-d mx-auto mb-8"></div>
+          
+          {/* Homeless Link Logo */}
+          <div className="mb-8">
+            <a 
+              href="https://homelesslink.org.uk" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-block transition-transform hover:scale-105"
+              title="Visit Homeless Link website"
+            >
+              <Image
+                src="/assets/icons/homeless-link.svg"
+                alt="Homeless Link"
+                width={300}
+                height={120}
+                className="mx-auto"
+                priority
+              />
+            </a>
+          </div>
+          
           <p className="text-body mb-6 max-w-2xl mx-auto">
             We are looking for businesses and supporters to{' '}
             <Link href="/give-help/business-support/" className="text-brand-a hover:text-brand-b underline font-medium">

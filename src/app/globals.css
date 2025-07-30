@@ -350,7 +350,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-size: 120%;
+  background-size: 0;
   background-position: center bottom;
   background-repeat: no-repeat;
 }
@@ -543,7 +543,7 @@ Responsive breakpoints:
 
 /* Base location overlay styles - fallback for all locations */
 .hero-location-overlay {
-  background-size: 70%;
+  background-size: 0;
   background-position: center bottom;
   background-repeat: no-repeat;
   width: 100%;
@@ -552,251 +552,467 @@ Responsive breakpoints:
   transform: none;
 }
 
+@media (min-width: 768px) {
+  .hero-location-overlay {
+    background-size: 70%;
+  }
+}
+
 /* Individual location customizations - adjust as needed for each location */
 
 .hero-location-birmingham {
-  background-size: 75%;
-  width: 100%;
-  height: 96%;
-  bottom: 8px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-birmingham {
+    background-size: 75%;
+    width: 100%;
+    height: 96%;
+    bottom: 8px;
+  }
 }
 
 .hero-location-manchester {
-  background-size: 70%;
-  width: 100%;
-  height: 99.5%;
-  bottom: 5px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-manchester {
+    background-size: 70%;
+    width: 100%;
+    height: 99.5%;
+    bottom: 5px;
+  }
 }
 
 .hero-location-leeds {
-  background-size: 70%;
-  width: 100%;
-  height: 99%;
-  bottom: 10px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-leeds {
+    background-size: 70%;
+    width: 100%;
+    height: 99%;
+    bottom: 10px;
+  }
 }
 
 .hero-location-liverpool {
-  background-size: 60%;
-  width: 100%;
-  height: 97%;
-  bottom: 6px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-liverpool {
+    background-size: 60%;
+    width: 100%;
+    height: 97%;
+    bottom: 6px;
+  }
 }
 
 .hero-location-glasgow {
-  background-size: 75%;
-  width: 100%;
-  height: 98%;
-  bottom: 8px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-glasgow {
+    background-size: 75%;
+    width: 100%;
+    height: 98%;
+    bottom: 8px;
+  }
 }
 
 .hero-location-edinburgh {
-  background-size: 85%;
-  width: 100%;
-  height: 135%;
-  bottom: 7px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-edinburgh {
+    background-size: 85%;
+    width: 100%;
+    height: 135%;
+    bottom: 7px;
+  }
 }
 
 .hero-location-nottingham {
-  background-size: 70%;
-  width: 100%;
-  height: 96%;
-  bottom: 10px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-nottingham {
+    background-size: 70%;
+    width: 100%;
+    height: 96%;
+    bottom: 10px;
+  }
 }
 
 .hero-location-brighton-and-hove {
-  background-size: 50%;
-  width: 100%;
-  height: 99%;
-  bottom: 8px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-brighton-and-hove {
+    background-size: 50%;
+    width: 100%;
+    height: 99%;
+    bottom: 8px;
+  }
 }
 
 .hero-location-blackpool {
-  background-size: 45%;
-  width: 100%;
-  height: 98%;
-  bottom: 12px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-blackpool {
+    background-size: 45%;
+    width: 100%;
+    height: 98%;
+    bottom: 12px;
+  }
 }
 
 .hero-location-bolton {
-  background-size: 70%;
-  width: 100%;
-  height: 99%;
-  bottom: 10px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-bolton {
+    background-size: 70%;
+    width: 100%;
+    height: 99%;
+    bottom: 10px;
+  }
 }
 
 .hero-location-bournemouth {
-  background-size: 75%;
-  width: 100%;
-  height: 85%;
-  bottom: 8px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-bournemouth {
+    background-size: 75%;
+    width: 100%;
+    height: 85%;
+    bottom: 8px;
+  }
 }
 
 .hero-location-bradford {
-  background-size: 70%;
-  width: 100%;
-  height: 85%;
-  bottom: 10px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-bradford {
+    background-size: 70%;
+    width: 100%;
+    height: 85%;
+    bottom: 10px;
+  }
 }
 
 .hero-location-bury {
-  background-size: 80%;
-  width: 100%;
-  height: 99%;
-  bottom: 8px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-bury {
+    background-size: 80%;
+    width: 100%;
+    height: 99%;
+    bottom: 8px;
+  }
 }
 
 .hero-location-cambridgeshire {
-  background-size: 60%;
-  width: 100%;
-  height: 96%;
-  bottom: 7px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-cambridgeshire {
+    background-size: 60%;
+    width: 100%;
+    height: 96%;
+    bottom: 7px;
+  }
 }
 
 .hero-location-chelmsford {
-  background-size: 70%;
-  width: 100%;
-  height: 96%;
-  bottom: 8px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-chelmsford {
+    background-size: 70%;
+    width: 100%;
+    height: 96%;
+    bottom: 8px;
+  }
 }
 
 .hero-location-coventry {
-  background-size: 70%;
-  width: 100%;
-  height: 98%;
-  bottom: 10px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-coventry {
+    background-size: 70%;
+    width: 100%;
+    height: 98%;
+    bottom: 10px;
+  }
 }
 
 .hero-location-derbyshire {
-  background-size: 75%;
-  width: 100%;
-  height: 98%;
-  bottom: 8px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-derbyshire {
+    background-size: 75%;
+    width: 100%;
+    height: 98%;
+    bottom: 8px;
+  }
 }
 
 .hero-location-dudley {
-  background-size: 70%;
-  width: 100%;
-  height: 94%;
-  bottom: 10px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-dudley {
+    background-size: 70%;
+    width: 100%;
+    height: 94%;
+    bottom: 10px;
+  }
 }
 
 .hero-location-exeter {
-  background-size: 75%;
-  width: 100%;
-  height: 85%;
-  bottom: 8px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-exeter {
+    background-size: 75%;
+    width: 100%;
+    height: 85%;
+    bottom: 8px;
+  }
 }
 
 .hero-location-luton {
-  background-size: 80%;
-  width: 100%;
-  height: 96%;
-  bottom: 10px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-luton {
+    background-size: 80%;
+    width: 100%;
+    height: 96%;
+    bottom: 10px;
+  }
 }
 
 .hero-location-oldham {
-  background-size: 75%;
-  width: 100%;
-  height: 100%;
-  bottom: 8px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-oldham {
+    background-size: 75%;
+    width: 100%;
+    height: 100%;
+    bottom: 8px;
+  }
 }
 
 .hero-location-portsmouth {
-  background-size: 80%;
-  width: 100%;
-  height: 87%;
-  bottom: 7px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-portsmouth {
+    background-size: 80%;
+    width: 100%;
+    height: 87%;
+    bottom: 7px;
+  }
 }
 
 .hero-location-reading {
-  background-size: 50%;
-  width: 100%;
-  height: 105%;
-  bottom: 8px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-reading {
+    background-size: 50%;
+    width: 100%;
+    height: 105%;
+    bottom: 8px;
+  }
 }
 
 .hero-location-rochdale {
-  background-size: 75%;
-  width: 100%;
-  height: 106%;
-  bottom: 10px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-rochdale {
+    background-size: 75%;
+    width: 100%;
+    height: 106%;
+    bottom: 10px;
+  }
 }
 
 .hero-location-salford {
-  background-size: 55%;
-  width: 100%;
-  height: 115%;
-  bottom: 8px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-salford {
+    background-size: 55%;
+    width: 100%;
+    height: 115%;
+    bottom: 8px;
+  }
 }
 
 .hero-location-sandwell {
-  background-size: 80%;
-  width: 100%;
-  height: 98%;
-  bottom: 10px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-sandwell {
+    background-size: 80%;
+    width: 100%;
+    height: 98%;
+    bottom: 10px;
+  }
 }
 
 .hero-location-solihull {
-  background-size: 75%;
-  width: 100%;
-  height: 98%;
-  bottom: 8px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-solihull {
+    background-size: 75%;
+    width: 100%;
+    height: 98%;
+    bottom: 8px;
+  }
 }
 
 .hero-location-southampton {
-  background-size: 90%;
-  width: 100%;
-  height: 97%;
-  bottom: 7px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-southampton {
+    background-size: 90%;
+    width: 100%;
+    height: 97%;
+    bottom: 7px;
+  }
 }
 
 .hero-location-stockport {
-  background-size: 75%;
-  width: 100%;
-  height: 96%;
-  bottom: 8px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-stockport {
+    background-size: 75%;
+    width: 100%;
+    height: 96%;
+    bottom: 8px;
+  }
 }
 
 .hero-location-tameside {
-  background-size: 60%;
-  width: 100%;
-  height: 98%;
-  bottom: 10px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-tameside {
+    background-size: 60%;
+    width: 100%;
+    height: 98%;
+    bottom: 10px;
+  }
 }
 
 .hero-location-trafford {
-  background-size: 60%;
-  width: 100%;
-  height: 103%;
-  bottom: 8px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-trafford {
+    background-size: 60%;
+    width: 100%;
+    height: 103%;
+    bottom: 8px;
+  }
 }
 
 .hero-location-wakefield {
-  background-size: 70%;
-  width: 100%;
-  height: 123%;
-  bottom: 10px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-wakefield {
+    background-size: 70%;
+    width: 100%;
+    height: 123%;
+    bottom: 10px;
+  }
 }
 
 .hero-location-walsall {
-  background-size: 80%;
-  width: 100%;
-  height: 98%;
-  bottom: 8px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-walsall {
+    background-size: 80%;
+    width: 100%;
+    height: 98%;
+    bottom: 8px;
+  }
 }
 
 .hero-location-wigan-and-leigh {
-  background-size: 60%;
-  width: 100%;
-  height: 99%;
-  bottom: 10px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-wigan-and-leigh {
+    background-size: 60%;
+    width: 100%;
+    height: 99%;
+    bottom: 10px;
+  }
 }
 
 .hero-location-wolverhampton {
-  background-size: 60%;
-  width: 100%;
-  height: 98%;
-  bottom: 8px;
+  background-size: 0;
+}
+
+@media (min-width: 768px) {
+  .hero-location-wolverhampton {
+    background-size: 60%;
+    width: 100%;
+    height: 98%;
+    bottom: 8px;
+  }
 }
 
 /* Remove default marker in Chrome, Safari, Edge */
@@ -828,6 +1044,235 @@ a.inline-flex[class*="bg-brand-"]:hover {
 }
 a.inline-flex[class*="bg-brand-"]:active {
   @apply !text-white;
+}
+
+/* Hamburger Menu Animation */
+.hamburger-icon {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 0;
+}
+
+.hamburger-line {
+  width: 18px;
+  height: 2px;
+  background-color: var(--color-brand-k);
+  border-radius: 1px;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transform-origin: center;
+}
+
+.hamburger-line:nth-child(1) {
+  transform-origin: top left;
+}
+
+.hamburger-line:nth-child(3) {
+  transform-origin: bottom left;
+}
+
+.hamburger-line.open:nth-child(1) {
+  transform: rotate(45deg) translate(1px, 1px);
+}
+
+.hamburger-line.open:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.hamburger-line.open:nth-child(3) {
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+
+/* Mobile Menu Animations */
+.mobile-menu-container {
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-menu-closed {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.mobile-menu-open {
+  max-height: 100vh;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mobile-menu {
+  background: linear-gradient(135deg, rgba(246, 233, 210, 0.95) 0%, rgba(246, 233, 210, 1) 100%);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--color-brand-j);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Enhanced Mobile Navigation Links */
+.mobile-nav-link {
+  @apply block px-4 py-3 text-brand-k hover:bg-brand-i hover:text-brand-a transition-all duration-200 rounded-md mx-2 font-medium min-h-[48px] flex items-center text-base;
+  position: relative;
+  border-left: 3px solid transparent;
+}
+
+.mobile-nav-link:hover {
+  border-left-color: var(--color-brand-a);
+  background: linear-gradient(90deg, rgba(56, 174, 142, 0.1) 0%, rgba(246, 233, 210, 0.8) 100%);
+  transform: translateX(2px);
+}
+
+.mobile-nav-link:active {
+  transform: translateX(0px);
+  background: var(--color-brand-i);
+}
+
+/* Mobile Dropdown Animations */
+.mobile-locations-menu,
+.mobile-about-menu {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    max-height: 80vh;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile Locations Dropdown Enhancements */
+.mobile-locations-menu {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-brand-a) var(--color-brand-q);
+}
+
+.mobile-locations-menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mobile-locations-menu::-webkit-scrollbar-track {
+  background: var(--color-brand-q);
+  border-radius: 3px;
+}
+
+.mobile-locations-menu::-webkit-scrollbar-thumb {
+  background: var(--color-brand-a);
+  border-radius: 3px;
+}
+
+.mobile-locations-menu::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-b);
+}
+
+/* Mobile Dropdown Items */
+.mobile-menu .mobile-nav-link + div {
+  margin-left: 0.5rem;
+  margin-top: 0.5rem;
+  border-radius: 8px;
+}
+
+.mobile-menu .mobile-nav-link + div a {
+  @apply hover:bg-white transition-all duration-200 rounded;
+  color: black !important;
+  border-left: 2px solid transparent;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 16px;
+}
+
+.mobile-menu .mobile-nav-link + div a:hover {
+  color: var(--color-brand-a) !important;
+  border-left-color: var(--color-brand-a);
+  transform: translateX(4px);
+}
+
+/* Override global link styling for mobile about dropdown */
+.mobile-menu #mobile-about-menu a {
+  color: black !important;
+}
+
+.mobile-menu #mobile-about-menu a:hover {
+  color: var(--color-brand-a) !important;
+}
+
+/* Additional specificity override */
+nav .mobile-menu #mobile-about-menu li a {
+  color: black !important;
+}
+
+nav .mobile-menu #mobile-about-menu li a:hover {
+  color: var(--color-brand-a) !important;
+}
+
+/* Mobile Locations Specific Styling */
+.mobile-locations-menu a {
+  transition: all 0.2s ease-out;
+}
+
+.mobile-locations-menu a:hover {
+  transform: translateX(2px);
+  box-shadow: 0 2px 4px rgba(56, 174, 142, 0.1);
+}
+
+/* Mobile Select Dropdown Fixes */
+@media (max-width: 767px) {
+  select {
+    /* Fix mobile dropdown positioning */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/path%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+    min-height: 44px;
+    font-size: 16px;
+  }
+  
+  /* Prevent iOS zoom on select focus */
+  select:focus {
+    font-size: 16px;
+  }
+
+  /* Fix select option text on mobile */
+  select option {
+    font-size: 16px;
+    padding: 8px 12px;
+    color: black;
+    background-color: white;
+  }
+
+  /* Improve filter panel layout on mobile */
+  .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4 {
+    gap: 1rem;
+  }
+
+  .grid.grid-cols-1.md\\:grid-cols-3 {
+    gap: 1rem;
+  }
+}
+
+/* Ensure proper select styling across all devices */
+select {
+  cursor: pointer;
+}
+
+select:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 /* Loading border animation for service cards */

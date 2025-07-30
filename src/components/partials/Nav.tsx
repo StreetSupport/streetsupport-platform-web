@@ -166,13 +166,11 @@ export default function Nav() {
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
           >
-            <svg className="h-6 w-6 text-brand-k" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              {menuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8h16M4 16h16" />
-              )}
-            </svg>
+            <div className="hamburger-icon">
+              <span className={`hamburger-line ${menuOpen ? 'open' : ''}`}></span>
+              <span className={`hamburger-line ${menuOpen ? 'open' : ''}`}></span>
+              <span className={`hamburger-line ${menuOpen ? 'open' : ''}`}></span>
+            </div>
           </button>
 
           <div className="hidden md:flex space-x-6 items-center">
@@ -186,13 +184,16 @@ export default function Nav() {
               <button 
                 ref={locationsButtonRef}
                 id="locations-button"
-                className="nav-link focus:outline-none focus:ring-2 focus:ring-brand-a rounded"
+                className="nav-link focus:outline-none focus:ring-2 focus:ring-brand-a rounded flex items-center gap-1"
                 onKeyDown={handleLocationsKeyDown}
                 aria-haspopup="menu"
                 aria-expanded={isLocationsOpen}
                 aria-controls="locations-dropdown"
               >
                 Locations
+                <svg className={`w-4 h-4 transition-transform duration-200 ${isLocationsOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               </button>
 
               {isLocationsOpen && (
@@ -246,9 +247,17 @@ export default function Nav() {
               onMouseEnter={handleAboutMouseEnter}
               onMouseLeave={handleAboutMouseLeave}
             >
-              <Link href="/about" className="nav-link" onClick={handleAboutClick}>
+              <button 
+                className="nav-link focus:outline-none focus:ring-2 focus:ring-brand-a rounded flex items-center gap-1"
+                onMouseEnter={handleAboutMouseEnter}
+                onMouseLeave={handleAboutMouseLeave}
+                onClick={() => window.location.href = '/about'}
+              >
                 About
-              </Link>
+                <svg className={`w-4 h-4 transition-transform duration-200 ${isAboutOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
 
               {isAboutOpen && (
                 <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-white border border-brand-f rounded-md shadow-lg z-50">
@@ -315,43 +324,43 @@ export default function Nav() {
         </div>
       </div>
 
-      {menuOpen && (
+      <div className={`mobile-menu-container ${menuOpen ? 'mobile-menu-open' : 'mobile-menu-closed'}`}>
         <div className="mobile-menu px-4 pb-4 space-y-2">
           <Link href="/find-help" className="mobile-nav-link" onClick={handleFindHelpClick}>Find Help</Link>
 
           <button
             onClick={() => setMobileLocationsOpen(prev => !prev)}
-            className="w-full text-left mobile-nav-link text-small font-semibold mt-2 focus:outline-none focus:ring-2 focus:ring-brand-a rounded"
+            className="w-full text-left mobile-nav-link font-semibold mt-2 focus:outline-none focus:ring-2 focus:ring-brand-a rounded flex items-center justify-between"
             aria-expanded={mobileLocationsOpen}
             aria-controls="mobile-locations-menu"
             aria-haspopup="menu"
           >
             Locations
+            <svg className={`w-5 h-5 transition-transform duration-200 ${mobileLocationsOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
           </button>
 
           {mobileLocationsOpen && (
-            <div id="mobile-locations-menu" role="menu" className="mt-2 ml-4">
-              {Object.entries(groupedLocations).map(([groupName, groupLocations]) => (
-                <div key={groupName} className="mb-4">
-                  <h3 className="text-xs font-semibold text-brand-f uppercase tracking-wide mb-2 px-3">
-                    {groupName}
-                  </h3>
-                  <ul className="space-y-1">
-                    {groupLocations.map(location => (
-                      <li key={location.id}>
-                        <Link
-                          href={`/${location.slug}`}
-                          className="block py-2 px-3 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded focus:outline-none focus:ring-2 focus:ring-brand-a min-h-[44px] flex items-center"
-                          onClick={handleLocationClick}
-                          role="menuitem"
-                        >
-                          {location.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
+            <div id="mobile-locations-menu" role="menu" className="mobile-locations-menu mt-2 ml-4 max-h-[60vh] overflow-y-auto bg-white/80 backdrop-blur-sm rounded-lg border border-brand-q shadow-lg">
+              <div className="p-3">
+                <div className="text-xs font-semibold text-brand-f uppercase tracking-wide mb-3 px-2 sticky top-0 bg-white/90 backdrop-blur-sm py-2 -mx-2 border-b border-brand-q">
+                  All Locations ({sortedLocations.length})
                 </div>
-              ))}
+                <div className="grid grid-cols-1 gap-1">
+                  {sortedLocations.map(location => (
+                    <Link
+                      key={location.id}
+                      href={`/${location.slug}`}
+                      className="block py-2.5 px-3 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded focus:outline-none focus:ring-2 focus:ring-brand-a min-h-[40px] flex items-center border-l-2 border-transparent hover:border-l-brand-a"
+                      onClick={handleLocationClick}
+                      role="menuitem"
+                    >
+                      {location.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
 
@@ -360,13 +369,28 @@ export default function Nav() {
 
           <button
             onClick={() => setMobileAboutOpen(prev => !prev)}
-            className="w-full text-left mobile-nav-link text-small font-semibold mt-2"
+            className="w-full text-left mobile-nav-link font-semibold mt-2 focus:outline-none focus:ring-2 focus:ring-brand-a rounded flex items-center justify-between"
+            aria-expanded={mobileAboutOpen}
+            aria-controls="mobile-about-menu"
+            aria-haspopup="menu"
           >
             About
+            <svg className={`w-5 h-5 transition-transform duration-200 ${mobileAboutOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
           </button>
 
           {mobileAboutOpen && (
-            <ul className="mt-1 space-y-1 ml-4">
+            <ul id="mobile-about-menu" role="menu" className="mobile-about-menu mt-1 space-y-1 ml-4">
+              <li>
+                <Link
+                  href="/about"
+                  className="block py-2 px-3 text-sm text-brand-l hover:bg-brand-i hover:text-brand-k transition-colors duration-200 font-semibold border-b border-brand-q pb-3 mb-2"
+                  onClick={handleAboutClick}
+                >
+                  About Street Support
+                </Link>
+              </li>
               <li>
                 <Link
                   href="/about/our-team"
@@ -424,7 +448,7 @@ export default function Nav() {
             </ul>
           )}
         </div>
-      )}
+      </div>
     </nav>
   );
 }

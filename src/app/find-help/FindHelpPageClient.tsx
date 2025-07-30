@@ -62,7 +62,7 @@ interface FindHelpPageClientProps {
 }
 
 export default function FindHelpPageClient({ searchParams }: FindHelpPageClientProps) {
-  const { location, setLocationFromCoordinates } = useLocation();
+  const { location, setLocationFromCoordinates, clearLocation } = useLocation();
   const [services, setServices] = useState<ServiceWithDistance[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -280,6 +280,22 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
     setHasLocationSet(true);
   }, []);
 
+  const handleChangeLocation = useCallback(() => {
+    // Clear all state and URL parameters
+    clearLocation();
+    clearSearchState();
+    setHasLocationSet(false);
+    setServices([]);
+    setError(null);
+    setInitialFilters(null);
+    setShouldRestoreState(false);
+    
+    // Clear URL parameters
+    const url = new URL(window.location.href);
+    url.search = '';
+    window.history.replaceState({}, '', url.toString());
+  }, [clearLocation]);
+
 
 
   return (
@@ -324,7 +340,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <button
-                    onClick={() => setHasLocationSet(false)}
+                    onClick={handleChangeLocation}
                     className="text-sm bg-gray-100 text-gray-800 px-3 py-1 rounded-md hover:bg-gray-200 transition-colors"
                   >
                     Change Location
@@ -372,6 +388,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
                 saveSearchState(searchState);
               }
             }}
+            onChangeLocation={handleChangeLocation}
           />
         </ErrorBoundary>
       )}

@@ -123,7 +123,7 @@ export default function SiteFooter() {
                 Get updates about our work and new resources to support people experiencing homelessness.
               </p>
               
-              <form onSubmit={handleNewsletterSubmit} className="space-y-4">
+              <form onSubmit={handleNewsletterSubmit} className="space-y-4" suppressHydrationWarning>
                 <div>
                   <label htmlFor="newsletter-email" className="sr-only">
                     Email Address
