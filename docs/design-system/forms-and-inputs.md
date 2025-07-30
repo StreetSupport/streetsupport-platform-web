@@ -629,7 +629,7 @@ Forms are critical touchpoints for users seeking help, often during stressful si
         aria-describedby="name-help"
       />
       <div id="name-help" className="field-help">
-        This helps us personalize our response to you
+        This helps us personalise our response to you
       </div>
     </div>
     

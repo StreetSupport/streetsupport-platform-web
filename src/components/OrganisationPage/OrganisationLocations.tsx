@@ -259,7 +259,7 @@ export default function OrganisationLocations({ organisation, userContext, onMar
       <p className="text-sm text-gray-600 mb-3">
         {organisationLocationCount} location{organisationLocationCount !== 1 ? 's' : ''} available for this organisation
       </p>
-      <GoogleMap center={center} markers={allLocations} zoom={12} onMarkerClick={onMarkerClick} onMapReady={onMapReady} />
+      <GoogleMap center={center} markers={allLocations} zoom={14} onMarkerClick={onMarkerClick} onMapReady={onMapReady} />
     </section>
   );
 }

@@ -18,7 +18,7 @@ export default async function AdvicePage(props) {
   }
 
   return (
-    <main className="space-y-8">
+    <>
       <Breadcrumbs 
         items={[
           { href: "/", label: "Home" },
@@ -27,20 +27,20 @@ export default async function AdvicePage(props) {
         ]} 
       />
 
-      {/* Page Header */}
-      <section className="bg-white py-8">
-        <div className="max-w-4xl mx-auto px-4">
-          <h1 className="text-3xl font-bold mb-4">
+      {/* Header */}
+      <div className="bg-brand-i py-12">
+        <div className="max-w-6xl mx-auto px-6">
+          <h1 className="heading-2 text-brand-k mb-4">
             Advice for {location.name}
           </h1>
-          <p className="text-lg text-gray-700">
-            Find answers to common questions and get advice on support available in {location.name}.
+          <p className="text-lead text-brand-l">
+            Get help with common questions about homelessness support and services.
           </p>
         </div>
-      </section>
+      </div>
 
       {/* FAQ Content */}
       <AdvicePageClient locationKey={location.key} locationName={location.name} />
-    </main>
+    </>
   );
 }
