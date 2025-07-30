@@ -22,7 +22,7 @@ export default function RadiusFilter({ selectedRadius, onRadiusChange, className
       id="radius-filter"
       value={selectedRadius}
       onChange={(e) => onRadiusChange(Number(e.target.value))}
-      className={className || "border px-2 py-1 rounded"}
+      className={className || "border border-brand-q px-2 py-1 rounded focus:ring-2 focus:ring-brand-a focus:border-brand-a"}
       aria-label="Select search radius"
     >
       {RADIUS_OPTIONS.map((option) => (

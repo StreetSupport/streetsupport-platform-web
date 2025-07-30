@@ -1,8 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, TEST_POSTCODE } from './fixtures/base-test';
 
 // Test mobile responsiveness and accessibility compliance
 test.describe('Mobile Responsiveness and Accessibility', () => {
-  const testPostcode = 'M1 1AE';
+  const testPostcode = TEST_POSTCODE;
 
   test.beforeEach(async ({ page }) => {
     // Mock APIs for consistent testing

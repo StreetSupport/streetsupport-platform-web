@@ -1,44 +1,61 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import HomepageMap from '@/components/Homepage/HomepageMap';
+import LocationDropdown from '@/components/Homepage/LocationDropdown';
+import Hero from '@/components/ui/Hero';
 
-export default function Home() {
+async function getStatistics() {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/stats`, {
+      next: { revalidate: 60 } // Revalidate every 60 seconds
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch statistics');
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching statistics:', error);
+    // Return default values if fetch fails
+    return {
+      organisations: 0,
+      services: 0,
+      partnerships: 0
+    };
+  }
+}
+
+export default async function Home() {
+  const stats = await getStatistics();
   return (
     <main className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-brand-a via-brand-b to-brand-c text-white py-24 px-4">
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="relative max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Working Together to Tackle<br />
-            <span className="text-brand-d">Homelessness</span>
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 text-white/90 max-w-2xl mx-auto font-light">
-            Find support services near you.
-          </p>
-          <Link
-            href="/find-help"
-            className="inline-block px-8 py-4 bg-brand-d hover:bg-brand-e text-black font-semibold text-lg rounded-lg transition-colors shadow-lg hover:shadow-xl transform hover:scale-105 transition-transform"
-          >
-            Find Help
-          </Link>
-        </div>
-      </section>
+      <Hero
+        backgroundImage="/assets/img/home-header-background.png"
+        title="Working Together to Tackle Homelessness"
+        subtitle="Find support services near you."
+        ctaText="Find Help"
+        ctaLink="/find-help"
+      />
 
       {/* Where we are section */}
-      <section className="py-16 px-4 bg-gray-50">
+      <section className="section-spacing px-4 bg-white">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+              <h2 className="heading-2">
                 Where we are
               </h2>
-              <p className="text-lg text-gray-700 mb-6 leading-relaxed">
+              <p className="text-body">
                 Street Support Network is currently active in several locations across the UK.
               </p>
-              <p className="text-lg text-gray-700 mb-8 leading-relaxed">
-                Want to see what is happening near you? Select one location to visit their page.
+              <p className="text-body mb-6">
+                Want to see what is happening near you? Select a location from the dropdown below or click on the map.
               </p>
+              <LocationDropdown />
             </div>
             <div className="w-full">
               <HomepageMap />
@@ -48,35 +65,63 @@ export default function Home() {
       </section>
 
       {/* Statistics Section */}
-      <section className="py-16 px-4 bg-brand-a text-white">
+      <section className="section-spacing px-4 bg-brand-a text-white">
         <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
-              <div className="text-5xl md:text-6xl font-bold mb-2 text-brand-d">1815</div>
+              <div className="text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.organisations}</div>
               <div className="text-xl md:text-2xl font-light">Organisations</div>
+              <div className="text-lg md:text-xl font-light text-brand-k">Listed</div>
             </div>
             <div>
-              <div className="text-5xl md:text-6xl font-bold mb-2 text-brand-d">4567</div>
+              <div className="text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.services}</div>
               <div className="text-xl md:text-2xl font-light">Services</div>
+              <div className="text-lg md:text-xl font-light text-brand-k">Provided</div>
+            </div>
+            <div>
+              <div className="text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.partnerships}</div>
+              <div className="text-xl md:text-2xl font-light">Homelessness Partnerships</div>
+              <div className="text-lg md:text-xl font-light text-brand-k">Supported</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Partnership Section */}
-      <section className="py-16 px-4 bg-white text-center">
+      <section className="section-spacing px-4 bg-white text-center">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-4">
+          <h2 className="heading-3 mb-4">
             In collaboration with...
           </h2>
           <div className="h-1 w-24 bg-brand-d mx-auto mb-8"></div>
-          <p className="text-lg text-gray-700 mb-6 max-w-2xl mx-auto leading-relaxed">
+          
+          {/* Homeless Link Logo */}
+          <div className="mb-8">
+            <a 
+              href="https://homelesslink.org.uk" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-block transition-transform hover:scale-105"
+              title="Visit Homeless Link website"
+            >
+              <Image
+                src="/assets/icons/homeless-link.svg"
+                alt="Homeless Link"
+                width={300}
+                height={120}
+                className="mx-auto"
+                priority
+              />
+            </a>
+          </div>
+          
+          <p className="text-body mb-6 max-w-2xl mx-auto">
             We are looking for businesses and supporters to{' '}
             <Link href="/give-help/business-support/" className="text-brand-a hover:text-brand-b underline font-medium">
               partner with us in the mission to tackle homelessness
             </Link>.
           </p>
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-body max-w-2xl mx-auto">
             If you share our vision of a society without homelessness, please{' '}
             <Link href="/contact" className="text-brand-a hover:text-brand-b underline font-medium">
               get in touch

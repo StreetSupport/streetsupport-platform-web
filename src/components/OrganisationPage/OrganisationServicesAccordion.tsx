@@ -252,35 +252,70 @@ export default function OrganisationServicesAccordion({
                                   onLocationClick(coordinates[1], coordinates[0]); // lat, lng
                                 }
                               }}
-                              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg border text-sm transition-colors ${
+                              className={`w-full px-3 py-3 rounded-lg border text-sm transition-colors ${
                                 isSelected
                                   ? 'bg-blue-50 border-blue-200 text-blue-800'
                                   : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
                               }`}
                             >
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs">📍</span>
-                                <div className="text-left flex-1">
-                                  <div className="font-medium truncate">{fullAddress || 'Unknown Address'}</div>
+                              {/* Responsive layout - mobile first, desktop optimized */}
+                              <div className="flex items-start gap-2">
+                                <span className="text-xs mt-0.5 flex-shrink-0">📍</span>
+                                <div className="flex-1 min-w-0">
+                                  {/* Address - allow wrapping */}
+                                  <div className="font-medium text-left break-words">{fullAddress || 'Unknown Address'}</div>
+                                  
+                                  {/* Status and distance info */}
+                                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mt-1 text-xs">
+                                    {/* Distance */}
+                                    <div className="flex items-center gap-3">
+                                      {location.distance !== Infinity && (
+                                        <span className="text-gray-500 flex-shrink-0">{location.distance.toFixed(1)} km</span>
+                                      )}
+                                      
+                                      {/* Status indicators */}
+                                      <div className="flex items-center gap-1">
+                                        {(() => {
+                                          const service = location.service;
+                                          const hasOpenTimes = service.openTimes && service.openTimes.length > 0;
+                                          
+                                          // Check for 24-hour service
+                                          const is24Hour = hasOpenTimes && service.openTimes.some((slot) => {
+                                            const startTime = Number(slot.start);
+                                            const endTime = Number(slot.end);
+                                            return startTime === 0 && endTime === 2359; // 00:00 to 23:59
+                                          });
+                                          
+                                          return (
+                                            <>
+                                              {/* Open/closed status - only show if has opening times and not 24/7 */}
+                                              {hasOpenTimes && !is24Hour && (
+                                                <>
+                                                  {openingStatus.isOpen && (
+                                                    <span className="text-green-600">● Open</span>
+                                                  )}
+                                                  {!openingStatus.isOpen && (
+                                                    <span className="text-gray-500">● Closed</span>
+                                                  )}
+                                                </>
+                                              )}
+                                              {is24Hour && (
+                                                <span className="text-green-600">● Open 24/7</span>
+                                              )}
+                                            </>
+                                          );
+                                        })()}
+                                      </div>
+                                    </div>
+                                    
+                                    {/* Next open time - inline on desktop, new line on mobile */}
+                                    {!openingStatus.isOpen && openingStatus.nextOpen && (
+                                      <span className="text-gray-400 flex-shrink-0">
+                                        Next: {openingStatus.nextOpen.day} {openingStatus.nextOpen.time}
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
-                              </div>
-                              <div className="flex flex-col items-end gap-1 text-xs">
-                                <div className="flex items-center gap-2">
-                                  {location.distance !== Infinity && (
-                                    <span className="text-gray-500">{location.distance.toFixed(1)} km</span>
-                                  )}
-                                  {openingStatus.isOpen && (
-                                    <span className="text-green-600">● Open</span>
-                                  )}
-                                  {!openingStatus.isOpen && (
-                                    <span className="text-gray-500">● Closed</span>
-                                  )}
-                                </div>
-                                {!openingStatus.isOpen && openingStatus.nextOpen && (
-                                  <span className="text-xs text-gray-400">
-                                    Next: {openingStatus.nextOpen.day} {openingStatus.nextOpen.time}
-                                  </span>
-                                )}
                               </div>
                             </button>
                           );
@@ -299,6 +334,53 @@ export default function OrganisationServicesAccordion({
                       )}
                       <div className={`transition-opacity duration-200 ${loadingContent === accordionKey ? 'opacity-50' : 'opacity-100'}`}>
                         <MarkdownContent content={(selectedLocation as ServiceLocation).service.description} />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Service Type Indicators */}
+                  {selectedLocation && (
+                    <div className="mb-4 relative">
+                      {loadingContent === accordionKey && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                        </div>
+                      )}
+                      <div className={`transition-opacity duration-200 ${loadingContent === accordionKey ? 'opacity-50' : 'opacity-100'}`}>
+                        {(() => {
+                          const service = (selectedLocation as ServiceLocation).service;
+                          
+                          // Check for phone service
+                          const isPhoneService = service.subCategory.toLowerCase().includes('telephone') || 
+                                               service.subCategory.toLowerCase().includes('phone') ||
+                                               service.subCategory.toLowerCase().includes('helpline');
+                          
+                          // Check for 24-hour service
+                          const is24Hour = service.openTimes && service.openTimes.length > 0 && service.openTimes.some((slot) => {
+                            const startTime = Number(slot.start);
+                            const endTime = Number(slot.end);
+                            return startTime === 0 && endTime === 2359; // 00:00 to 23:59
+                          });
+                          
+                          const hasServiceTypeIndicators = isPhoneService || is24Hour;
+                          
+                          if (!hasServiceTypeIndicators) return null;
+                          
+                          return (
+                            <div className="flex flex-wrap gap-2 mb-4">
+                              {isPhoneService && (
+                                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+                                  📞 Phone Service
+                                </span>
+                              )}
+                              {is24Hour && (
+                                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
+                                  Open 24/7
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })()}
                       </div>
                     </div>
                   )}
@@ -401,7 +483,7 @@ export default function OrganisationServicesAccordion({
                               )}
                               {openingStatus.isAppointmentOnly && (
                                 <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                  Appointment Only
+                                  Call before attending
                                 </span>
                               )}
                               {isPhoneService && (

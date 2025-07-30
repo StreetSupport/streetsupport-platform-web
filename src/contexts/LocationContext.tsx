@@ -34,6 +34,7 @@ interface LocationContextType {
   setLocationFromCoordinates: (coords: { lat: number; lng: number; label?: string; radius?: number; source: LocationSource; slug?: string }) => void;
   updateRadius: (radius: number) => void;
   requestLocation: () => Promise<void>;
+  clearLocation: () => void;
   error: LocationError | null;
   isLoading: boolean;
   clearError: () => void;
@@ -139,6 +140,11 @@ export function LocationProvider({ children }: { children: ReactNode }) {
     setError(null);
   }, []);
 
+  const clearLocation = useCallback(() => {
+    setLocation(null);
+    setError(null);
+  }, []);
+
   const enhancedSetLocation = useCallback((newLocation: LocationState) => {
     setLocation(newLocation);
     setError(null); // Clear any existing errors when location is set
@@ -168,6 +174,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
         setLocationFromCoordinates,
         updateRadius,
         requestLocation, 
+        clearLocation,
         error, 
         isLoading, 
         clearError 

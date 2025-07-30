@@ -26,11 +26,6 @@ describe('OrganisationFooter', () => {
     });
   });
 
-  it('renders disclaimer text', () => {
-    render(<OrganisationFooter />);
-    expect(screen.getByText(/Information provided by Street Support/i)).toBeInTheDocument();
-  });
-
   it('shows social share links', () => {
     render(<OrganisationFooter />);
     expect(screen.getByText(/Share this page:/i)).toBeInTheDocument();
@@ -101,8 +96,8 @@ describe('OrganisationFooter', () => {
       render(<OrganisationFooter />);
     }).not.toThrow();
     
-    // Verify that the component renders without window
-    expect(screen.getByText(/Information provided by Street Support/i)).toBeInTheDocument();
+    // Verify that the component renders without window - check for share text that's always there
+    expect(screen.getByText(/Share this page:/i)).toBeInTheDocument();
     
     // Restore window
     global.window = originalWindow;

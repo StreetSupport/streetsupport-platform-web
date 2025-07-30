@@ -1,3 +1,6 @@
+// import Link from 'next/link'; // Unused import
+import Breadcrumbs from '@/components/ui/Breadcrumbs';
+
 export default function LocationsPage() {
   const locations = [
     { name: "Birmingham", slug: "birmingham" },
@@ -6,7 +9,16 @@ export default function LocationsPage() {
   ];
 
   return (
-    <main className="container mx-auto px-4 py-12">
+    <main>
+      <Breadcrumbs 
+        items={[
+          { href: "/", label: "Home" },
+          { label: "Locations", current: true }
+        ]} 
+      />
+
+      <div className="container mx-auto px-4 py-12">
+
       <h1 className="text-3xl font-bold mb-6">Our Locations</h1>
       <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {locations.map((loc) => (
@@ -21,6 +33,7 @@ export default function LocationsPage() {
           </li>
         ))}
       </ul>
+      </div>
     </main>
   );
 }

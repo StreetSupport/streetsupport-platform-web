@@ -19,13 +19,16 @@ interface Props {
     selectedSubCategory: string;
     sortOrder: 'distance' | 'alpha';
     showMap: boolean;
+    currentPage?: number;
   } | null;
   onStateUpdate?: (state: {
     selectedCategory: string;
     selectedSubCategory: string;
     sortOrder: 'distance' | 'alpha';
     showMap: boolean;
+    currentPage: number;
   }) => void;
+  onChangeLocation?: () => void;
 }
 
 interface MapMarker {
@@ -115,15 +118,18 @@ export default function FindHelpResults({
   error = null, 
   shouldRestoreState: _shouldRestoreState = false,
   initialFilters = null,
-  onStateUpdate
+  onStateUpdate,
+  onChangeLocation
 }: Props) {
   const { location, updateRadius } = useLocation();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const filtersHeaderRef = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
   
   const [showMap, setShowMap] = useState(initialFilters?.showMap || false);
   const [sortOrder, setSortOrder] = useState<'distance' | 'alpha'>(initialFilters?.sortOrder || 'distance');
   const [selectedCategory, setSelectedCategory] = useState(initialFilters?.selectedCategory || '');
   const [selectedSubCategory, setSelectedSubCategory] = useState(initialFilters?.selectedSubCategory || '');
+  const [currentPage, setCurrentPage] = useState(initialFilters?.currentPage || 1);
   const [openDescriptionId, setOpenDescriptionId] = useState<string | null>(null);
 
   // Debounce filter values to prevent excessive re-renders
@@ -137,10 +143,11 @@ export default function FindHelpResults({
         selectedCategory: debouncedSelectedCategory,
         selectedSubCategory: debouncedSelectedSubCategory,
         sortOrder,
-        showMap
+        showMap,
+        currentPage
       });
     }
-  }, [debouncedSelectedCategory, debouncedSelectedSubCategory, sortOrder, showMap, onStateUpdate]);
+  }, [debouncedSelectedCategory, debouncedSelectedSubCategory, sortOrder, showMap, currentPage, onStateUpdate]);
 
   // Centralized read more state management
   const handleToggleDescription = useCallback((id: string) => {
@@ -151,6 +158,7 @@ export default function FindHelpResults({
   const handleResetFilters = useCallback(() => {
     setSelectedCategory('');
     setSelectedSubCategory('');
+    setCurrentPage(1); // Reset to first page when filters are reset
   }, []);
 
   // Combined filtering and grouping logic with debounced values
@@ -213,56 +221,86 @@ export default function FindHelpResults({
   }, [filteredServices, location]);
 
   return (
-    <section className="flex flex-col lg:flex-row items-start px-4 sm:px-6 md:px-8 py-6 gap-6 max-w-7xl mx-auto h-auto lg:h-[calc(100vh-4rem)]">
-      <div className={`w-full ${showMap ? 'lg:w-1/2' : 'lg:w-full'} flex flex-col h-auto lg:h-full`}>
-        <div className="mb-4">
-          <div className="flex justify-between items-baseline mb-2">
-            <h1 className="text-xl font-bold">Services near you</h1>
+    <section className="section-spacing">
+      <div className="page-container">
+        <div className="w-full flex flex-col gap-6">
+        <div ref={filtersHeaderRef} className="mb-4">
+          <div className="flex justify-between items-center mb-2">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <h1 className="text-xl font-bold">Services near you</h1>
+              {location && (
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <span className="inline-flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    {location.label || `${location.lat?.toFixed(4)}, ${location.lng?.toFixed(4)}`}
+                  </span>
+                  {onChangeLocation && (
+                    <button
+                      onClick={onChangeLocation}
+                      className="text-brand-a hover:text-brand-b underline transition-colors"
+                      title="Change location"
+                    >
+                      Change
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
             {!loading && !error && sortedGroups.length > 0 && (
               <p className="text-sm text-gray-600">
                 {filteredServices.length} service{filteredServices.length !== 1 ? 's' : ''} from {sortedGroups.length} organisation{sortedGroups.length !== 1 ? 's' : ''}
               </p>
             )}
           </div>
-          <FilterPanel
-            selectedCategory={selectedCategory}
-            selectedSubCategory={selectedSubCategory}
-            setSelectedCategory={setSelectedCategory}
-            setSelectedSubCategory={setSelectedSubCategory}
-            onResetFilters={handleResetFilters}
-          />
-          <div className="flex items-center flex-wrap gap-4 mt-4">
-            <div className="flex items-center gap-2">
-              <label htmlFor="sortOrder" className="text-sm font-medium">Sort by:</label>
-              <select
-                id="sortOrder"
-                className="border px-2 py-1 rounded"
-                value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value as 'distance' | 'alpha')}
-              >
-                <option value="distance">Distance</option>
-                <option value="alpha">Alphabetical</option>
-              </select>
+          <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
+            <FilterPanel
+              selectedCategory={selectedCategory}
+              selectedSubCategory={selectedSubCategory}
+              setSelectedCategory={setSelectedCategory}
+              setSelectedSubCategory={setSelectedSubCategory}
+              onResetFilters={handleResetFilters}
+            />
+            
+            <div className="border-t border-brand-a pt-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div>
+                  <label htmlFor="sortOrder" className="block text-sm font-medium text-brand-l mb-2">Sort by</label>
+                  <select
+                    id="sortOrder"
+                    className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-brand-a bg-white"
+                    value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value as 'distance' | 'alpha')}
+                  >
+                    <option value="distance">Distance</option>
+                    <option value="alpha">Alphabetical</option>
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="radius-filter" className="block text-sm font-medium text-brand-l mb-2">Search radius</label>
+                  <RadiusFilter
+                    selectedRadius={location?.radius || 5}
+                    onRadiusChange={updateRadius}
+                    className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-brand-a bg-white"
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => setShowMap(!showMap)}
+                    className="btn-base btn-primary btn-sm"
+                  >
+                    {showMap ? 'Hide map' : 'Show map'}
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <label htmlFor="radius-filter" className="text-sm font-medium">Search radius:</label>
-              <RadiusFilter
-                selectedRadius={location?.radius || 5}
-                onRadiusChange={updateRadius}
-                className="border px-2 py-1 rounded"
-              />
-            </div>
-            <button
-              onClick={() => setShowMap(!showMap)}
-              className="text-sm px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 ml-auto"
-            >
-              {showMap ? 'Hide map' : 'Show map'}
-            </button>
           </div>
         </div>
 
         {showMap && (
-          <div className="block lg:hidden w-full mb-4" data-testid="map-container">
+          <div className="w-full mb-4" data-testid="map-container">
             <GoogleMap
               center={
                 location && location.lat !== undefined && location.lng !== undefined
@@ -280,7 +318,7 @@ export default function FindHelpResults({
           </div>
         )}
 
-        <div ref={scrollContainerRef} className="flex-1 overflow-y-visible lg:overflow-y-auto pr-2">
+        <div ref={scrollContainerRef} className="flex-1">
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" role="status" aria-label="Loading"></div>
@@ -311,30 +349,15 @@ export default function FindHelpResults({
               showMap={showMap}
               openDescriptionId={openDescriptionId}
               onToggleDescription={handleToggleDescription}
-              batchSize={20}
+              batchSize={21}
+              initialPage={currentPage}
+              onPageChange={setCurrentPage}
+              scrollTargetRef={filtersHeaderRef}
             />
           )}
         </div>
-      </div>
-
-      {showMap && (
-        <div className="hidden lg:block w-full lg:w-1/2 mt-8 lg:mt-0 lg:sticky lg:top-[6.5rem] min-h-[400px]" data-testid="map-container">
-          <GoogleMap
-            center={
-              location && location.lat !== undefined && location.lng !== undefined
-                ? { lat: location.lat, lng: location.lng }
-                : null
-            }
-            markers={combinedMarkers}
-            zoom={13}
-            userLocation={
-              location && location.lat !== undefined && location.lng !== undefined
-                ? { lat: location.lat, lng: location.lng, radius: location.radius }
-                : null
-            }
-          />
         </div>
-      )}
+      </div>
     </section>
   );
 }

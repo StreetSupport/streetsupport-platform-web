@@ -1,0 +1,62 @@
+[
+  {
+    "_id": "5bd060eb46e3da5220f9c8ba",
+    "key": "refugees",
+    "name": "Refugees"
+  },
+  {
+    "_id": "5bf6b9e323c7a0408e8e6912",
+    "key": "age-18-30",
+    "name": "18-30 only"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8be",
+    "key": "lgbt+",
+    "name": "LGBT+"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8bf",
+    "key": "women-only",
+    "name": "Women only"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8c0",
+    "key": "men-only",
+    "name": "Men only"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8c1",
+    "key": "families",
+    "name": "Families"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8c2",
+    "key": "veterans",
+    "name": "Veterans"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8c3",
+    "key": "young-people",
+    "name": "Young people"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8c4",
+    "key": "adults",
+    "name": "Adults"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8c5",
+    "key": "elderly",
+    "name": "Elderly"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8c6",
+    "key": "disabled",
+    "name": "Disabled"
+  },
+  {
+    "_id": "5bd060eb46e3da5220f9c8c7",
+    "key": "mental-health",
+    "name": "Mental health support needs"
+  }
+]

@@ -21,6 +21,7 @@ export interface FindHelpSearchState {
   
   // UI state
   fromResultsPage: boolean;
+  currentPage?: number; // Add pagination state
   
   // Timetable filters
   timetableFilters?: {
@@ -208,6 +209,7 @@ export function createSearchState(
     sortOrder: filters.sortOrder,
     showMap: filters.showMap,
     fromResultsPage: true,
+    currentPage: 1,
     timetableFilters: filters.timetableFilters || {},
   };
 }

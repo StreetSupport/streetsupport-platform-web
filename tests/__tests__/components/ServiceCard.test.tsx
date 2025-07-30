@@ -87,7 +87,8 @@ describe('ServiceCard', () => {
     expect(
       screen.getByText(/A local service offering dentist/i)
     ).toBeInTheDocument();
-    expect(screen.getByText(/Health > Dentist/i)).toBeInTheDocument();
+    expect(screen.getByText('Health')).toBeInTheDocument();
+    expect(screen.getByText('Dentist')).toBeInTheDocument();
   });
 
   it('renders opening times', () => {
@@ -145,7 +146,7 @@ describe('ServiceCard', () => {
     
     // Since we're using lazy loading, the content will initially show a loading state
     // Check for the presence of a loading state or the actual content
-    const contentArea = screen.getByRole('link').querySelector('.text-gray-800.mb-2');
+    const contentArea = screen.getByRole('link').querySelector('.mb-2');
     expect(contentArea).toBeInTheDocument();
   });
 

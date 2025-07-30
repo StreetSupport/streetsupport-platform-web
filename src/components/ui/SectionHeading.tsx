@@ -16,7 +16,7 @@ export default function SectionHeading({
 }: SectionHeadingProps) {
   return (
     <div className={clsx('text-center mb-4', className)}>
-      <h2 className="inline-block pt-5 mb-0 mr-2 text-2xl font-headline sm:mb-5">
+      <h2 className="heading-3 inline-block pt-5 mb-0 mr-2 sm:mb-5">
         {title}
       </h2>
       {button && <span className="inline-block align-middle">{button}</span>}

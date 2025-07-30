@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+// import Link from 'next/link'; // Unused import
 import { useLocation } from '@/contexts/LocationContext';
+import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import LocationPrompt from '@/components/Location/LocationPrompt';
 import FindHelpResults from '@/components/FindHelp/FindHelpResults';
 import ErrorBoundary from '@/components/ErrorBoundary';
@@ -59,8 +61,8 @@ interface FindHelpPageClientProps {
   searchParams: { [key: string]: string | string[] | undefined };
 }
 
-export default function FindHelpPageClient({ searchParams }: FindHelpPageClientProps) {
-  const { location, setLocationFromCoordinates } = useLocation();
+export default function FindHelpPageClient({ searchParams: _searchParams }: FindHelpPageClientProps) {
+  const { location, setLocationFromCoordinates, clearLocation } = useLocation();
   const [services, setServices] = useState<ServiceWithDistance[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -72,6 +74,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
     selectedSubCategory: string;
     sortOrder: 'distance' | 'alpha';
     showMap: boolean;
+    currentPage?: number;
   } | null>(null);
 
   // Initialize state from URL and sessionStorage on mount
@@ -87,7 +90,8 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
         selectedCategory: savedState.selectedCategory,
         selectedSubCategory: savedState.selectedSubCategory,
         sortOrder: savedState.sortOrder,
-        showMap: savedState.showMap
+        showMap: savedState.showMap,
+        currentPage: 1
       });
       
       // Restore location from saved state
@@ -135,7 +139,8 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
           selectedCategory: urlParams.cat || '',
           selectedSubCategory: urlParams.subcat || '',
           sortOrder: 'distance',
-          showMap: false
+          showMap: false,
+          currentPage: 1
         });
       }
     } else {
@@ -174,11 +179,8 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
         limit: '500',
       });
 
-      // Add category filter from search params or initial filters if provided
-      const category = searchParams.category || initialFilters?.selectedCategory;
-      if (category && typeof category === 'string') {
-        params.append('category', category);
-      }
+      // Don't apply category/subcategory filters in the API call
+      // We'll filter client-side to allow users to change filters dynamically
 
       const response = await fetch(`/api/services?${params.toString()}`, {
         cache: 'no-store',
@@ -265,7 +267,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
     } finally {
       setLoading(false);
     }
-  }, [searchParams.category, initialFilters?.selectedCategory]);
+  }, []);
 
   // Fetch services when location is set
   useEffect(() => {
@@ -278,10 +280,33 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
     setHasLocationSet(true);
   }, []);
 
+  const handleChangeLocation = useCallback(() => {
+    // Clear all state and URL parameters
+    clearLocation();
+    clearSearchState();
+    setHasLocationSet(false);
+    setServices([]);
+    setError(null);
+    setInitialFilters(null);
+    setShouldRestoreState(false);
+    
+    // Clear URL parameters
+    const url = new URL(window.location.href);
+    url.search = '';
+    window.history.replaceState({}, '', url.toString());
+  }, [clearLocation]);
+
 
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Breadcrumbs 
+        items={[
+          { href: "/", label: "Home" },
+          { label: "Find Help", current: true }
+        ]} 
+      />
+      
       {!hasLocationSet ? (
         <div className="max-w-2xl mx-auto p-4 pt-8">
           <ErrorBoundary
@@ -315,7 +340,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <button
-                    onClick={() => setHasLocationSet(false)}
+                    onClick={handleChangeLocation}
                     className="text-sm bg-gray-100 text-gray-800 px-3 py-1 rounded-md hover:bg-gray-200 transition-colors"
                   >
                     Change Location
@@ -363,6 +388,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
                 saveSearchState(searchState);
               }
             }}
+            onChangeLocation={handleChangeLocation}
           />
         </ErrorBoundary>
       )}

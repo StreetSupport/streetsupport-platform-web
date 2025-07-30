@@ -8,11 +8,8 @@ const OUTPUT_FILE = './src/data/service-categories.json';
 const MONGO_URI = process.env.MONGODB_URI;
 const MONGO_DB_NAME = process.env.MONGODB_DB || 'streetsupport';
 
-if (!MONGO_URI) {
-  throw new Error('❌ MONGODB_URI not found in environment');
-}
-
-const client = new MongoClient(MONGO_URI);
+// Remove the error throw - we'll handle this gracefully
+// MongoClient will be created only when MONGO_URI is available
 
 
 const formatCategory = (doc) => ({
@@ -26,6 +23,19 @@ const formatCategory = (doc) => ({
 
 (async () => {
   try {
+    if (!MONGO_URI || process.env.USE_FALLBACK === 'true') {
+      console.log('⚠️  MONGODB_URI not available, using fallback data...');
+      
+      // Copy fallback data to expected location
+      const fallbackPath = './public/data/service-categories-fallback.json';
+      const fallbackData = fs.readFileSync(fallbackPath, 'utf8');
+      fs.writeFileSync(OUTPUT_FILE, fallbackData);
+      
+      console.log(`✅ Fallback service categories data copied to ${OUTPUT_FILE}`);
+      process.exit(0);
+    }
+
+    const client = new MongoClient(MONGO_URI);
     await client.connect();
     const db = client.db(MONGO_DB_NAME);
 

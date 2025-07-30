@@ -1,22 +1,106 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import rawLocations from '@/data/locations.json';
+import { clearSearchState } from '@/utils/findHelpStateUtils';
 
 interface Location {
-  id: number;
+  id: string;
   name: string;
   slug: string;
+  isPublic: boolean;
 }
 
-const locations = rawLocations as unknown as Location[];
+const locations = rawLocations.filter(loc => loc.isPublic) as Location[];
 
 export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLocationsOpen, setIsLocationsOpen] = useState(false);
   const [mobileLocationsOpen, setMobileLocationsOpen] = useState(false);
+  const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [mobileAboutOpen, setMobileAboutOpen] = useState(false);
+  const [focusedLocationIndex, setFocusedLocationIndex] = useState(-1);
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const aboutCloseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const locationsButtonRef = useRef<HTMLButtonElement>(null);
+  const locationsDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Group locations alphabetically
+  const groupedLocations = {
+    'A-F': locations.filter(loc => loc.name[0] >= 'A' && loc.name[0] <= 'F').sort((a, b) => a.name.localeCompare(b.name)),
+    'G-M': locations.filter(loc => loc.name[0] >= 'G' && loc.name[0] <= 'M').sort((a, b) => a.name.localeCompare(b.name)),
+    'N-S': locations.filter(loc => loc.name[0] >= 'N' && loc.name[0] <= 'S').sort((a, b) => a.name.localeCompare(b.name)),
+    'T-Z': locations.filter(loc => loc.name[0] >= 'T' && loc.name[0] <= 'Z').sort((a, b) => a.name.localeCompare(b.name))
+  };
+
+  const sortedLocations = locations.sort((a, b) => a.name.localeCompare(b.name));
+
+  // Handle keyboard navigation
+  const handleLocationsKeyDown = (e: React.KeyboardEvent) => {
+    if (!isLocationsOpen) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        setIsLocationsOpen(true);
+        setFocusedLocationIndex(0);
+      }
+      return;
+    }
+
+    switch (e.key) {
+      case 'Escape':
+        e.preventDefault();
+        setIsLocationsOpen(false);
+        setFocusedLocationIndex(-1);
+        locationsButtonRef.current?.focus();
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        setFocusedLocationIndex(prev => (prev + 1) % sortedLocations.length);
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setFocusedLocationIndex(prev => prev <= 0 ? sortedLocations.length - 1 : prev - 1);
+        break;
+      case 'Home':
+        e.preventDefault();
+        setFocusedLocationIndex(0);
+        break;
+      case 'End':
+        e.preventDefault();
+        setFocusedLocationIndex(sortedLocations.length - 1);
+        break;
+      case 'Enter':
+      case ' ':
+        if (focusedLocationIndex >= 0) {
+          const focusedLocation = sortedLocations[focusedLocationIndex];
+          if (focusedLocation) {
+            window.location.href = `/${focusedLocation.slug}`;
+          }
+        }
+        break;
+    }
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (locationsDropdownRef.current && !locationsDropdownRef.current.contains(event.target as Node) &&
+          locationsButtonRef.current && !locationsButtonRef.current.contains(event.target as Node)) {
+        setIsLocationsOpen(false);
+        setFocusedLocationIndex(-1);
+      }
+    };
+
+    if (isLocationsOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isLocationsOpen]);
 
   function handleMouseEnter() {
     if (closeTimeoutRef.current) {
@@ -28,7 +112,20 @@ export default function Nav() {
   function handleMouseLeave() {
     closeTimeoutRef.current = setTimeout(() => {
       setIsLocationsOpen(false);
-    }, 100);
+    }, 300);
+  }
+
+  function handleAboutMouseEnter() {
+    if (aboutCloseTimeoutRef.current) {
+      clearTimeout(aboutCloseTimeoutRef.current);
+    }
+    setIsAboutOpen(true);
+  }
+
+  function handleAboutMouseLeave() {
+    aboutCloseTimeoutRef.current = setTimeout(() => {
+      setIsAboutOpen(false);
+    }, 300);
   }
 
   // ✅ Handler to close all menus on link click
@@ -38,100 +135,332 @@ export default function Nav() {
     setMenuOpen(false);
   }
 
+  function handleAboutClick() {
+    setIsAboutOpen(false);
+    setMobileAboutOpen(false);
+    setMenuOpen(false);
+  }
+
+  function handleFindHelpClick() {
+    // Clear any saved search state to ensure fresh start
+    clearSearchState();
+    setMenuOpen(false);
+  }
+
   return (
-    <nav className="bg-white border-b border-neutral-200">
+    <nav className="nav-container">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          <Link href="/" className="text-xl font-semibold text-neutral-900">
-            Street Support
+        <div className="flex justify-between h-20 items-center">
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/assets/img/StreetSupport_logo_land.png"
+              alt="Street Support Network"
+              width={240}
+              height={60}
+              className="h-10 w-auto"
+            />
           </Link>
 
           <button
-            className="md:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+            className="md:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-a"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
           >
-            <svg className="h-6 w-6 text-neutral-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              {menuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8h16M4 16h16" />
-              )}
-            </svg>
+            <div className="hamburger-icon">
+              <span className={`hamburger-line ${menuOpen ? 'open' : ''}`}></span>
+              <span className={`hamburger-line ${menuOpen ? 'open' : ''}`}></span>
+              <span className={`hamburger-line ${menuOpen ? 'open' : ''}`}></span>
+            </div>
           </button>
 
           <div className="hidden md:flex space-x-6 items-center">
-            <Link href="/find-help" className="text-neutral-800 hover:text-blue-600">Find Help</Link>
+            <Link href="/find-help" className="nav-link" onClick={handleFindHelpClick}>Find Help</Link>
 
             <div
               className="relative"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
-              <button className="text-neutral-800 hover:text-blue-600 focus:outline-none">
+              <button 
+                ref={locationsButtonRef}
+                id="locations-button"
+                className="nav-link focus:outline-none focus:ring-2 focus:ring-brand-a rounded flex items-center gap-1"
+                onKeyDown={handleLocationsKeyDown}
+                aria-haspopup="menu"
+                aria-expanded={isLocationsOpen}
+                aria-controls="locations-dropdown"
+              >
                 Locations
+                <svg className={`w-4 h-4 transition-transform duration-200 ${isLocationsOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               </button>
 
               {isLocationsOpen && (
-                <div className="absolute left-1/2 -translate-x-1/2 z-50 mt-2 w-[600px] bg-white border border-neutral-200 rounded shadow-md p-4">
-                  <ul className="columns-1 sm:columns-2 md:columns-3 gap-4 space-y-1">
-                    {locations
-                      .sort((a, b) => a.name.localeCompare(b.name))
-                      .map(location => (
-                        <li key={location.id}>
-                          <Link
-                            href={`/${location.slug}`}
-                            className="block text-sm text-neutral-800 hover:underline"
-                            onClick={handleLocationClick} // ✅ Close on click
-                          >
-                            {location.name}
-                          </Link>
-                        </li>
-                      ))}
-                  </ul>
+                <div 
+                  className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[500px] z-50"
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <div 
+                    ref={locationsDropdownRef}
+                    id="locations-dropdown"
+                    className="bg-white border border-brand-f rounded-md shadow-lg p-4"
+                    role="menu"
+                  aria-labelledby="locations-button"
+                  onKeyDown={handleLocationsKeyDown}
+                >
+                  <div className="grid grid-cols-2 gap-6">
+                    {Object.entries(groupedLocations).map(([groupName, groupLocations]) => (
+                      <div key={groupName} className="space-y-2">
+                        <h3 className="text-xs font-semibold text-brand-f uppercase tracking-wide border-b border-brand-q pb-1">
+                          {groupName}
+                        </h3>
+                        <ul className="space-y-1">
+                          {groupLocations.map((location, _index) => {
+                            const globalIndex = sortedLocations.findIndex(loc => loc.id === location.id);
+                            const isFocused = globalIndex === focusedLocationIndex;
+                            return (
+                              <li key={location.id}>
+                                <Link
+                                  href={`/${location.slug}`}
+                                  className={`block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded ${
+                                    isFocused ? 'bg-brand-i text-brand-k ring-2 ring-brand-a' : ''
+                                  }`}
+                                  onClick={handleLocationClick}
+                                  role="menuitem"
+                                  tabIndex={-1}
+                                >
+                                  {location.name}
+                                </Link>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                  </div>
                 </div>
               )}
             </div>
 
-            <Link href="/about" className="text-neutral-800 hover:text-blue-600">About</Link>
-            <Link href="/contact" className="text-neutral-800 hover:text-blue-600">Contact</Link>
+            <Link href="/resources" className="nav-link">Resources</Link>
+            <Link href="/news" className="nav-link">News</Link>
+
+            <div
+              className="relative"
+              onMouseEnter={handleAboutMouseEnter}
+              onMouseLeave={handleAboutMouseLeave}
+            >
+              <button 
+                className="nav-link focus:outline-none focus:ring-2 focus:ring-brand-a rounded flex items-center gap-1"
+                onMouseEnter={handleAboutMouseEnter}
+                onMouseLeave={handleAboutMouseLeave}
+                onClick={() => window.location.href = '/about'}
+              >
+                About
+                <svg className={`w-4 h-4 transition-transform duration-200 ${isAboutOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {isAboutOpen && (
+                <div 
+                  className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-48 z-50"
+                  onMouseEnter={handleAboutMouseEnter}
+                  onMouseLeave={handleAboutMouseLeave}
+                >
+                  <div className="bg-white border border-brand-f rounded-md shadow-lg">
+                  <ul className="py-2">
+                    <li>
+                      <Link
+                        href="/about/our-team"
+                        className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded"
+                        onClick={handleAboutClick}
+                      >
+                        Our Team
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/about/our-trustees"
+                        className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded"
+                        onClick={handleAboutClick}
+                      >
+                        Our Trustees
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/about/privacy-and-data"
+                        className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded"
+                        onClick={handleAboutClick}
+                      >
+                        Privacy and Data
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/about/jobs"
+                        className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded"
+                        onClick={handleAboutClick}
+                      >
+                        Jobs
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/about/impact"
+                        className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded"
+                        onClick={handleAboutClick}
+                      >
+                        Impact
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/contact"
+                        className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded"
+                        onClick={handleAboutClick}
+                      >
+                        Contact
+                      </Link>
+                    </li>
+                  </ul>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {menuOpen && (
-        <div className="md:hidden px-4 pb-4 space-y-2">
-          <Link href="/find-help" className="block text-neutral-800 hover:text-blue-600">Find Help</Link>
+      <div className={`mobile-menu-container ${menuOpen ? 'mobile-menu-open' : 'mobile-menu-closed'}`}>
+        <div className="mobile-menu px-4 pb-4 space-y-2">
+          <Link href="/find-help" className="mobile-nav-link" onClick={handleFindHelpClick}>Find Help</Link>
 
           <button
             onClick={() => setMobileLocationsOpen(prev => !prev)}
-            className="w-full text-left text-neutral-800 hover:text-blue-600 text-sm font-semibold mt-2"
+            className="w-full text-left mobile-nav-link font-semibold mt-2 focus:outline-none focus:ring-2 focus:ring-brand-a rounded flex items-center justify-between"
+            aria-expanded={mobileLocationsOpen}
+            aria-controls="mobile-locations-menu"
+            aria-haspopup="menu"
           >
             Locations
+            <svg className={`w-5 h-5 transition-transform duration-200 ${mobileLocationsOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
           </button>
 
           {mobileLocationsOpen && (
-            <ul className="mt-1 space-y-1">
-              {locations
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map(location => (
-                  <li key={location.id}>
+            <div id="mobile-locations-menu" role="menu" className="mobile-locations-menu mt-2 ml-4 max-h-[60vh] overflow-y-auto bg-white/80 backdrop-blur-sm rounded-lg border border-brand-q shadow-lg">
+              <div className="p-3">
+                <div className="text-xs font-semibold text-brand-f uppercase tracking-wide mb-3 px-2 sticky top-0 bg-white/90 backdrop-blur-sm py-2 -mx-2 border-b border-brand-q">
+                  All Locations ({sortedLocations.length})
+                </div>
+                <div className="grid grid-cols-1 gap-1">
+                  {sortedLocations.map(location => (
                     <Link
+                      key={location.id}
                       href={`/${location.slug}`}
-                      className="block text-neutral-800 hover:text-blue-600 text-sm"
-                      onClick={handleLocationClick} // ✅ Close on click
+                      className="block py-2.5 px-3 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded focus:outline-none focus:ring-2 focus:ring-brand-a min-h-[40px] flex items-center border-l-2 border-transparent hover:border-l-brand-a"
+                      onClick={handleLocationClick}
+                      role="menuitem"
                     >
                       {location.name}
                     </Link>
-                  </li>
-                ))}
-            </ul>
+                  ))}
+                </div>
+              </div>
+            </div>
           )}
 
-          <Link href="/about" className="block text-neutral-800 hover:text-blue-600">About</Link>
-          <Link href="/contact" className="block text-neutral-800 hover:text-blue-600">Contact</Link>
+          <Link href="/resources" className="mobile-nav-link">Resources</Link>
+          <Link href="/news" className="mobile-nav-link">News</Link>
+
+          <button
+            onClick={() => setMobileAboutOpen(prev => !prev)}
+            className="w-full text-left mobile-nav-link font-semibold mt-2 focus:outline-none focus:ring-2 focus:ring-brand-a rounded flex items-center justify-between"
+            aria-expanded={mobileAboutOpen}
+            aria-controls="mobile-about-menu"
+            aria-haspopup="menu"
+          >
+            About
+            <svg className={`w-5 h-5 transition-transform duration-200 ${mobileAboutOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {mobileAboutOpen && (
+            <ul id="mobile-about-menu" role="menu" className="mobile-about-menu mt-1 space-y-1 ml-4">
+              <li>
+                <Link
+                  href="/about"
+                  className="block py-2 px-3 text-sm text-brand-l hover:bg-brand-i hover:text-brand-k transition-colors duration-200 font-semibold border-b border-brand-q pb-3 mb-2"
+                  onClick={handleAboutClick}
+                >
+                  About Street Support
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/about/our-team"
+                  className="block py-2 px-3 text-sm text-brand-l hover:bg-brand-i hover:text-brand-k transition-colors duration-200"
+                  onClick={handleAboutClick}
+                >
+                  Our Team
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/about/our-trustees"
+                  className="block py-2 px-3 text-sm text-brand-l hover:bg-brand-i hover:text-brand-k transition-colors duration-200"
+                  onClick={handleAboutClick}
+                >
+                  Our Trustees
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/about/privacy-and-data"
+                  className="block py-2 px-3 text-sm text-brand-l hover:bg-brand-i hover:text-brand-k transition-colors duration-200"
+                  onClick={handleAboutClick}
+                >
+                  Privacy and Data
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/about/jobs"
+                  className="block py-2 px-3 text-sm text-brand-l hover:bg-brand-i hover:text-brand-k transition-colors duration-200"
+                  onClick={handleAboutClick}
+                >
+                  Jobs
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/about/impact"
+                  className="block py-2 px-3 text-sm text-brand-l hover:bg-brand-i hover:text-brand-k transition-colors duration-200"
+                  onClick={handleAboutClick}
+                >
+                  Impact
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/contact"
+                  className="block py-2 px-3 text-sm text-brand-l hover:bg-brand-i hover:text-brand-k transition-colors duration-200"
+                  onClick={handleAboutClick}
+                >
+                  Contact
+                </Link>
+              </li>
+            </ul>
+          )}
         </div>
-      )}
+      </div>
     </nav>
   );
 }

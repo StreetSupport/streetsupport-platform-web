@@ -19,6 +19,10 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
   const [networkError, setNetworkError] = useState<string | null>(null);
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [selectedLocationSlug, setSelectedLocationSlug] = useState('');
+  const [showOrgSearch, setShowOrgSearch] = useState(false);
+  const [orgSearchInput, setOrgSearchInput] = useState('');
+  const [isOrgSearching, setIsOrgSearching] = useState(false);
+  const [orgSearchError, setOrgSearchError] = useState<string | null>(null);
 
   // Check if location is already set from navigation context
   useEffect(() => {
@@ -146,6 +150,57 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
     setShowPostcodeInput(true);
   };
 
+  const handleOrgSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const trimmedQuery = orgSearchInput.trim();
+    if (!trimmedQuery) {
+      setOrgSearchError('Please enter an organisation name');
+      return;
+    }
+
+    setIsOrgSearching(true);
+    setOrgSearchError(null);
+
+    try {
+      const response = await fetch(`/api/organisations/search?q=${encodeURIComponent(trimmedQuery)}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          setOrgSearchError('No organisations found matching your search');
+        } else if (response.status >= 500) {
+          setOrgSearchError('Server error. Please try again later.');
+        } else {
+          setOrgSearchError('Search failed. Please try again.');
+        }
+        return;
+      }
+
+      const data = await response.json();
+      
+      if (data.organisations && data.organisations.length > 0) {
+        // If only one result, navigate directly to it
+        if (data.organisations.length === 1) {
+          window.location.href = `/find-help/organisation/${data.organisations[0].slug}`;
+        } else {
+          // Multiple results - navigate to search results page
+          window.location.href = `/find-help/organisations?search=${encodeURIComponent(trimmedQuery)}`;
+        }
+      } else {
+        setOrgSearchError('No organisations found matching your search');
+      }
+    } catch (err) {
+      console.error('Organisation search error:', err);
+      setOrgSearchError('Network error. Please check your connection and try again.');
+    } finally {
+      setIsOrgSearching(false);
+    }
+  };
+
 
   
   const handleLocationDropdownSubmit = (e: React.FormEvent) => {
@@ -173,7 +228,7 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
   // If location is already set, show confirmation
   if (location) {
     return (
-      <div className={`bg-green-50 border border-green-200 rounded-lg p-4 ${className}`}>
+      <div className={`bg-brand-i border border-brand-b rounded-lg p-4 ${className}`}>
         <div className="flex items-center">
           <div className="flex-shrink-0">
             <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
@@ -197,28 +252,89 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
   }
 
   return (
-    <div className={`bg-white border border-gray-200 rounded-lg p-6 ${className}`}>
+    <div className={`card p-6 ${className}`}>
       <div className="text-center">
         <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
-          <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="h-6 w-6 text-brand-a" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
         </div>
         
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">
+        <h2 className="heading-5">
           Find Services Near You
         </h2>
         
-        <p className="text-sm text-gray-600 mb-6">
-          We&apos;ll help you find services in your area. You can share your location or enter your postcode.
+        <p className="text-small mb-6">
+          We&apos;ll help you find services in your area. You can share your location or enter your postcode. You can also{' '}
+          <button
+            onClick={() => setShowOrgSearch(true)}
+            className="text-brand-a hover:text-brand-b underline transition-colors"
+          >
+            search for an organisation by name
+          </button>.
         </p>
+
+        {/* Organization search form */}
+        {showOrgSearch && (
+          <form onSubmit={handleOrgSearch} className="space-y-4 mb-6">
+            <div className="text-left">
+              <label htmlFor="org-search" className="block text-small font-medium text-brand-l mb-2">
+                Search for an organisation by name
+              </label>
+              <input
+                id="org-search"
+                type="text"
+                className="w-full px-3 py-2 border border-brand-q rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-transparent"
+                placeholder="e.g., Manchester City Mission"
+                value={orgSearchInput}
+                onChange={(e) => {
+                  setOrgSearchInput(e.target.value);
+                  setOrgSearchError(null);
+                }}
+                disabled={isOrgSearching}
+                required
+              />
+              {orgSearchError && (
+                <p className="mt-2 text-sm text-red-600">{orgSearchError}</p>
+              )}
+            </div>
+            
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                className="btn-base btn-primary btn-md flex-1"
+                disabled={isOrgSearching || !orgSearchInput.trim()}
+              >
+                {isOrgSearching ? (
+                  <span className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-q mr-2"></div>
+                    Searching...
+                  </span>
+                ) : (
+                  'Search Organisations'
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowOrgSearch(false);
+                  setOrgSearchInput('');
+                  setOrgSearchError(null);
+                }}
+                className="btn-base btn-tertiary btn-md"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
 
         {/* Loading state */}
         {isLoading && (
           <div className="flex items-center justify-center py-4" role="status" aria-label="Loading">
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-            <span className="ml-2 text-sm text-gray-600">Getting your location...</span>
+            <span className="ml-2 text-small">Getting your location...</span>
           </div>
         )}
 
@@ -238,13 +354,13 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
             <div className="mt-4 flex space-x-3">
               <button
                 onClick={handleTryAgain}
-                className="text-sm bg-yellow-100 text-yellow-800 px-3 py-1 rounded-md hover:bg-yellow-200 transition-colors"
+                className="inline-flex items-center justify-center px-4 py-2 bg-brand-a text-white font-medium rounded-md hover:bg-brand-b active:bg-brand-c transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-a focus:ring-offset-2"
               >
                 Try Again
               </button>
               <button
                 onClick={handleUsePostcode}
-                className="text-sm bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition-colors"
+                className="btn-base btn-primary btn-sm"
               >
                 Enter Postcode or Choose a Location
               </button>
@@ -258,13 +374,13 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
           <div className="space-y-4">
             <button
               onClick={handleLocationRequest}
-              className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium"
+              className="btn-base btn-primary btn-lg w-full"
             >
               Use My Current Location
             </button>
             <button
               onClick={handleUsePostcode}
-              className="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-md hover:bg-gray-200 transition-colors"
+              className="btn-base btn-secondary btn-lg w-full"
             >
               Enter Postcode or Choose a Location
             </button>
@@ -277,12 +393,12 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
             <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                  <svg className="h-5 w-5 text-brand-b" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm text-blue-800">Choose how you&apos;d like to find services near you:</p>
+                  <p className="text-small text-brand-c">Choose how you&apos;d like to find services near you:</p>
                 </div>
               </div>
             </div>
@@ -290,13 +406,13 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
             {/* Postcode input section */}
             <form onSubmit={handlePostcodeSubmit} className="space-y-4" role="form">
               <div className="text-left">
-                <label htmlFor="postcode" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="postcode" className="block text-small font-medium text-brand-l mb-2">
                   Option 1: Enter your postcode
                 </label>
                 <input
                   id="postcode"
                   type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-brand-q rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-transparent"
                   placeholder="e.g., M1 1AE"
                   value={postcodeInput}
                   onChange={(e) => {
@@ -318,12 +434,12 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
               
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-base btn-primary btn-md w-full"
                 disabled={isGeocoding || !postcodeInput.trim()}
               >
                 {isGeocoding ? (
                   <span className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-q mr-2"></div>
                     Finding Location...
                   </span>
                 ) : (
@@ -335,22 +451,22 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
             {/* Divider */}
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
+                <div className="w-full border-t border-brand-q" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">or</span>
+                <span className="px-2 bg-white text-brand-f">or</span>
               </div>
             </div>
 
             {/* Location dropdown section */}
             <form onSubmit={handleLocationDropdownSubmit} className="space-y-4" role="form">
               <div className="text-left">
-                <label htmlFor="location-select" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="location-select" className="block text-small font-medium text-brand-l mb-2">
                   Option 2: Select your area
                 </label>
                 <select
                   id="location-select"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-brand-q rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-transparent"
                   value={selectedLocationSlug}
                   onChange={(e) => setSelectedLocationSlug(e.target.value)}
                 >
@@ -369,7 +485,7 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
               
               <button
                 type="submit"
-                className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-base btn-success btn-md w-full"
                 disabled={!selectedLocationSlug}
               >
                 Find Services in {selectedLocationSlug ? locations.find(l => l.slug === selectedLocationSlug)?.name : 'Selected Area'}
@@ -382,7 +498,7 @@ export default function LocationPrompt({ onLocationSet, className = '' }: Locati
                 <button
                   type="button"
                   onClick={handleLocationRequest}
-                  className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                  className="btn-base btn-tertiary btn-sm"
                 >
                   Try location access again
                 </button>

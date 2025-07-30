@@ -53,21 +53,21 @@ export default function FilterPanel({
   const hasActiveFilters = selectedCategory || selectedSubCategory;
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-2">
-        <label htmlFor="category" className="text-sm font-medium">
-          Category:
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+      <div>
+        <label htmlFor="category" className="block text-sm font-medium text-brand-l mb-2">
+          Category
         </label>
         <select
           id="category"
-          className="border px-2 py-1 rounded"
+          className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-brand-a bg-white"
           value={selectedCategory}
           onChange={(e) => {
             setSelectedCategory(e.target.value);
             setSelectedSubCategory('');
           }}
         >
-          <option value="">All</option>
+          <option value="">All categories</option>
           {categories.map((cat) => (
             <option key={cat.key} value={cat.key}>
               {cat.name}
@@ -75,31 +75,35 @@ export default function FilterPanel({
           ))}
         </select>
       </div>
-      <div className="flex items-center gap-2">
-        <label htmlFor="subCategory" className="text-sm font-medium">
-          Subcategory:
+      
+      <div>
+        <label htmlFor="subCategory" className="block text-sm font-medium text-brand-l mb-2">
+          Subcategory
         </label>
         <select
           id="subCategory"
-          className="border px-2 py-1 rounded"
+          className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-brand-a bg-white disabled:bg-gray-50 disabled:text-gray-500 disabled:border-gray-200"
           value={selectedSubCategory}
           onChange={(e) => setSelectedSubCategory(e.target.value)}
           disabled={!selectedCategory}
         >
-          <option value="">All</option>
+          <option value="">All subcategories</option>
           {subCategories.map((sub) => (
             <option key={sub.key} value={sub.key}>
               {sub.name}
             </option>
           ))}
         </select>
+      </div>
+
+      <div className="md:col-span-2 lg:col-span-2 flex justify-end">
         {hasActiveFilters && (
           <button
             onClick={onResetFilters}
-            className="text-xs px-2 py-1 text-gray-600 hover:text-gray-800 border border-gray-300 rounded hover:bg-gray-50 transition-colors ml-2"
+            className="px-4 py-2 text-sm text-brand-a hover:text-brand-b hover:bg-brand-i rounded-md transition-colors font-medium"
             title="Reset all filters"
           >
-            Reset filters
+            Clear filters
           </button>
         )}
       </div>

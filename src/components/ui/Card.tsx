@@ -13,7 +13,7 @@ export default function Card({ children, className, fatBottom = false }: CardPro
   return (
     <div
       className={clsx(
-        'rounded-[7px] mb-5 text-center border border-gray-200 shadow-sm print:shadow-none',
+        'card text-center mb-5 print:shadow-none',
         className
       )}
     >

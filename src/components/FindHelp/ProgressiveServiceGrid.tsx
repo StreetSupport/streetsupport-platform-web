@@ -23,6 +23,9 @@ interface ProgressiveServiceGridProps {
   openDescriptionId: string | null;
   onToggleDescription: (id: string) => void;
   batchSize?: number;
+  initialPage?: number;
+  onPageChange?: (page: number) => void;
+  scrollTargetRef?: React.RefObject<HTMLDivElement>;
 }
 
 /**
@@ -31,13 +34,17 @@ interface ProgressiveServiceGridProps {
  */
 export default function ProgressiveServiceGrid({
   groups,
-  showMap,
+  showMap: _showMap,
   openDescriptionId,
   onToggleDescription,
-  batchSize = 50
+  batchSize = 50,
+  initialPage = 1,
+  onPageChange,
+  scrollTargetRef
 }: ProgressiveServiceGridProps) {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(initialPage);
   const [loadingCardId, setLoadingCardId] = useState<string | null>(null);
+  const [shouldScrollOnPageChange, setShouldScrollOnPageChange] = useState(false);
   const itemsPerPage = batchSize;
   const gridRef = useRef<HTMLDivElement>(null);
   
@@ -47,19 +54,33 @@ export default function ProgressiveServiceGrid({
   const endIndex = startIndex + itemsPerPage;
   const visibleGroups = groups.slice(startIndex, endIndex);
   
+  // Update page when initialPage changes (from restored state)
+  useEffect(() => {
+    setCurrentPage(initialPage);
+  }, [initialPage]);
+
   // Reset page when groups change
   useEffect(() => {
     setCurrentPage(1);
     setLoadingCardId(null); // Clear loading state when groups change
+    setShouldScrollOnPageChange(false); // Don't scroll when groups change (filter/search)
   }, [groups]);
-  
-  // Scroll to top of results when page changes
+
+  // Call onPageChange callback when currentPage changes
   useEffect(() => {
-    if (gridRef.current) {
-      // Scroll to the grid container
-      gridRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (onPageChange) {
+      onPageChange(currentPage);
     }
-  }, [currentPage]);
+  }, [currentPage, onPageChange]);
+  
+  // Only scroll when pagination is used (not on initial load or filter changes)
+  useEffect(() => {
+    if (shouldScrollOnPageChange && scrollTargetRef?.current) {
+      // Scroll to the "Services near you" header without smooth scrolling
+      scrollTargetRef.current.scrollIntoView({ behavior: 'instant', block: 'start' });
+      setShouldScrollOnPageChange(false); // Reset flag after scrolling
+    }
+  }, [currentPage, shouldScrollOnPageChange, scrollTargetRef]);
   
   // Generate page numbers to display
   // Handle card click to show loading state
@@ -103,7 +124,7 @@ export default function ProgressiveServiceGrid({
 
   return (
     <>
-      <div ref={gridRef} className={`gap-4 ${showMap ? 'flex flex-col' : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
+      <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {visibleGroups.map((group) => (
           <div
             key={group.orgId}
@@ -135,9 +156,13 @@ export default function ProgressiveServiceGrid({
         <div className="flex items-center justify-center gap-2 mt-6 py-4">
           {/* Previous button */}
           <button
-            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            onClick={() => {
+              const newPage = Math.max(1, currentPage - 1);
+              setShouldScrollOnPageChange(true);
+              setCurrentPage(newPage);
+            }}
             disabled={currentPage === 1}
-            className="px-3 py-1 text-sm rounded-md border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-base btn-tertiary btn-sm transition-all duration-200 cursor-pointer hover:scale-105 hover:shadow-sm disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
             aria-label="Previous page"
           >
             Previous
@@ -151,11 +176,15 @@ export default function ProgressiveServiceGrid({
               ) : (
                 <button
                   key={page}
-                  onClick={() => setCurrentPage(Number(page))}
-                  className={`px-3 py-1 text-sm rounded-md border ${
+                  onClick={() => {
+                    const newPage = Number(page);
+                    setShouldScrollOnPageChange(true);
+                    setCurrentPage(newPage);
+                  }}
+                  className={`px-3 py-1 text-sm rounded-md border transition-all duration-200 cursor-pointer ${
                     currentPage === page
-                      ? 'bg-blue-600 text-white border-blue-600'
-                      : 'border-gray-300 hover:bg-gray-50'
+                      ? 'bg-brand-a text-brand-q border-brand-a'
+                      : 'border-brand-k hover:bg-brand-q hover:border-brand-a hover:scale-105 hover:shadow-sm'
                   }`}
                   aria-label={`Go to page ${page}`}
                   aria-current={currentPage === page ? 'page' : undefined}
@@ -168,9 +197,13 @@ export default function ProgressiveServiceGrid({
           
           {/* Next button */}
           <button
-            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+            onClick={() => {
+              const newPage = Math.min(totalPages, currentPage + 1);
+              setShouldScrollOnPageChange(true);
+              setCurrentPage(newPage);
+            }}
             disabled={currentPage === totalPages}
-            className="px-3 py-1 text-sm rounded-md border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-base btn-tertiary btn-sm transition-all duration-200 cursor-pointer hover:scale-105 hover:shadow-sm disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
             aria-label="Next page"
           >
             Next

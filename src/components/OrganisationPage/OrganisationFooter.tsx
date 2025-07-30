@@ -35,7 +35,6 @@ export default function OrganisationFooter() {
   return (
     <footer className="mt-6 text-sm text-gray-600">
       {/** ✅ This is always rendered, immediately */}
-      <p>Information provided by Street Support for demonstration purposes only.</p>
 
       <div className="mb-4 flex items-center gap-4">
         <span>Share this page:</span>

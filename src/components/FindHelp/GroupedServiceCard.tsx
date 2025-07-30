@@ -95,31 +95,18 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
           onCardClick();
         }
       }}
-      className={`relative block border-2 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-a ${
-        isLoading 
-          ? 'border-transparent animate-pulse' 
-          : 'border-gray-200'
-      }`}
+      className={`card card-compact ${isLoading ? 'loading-card' : ''}`}
       aria-label={`View details for ${decodedOrgName}`}
-      style={isLoading ? {
-        backgroundImage: `
-          linear-gradient(white, white),
-          conic-gradient(from 0deg, #10b981 0deg, #10b981 60deg, rgba(16, 185, 129, 0.3) 90deg, transparent 120deg, transparent 240deg, rgba(16, 185, 129, 0.3) 270deg, #10b981 300deg, #10b981 360deg)
-        `,
-        backgroundOrigin: 'border-box',
-        backgroundClip: 'padding-box, border-box',
-        animation: 'loading-border 1.5s ease-in-out infinite'
-      } : {}}
     >
       <div className="flex justify-between items-start mb-2">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {group.isVerified && (
             <span
-              className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-800"
+              className="service-tag verified"
               title="Verified Service"
             >
               <svg
-                className="w-3 h-3 text-green-600"
+                className="w-3 h-3 text-brand-b"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -141,17 +128,17 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
         
         {/* Distance */}
         {distanceText && (
-          <span className="text-xs text-gray-500">{distanceText}</span>
+          <span className="text-xs !text-black">{distanceText}</span>
         )}
       </div>
 
       {/* Organization name - prominent */}
-      <h2 className="text-lg font-semibold mb-2">{decodedOrgName}</h2>
+      <h2 className="text-lg font-semibold mb-2 !text-black">{decodedOrgName}</h2>
 
       {/* Categories */}
       {formattedCategories.length > 0 && (
         <div className="mb-3">
-          <p className="text-xs font-medium text-gray-500 mb-1">Categories:</p>
+          <p className="text-xs font-medium !text-black mb-1">Categories:</p>
           <div className="flex flex-wrap gap-1">
             {formattedCategories.map((cat, index) => (
               <span
@@ -168,12 +155,12 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
       {/* Subcategories */}
       {formattedSubcategories.length > 0 && (
         <div className="mb-3">
-          <p className="text-xs font-medium text-gray-500 mb-1">Services:</p>
+          <p className="text-xs font-medium !text-black mb-1">Services:</p>
           <div className="flex flex-wrap gap-1">
             {formattedSubcategories.map((subcat, index) => (
               <span
                 key={index}
-                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium !bg-brand-n !text-white"
               >
                 {subcat}
               </span>
@@ -185,9 +172,12 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
       {/* Organization Description */}
       {group.orgDescription && (
         <div className="mb-3">
-          {shouldTruncate && !isDescriptionOpen ? (
-            <div>
-              <p className="text-sm text-gray-800 mb-1">{displayDescription}</p>
+          <div>
+            <LazyMarkdownContent 
+              content={isDescriptionOpen ? group.orgDescription : displayDescription} 
+              className="text-sm mb-2 !text-black" 
+            />
+            {shouldTruncate && (
               <button
                 type="button"
                 onClick={(e) => {
@@ -195,34 +185,17 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
                   e.stopPropagation();
                   onToggleDescription?.();
                 }}
-                className="text-blue-600 underline text-sm hover:text-blue-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="btn-base btn-tertiary btn-sm transition-all duration-200 cursor-pointer hover:scale-105 hover:shadow-sm"
               >
-                Read more
+                {isDescriptionOpen ? 'Show less' : 'Read more'}
               </button>
-            </div>
-          ) : (
-            <div>
-              <LazyMarkdownContent content={group.orgDescription} className="prose-sm" />
-              {shouldTruncate && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onToggleDescription?.();
-                  }}
-                  className="text-blue-600 underline text-sm hover:text-blue-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-400"
-                >
-                  Show less
-                </button>
-              )}
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
 
       {/* Placeholder for service details */}
-      <div className="text-xs text-gray-500 mt-2 pt-2 border-t border-gray-200">
+      <div className="text-xs !text-black mt-2 pt-2 border-t border-gray-200">
         Click to view full organisation details and services
       </div>
     </Link>
