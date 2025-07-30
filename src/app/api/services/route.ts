@@ -7,6 +7,7 @@ interface MongoQuery {
   IsPublished: boolean;
   'Address.City'?: { $regex: RegExp };
   ParentCategoryKey?: { $regex: RegExp };
+  SubCategoryKey?: { $regex: RegExp };
 }
 
 interface GeospatialQuery {
@@ -43,6 +44,7 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const location = searchParams.get('location');
   const category = searchParams.get('category');
+  const subcategory = searchParams.get('subcategory');
   const lat = searchParams.get('lat');
   const lng = searchParams.get('lng');
   const radius = searchParams.get('radius');
@@ -166,6 +168,19 @@ export async function GET(req: Request) {
         }
       } else {
         query.ParentCategoryKey = { $regex: new RegExp(`^${category}`, 'i') };
+      }
+    }
+
+    // Add subcategory filtering
+    if (subcategory) {
+      if (latitude !== undefined && longitude !== undefined) {
+        // For geospatial queries, add subcategory filter to the $geoNear query
+        const geoNearStage = pipeline[0];
+        if (geoNearStage.$geoNear) {
+          geoNearStage.$geoNear.query.SubCategoryKey = { $regex: new RegExp(`^${subcategory}`, 'i') };
+        }
+      } else {
+        query.SubCategoryKey = { $regex: new RegExp(`^${subcategory}`, 'i') };
       }
     }
 

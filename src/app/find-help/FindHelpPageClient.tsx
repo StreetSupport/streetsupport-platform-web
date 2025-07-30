@@ -180,9 +180,15 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
       });
 
       // Add category filter from search params or initial filters if provided
-      const category = searchParams.category || initialFilters?.selectedCategory;
+      const category = searchParams.cat || initialFilters?.selectedCategory;
       if (category && typeof category === 'string') {
         params.append('category', category);
+      }
+      
+      // Add subcategory filter if provided
+      const subcategory = searchParams.subcat;
+      if (subcategory && typeof subcategory === 'string') {
+        params.append('subcategory', subcategory);
       }
 
       const response = await fetch(`/api/services?${params.toString()}`, {
@@ -270,7 +276,7 @@ export default function FindHelpPageClient({ searchParams }: FindHelpPageClientP
     } finally {
       setLoading(false);
     }
-  }, [searchParams.category, initialFilters?.selectedCategory]);
+  }, [searchParams.cat, searchParams.subcat, initialFilters?.selectedCategory]);
 
   // Fetch services when location is set
   useEffect(() => {
