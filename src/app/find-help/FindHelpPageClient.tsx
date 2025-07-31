@@ -196,7 +196,7 @@ export default function FindHelpPageClient({ searchParams: _searchParams }: Find
         if (response.status >= 500) {
           throw new Error('Server error. Our services are temporarily unavailable.');
         } else if (response.status === 429) {
-          throw new Error('Too many requests. Please wait a moment and try again.');
+          throw new Error('RATE_LIMIT');
         } else if (response.status === 404) {
           throw new Error('Services endpoint not found. Please try again later.');
         } else {
@@ -228,6 +228,8 @@ export default function FindHelpPageClient({ searchParams: _searchParams }: Find
         } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
           errorMessage = 'Network error. Please check your internet connection.';
           isNetworkIssue = true;
+        } else if (err.message === 'RATE_LIMIT') {
+          errorMessage = 'RATE_LIMIT';
         } else {
           errorMessage = err.message;
         }
@@ -279,6 +281,12 @@ export default function FindHelpPageClient({ searchParams: _searchParams }: Find
   const handleLocationSet = useCallback(() => {
     setHasLocationSet(true);
   }, []);
+
+  const handleRetry = useCallback(() => {
+    if (location) {
+      fetchServices(location);
+    }
+  }, [location, fetchServices]);
 
   const handleChangeLocation = useCallback(() => {
     // Clear all state and URL parameters
@@ -356,6 +364,7 @@ export default function FindHelpPageClient({ searchParams: _searchParams }: Find
             error={error}
             shouldRestoreState={shouldRestoreState}
             initialFilters={initialFilters}
+            onRetry={handleRetry}
             onStateUpdate={(state) => {
               // Update URL parameters
               updateURLSearchParams({
