@@ -23,6 +23,9 @@ test.describe('Error Handling and Recovery', () => {
   });
 
   test('should handle services API rate limiting', async ({ page }) => {
+    // Unroute any existing routes for this endpoint first
+    await page.unroute('**/api/services**');
+    
     // Mock rate limiting response
     await page.route('**/api/services**', async (route) => {
       await route.fulfill({
@@ -38,7 +41,7 @@ test.describe('Error Handling and Recovery', () => {
     await page.getByRole('button', { name: /find services by postcode/i }).click();
     
     // Wait for location to be set and services to be requested
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(3000);
     
     // Should show rate limiting error
     await expect(page.getByText(/too many requests/i)).toBeVisible();
@@ -247,6 +250,9 @@ test.describe('Error Handling and Recovery', () => {
   });
 
   test('should maintain functionality during intermittent connectivity', async ({ page }) => {
+    // Unroute any existing routes for this endpoint first
+    await page.unroute('**/api/services**');
+    
     let isOnline = true;
     await page.route('**/api/services**', async (route) => {
       if (!isOnline) {
