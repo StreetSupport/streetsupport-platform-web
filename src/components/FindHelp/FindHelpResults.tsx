@@ -29,6 +29,7 @@ interface Props {
     currentPage: number;
   }) => void;
   onChangeLocation?: () => void;
+  onRetry?: () => void;
 }
 
 interface MapMarker {
@@ -119,7 +120,8 @@ export default function FindHelpResults({
   shouldRestoreState: _shouldRestoreState = false,
   initialFilters = null,
   onStateUpdate,
-  onChangeLocation
+  onChangeLocation,
+  onRetry
 }: Props) {
   const { location, updateRadius } = useLocation();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -334,7 +336,22 @@ export default function FindHelpResults({
                 </div>
                 <div className="ml-3">
                   <h3 className="text-sm font-medium text-red-800">Error loading services</h3>
-                  <p className="mt-1 text-sm text-red-700">{error}</p>
+                  {error === 'RATE_LIMIT' ? (
+                    <>
+                      <p className="mt-1 text-sm text-red-700">Too many requests</p>
+                      <p className="text-sm text-red-700">Please wait a moment and try again</p>
+                    </>
+                  ) : (
+                    <p className="mt-1 text-sm text-red-700">{error}</p>
+                  )}
+                  {(error?.includes('Network error') || error?.includes('Request timed out')) && onRetry && (
+                    <button
+                      onClick={onRetry}
+                      className="mt-2 text-sm bg-red-100 text-red-800 px-3 py-1 rounded-md hover:bg-red-200 transition-colors"
+                    >
+                      Try again
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
