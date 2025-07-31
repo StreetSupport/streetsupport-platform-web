@@ -9,6 +9,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    # Explicit status check name for Vercel
+    name: test
 
     steps:
       - name: Checkout repository
@@ -53,10 +55,26 @@ jobs:
     needs: test
     if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    # Explicit status check name for Vercel
+    name: deploy
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Deployment complete
-        run: echo "✅ Deployment successful"
+      - name: Mark deployment ready
+        run: echo "✅ Tests passed - ready for deployment"
+        
+      - name: Set deployment status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: 'success',
+              target_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              description: 'All tests passed - ready for deployment',
+              context: 'ci/tests-complete'
+            })
