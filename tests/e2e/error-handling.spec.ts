@@ -355,6 +355,36 @@ test.describe('Error Handling and Recovery', () => {
     // Simulate going offline
     isOnline = false;
     
+    // Re-setup the route after changing isOnline to ensure it persists through reload
+    await page.unroute('**/api/services**');
+    await page.route('**/api/services**', async (route) => {
+      mockCallCount++;
+      console.log(`📍 Offline mock called ${mockCallCount} times, isOnline: ${isOnline}`);
+      
+      if (!isOnline) {
+        await route.abort('failed');
+      } else {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            results: [
+              {
+                _id: '1',
+                ServiceProviderName: 'Intermittent Service',
+                Info: 'Service during connectivity test',
+                ParentCategoryKey: 'support',
+                ServiceProviderKey: 'intermittent-service',
+                Address: { Location: { coordinates: [-2.2426, 53.4808] } },
+                ClientGroups: [],
+                OpeningTimes: []
+              }
+            ]
+          })
+        });
+      }
+    });
+    
     // Try to refresh or retry - reload the page to trigger new request
     await page.reload();
     
@@ -362,10 +392,20 @@ test.describe('Error Handling and Recovery', () => {
     // The reload will trigger the API call which will fail due to offline state
     
     // Should show offline error or some error handling
-    await page.waitForTimeout(2000);
-    const networkErrorVisible = await page.getByText(/network error/i).isVisible();
-    const errorVisible = await page.getByText(/error|failed/i).first().isVisible();
-    const retryVisible = await page.getByRole('button', { name: /try again|retry/i }).isVisible();
+    await page.waitForTimeout(3000);
+    
+    // Debug what's on the page after offline reload
+    const pageContentOffline = await page.textContent('body');
+    console.log('📄 After offline reload, page contains "error":', pageContentOffline?.toLowerCase().includes('error'));
+    console.log('📄 After offline reload, page contains "network":', pageContentOffline?.toLowerCase().includes('network'));
+    console.log('📄 After offline reload, page contains "try again":', pageContentOffline?.toLowerCase().includes('try again'));
+    console.log('📄 Offline mock call count:', mockCallCount);
+    
+    const networkErrorVisible = await page.getByText(/network error/i).isVisible().catch(() => false);
+    const errorVisible = await page.getByText(/error|failed/i).first().isVisible().catch(() => false);
+    const retryVisible = await page.getByRole('button', { name: /try again|retry/i }).isVisible().catch(() => false);
+    
+    console.log('🔍 Offline error checks:', { networkErrorVisible, errorVisible, retryVisible });
     
     // At least one error handling mechanism should be visible
     expect(networkErrorVisible || errorVisible || retryVisible).toBeTruthy();
