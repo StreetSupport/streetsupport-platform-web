@@ -259,7 +259,22 @@ export default function OrganisationLocations({ organisation, userContext, onMar
       <p className="text-sm text-gray-600 mb-3">
         {organisationLocationCount} location{organisationLocationCount !== 1 ? 's' : ''} available for this organisation
       </p>
-      <GoogleMap center={center} markers={allLocations} zoom={14} onMarkerClick={onMarkerClick} onMapReady={onMapReady} />
+      <GoogleMap 
+        center={center} 
+        markers={allLocations} 
+        zoom={14} 
+        autoFitBounds={true}
+        maxZoom={16}
+        minZoom={12}
+        includeUserInBounds={true}
+        onMarkerClick={onMarkerClick} 
+        onMapReady={onMapReady}
+        userLocation={
+          userContext?.lat && userContext?.lng 
+            ? { lat: userContext.lat, lng: userContext.lng, radius: userContext.radius || undefined }
+            : null
+        }
+      />
     </section>
   );
 }

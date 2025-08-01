@@ -200,7 +200,8 @@ export async function GET(req: Request) {
             ShortDescription: 1,
             Website: 1,
             Telephone: 1,
-            Email: 1
+            Email: 1,
+            Tags: 1
           }
         }]
       }
@@ -224,7 +225,8 @@ export async function GET(req: Request) {
               then: {
                 name: '$provider.Name',
                 slug: '$provider.Key',
-                isVerified: { $ifNull: ['$provider.IsVerified', false] }
+                isVerified: { $ifNull: ['$provider.IsVerified', false] },
+                tags: { $ifNull: ['$provider.Tags', []] }
               },
               else: null
             }

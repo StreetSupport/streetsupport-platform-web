@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useDebounce } from '@/hooks/useDebounce';
 import GoogleMap from '@/components/MapComponent/GoogleMap';
 import rawCategories from '@/data/service-categories.json';
-import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup';
+import { getCategoryName, getSubCategoryName } from '@/utils/categoryLookup';
 import type { ServiceWithDistance } from '@/types';
 
 interface Category {
@@ -243,7 +243,7 @@ export default function LocationFindHelp({ locationName, latitude, longitude }: 
                 disabled={subCategories.length === 0}
                 className="w-full px-3 py-2 border border-brand-f rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-transparent disabled:bg-gray-100"
               >
-                <option value="">All {selectedCategory ? categoryKeyToName[selectedCategory] || selectedCategory : 'subcategories'}</option>
+                <option value="">All {selectedCategory ? getCategoryName(selectedCategory) : 'subcategories'}</option>
                 {subCategories.map((subCategory) => (
                   <option key={subCategory.key} value={subCategory.key}>
                     {subCategory.name}
@@ -274,7 +274,7 @@ export default function LocationFindHelp({ locationName, latitude, longitude }: 
                 <div className="text-center">
                   {selectedSubCategory && (
                     <p className="text-sm text-brand-f">
-                      Showing {subCategoryKeyToName[selectedSubCategory] || selectedSubCategory} services
+                      Showing {selectedCategory ? getSubCategoryName(selectedCategory, selectedSubCategory) : selectedSubCategory} services
                     </p>
                   )}
                 </div>
@@ -312,6 +312,16 @@ export default function LocationFindHelp({ locationName, latitude, longitude }: 
             center={{ lat: latitude, lng: longitude }}
             markers={mapMarkers}
             zoom={13}
+            autoFitBounds={true}
+            maxZoom={14}
+            minZoom={10}
+            includeUserInBounds={false}
+            userLocation={
+              // Use the location page's coordinates as the "user location" for marker navigation
+              // This ensures that when users click markers, the organisation page will show 
+              // a user pin at this location's coordinates
+              { lat: latitude, lng: longitude, radius: 5 }
+            }
           />
         )}
       </div>

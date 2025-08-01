@@ -34,6 +34,7 @@ export interface UIFlattenedService extends Omit<FlattenedService, 'organisation
     name: string;
     slug: string;
     isVerified?: boolean;
+    tags?: string[];
   };
 }
 

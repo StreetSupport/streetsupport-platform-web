@@ -37,7 +37,7 @@ export default function LocationDropdown() {
         id="location-select"
         value={selectedLocation}
         onChange={handleLocationChange}
-        className="w-full px-4 py-3 border border-brand-f rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-transparent bg-white text-brand-l"
+        className="custom-select w-full px-4 py-3 border border-brand-f rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-transparent bg-white text-brand-l"
       >
         <option value="">Select a location...</option>
         {sortedLocations.map((location) => (

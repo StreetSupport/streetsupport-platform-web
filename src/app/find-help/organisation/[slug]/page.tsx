@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import OrganisationShell from './OrganisationShell';
 import { notFound } from 'next/navigation';
-import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup';
+import { getCategoryName, getSubCategoryName } from '@/utils/categoryLookup';
 
 import type { RawService } from '@/types/api';
 import type { Metadata } from 'next';
@@ -34,11 +34,11 @@ function processOrganisationData(data: { organisation: unknown; services: unknow
 
     return {
       id: service._id || `service-${idx}`,
-      name: subCategoryKeyToName[subKey] || subKey || 'Unnamed Service',
+      name: getSubCategoryName(parentKey, subKey) || 'Unnamed Service',
       category: parentKey,
-      categoryName: categoryKeyToName[parentKey] || parentKey || 'Other',
+      categoryName: getCategoryName(parentKey) || 'Other',
       subCategory: subKey,
-      subCategoryName: subCategoryKeyToName[subKey] || subKey || 'Other',
+      subCategoryName: getSubCategoryName(parentKey, subKey) || 'Other',
       description: service.Info || '',
       address: service.Address || {},
       openTimes,
