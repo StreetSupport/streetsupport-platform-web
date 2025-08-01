@@ -7,7 +7,7 @@ import type { OrganisationDetails, Address } from '@/utils/organisation';
 import type { ServiceWithDistance, FlattenedService } from '@/types';
 import { isServiceOpenNow } from '@/utils/openingTimes';
 import { decodeText } from '@/utils/htmlDecode';
-import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup';
+import { getCategoryName, getSubCategoryName } from '@/utils/categoryLookup';
 
 
 // Type for service location data
@@ -198,7 +198,7 @@ export default function OrganisationServicesAccordion({
 
         return (
           <div key={category} className="mb-6">
-            <h3 className="text-lg font-bold mb-4">{categoryKeyToName[category] || category}</h3>
+            <h3 className="text-lg font-bold mb-4">{getCategoryName(category)}</h3>
 
             {subcategories.map((subcategory) => {
               const serviceData = categoryGroupedServices[category][subcategory];
@@ -208,7 +208,7 @@ export default function OrganisationServicesAccordion({
               return (
                 <Accordion
                   key={accordionKey}
-                  title={subCategoryKeyToName[subcategory] || subcategory}
+                  title={getSubCategoryName(category, subcategory)}
                   className="mb-4"
                   isOpen={openAccordion === accordionKey}
                   onToggle={() => setOpenAccordion(openAccordion === accordionKey ? null : accordionKey)}
@@ -441,7 +441,15 @@ export default function OrganisationServicesAccordion({
                   )}
 
                   {/* Opening Times */}
-                  {(selectedLocation as ServiceLocation | undefined)?.service?.openTimes && (selectedLocation as ServiceLocation).service.openTimes.length > 0 && (
+                  {(selectedLocation as ServiceLocation | undefined)?.service?.openTimes && (selectedLocation as ServiceLocation).service.openTimes.length > 0 && (() => {
+                    // Check if organization has 24/7 tag - hide opening times if it does
+                    const orgTags = organisation.tags || [];
+                    const tagsArray = Array.isArray(orgTags) ? orgTags : [orgTags];
+                    const is24_7Service = tagsArray.some(tag => 
+                      typeof tag === 'string' && tag.toLowerCase().includes('24') && tag.toLowerCase().includes('7')
+                    );
+                    return !is24_7Service;
+                  })() && (
                     <div className="relative">
                       {loadingContent === accordionKey && (
                         <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded">

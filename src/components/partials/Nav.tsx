@@ -147,11 +147,15 @@ export default function Nav() {
     setMenuOpen(false);
   }
 
+  function handleMenuClose() {
+    setMenuOpen(false);
+  }
+
   return (
     <nav className="nav-container">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center" onClick={handleMenuClose}>
             <Image
               src="/assets/img/StreetSupport_logo_land.png"
               alt="Street Support Network"
@@ -376,8 +380,8 @@ export default function Nav() {
             </div>
           )}
 
-          <Link href="/resources" className="mobile-nav-link">Resources</Link>
-          <Link href="/news" className="mobile-nav-link">News</Link>
+          <Link href="/resources" className="mobile-nav-link" onClick={handleMenuClose}>Resources</Link>
+          <Link href="/news" className="mobile-nav-link" onClick={handleMenuClose}>News</Link>
 
           <button
             onClick={() => setMobileAboutOpen(prev => !prev)}

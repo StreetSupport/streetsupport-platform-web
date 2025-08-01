@@ -70,6 +70,7 @@ export const mockUIFlattenedService: UIFlattenedService = {
     name: 'Test Organisation',
     slug: 'test-org',
     isVerified: true,
+    tags: ['health', 'mental-health'],
   },
   organisationSlug: 'test-org',
   description: 'Providing mental health support services including counseling, therapy, and crisis intervention. Available for adults and young people.',
@@ -117,6 +118,37 @@ export const mockServices: FlattenedService[] = [
     description: 'Emergency food provision for individuals and families in crisis. Referral may be required.',
   },
 ];
+
+/**
+ * Mock 24/7 service for testing opening times hiding
+ */
+export const mock24_7Service: ServiceWithDistance = {
+  id: 'service-24-7',
+  name: '24/7 Crisis Hotline',
+  category: 'support',
+  subCategory: 'crisis',
+  organisation: {
+    name: '24/7 Crisis Support',
+    slug: 'crisis-support-24-7',
+    isVerified: true,
+    tags: ['crisis', '24/7', 'emergency'],
+  },
+  organisationSlug: 'crisis-support-24-7',
+  description: 'Round-the-clock crisis support hotline available 24 hours a day, 7 days a week.',
+  openTimes: [
+    { day: 0, start: 0, end: 2359 }, // Sunday 24 hours
+    { day: 1, start: 0, end: 2359 }, // Monday 24 hours
+    { day: 2, start: 0, end: 2359 }, // Tuesday 24 hours
+    { day: 3, start: 0, end: 2359 }, // Wednesday 24 hours
+    { day: 4, start: 0, end: 2359 }, // Thursday 24 hours
+    { day: 5, start: 0, end: 2359 }, // Friday 24 hours
+    { day: 6, start: 0, end: 2359 }, // Saturday 24 hours
+  ],
+  clientGroups: ['adults', 'young-people', 'families'],
+  latitude: 52.489471,
+  longitude: -1.898575,
+  distance: 0.8,
+};
 
 /**
  * Mock UI services array

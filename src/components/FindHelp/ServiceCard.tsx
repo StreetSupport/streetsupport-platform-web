@@ -8,7 +8,7 @@ import { useLocation } from '@/contexts/LocationContext';
 import type { ServiceWithDistance } from '@/types';
 import LazyMarkdownContent from '@/components/ui/LazyMarkdownContent';
 import { decodeText } from '@/utils/htmlDecode';
-import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup';
+import { getCategoryName, getSubCategoryName } from '@/utils/categoryLookup';
 import { formatDistance } from '@/utils/openingTimes';
 import openingTimesCache from '@/utils/openingTimesCache';
 
@@ -61,8 +61,8 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
         : decodedDescription;
 
     // Get formatted category and subcategory names
-    const categoryName = categoryKeyToName[service.category] || service.category;
-    const subCategoryName = subCategoryKeyToName[service.subCategory] || service.subCategory;
+    const categoryName = getCategoryName(service.category);
+    const subCategoryName = getSubCategoryName(service.category, service.subCategory);
     const formattedCategory = `${categoryName} > ${subCategoryName}`;
 
     // Get opening status using cache to avoid expensive recalculations
@@ -194,7 +194,14 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
         </div>
       )}
 
-      {service.openTimes && service.openTimes.length > 0 ? (
+      {service.openTimes && service.openTimes.length > 0 && (() => {
+        // Check if organization has 24/7 tag - hide opening times if it does
+        const orgTags = service.organisation?.tags || [];
+        const is24_7Service = orgTags.some(tag => 
+          typeof tag === 'string' && tag.toLowerCase().includes('24') && tag.toLowerCase().includes('7')
+        );
+        return !is24_7Service;
+      })() ? (
         <div className="mt-3">
           <p className="text-small font-semibold mb-1 !text-black">Opening Times:</p>
           <ul className="list-disc pl-5 text-sm !text-black">

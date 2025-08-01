@@ -4,7 +4,7 @@ This directory contains CI/CD pipeline documentation, deployment strategies, and
 
 ## 📋 Contents
 
-### [GitHub Actions Workflow](./WORKFLOW.md)
+### [GitHub Actions Workflow](./workflow.md)
 **Purpose**: Complete CI/CD pipeline documentation for automated testing and deployment
 
 **File**: `.github/workflows/test-and-deploy.yml`
@@ -19,7 +19,7 @@ This directory contains CI/CD pipeline documentation, deployment strategies, and
 
 **Status**: ✅ Active production workflow
 
-### [Secrets Management](./SECRETS.md)
+### [Secrets Management](./secrets.md)
 **Purpose**: Security guide for managing sensitive configuration and API keys
 
 **Key Topics**:
@@ -30,6 +30,18 @@ This directory contains CI/CD pipeline documentation, deployment strategies, and
 - Local development setup
 
 **Status**: ✅ Current security practices
+
+### [Vercel Configuration](./vercel-configuration.md)
+**Purpose**: Complete Vercel deployment setup and configuration guide
+
+**Key Topics**:
+- Project settings and environment variables
+- Deployment protection setup
+- GitHub Actions integration
+- Monitoring and troubleshooting
+- Security configuration
+
+**Status**: ✅ Current deployment practices
 
 ## 🚀 Deployment Architecture
 
@@ -48,9 +60,9 @@ GitHub Repository
 ```
 
 ### Environments
-- **Production**: `streetsupport.net` (main branch)
-- **Staging**: `staging.streetsupport.net` (staging branch)
+- **Production**: `streetsupport.net` (staging branch)
 - **Preview**: Auto-deployed PR previews (all branches)
+- **Local**: `http://localhost:3000` (development)
 
 ## 🔄 CI/CD Pipeline
 
@@ -68,7 +80,7 @@ GitHub Repository
 ✅ Build production bundle
 ```
 
-#### 2. **Deploy Job** (staging/main only)
+#### 2. **Deploy Job** (staging branch only)
 ```yaml
 ✅ Deploy to Vercel
 ✅ Post Slack notification (optional)
@@ -200,11 +212,11 @@ VERCEL_URL=streetsupport.net           # Deployment URL
 
 ### Branching Model
 ```
-main (production)    ← Stable releases
-  ↑
-staging (preview)    ← Integration testing
+staging (production)  ← Stable releases deployed to production
   ↑
 feature branches     ← Development work
+  ↑
+fork branches        ← External contributor work
 ```
 
 ### Version Management

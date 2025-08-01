@@ -39,7 +39,7 @@ export const loadGoogleMaps = async (): Promise<typeof google> => {
 
     // Create and inject script tag
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&v=weekly`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&v=weekly&libraries=geometry`;
     script.async = true;
     script.defer = true;
     

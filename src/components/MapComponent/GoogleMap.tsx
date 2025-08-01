@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { loadGoogleMaps } from '@/utils/loadGoogleMaps';
+import { updateMapBounds, shouldRecalculateBounds } from '@/utils/mapBounds';
 
 interface Marker {
   id: string;
@@ -32,13 +33,31 @@ interface Props {
   onMarkerClick?: (markerId: string) => void; // Global click handler
   onMapReady?: (mapInstance: google.maps.Map) => void; // Callback when map is ready
   userLocation?: UserLocation | null; // User location context for navigation
+  autoFitBounds?: boolean; // Enable automatic bounds fitting
+  maxZoom?: number; // Maximum zoom level for bounds fitting
+  minZoom?: number; // Minimum zoom level for bounds fitting
+  fitPadding?: number; // Padding percentage for bounds fitting (0-1)
+  includeUserInBounds?: boolean; // Whether to include user location in bounds calculation
 }
 
-export default function GoogleMap({ center, markers, zoom, onMarkerClick, onMapReady, userLocation }: Props) {
+export default function GoogleMap({ 
+  center, 
+  markers, 
+  zoom, 
+  onMarkerClick, 
+  onMapReady, 
+  userLocation,
+  autoFitBounds = false,
+  maxZoom = 16,
+  minZoom = 8,
+  fitPadding = 0.1,
+  includeUserInBounds = true
+}: Props) {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
   const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
+  const previousMarkersRef = useRef<Marker[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -86,10 +105,16 @@ export default function GoogleMap({ center, markers, zoom, onMarkerClick, onMapR
 
   useEffect(() => {
     const map = mapInstanceRef.current;
-    if (!map || !markers || markers.length === 0 || !isLoaded) return;
+    if (!map || !markers || !isLoaded) return;
 
+    // Always clear existing markers first
     markersRef.current.forEach((marker) => marker.setMap(null));
     markersRef.current = [];
+
+    // If no new markers, we're done (map will show no markers)
+    if (markers.length === 0) {
+      return;
+    }
 
     const newMarkers: google.maps.Marker[] = [];
 
@@ -221,7 +246,31 @@ export default function GoogleMap({ center, markers, zoom, onMarkerClick, onMapR
     });
 
     markersRef.current = newMarkers;
-  }, [markers, isLoaded, onMarkerClick, userLocation?.lat, userLocation?.lng, userLocation?.radius]);
+
+    // Auto-fit bounds if enabled and Google Maps API is loaded
+    if (autoFitBounds && typeof google !== 'undefined' && google.maps && google.maps.geometry) {
+      // Check if we should recalculate bounds (markers changed significantly)
+      const shouldRecalculate = shouldRecalculateBounds(previousMarkersRef.current, markers);
+      
+      if (shouldRecalculate) {
+        // Convert user location to the format expected by mapBounds utility
+        const boundsUserLocation = userLocation?.lat !== undefined && userLocation?.lng !== undefined 
+          ? { lat: userLocation.lat, lng: userLocation.lng }
+          : null;
+
+        // Update map bounds with the new markers
+        updateMapBounds(map, markers, boundsUserLocation, {
+          includeUserLocation: includeUserInBounds,
+          maxZoom,
+          minZoom,
+          paddingPercent: fitPadding
+        });
+
+        // Store current markers for next comparison
+        previousMarkersRef.current = [...markers];
+      }
+    }
+  }, [markers, isLoaded, onMarkerClick, userLocation?.lat, userLocation?.lng, userLocation?.radius, autoFitBounds, maxZoom, minZoom, fitPadding, includeUserInBounds]);
 
   if (loadError) {
     return (

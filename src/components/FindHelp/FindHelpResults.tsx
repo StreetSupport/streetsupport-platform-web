@@ -311,6 +311,10 @@ export default function FindHelpResults({
               }
               markers={combinedMarkers}
               zoom={13}
+              autoFitBounds={true}
+              maxZoom={15}
+              minZoom={10}
+              includeUserInBounds={true}
               userLocation={
                 location && location.lat !== undefined && location.lng !== undefined
                   ? { lat: location.lat, lng: location.lng, radius: location.radius }

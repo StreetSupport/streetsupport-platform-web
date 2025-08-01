@@ -12,14 +12,30 @@ const MONGO_DB_NAME = process.env.MONGODB_DB || 'streetsupport';
 // MongoClient will be created only when MONGO_URI is available
 
 
-const formatCategory = (doc) => ({
-  key: doc._id || doc.Key || doc.key,
-  name: doc.Name || doc.name,
-  subCategories: (doc.SubCategories || []).map((sc) => ({
-    key: sc.Key || sc.key,
-    name: sc.Name || sc.name,
-  })),
-});
+const formatCategory = (doc) => {
+  const categoryKey = doc._id || doc.Key || doc.key;
+  const categoryName = doc.Name || doc.name;
+  
+  return {
+    key: categoryKey,
+    name: categoryName,
+    subCategories: (doc.SubCategories || []).map((sc) => {
+      const subCategoryKey = sc.Key || sc.key;
+      let subCategoryName = sc.Name || sc.name;
+      
+      // Transform "General support" to "Food Banks" for the food category
+      if ((categoryKey === 'foodbank' || categoryName === 'Food') && 
+          (subCategoryKey === 'general' && subCategoryName === 'General support')) {
+        subCategoryName = 'Food Banks';
+      }
+      
+      return {
+        key: subCategoryKey,
+        name: subCategoryName,
+      };
+    }),
+  };
+};
 
 (async () => {
   try {

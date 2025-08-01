@@ -7,7 +7,7 @@ import { useLocation } from '@/contexts/LocationContext';
 
 import LazyMarkdownContent from '@/components/ui/LazyMarkdownContent';
 import { decodeText } from '@/utils/htmlDecode';
-import { categoryKeyToName, subCategoryKeyToName } from '@/utils/categoryLookup';
+import { getCategoryName, getSubCategoryName } from '@/utils/categoryLookup';
 import { formatDistance } from '@/utils/openingTimes';
 import type { ServiceWithDistance } from '@/types';
 
@@ -71,14 +71,22 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
   const distanceText = formatDistance(group.distance);
 
   const formattedCategories = [...new Set(group.categories)].map(cat => 
-    categoryKeyToName[cat] || cat
+    getCategoryName(cat)
   );
 
   // Get unique subcategories - this should represent the actual number of different services
   const uniqueSubcategories = [...new Set(group.subcategories)];
-  const formattedSubcategories = uniqueSubcategories.map(subcat => 
-    subCategoryKeyToName[subcat] || subcat
-  );
+  
+  // Create a mapping from subcategory to its parent category using the services data
+  const subcategoryToCategoryMap = new Map<string, string>();
+  group.services.forEach(service => {
+    subcategoryToCategoryMap.set(service.subCategory, service.category);
+  });
+  
+  const formattedSubcategories = uniqueSubcategories.map(subcat => {
+    const parentCategory = subcategoryToCategoryMap.get(subcat);
+    return parentCategory ? getSubCategoryName(parentCategory, subcat) : subcat;
+  });
 
   const decodedDescription = group.orgDescription ? decodeText(group.orgDescription) : '';
   const shouldTruncate = decodedDescription.length > 100;

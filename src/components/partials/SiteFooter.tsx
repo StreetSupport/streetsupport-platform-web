@@ -124,7 +124,7 @@ export default function SiteFooter() {
               </p>
               
               <form onSubmit={handleNewsletterSubmit} className="space-y-4" suppressHydrationWarning>
-                <div>
+                <div suppressHydrationWarning>
                   <label htmlFor="newsletter-email" className="sr-only">
                     Email Address
                   </label>
