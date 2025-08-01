@@ -51,8 +51,7 @@ export default defineConfig({
     stderr: 'pipe',
   },
   reporter: [
-    ['list'],
-    ['html', { open: 'never', outputFolder: 'playwright-report' }]
+    ['list']
   ],
   expect: {
     timeout: 20000, // Increased timeout for assertions
