@@ -112,8 +112,9 @@ export async function GET(req: Request) {
   const cachedResult = queryCache.get(cacheKey);
   if (cachedResult) {
     const response = NextResponse.json(cachedResult);
-    response.headers.set('Cache-Control', 'public, max-age=300, s-maxage=600');
+    response.headers.set('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=86400');
     response.headers.set('X-Cache', 'HIT');
+    response.headers.set('Vary', 'Accept-Encoding');
     return response;
   }
 
@@ -310,9 +311,10 @@ export async function GET(req: Request) {
     const response = NextResponse.json(responseData);
 
     // Add cache headers for better performance
-    response.headers.set('Cache-Control', 'public, max-age=300, s-maxage=600'); // 5 min browser, 10 min CDN
-    response.headers.set('ETag', `services-${Date.now()}-${total}-${page}`);
+    response.headers.set('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=86400'); // 5 min browser, 10 min CDN, 24h stale
+    response.headers.set('ETag', `services-${cacheKey.slice(-8)}-${total}-${page}`); // Use cache key for better ETag
     response.headers.set('X-Cache', 'MISS');
+    response.headers.set('Vary', 'Accept-Encoding'); // Enable compression
     
     return response;
   } catch (error) {

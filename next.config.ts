@@ -7,6 +7,14 @@ const nextConfig = {
     NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     MONGODB_URI: process.env.MONGODB_URI,
   },
+  // Enable response compression for better performance
+  compress: true,
+  
+  // Performance optimizations
+  poweredByHeader: false, // Remove X-Powered-By header for security and performance
+  
+  // Build optimizations (swcMinify is now default in Next.js 15)
+  
   images: {
     // Enable modern image formats for better compression
     formats: ['image/avif', 'image/webp'],
@@ -29,6 +37,60 @@ const nextConfig = {
     //   },
     // ],
   },
+  
+  // Enable experimental features for better performance
+  experimental: {
+    // Optimize server components
+    optimizeServerReact: true,
+  },
+  
+  // Turbopack configuration (moved from experimental.turbo)
+  turbopack: {
+    resolveAlias: {
+      // Reduce bundle size by aliasing large dependencies
+      'react-icons/lib': 'react-icons',
+    },
+  },
+  
+  // Production optimizations
+  ...(process.env.NODE_ENV === 'production' && {
+    output: 'standalone', // Optimize for deployment
+    
+    // Webpack optimizations
+    webpack: (config: any) => {
+      // Enable module concatenation for smaller bundles
+      config.optimization = {
+        ...config.optimization,
+        usedExports: true,
+        sideEffects: false,
+        
+        // Split chunks for better caching
+        splitChunks: {
+          ...config.optimization?.splitChunks,
+          chunks: 'all',
+          cacheGroups: {
+            ...config.optimization?.splitChunks?.cacheGroups,
+            // Separate vendor chunks
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              chunks: 'all',
+              priority: 10,
+            },
+            // Separate Google Maps chunk
+            maps: {
+              test: /[\\/]node_modules[\\/]@googlemaps[\\/]/,
+              name: 'maps',
+              chunks: 'all',
+              priority: 20,
+            },
+          },
+        },
+      };
+      
+      return config;
+    },
+  }),
 };
 
 export default nextConfig;

@@ -120,13 +120,20 @@ export async function GET(req: Request) {
       SubCategoryName: decodeText(service.SubCategoryName || '')
     }));
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       status: 'success',
       organisation: provider,
       addresses: provider.addresses,
       services: decodedServices,
       userContext: userContext,
     });
+
+    // Add cache headers for better performance
+    response.headers.set('Cache-Control', 'public, max-age=600, s-maxage=1200, stale-while-revalidate=86400'); // 10 min browser, 20 min CDN, 24h stale
+    response.headers.set('ETag', `org-${slug}-${services.length}`);
+    response.headers.set('Vary', 'Accept-Encoding');
+    
+    return response;
 
   } catch (error) {
     console.error('[API ERROR] /api/service-providers/[slug]:', error);

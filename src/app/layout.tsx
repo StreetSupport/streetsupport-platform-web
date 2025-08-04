@@ -125,7 +125,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* Preconnect to external domains for performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        
+        {/* Enhanced Google Maps performance */}
         <link rel="preconnect" href="https://maps.googleapis.com" />
+        <link rel="preconnect" href="https://maps.gstatic.com" />
+        <link rel="dns-prefetch" href="//maps.googleapis.com" />
+        <link rel="dns-prefetch" href="//maps.gstatic.com" />
+        <link rel="dns-prefetch" href="//csi.gstatic.com" />
         
         {/* DNS Prefetch for common external resources */}
         <link rel="dns-prefetch" href="//www.google-analytics.com" />
