@@ -212,4 +212,309 @@ describe('OrganisationLocations', () => {
     expect(markers[0].id).toBe('org-addr-0');
     expect(markers[1].id).toBe('org-addr-1');
   });
+
+  describe('Service locations', () => {
+    it('prefers service locations over organisation addresses', () => {
+      const orgWithServices = {
+        ...baseOrg,
+        services: [
+          {
+            id: 'service-1',
+            name: 'Test Service',
+            category: 'meals',
+            subCategory: 'breakfast',
+            address: {
+              Street: '789 Service St',
+              City: 'Service City',
+              Postcode: 'SV1 1CE',
+              Location: { coordinates: [-2.1, 53.1] }
+            }
+          }
+        ],
+        addresses: [
+          {
+            Key: { $binary: { base64: 'addr-org' } },
+            Location: { coordinates: [-2, 53] },
+            Street: '123 Org St',
+            City: 'Org City',
+            Postcode: 'OR1 1G',
+          }
+        ]
+      };
+
+      render(<OrganisationLocations organisation={orgWithServices as OrganisationDetails} />);
+      
+      const markers = (globalThis as any).mapProps.markers;
+      // Should only show service location, not organisation address
+      expect(markers).toHaveLength(1);
+      expect(markers[0].title).toBe('789 Service St, Service City, SV1 1CE');
+      expect(markers[0].type).toBe('service');
+    });
+
+    it('falls back to organisation addresses when no service locations', () => {
+      const orgWithoutServiceLocations = {
+        ...baseOrg,
+        services: [
+          {
+            id: 'service-1',
+            name: 'Test Service',
+            category: 'meals',
+            subCategory: 'breakfast',
+            // No address field
+          }
+        ]
+      };
+
+      render(<OrganisationLocations organisation={orgWithoutServiceLocations as OrganisationDetails} />);
+      
+      const markers = (globalThis as any).mapProps.markers;
+      expect(markers).toHaveLength(1);
+      expect(markers[0].type).toBe('organisation');
+    });
+
+    it('deduplicates service locations with same coordinates', () => {
+      const orgWithDuplicateServices = {
+        ...baseOrg,
+        services: [
+          {
+            id: 'service-1',
+            name: 'Morning Service',
+            category: 'meals',
+            subCategory: 'breakfast',
+            address: {
+              Street: '789 Service St',
+              City: 'Service City',
+              Postcode: 'SV1 1CE',
+              Location: { coordinates: [-2.1, 53.1] }
+            }
+          },
+          {
+            id: 'service-2',
+            name: 'Evening Service',
+            category: 'meals',
+            subCategory: 'dinner',
+            address: {
+              Street: '789 Service St',
+              City: 'Service City',
+              Postcode: 'SV1 1CE',
+              Location: { coordinates: [-2.1, 53.1] } // Same coordinates
+            }
+          }
+        ]
+      };
+
+      render(<OrganisationLocations organisation={orgWithDuplicateServices as OrganisationDetails} />);
+      
+      const markers = (globalThis as any).mapProps.markers;
+      // Should only show one marker despite two services at same location
+      expect(markers).toHaveLength(1);
+      expect(markers[0].lat).toBe(53.1);
+      expect(markers[0].lng).toBe(-2.1);
+    });
+  });
+
+  describe('User context integration', () => {
+    const userContext = {
+      lat: 53.0,
+      lng: -2.0,
+      radius: 10,
+      location: 'Manchester'
+    };
+
+    it('includes user location marker when user context provided', () => {
+      render(<OrganisationLocations organisation={baseOrg as OrganisationDetails} userContext={userContext} />);
+      
+      const markers = (globalThis as any).mapProps.markers;
+      const userMarker = markers.find((m: any) => m.id === 'user-location');
+      
+      expect(userMarker).toBeDefined();
+      expect(userMarker.lat).toBe(53.0);
+      expect(userMarker.lng).toBe(-2.0);
+      expect(userMarker.title).toBe('You are here');
+      expect(userMarker.type).toBe('user');
+    });
+
+    it('uses user location as map center when available', () => {
+      render(<OrganisationLocations organisation={baseOrg as OrganisationDetails} userContext={userContext} />);
+      
+      const mapProps = (globalThis as any).mapProps;
+      expect(mapProps.center).toEqual({ lat: 53.0, lng: -2.0 });
+    });
+
+    it('filters locations by radius when user context has radius', () => {
+      const orgWithDistantLocation = {
+        ...baseOrg,
+        addresses: [
+          {
+            Key: { $binary: { base64: 'addr-nearby' } },
+            Location: { coordinates: [-2.01, 53.01] }, // Very close
+            Street: '123 Nearby St',
+            City: 'Nearby City',
+            Postcode: 'NB1 1Y',
+          },
+          {
+            Key: { $binary: { base64: 'addr-distant' } },
+            Location: { coordinates: [-5, 55] }, // Very far (Scotland)
+            Street: '456 Distant St',
+            City: 'Distant City',
+            Postcode: 'DI1 1ST',
+          }
+        ]
+      };
+
+      render(
+        <OrganisationLocations 
+          organisation={orgWithDistantLocation as OrganisationDetails} 
+          userContext={userContext} 
+        />
+      );
+      
+      const markers = (globalThis as any).mapProps.markers;
+      const orgMarkers = markers.filter((m: any) => m.type === 'organisation');
+      
+      // Should only include nearby location within radius
+      expect(orgMarkers).toHaveLength(1);
+      expect(orgMarkers[0].id).toBe('addr-nearby');
+    });
+
+    it('sets correct userLocation prop on GoogleMap', () => {
+      render(<OrganisationLocations organisation={baseOrg as OrganisationDetails} userContext={userContext} />);
+      
+      const mapProps = (globalThis as any).mapProps;
+      expect(mapProps.userLocation).toEqual({
+        lat: 53.0,
+        lng: -2.0,
+        radius: 10
+      });
+    });
+
+    it('handles user context without radius', () => {
+      const userContextNoRadius = {
+        lat: 53.0,
+        lng: -2.0,
+        radius: null,
+        location: 'Manchester'
+      };
+
+      render(<OrganisationLocations organisation={baseOrg as OrganisationDetails} userContext={userContextNoRadius} />);
+      
+      const mapProps = (globalThis as any).mapProps;
+      expect(mapProps.userLocation).toEqual({
+        lat: 53.0,
+        lng: -2.0,
+        radius: undefined
+      });
+    });
+  });
+
+  describe('Selected location highlighting', () => {
+    it('marks locations as selected based on selectedLocationForService prop', () => {
+      const orgWithServices = {
+        ...baseOrg,
+        services: [
+          {
+            id: 'service-1',
+            name: 'Test Service',
+            category: 'meals',
+            subCategory: 'breakfast',
+            address: {
+              Street: '789 Service St',
+              City: 'Service City',
+              Postcode: 'SV1 1CE',
+              Location: { coordinates: [-2.1, 53.1] }
+            }
+          }
+        ]
+      };
+
+      const selectedLocationForService = {
+        'meals-breakfast': 0 // Select first location for this service category
+      };
+
+      render(
+        <OrganisationLocations 
+          organisation={orgWithServices as OrganisationDetails} 
+          selectedLocationForService={selectedLocationForService}
+        />
+      );
+      
+      const markers = (globalThis as any).mapProps.markers;
+      expect(markers[0].isSelected).toBe(true);
+    });
+  });
+
+  describe('Location count display', () => {
+    it('shows correct singular location count', () => {
+      render(<OrganisationLocations organisation={baseOrg as OrganisationDetails} />);
+      
+      expect(screen.getByText('1 location available for this organisation')).toBeInTheDocument();
+    });
+
+    it('shows correct plural location count', () => {
+      const orgWithMultipleLocations = {
+        ...baseOrg,
+        addresses: [
+          ...baseOrg.addresses as any[],
+          {
+            Key: { $binary: { base64: 'addr-2' } },
+            Location: { coordinates: [-1.5, 52.5] },
+            Street: '456 Second St',
+            City: 'Second City',
+            Postcode: 'SC1 1ND',
+          }
+        ]
+      };
+
+      render(<OrganisationLocations organisation={orgWithMultipleLocations as OrganisationDetails} />);
+      
+      expect(screen.getByText('2 locations available for this organisation')).toBeInTheDocument();
+    });
+
+    it('excludes user location from organisation count', () => {
+      const userContext = {
+        lat: 53.0,
+        lng: -2.0,
+        radius: 10,
+        location: 'Manchester'
+      };
+
+      render(<OrganisationLocations organisation={baseOrg as OrganisationDetails} userContext={userContext} />);
+      
+      // Should still show "1 location" even though there are 2 markers (org + user)
+      expect(screen.getByText('1 location available for this organisation')).toBeInTheDocument();
+    });
+  });
+
+  describe('Event handlers', () => {
+    it('passes onMarkerClick handler to GoogleMap', () => {
+      const onMarkerClick = jest.fn();
+      
+      render(<OrganisationLocations organisation={baseOrg as OrganisationDetails} onMarkerClick={onMarkerClick} />);
+      
+      const mapProps = (globalThis as any).mapProps;
+      expect(mapProps.onMarkerClick).toBe(onMarkerClick);
+    });
+
+    it('passes onMapReady handler to GoogleMap', () => {
+      const onMapReady = jest.fn();
+      
+      render(<OrganisationLocations organisation={baseOrg as OrganisationDetails} onMapReady={onMapReady} />);
+      
+      const mapProps = (globalThis as any).mapProps;
+      expect(mapProps.onMapReady).toBe(onMapReady);
+    });
+  });
+
+  describe('Map configuration', () => {
+    it('sets correct map configuration props', () => {
+      render(<OrganisationLocations organisation={baseOrg as OrganisationDetails} />);
+      
+      const mapProps = (globalThis as any).mapProps;
+      expect(mapProps.zoom).toBe(14);
+      expect(mapProps.autoFitBounds).toBe(true);
+      expect(mapProps.maxZoom).toBe(16);
+      expect(mapProps.minZoom).toBe(12);
+      expect(mapProps.includeUserInBounds).toBe(true);
+    });
+  });
 });

@@ -105,4 +105,4 @@ docs/
 ---
 
 *This index is automatically maintained and reflects the current documentation structure.*
-*Last updated: January 2025*
+*Last updated: August 2025*

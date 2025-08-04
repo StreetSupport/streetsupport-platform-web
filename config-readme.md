@@ -5,6 +5,7 @@ This document provides an overview of the configuration files used in this proje
 ## Root Directory
 
 - **babel.config.json**: Babel configuration for transpiling JavaScript/TypeScript code
+- **eslint.config.mjs**: ESLint configuration using the new flat config format
 - **next.config.ts**: Next.js configuration file
 - **postcss.config.cjs**: PostCSS configuration for CSS processing
 - **tailwind.config.js**: Tailwind CSS configuration
@@ -12,8 +13,6 @@ This document provides an overview of the configuration files used in this proje
 - **eslintignore**: Files to be ignored by ESLint
 
 ## Config Directory
-
-- **config/eslint.config.mjs**: ESLint configuration using the new flat config format
 - **config/jest.config.cjs**: Jest configuration for unit testing
 - **config/jest.setup.js**: Jest setup file with test environment configuration
 - **config/playwright.config.ts**: Playwright configuration for end-to-end testing
@@ -27,4 +26,4 @@ This document provides an overview of the configuration files used in this proje
 
 - All test-related configurations are in the `config` directory
 - Build and styling configurations are in the root directory
-- ESLint configuration uses the modern flat config format in the `config` directory
+- ESLint configuration uses the modern flat config format in the root directory

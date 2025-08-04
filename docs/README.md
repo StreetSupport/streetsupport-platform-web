@@ -119,5 +119,5 @@ This documentation is maintained alongside the codebase. When making changes:
 
 ---
 
-*Last updated: January 2025*
+*Last updated: August 2025*
 *Documentation version: 2.0*
