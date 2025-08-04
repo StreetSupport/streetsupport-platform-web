@@ -125,14 +125,23 @@ See Trello card: `Linting Suppression and Deferred Resolution Strategy` — [Lin
 
 ---
 
-## 📚 More Documentation
+## 📚 Documentation
 
-- 📑 [API Project Plan](./docs/API-Project-Plan.md)
-- 📑 [API Scaffolding & DB Helper Summary](./docs/api-scaffold-and-db-helper-summary.md)
-- 📑 [Confirm & Test Mongo DB Connection](./docs/confirm-and-test-mongo-db.md)
-- 📑 [Workflow Guide](./docs/WORKFLOW.md)
-- 📖 [Workarounds, decisions & debugging — Wiki](https://github.com/StreetSupport/streetsupport-platform-web/wiki)
-- 🗂️ [Rebuild Docs](https://drive.google.com/drive/folders/1hBp77oH095WVIEBD-WEvaKEgwoUBVbCx?usp=drive_link)
+### 🎯 Core Documentation
+- 📖 [**Complete Documentation Hub**](./docs/README.md) — Start here for all documentation
+- 📋 [**Documentation Index**](./docs/index.md) — Complete file directory and navigation
+
+### 🚀 Quick Links by Topic
+- 🛠️ [**Development Guide**](./docs/development/README.md) — Local setup and development workflows
+- 🧪 [**Testing Strategy**](./docs/testing/README.md) — Comprehensive testing approach and E2E implementation
+- 🚀 [**Deployment Guide**](./docs/deployment/README.md) — CI/CD pipeline and deployment procedures
+- 🛡️ [**Security Documentation**](./docs/security/README.md) — Comprehensive security measures and procedures
+- 🎨 [**Design System**](./docs/design-system/README.md) — UI components and design patterns
+- 🎯 [**Project Planning**](./docs/project-planning/README.md) — Strategic planning and API architecture
+
+### 🔗 External Resources
+- 📖 [**GitHub Wiki**](https://github.com/StreetSupport/streetsupport-platform-web/wiki) — Workarounds and debugging guides
+- 🗂️ [**Project Drive**](https://drive.google.com/drive/folders/1hBp77oH095WVIEBD-WEvaKEgwoUBVbCx?usp=drive_link) — Additional project resources
 
 ---
 

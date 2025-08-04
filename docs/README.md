@@ -21,8 +21,16 @@ Comprehensive testing strategies and implementation guides:
 
 ### 🚀 [Deployment](./deployment/)
 CI/CD workflows and deployment configurations:
-- [**GitHub Actions Workflow**](./deployment/WORKFLOW.md) - Complete CI/CD pipeline documentation
-- [**Secrets Management**](./deployment/SECRETS.md) - Security and secrets handling guide
+- [**GitHub Actions Workflow**](./deployment/workflow.md) - Complete CI/CD pipeline documentation
+- [**Secrets Management**](./deployment/secrets.md) - Security and secrets handling guide
+- [**Vercel Configuration**](./deployment/vercel-configuration.md) - Production deployment settings
+
+### 🛡️ [Security](./security/)
+Comprehensive security documentation and procedures:
+- [**Security Overview**](./security/README.md) - Complete security strategy and implementation
+- [**Application Security**](./security/application-security.md) - Code-level security measures and CSP configuration
+- [**Infrastructure Security**](./security/infrastructure-security.md) - Deployment and hosting security
+- [**Security Monitoring**](./security/security-monitoring.md) - Monitoring, alerting, and incident response
 
 ### 🎨 [Design System](./design-system/)
 Comprehensive design system documentation:
