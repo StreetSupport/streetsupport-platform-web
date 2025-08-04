@@ -18,7 +18,8 @@
     "fetch:locations": "node ./scripts/fetch-locations.js",
     "fetch:service-categories": "node ./scripts/fetch-service-categories.js",
     "fetch:client-groups": "node ./scripts/fetch-client-groups.js",
-    "fetch:all": "npm-run-all2 fetch:locations fetch:service-categories fetch:client-groups"
+    "fetch:temporary-accommodation": "node ./scripts/fetch-temporary-accommodation.js",
+    "fetch:all": "npm-run-all2 fetch:locations fetch:service-categories fetch:client-groups fetch:temporary-accommodation"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.8",
