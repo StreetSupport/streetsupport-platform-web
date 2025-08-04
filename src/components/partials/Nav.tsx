@@ -145,6 +145,12 @@ export default function Nav() {
     // Clear any saved search state to ensure fresh start
     clearSearchState();
     setMenuOpen(false);
+    
+    // If we're already on the find-help page, force a clean reload
+    if (typeof window !== 'undefined' && window.location.pathname === '/find-help') {
+      // Clear URL parameters and navigate to clean find-help page
+      window.location.href = '/find-help';
+    }
   }
 
   function handleMenuClose() {
