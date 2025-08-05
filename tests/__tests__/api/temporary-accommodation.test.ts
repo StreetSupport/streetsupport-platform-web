@@ -5,18 +5,9 @@
 import { GET } from '@/app/api/temporary-accommodation/route';
 import { NextRequest } from 'next/server';
 
-// Mock the database and file system
-jest.mock('@/utils/mongodb', () => ({
-  getClientPromise: () => Promise.reject(new Error('Database not available'))
-}));
-
-jest.mock('path', () => ({
-  join: jest.fn(() => '/mock/path/temporary-accommodation.json')
-}));
-
-jest.mock('fs', () => ({
-  existsSync: jest.fn(() => true),
-  readFileSync: jest.fn(() => JSON.stringify([
+// Mock the accommodation data loader
+jest.mock('@/utils/accommodationData', () => ({
+  loadFilteredAccommodationData: jest.fn(() => Promise.resolve([
     {
       id: '1',
       name: 'Test Accommodation',
@@ -31,7 +22,6 @@ jest.mock('fs', () => ({
         postcode: 'M1 1AA',
         latitude: 53.4808,
         longitude: -2.2426,
-        publicTransportInfo: '',
         associatedCityId: 'manchester'
       },
       contact: {
@@ -43,7 +33,6 @@ jest.mock('fs', () => ({
       accommodation: {
         type: 'supported',
         isOpenAccess: false,
-        supportOffered: ['housing'],
         referralRequired: true,
         referralNotes: 'Contact us first',
         price: '50',
@@ -79,10 +68,6 @@ jest.mock('fs', () => ({
         hasOnSiteManager: 1,
         supportOffered: ['mental health', 'substance abuse'],
         supportInfo: 'We provide comprehensive support services'
-      },
-      metadata: {
-        createdDate: '2023-01-01T00:00:00.000Z',
-        lastModifiedDate: '2023-06-01T00:00:00.000Z'
       }
     }
   ]))

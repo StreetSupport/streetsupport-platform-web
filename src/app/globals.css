@@ -1425,3 +1425,13 @@ select:disabled {
   background-repeat: no-repeat;
   background-position: right 16px center;
 }
+
+/* Tooltip responsive styling */
+@media (max-width: 640px) {
+  .tooltip-content {
+    max-width: 250px !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+  }
+}

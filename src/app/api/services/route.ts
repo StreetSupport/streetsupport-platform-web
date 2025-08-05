@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
 import { decodeText } from '@/utils/htmlDecode';
 import queryCache from '@/utils/queryCache';
+import { loadFilteredAccommodationData, type AccommodationData } from '@/utils/accommodationData';
 
 interface MongoQuery {
   IsPublished: boolean;
@@ -37,6 +38,89 @@ interface AggregationStage {
   $skip?: number;
   $limit?: number;
   $count?: string;
+}
+
+// This function is now replaced by loadAccommodationDataFromDatabase() from utils/accommodationData.ts
+
+// Function to transform accommodation entry to service format
+function transformAccommodationToService(accommodation: AccommodationData) {
+  return {
+    _id: accommodation.id,
+    name: accommodation.name || '',
+    description: accommodation.synopsis || accommodation.description || '',
+    ParentCategoryKey: 'accom',
+    SubCategoryKey: accommodation.accommodation?.type || 'other',
+    ServiceProviderName: accommodation.name || '',
+    ServiceProviderKey: accommodation.serviceProviderId,
+    OpeningTimes: [],
+    ClientGroups: [],
+    Address: {
+      Location: {
+        type: 'Point',
+        coordinates: [accommodation.address?.longitude || 0, accommodation.address?.latitude || 0]
+      },
+      City: accommodation.address?.city || '',
+      Street1: accommodation.address?.street1 || '',
+      Street2: accommodation.address?.street2 || '',
+      Street3: accommodation.address?.street3 || '',
+      Postcode: accommodation.address?.postcode || ''
+    },
+    // Add accommodation-specific data
+    accommodationData: {
+      type: accommodation.accommodation?.type,
+      isOpenAccess: accommodation.accommodation?.isOpenAccess,
+      referralRequired: accommodation.accommodation?.referralRequired,
+      referralNotes: accommodation.accommodation?.referralNotes,
+      price: accommodation.accommodation?.price,
+      foodIncluded: accommodation.accommodation?.foodIncluded,
+      availabilityOfMeals: accommodation.accommodation?.availabilityOfMeals,
+      features: accommodation.features,
+      residentCriteria: accommodation.residentCriteria,
+      support: accommodation.support,
+      contact: accommodation.contact
+    },
+    // Mark as accommodation source
+    sourceType: 'accommodation'
+  };
+}
+
+// Function to filter accommodation by geospatial criteria
+function filterAccommodationByLocation(accommodations: AccommodationData[], latitude: number, longitude: number, radiusKm: number) {
+  return accommodations.filter(accommodation => {
+    const lat = accommodation.address?.latitude;
+    const lng = accommodation.address?.longitude;
+    
+    if (!lat || !lng) return false;
+    
+    // Calculate distance using Haversine formula
+    const R = 6371; // Earth's radius in km
+    const dLat = (lat - latitude) * Math.PI / 180;
+    const dLng = (lng - longitude) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(latitude * Math.PI / 180) * Math.cos(lat * Math.PI / 180) *
+              Math.sin(dLng/2) * Math.sin(dLng/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distance = R * c;
+    
+    return distance <= radiusKm;
+  }).map(accommodation => {
+    // Calculate and add distance
+    const lat = accommodation.address.latitude;
+    const lng = accommodation.address.longitude;
+    const R = 6371;
+    const dLat = (lat - latitude) * Math.PI / 180;
+    const dLng = (lng - longitude) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(latitude * Math.PI / 180) * Math.cos(lat * Math.PI / 180) *
+              Math.sin(dLng/2) * Math.sin(dLng/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distance = R * c * 1000; // Convert to meters for consistency
+    
+    return {
+      ...transformAccommodationToService(accommodation),
+      distance
+    };
+  });
 }
 
 
@@ -260,31 +344,72 @@ export async function GET(req: Request) {
       { $limit: limit }
     );
 
-    // Use aggregation pipeline for all queries now (optimized with $lookup)
-    const services = await servicesCol.aggregate(pipeline).toArray();
+    // Load filtered accommodation data from database (only what we need)
+    const accommodationData = await loadFilteredAccommodationData({
+      location: location || undefined,
+      category: category || undefined,
+      subcategory: subcategory || undefined,
+      latitude,
+      longitude,
+      radiusKm
+    });
+
+    // Transform accommodation data to service format
+    let accommodationResults: ReturnType<typeof transformAccommodationToService>[] = [];
+    if (accommodationData.length > 0) {
+      if (latitude !== undefined && longitude !== undefined && radiusKm !== undefined) {
+        accommodationResults = filterAccommodationByLocation(accommodationData, latitude, longitude, radiusKm);
+      } else {
+        accommodationResults = accommodationData.map(transformAccommodationToService);
+      }
+    }
+
+    // Remove pagination from pipeline for accommodation integration
+    const pipelineWithoutPagination = [...pipeline];
+    pipelineWithoutPagination.splice(-2, 2); // Remove skip and limit
+
+    // Use aggregation pipeline for regular services
+    const services = await servicesCol.aggregate(pipelineWithoutPagination).toArray();
     
-    // Get total count using optimized pipeline
-    const countPipeline = [...pipeline];
-    countPipeline.splice(-2, 2); // Remove skip and limit  
+    // Get total count of services using optimized pipeline
+    const countPipeline = [...pipelineWithoutPagination];
     countPipeline.push({ $count: "total" });
     const countResult = await servicesCol.aggregate(countPipeline).toArray();
-    const total = countResult.length > 0 ? countResult[0].total : 0;
+    const servicesTotal = countResult.length > 0 ? countResult[0].total : 0;
+
+    // Combine services and accommodation results
+    const combinedResults: Array<Record<string, unknown> & { distance?: number }> = [...services, ...accommodationResults];
+    const total = servicesTotal + accommodationResults.length;
+
+
+    // Sort combined results by distance if available, otherwise keep original order
+    const sortedResults = combinedResults.sort((a, b) => {
+      if (a.distance !== undefined && b.distance !== undefined) {
+        return a.distance - b.distance;
+      }
+      return 0;
+    });
+
+    // Apply pagination to combined results
+    const paginatedResults = sortedResults.slice((page - 1) * limit, page * limit);
+
 
     // Process results with HTML decoding and distance conversion
-    const results = services.map((service) => {
+    const results = paginatedResults.map((service) => {
+      const serviceAny = service as Record<string, unknown>;
       const result: Record<string, unknown> = {
         ...service,
-        name: decodeText(service.name || service.ServiceProviderName || ''),
-        description: decodeText(service.description || service.Info || ''),
-        organisationSlug: service.organisation?.slug || service.ServiceProviderKey,
+        name: decodeText((serviceAny.name as string) || (serviceAny.ServiceProviderName as string) || ''),
+        description: decodeText((serviceAny.description as string) || (serviceAny.Info as string) || ''),
+        organisationSlug: (serviceAny.organisation as { slug?: string })?.slug || (serviceAny.ServiceProviderKey as string),
         // Ensure organisation data is properly decoded
-        organisation: service.organisation ? {
-          name: decodeText(service.organisation.name),
-          slug: service.organisation.slug,
-          isVerified: service.organisation.isVerified
+        organisation: serviceAny.organisation ? {
+          name: decodeText((serviceAny.organisation as { name?: string })?.name || ''),
+          slug: (serviceAny.organisation as { slug?: string })?.slug || '',
+          isVerified: (serviceAny.organisation as { isVerified?: boolean })?.isVerified || false
         } : {
-          name: decodeText(service.ServiceProviderName || ''),
-          slug: service.ServiceProviderKey,
+          name: decodeText((serviceAny.ServiceProviderName as string) || ''),
+          slug: (serviceAny.ServiceProviderKey as string) || '',
           isVerified: false
         }
       };

@@ -1,9 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getClientPromise } from '@/utils/mongodb';
-import { decodeText } from '@/utils/htmlDecode';
+import { loadFilteredAccommodationData } from '@/utils/accommodationData';
 import queryCache from '@/utils/queryCache';
-import fs from 'fs';
-import path from 'path';
 
 interface TemporaryAccommodation {
   id: string;
@@ -49,22 +46,6 @@ interface TemporaryAccommodation {
   };
 }
 
-interface MongoQuery {
-  IsPublished: boolean;
-  'Address.City'?: { $regex: RegExp };
-  AccommodationType?: { $regex: RegExp };
-}
-
-interface GeospatialQuery {
-  near: {
-    type: string;
-    coordinates: [number, number];
-  };
-  distanceField: string;
-  maxDistance: number;
-  spherical: boolean;
-  query: MongoQuery;
-}
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -135,168 +116,62 @@ export async function GET(req: Request) {
   }
 
   try {
-    const client = await getClientPromise();
-    const db = client.db('streetsupport');
+    // Use our new database-based accommodation loading
+    const accommodationDataRaw = await loadFilteredAccommodationData({
+      location: location || undefined,
+      category: 'accom', // Always accommodation for this endpoint
+      subcategory: accommodationType || undefined,
+      latitude,
+      longitude,
+      radiusKm
+    });
 
-    // Try database first, fall back to JSON file if needed
-    let accommodationData: TemporaryAccommodation[] = [];
-    let total = 0;
-
-    try {
-      // Build MongoDB query
-      const baseQuery: MongoQuery = { IsPublished: true };
-
-      if (location) {
-        baseQuery['Address.City'] = { $regex: new RegExp(location, 'i') };
+    // Transform to match the expected TemporaryAccommodation interface
+    const accommodationData: TemporaryAccommodation[] = accommodationDataRaw.map((item) => ({
+      id: item.id,
+      name: item.name,
+      synopsis: item.synopsis,
+      description: item.description,
+      serviceProvider: item.serviceProviderId,
+      address: {
+        street: item.address.street1,
+        street1: item.address.street1,
+        street2: item.address.street2,
+        street3: item.address.street3,
+        city: item.address.city,
+        postcode: item.address.postcode,
+        latitude: item.address.latitude || null,
+        longitude: item.address.longitude || null
+      },
+      contact: {
+        telephone: item.contact.telephone,
+        email: item.contact.email,
+        website: '',
+        facebook: '',
+        twitter: ''
+      },
+      availability: {
+        isOpen24Hour: false,
+        openingTimes: []
+      },
+      accommodation: {
+        type: item.accommodation.type,
+        residentCriteria: '', // This data structure differs
+        referralRequired: item.accommodation.referralRequired,
+        referralNotes: item.accommodation.referralNotes,
+        features: []
+      },
+      metadata: {
+        createdDate: null,
+        lastModifiedDate: null
       }
+    }));
 
-      if (accommodationType) {
-        baseQuery.AccommodationType = { $regex: new RegExp(accommodationType, 'i') };
-      }
+    const total = accommodationData.length;
 
-      let pipeline: Array<any> = [];
-
-      if (latitude && longitude && radiusKm) {
-        // Geospatial query
-        const geoNearStage: { $geoNear: GeospatialQuery } = {
-          $geoNear: {
-            near: {
-              type: 'Point',
-              coordinates: [longitude, latitude]
-            },
-            distanceField: 'distance',
-            maxDistance: radiusKm * 1000, // Convert km to meters
-            spherical: true,
-            query: baseQuery
-          }
-        };
-        pipeline.push(geoNearStage);
-      } else {
-        // Non-geospatial query
-        pipeline.push({ $match: baseQuery });
-      }
-
-      // Add pagination
-      const skip = (page - 1) * limit;
-      pipeline.push({ $skip: skip });
-      pipeline.push({ $limit: limit });
-
-      // Execute aggregation
-      const results = await db
-        .collection('temporaryaccommodation')
-        .aggregate(pipeline)
-        .toArray();
-
-      // Get total count for pagination
-      const countPipeline = pipeline.slice(0, -2); // Remove skip and limit
-      countPipeline.push({ $count: 'total' });
-      const countResult = await db
-        .collection('temporaryaccommodation')
-        .aggregate(countPipeline)
-        .toArray();
-
-      total = countResult.length > 0 ? countResult[0].total : 0;
-
-      // Transform data
-      accommodationData = results.map((item: any) => ({
-        id: item._id.toString(),
-        name: decodeText(item.Name || ''),
-        synopsis: decodeText(item.Synopsis || ''),
-        description: decodeText(item.Description || ''),
-        serviceProvider: decodeText(item.ServiceProvider || ''),
-        address: {
-          street: decodeText(item.Address?.Street || ''),
-          street1: decodeText(item.Address?.Street1 || ''),
-          street2: decodeText(item.Address?.Street2 || ''),
-          street3: decodeText(item.Address?.Street3 || ''),
-          city: decodeText(item.Address?.City || ''),
-          postcode: item.Address?.Postcode || '',
-          latitude: item.Address?.Location?.coordinates?.[1] || null,
-          longitude: item.Address?.Location?.coordinates?.[0] || null
-        },
-        contact: {
-          telephone: item.Telephone || '',
-          email: item.Email || '',
-          website: item.Website || '',
-          facebook: item.Facebook || '',
-          twitter: item.Twitter || ''
-        },
-        availability: {
-          isOpen24Hour: item.IsOpen24Hour || false,
-          openingTimes: item.OpeningTimes || []
-        },
-        accommodation: {
-          type: decodeText(item.AccommodationType || ''),
-          residentCriteria: decodeText(item.ResidentCriteria || ''),
-          referralRequired: item.ReferralRequired || false,
-          referralNotes: decodeText(item.ReferralNotes || ''),
-          features: Array.isArray(item.Features) ? item.Features.map((f: string) => decodeText(f)) : []
-        },
-        metadata: {
-          createdDate: item.CreationDate || null,
-          lastModifiedDate: item.LastModifiedDate || null
-        },
-        distance: item.distance // Include distance if geospatial query
-      }));
-
-    } catch (dbError) {
-      console.warn('[API] Database query failed, falling back to JSON file:', dbError);
-      
-      // Fallback to JSON file
-      const jsonPath = path.join(process.cwd(), 'src/data/temporary-accommodation.json');
-      if (fs.existsSync(jsonPath)) {
-        const jsonData = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
-        
-        // Apply filtering to JSON data
-        let filteredData = jsonData;
-        
-        if (location) {
-          filteredData = filteredData.filter((item: TemporaryAccommodation) =>
-            item.address.city.toLowerCase().includes(location.toLowerCase())
-          );
-        }
-        
-        if (accommodationType) {
-          filteredData = filteredData.filter((item: TemporaryAccommodation) =>
-            item.accommodation.type.toLowerCase().includes(accommodationType.toLowerCase())
-          );
-        }
-        
-        // Apply geospatial filtering if needed
-        if (latitude && longitude && radiusKm) {
-          filteredData = filteredData.filter((item: TemporaryAccommodation) => {
-            if (!item.address.latitude || !item.address.longitude) return false;
-            
-            // Simple distance calculation (Haversine formula)
-            const lat1 = latitude!;
-            const lon1 = longitude!;
-            const lat2 = item.address.latitude;
-            const lon2 = item.address.longitude;
-            
-            const R = 6371; // Earth's radius in km
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                     Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                     Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            const distance = R * c;
-            
-            return distance <= radiusKm!;
-          });
-        }
-        
-        total = filteredData.length;
-        
-        // Apply pagination
-        const skip = (page - 1) * limit;
-        accommodationData = filteredData.slice(skip, skip + limit);
-      } else {
-        console.error('[API] No fallback JSON file found');
-        accommodationData = [];
-        total = 0;
-      }
-    }
+    // Apply pagination
+    const skip = (page - 1) * limit;
+    const paginatedData = accommodationData.slice(skip, skip + limit);
 
     // Calculate pagination metadata
     const totalPages = Math.ceil(total / limit);
@@ -305,7 +180,7 @@ export async function GET(req: Request) {
 
     const responseData = {
       status: 'success',
-      data: accommodationData,
+      data: paginatedData,
       pagination: {
         currentPage: page,
         totalPages,
