@@ -102,7 +102,7 @@
 
 /* Base button styles */
 .btn-base {
-  @apply inline-flex items-center justify-center font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-a focus:ring-offset-2 focus:ring-offset-brand-q disabled:opacity-60 disabled:cursor-not-allowed;
+  @apply inline-flex items-center justify-center font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-a focus:ring-offset-2 focus:ring-offset-brand-q disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer;
 }
 
 /* Button Types */
@@ -214,7 +214,7 @@
 
 /* Card System */
 .card {
-  @apply bg-white border border-brand-q rounded-md shadow-sm transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02];
+  @apply bg-white border border-brand-q rounded-md shadow-sm transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02] cursor-pointer;
 }
 
 .card-featured {
@@ -278,7 +278,7 @@
 }
 
 .nav-link {
-  @apply text-brand-k hover:text-brand-a transition-colors duration-200 font-medium;
+  @apply text-brand-k hover:text-brand-a transition-colors duration-200 font-medium cursor-pointer;
 }
 
 .nav-link-active {
@@ -298,7 +298,7 @@
 }
 
 .mobile-nav-link {
-  @apply block px-4 py-2 text-brand-k hover:bg-brand-i transition-colors duration-200;
+  @apply block px-4 py-2 text-brand-k hover:bg-brand-i transition-colors duration-200 cursor-pointer;
 }
 
 /* Service Tags */
@@ -1032,7 +1032,7 @@ a {
 
 /* Override for nav links which have their own styling */
 .nav-link {
-  @apply text-brand-k hover:text-brand-a transition-colors duration-200 font-medium;
+  @apply text-brand-k hover:text-brand-a transition-colors duration-200 font-medium cursor-pointer;
 }
 
 /* Override for button links to ensure white text */
@@ -1115,7 +1115,7 @@ a.inline-flex[class*="bg-brand-"]:active {
 
 /* Enhanced Mobile Navigation Links */
 .mobile-nav-link {
-  @apply block px-4 py-3 text-brand-k hover:bg-brand-i hover:text-brand-a transition-all duration-200 rounded-md mx-2 font-medium min-h-[48px] flex items-center text-base;
+  @apply block px-4 py-3 text-brand-k hover:bg-brand-i hover:text-brand-a transition-all duration-200 rounded-md mx-2 font-medium min-h-[48px] flex items-center text-base cursor-pointer;
   position: relative;
   border-left: 3px solid transparent;
 }
