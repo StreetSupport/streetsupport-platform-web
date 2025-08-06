@@ -247,6 +247,9 @@ export default function SiteFooter() {
               <Link href="/about/privacy-and-data/cookie-policy" className="hover:text-brand-a transition-colors duration-200">
                 Cookie Policy
               </Link>
+              <Link href="/about/accessibility" className="hover:text-brand-a transition-colors duration-200">
+                Accessibility
+              </Link>
             </div>
           </div>
         </div>

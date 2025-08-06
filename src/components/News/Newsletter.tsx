@@ -34,10 +34,10 @@ export default function Newsletter() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-brand-a to-brand-b p-8 rounded-lg text-white">
+    <div className="bg-brand-i p-8 rounded-lg">
       <div className="max-w-2xl mx-auto text-center">
-        <h3 className="text-2xl font-bold mb-3">Stay Updated</h3>
-        <p className="text-brand-q opacity-90 mb-6">
+        <h3 className="text-2xl font-bold mb-3 text-brand-l">Stay Updated</h3>
+        <p className="text-brand-l mb-6">
           Get monthly updates on platform developments, impact stories, and sector news delivered to your inbox.
         </p>
         
@@ -49,12 +49,12 @@ export default function Newsletter() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={status === 'loading'}
-              className="flex-1 px-4 py-3 rounded-lg text-brand-l border border-transparent focus:ring-2 focus:ring-white focus:border-transparent transition-all disabled:opacity-50"
+              className="flex-1 px-4 py-3 rounded-lg text-brand-l border border-gray-300 focus:ring-2 focus:ring-brand-a focus:border-transparent transition-all disabled:opacity-50"
             />
             <button 
               type="submit"
               disabled={status === 'loading' || !email}
-              className="px-6 py-3 bg-white text-brand-a font-semibold rounded-lg hover:bg-brand-q transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[120px]"
+              className="px-6 py-3 bg-transparent border-2 border-brand-a text-brand-a font-semibold rounded-lg hover:bg-brand-a hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[120px]"
             >
               {status === 'loading' ? (
                 <div className="flex items-center justify-center">
@@ -81,7 +81,7 @@ export default function Newsletter() {
           )}
         </form>
         
-        <p className="text-xs text-brand-q opacity-75 mt-4">
+        <p className="text-xs text-brand-l mt-4">
           We respect your privacy. Unsubscribe at any time. 
           <br />
           Read our{' '}
@@ -89,7 +89,7 @@ export default function Newsletter() {
             href="https://streetsupport.net/privacy" 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="underline hover:no-underline"
+            className="text-brand-a underline hover:no-underline"
           >
             Privacy Policy
           </a>

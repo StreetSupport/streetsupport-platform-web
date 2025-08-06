@@ -312,6 +312,15 @@ export default function Nav() {
                     </li>
                     <li>
                       <Link
+                        href="/about/accessibility"
+                        className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded"
+                        onClick={handleAboutClick}
+                      >
+                        Accessibility
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
                         href="/about/jobs"
                         className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded"
                         onClick={handleAboutClick}
@@ -438,6 +447,15 @@ export default function Nav() {
                   onClick={handleAboutClick}
                 >
                   Privacy and Data
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/about/accessibility"
+                  className="block py-2 px-3 text-sm text-brand-l hover:bg-brand-i hover:text-brand-k transition-colors duration-200"
+                  onClick={handleAboutClick}
+                >
+                  Accessibility
                 </Link>
               </li>
               <li>
