@@ -78,7 +78,7 @@ const PartnershipCharterBanner: React.FC<PartnershipCharterBannerProps> = ({
     // Analytics tracking would be implemented here
     if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('event', 'partnership_charter_cta_click', {
-        charter_type: charterType,
+        charter_type: charterType || 'unknown',
         charter_title: title,
         button_label: button.label,
         button_position: index + 1,

@@ -65,7 +65,7 @@ export default function JobsPage() {
                       <div>
                         <h3 className="text-lg font-semibold text-brand-l mb-2">Trustee Position</h3>
                         <p className="text-body mb-3">
-                          Join our board of trustees and help guide the strategic direction of Street Support Network. We're looking for passionate individuals who can contribute their skills and expertise to our mission.
+                          Join our board of trustees and help guide the strategic direction of Street Support Network. We&apos;re looking for passionate individuals who can contribute their skills and expertise to our mission.
                         </p>
                         <a 
                           href="/about/jobs/trustee/trustee-vacancy-advert.pdf" 
@@ -118,7 +118,7 @@ export default function JobsPage() {
                 <div className="text-center">
                   <h2 className="heading-3 mb-4 text-white">Want to Get Involved?</h2>
                   <p className="text-brand-f mb-6 max-w-2xl mx-auto">
-                    Whether you're looking for paid opportunities or want to volunteer your time and skills, we'd love to hear from you. Together, we can make a real difference in supporting people experiencing homelessness.
+                    Whether you&apos;re looking for paid opportunities or want to volunteer your time and skills, we&apos;d love to hear from you. Together, we can make a real difference in supporting people experiencing homelessness.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <a

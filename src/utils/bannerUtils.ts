@@ -146,16 +146,16 @@ export function generateAccentGraphicClasses(position?: string): string {
 export function validateBannerProps(props: Record<string, unknown>): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
   
-  if (!props.title?.trim()) {
+  if (!props.title || typeof props.title !== 'string' || !props.title.trim()) {
     errors.push('Title is required');
   }
   
-  if (!props.ctaButtons || props.ctaButtons.length === 0) {
+  if (!props.ctaButtons || !Array.isArray(props.ctaButtons) || props.ctaButtons.length === 0) {
     errors.push('At least one CTA button is required');
   }
   
-  if (props.ctaButtons) {
-    props.ctaButtons.forEach((button: CTAButton, index: number) => {
+  if (Array.isArray(props.ctaButtons)) {
+    (props.ctaButtons as CTAButton[]).forEach((button: CTAButton, index: number) => {
       if (!button.label?.trim()) {
         errors.push(`CTA button ${index + 1} label is required`);
       }
@@ -165,11 +165,18 @@ export function validateBannerProps(props: Record<string, unknown>): { isValid: 
     });
   }
   
-  if (!props.background?.type) {
+  interface BannerBackground {
+    type?: string;
+    value?: string;
+  }
+  
+  const background = props.background as BannerBackground | null | undefined;
+  
+  if (!background || !background.type) {
     errors.push('Background type is required');
   }
   
-  if (!props.background?.value?.trim()) {
+  if (!background || typeof background.value !== 'string' || !background.value?.trim()) {
     errors.push('Background value is required');
   }
   

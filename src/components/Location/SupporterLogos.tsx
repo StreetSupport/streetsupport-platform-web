@@ -57,11 +57,11 @@ const SupporterLogos: React.FC<SupporterLogosProps> = ({
                   className="block w-full h-full focus:outline-none focus:ring-2 focus:ring-brand-a focus:ring-offset-2 rounded-lg"
                   aria-label={`Visit ${supporter.displayName} website`}
                 >
-                  <LogoImage supporter={supporter} />
+                  <LogoImage supporter={supporter as Supporter & { logoPath: string }} />
                 </Link>
               ) : (
                 <div className="cursor-default">
-                  <LogoImage supporter={supporter} />
+                  <LogoImage supporter={supporter as Supporter & { logoPath: string }} />
                 </div>
               )}
             </div>

@@ -269,7 +269,7 @@ describe('ResourceProjectBanner', () => {
     
     // First call should be the main CTA click
     expect(mockGtag).toHaveBeenNthCalledWith(1, 'event', 'resource_project_cta_click', {
-      resource_type: undefined,
+      resource_type: 'unknown',
       resource_title: 'Homelessness User Guide',
       button_label: 'Download Guide',
       button_position: 1,
@@ -280,7 +280,7 @@ describe('ResourceProjectBanner', () => {
     expect(mockGtag).toHaveBeenNthCalledWith(2, 'event', 'file_download', {
       file_name: 'Homelessness User Guide',
       file_type: 'unknown',
-      resource_type: undefined
+      resource_type: 'unknown'
     });
   });
 

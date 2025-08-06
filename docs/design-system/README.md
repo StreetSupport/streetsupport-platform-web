@@ -77,6 +77,14 @@ Flexible content containers for service information:
 - FAQ and article cards
 - Alert and notification patterns
 
+### 8. [Banners](./banners.md)
+Comprehensive banner system design guidelines:
+- Campaign banner styling and customisation options
+- SWEP emergency banner visual treatment
+- Background types and overlay effects
+- Interactive elements and progress indicators
+- Accessibility standards and responsive design
+
 ## Implementation Guidelines
 
 ### Getting Started

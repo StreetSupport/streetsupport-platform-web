@@ -70,8 +70,8 @@ export async function GET(req: Request, context: SwepApiParams) {
 // Get SWEP placeholder data - this will be replaced with CMS integration later
 function getSwepPlaceholderData(locationSlug: string): SwepData | null {
   const placeholderEntry = swepPlaceholderData.find(
-    (entry: SwepData) => entry.locationSlug === locationSlug
+    (entry) => entry.locationSlug === locationSlug
   );
   
-  return placeholderEntry || null;
+  return placeholderEntry as SwepData || null;
 }

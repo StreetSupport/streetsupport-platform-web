@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 
 interface NewsItem {
   id: string;
@@ -179,7 +178,7 @@ export default function NewsGrid({
           <div className="text-gray-500">
             {searchTerm ? (
               <>
-                <p className="mb-4">No articles found matching "{searchTerm}"</p>
+                <p className="mb-4">No articles found matching &ldquo;{searchTerm}&rdquo;</p>
                 <button 
                   onClick={() => setSearchTerm('')}
                   className="text-brand-a hover:text-brand-b font-semibold transition-colors"

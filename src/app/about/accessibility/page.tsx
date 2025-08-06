@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import SocialShare from '@/components/ui/SocialShare';
 import { Metadata } from 'next';
@@ -55,7 +56,7 @@ export default function AccessibilityPage() {
             <p className="mb-6">
               We believe that everyone should have equal access to information and services that help connect people 
               experiencing homelessness with the support they need. Accessibility is not just a legal requirement for us – 
-              it's a fundamental part of our mission to create an inclusive digital platform.
+              it&apos;s a fundamental part of our mission to create an inclusive digital platform.
             </p>
           </section>
 
@@ -186,16 +187,16 @@ export default function AccessibilityPage() {
               <section className="bg-brand-i p-8 rounded-lg">
                 <h2 className="text-2xl font-semibold text-brand-l mb-4">Need Help Right Now?</h2>
                 <p className="text-brand-l mb-6">
-                  If you're experiencing homelessness or need urgent support, our platform is designed to help you 
+                  If you&apos;re experiencing homelessness or need urgent support, our platform is designed to help you 
                   find services quickly, regardless of how you access the internet.
                 </p>
                 <div className="flex justify-center">
-                  <a
+                  <Link
                     href="/find-help"
                     className="inline-flex items-center justify-center px-6 py-3 bg-brand-a text-white font-semibold rounded-lg hover:bg-brand-b hover:text-white transition-colors"
                   >
                     Find Help Now
-                  </a>
+                  </Link>
                 </div>
               </section>
 

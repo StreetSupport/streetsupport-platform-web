@@ -1,11 +1,22 @@
 import { NextResponse } from 'next/server';
-import locations from '@/data/locations.json';
-
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://streetsupport.net';
 
 export async function GET() {
   // Get current date for lastmod
   const currentDate = new Date().toISOString();
+  
+  // Load locations data
+  let locationsData;
+  try {
+    const fs = await import('fs');
+    const path = await import('path');
+    const filePath = path.join(process.cwd(), 'src', 'data', 'locations.json');
+    const fileContents = fs.readFileSync(filePath, 'utf8');
+    locationsData = JSON.parse(fileContents);
+  } catch {
+    // Fallback to import if fs approach fails
+    locationsData = (await import('../../../data/locations.json')).default;
+  }
 
   // Static pages with their priority and change frequency
   const staticPages = [
@@ -174,9 +185,15 @@ export async function GET() {
   ];
 
   // Generate location pages from the locations data
-  const locationPages = locations
-    .filter(location => location.isPublic)
-    .flatMap(location => [
+  
+  interface LocationData {
+    slug: string;
+    isPublic: boolean;
+  }
+
+  const locationPages = locationsData
+    .filter((location: LocationData) => location.isPublic)
+    .flatMap((location: LocationData) => [
       {
         url: `/${location.slug}`,
         lastmod: currentDate,
@@ -211,7 +228,7 @@ ${allPages
     <priority>${page.priority}</priority>
   </url>`
   )
-  .join('\\n')}
+  .join('\n')}
 </urlset>`;
 
   return new NextResponse(sitemap, {

@@ -25,9 +25,9 @@ export default function Newsletter() {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       setStatus('success');
-      setMessage('Thank you for subscribing! You\'ll receive our monthly newsletter with updates on platform developments and impact stories.');
+      setMessage('Thank you for subscribing! You&apos;ll receive our monthly newsletter with updates on platform developments and impact stories.');
       setEmail('');
-    } catch (error) {
+    } catch {
       setStatus('error');
       setMessage('Something went wrong. Please try again later.');
     }

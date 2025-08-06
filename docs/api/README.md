@@ -96,6 +96,56 @@ GET /api/services?lat=53.4808&lng=-2.2426&radius=10&category=meals&limit=20
 }
 ```
 
+#### `GET /api/temporary-accommodation`
+Find emergency accommodation services by location.
+
+**Query Parameters:**
+- `lat` (number, required): Latitude coordinate
+- `lng` (number, required): Longitude coordinate  
+- `radius` (number, optional): Search radius in miles (default: 10)
+- `limit` (number, optional): Maximum results (default: 20)
+
+**Example Request:**
+```bash
+GET /api/temporary-accommodation?lat=53.4808&lng=-2.2426&radius=15
+```
+
+**Example Response:**
+```json
+{
+  "status": "success",
+  "total": 12,
+  "count": 12,
+  "data": [
+    {
+      "_id": "accom123",
+      "ServiceProviderName": "Manchester Emergency Housing",
+      "Info": "Emergency accommodation for individuals and families",
+      "ParentCategoryKey": "accommodation",
+      "SubCategoryKey": "emergency-accommodation",
+      "ServiceProviderKey": "manchester-emergency-housing",
+      "Address": {
+        "Street": "45 Emergency Lane",
+        "City": "Manchester",
+        "Postcode": "M2 3BC",
+        "Location": {
+          "coordinates": [-2.2500, 53.4850]
+        }
+      },
+      "OpeningTimes": [
+        { "Day": 0, "StartTime": 0, "EndTime": 2400, "IsOpen24Hour": true }
+      ],
+      "ClientGroups": ["adults", "families"],
+      "distance": 1.2,
+      "ContactDetails": {
+        "Telephone": "0161 234 5678",
+        "Email": "emergency@manchesterhousing.org"
+      }
+    }
+  ]
+}
+```
+
 ---
 
 ### 🏢 **Organisation Data**
@@ -285,6 +335,79 @@ GET /api/geocode?postcode=M1%201AA
   "status": "error",
   "message": "Invalid postcode format"
 }
+```
+
+---
+
+### 📰 **News & Content**
+
+#### `GET /api/news/general`
+Get latest news from WordPress RSS feed.
+
+**Query Parameters:**
+- None required
+
+**Example Request:**
+```bash
+GET /api/news/general
+```
+
+**Example Response:**
+```json
+{
+  "status": "success",
+  "data": {
+    "news": [
+      {
+        "id": "news-1704067200-1",
+        "title": "New Winter Emergency Services Available",
+        "excerpt": "Street Support has partnered with local councils to provide additional emergency accommodation during the winter months...",
+        "link": "https://news.streetsupport.net/2024/01/winter-emergency-services",
+        "date": "1 January 2024",
+        "author": "Street Support",
+        "category": "Emergency Services",
+        "imageUrl": "https://news.streetsupport.net/wp-content/uploads/2024/01/winter-shelter.jpg"
+      }
+    ],
+    "total": 15
+  }
+}
+```
+
+**Integration Details:**
+- **RSS Source**: `https://news.streetsupport.net/feed/`
+- **Caching**: 30 minutes browser cache, 1 hour CDN cache
+- **Fallback**: Returns empty array if RSS feed unavailable
+- **Content Processing**: Automatic HTML entity decoding and excerpt generation
+- **Rate Limiting**: Subject to standard API rate limits
+
+---
+
+### 🗺️ **Site Structure**
+
+#### `GET /api/sitemap`
+Generate XML sitemap for search engines.
+
+**Query Parameters:**
+- None required
+
+**Example Response:**
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://streetsupport.net/</loc>
+    <lastmod>2024-08-06T10:30:00Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://streetsupport.net/manchester</loc>
+    <lastmod>2024-08-06T10:30:00Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset>
 ```
 
 ---

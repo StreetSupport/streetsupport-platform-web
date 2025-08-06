@@ -21,6 +21,91 @@ jest.mock('next/navigation', () => ({
   cookies: jest.fn(() => ({ get: jest.fn(), set: jest.fn(), delete: jest.fn() })),
 }));
 
+// Mock Next.js server components
+jest.mock('next/server', () => ({
+  NextRequest: jest.fn().mockImplementation((url, init) => {
+    const urlObj = new URL(url || 'http://localhost:3000');
+    const headersMap = new Map(Object.entries(init?.headers || {}));
+    return {
+      url: urlObj.href,
+      method: (init?.method) || 'GET',
+      headers: {
+        get: (key) => headersMap.get(key),
+        has: (key) => headersMap.has(key),
+        set: (key, value) => headersMap.set(key, value),
+        delete: (key) => headersMap.delete(key),
+        entries: () => headersMap.entries(),
+        keys: () => headersMap.keys(),
+        values: () => headersMap.values(),
+        forEach: (callback) => headersMap.forEach(callback),
+      },
+      nextUrl: {
+        pathname: urlObj.pathname,
+        search: urlObj.search,
+        searchParams: new URLSearchParams(urlObj.search),
+        href: urlObj.href,
+        origin: urlObj.origin,
+      },
+      body: init?.body,
+      json: jest.fn().mockResolvedValue({}),
+      text: jest.fn().mockResolvedValue(''),
+      formData: jest.fn().mockResolvedValue(new FormData()),
+    };
+  }),
+  NextResponse: Object.assign(
+    jest.fn().mockImplementation((body, init) => {
+      const headersMap = new Map(Object.entries(init?.headers || {}));
+      return {
+        ok: true,
+        status: (init?.status) || 200,
+        statusText: 'OK',
+        headers: {
+          get: (key) => headersMap.get(key),
+          has: (key) => headersMap.has(key),
+          set: (key, value) => headersMap.set(key, value),
+          delete: (key) => headersMap.delete(key),
+          entries: () => headersMap.entries(),
+          keys: () => headersMap.keys(),
+          values: () => headersMap.values(),
+          forEach: (callback) => headersMap.forEach(callback),
+        },
+        body,
+        json: jest.fn().mockImplementation(() => {
+          try {
+            return Promise.resolve(JSON.parse(body || '{}'));
+          } catch {
+            return Promise.reject(new Error('Invalid JSON'));
+          }
+        }),
+        text: jest.fn().mockResolvedValue(body || ''),
+      };
+    }),
+    {
+      json: jest.fn().mockImplementation((data, init) => {
+        const headersMap = new Map(Object.entries(init?.headers || {}));
+        return {
+          ok: true,
+          status: (init?.status) || 200,
+          statusText: 'OK',
+          headers: {
+            get: (key) => headersMap.get(key),
+            has: (key) => headersMap.has(key),
+            set: (key, value) => headersMap.set(key, value),
+            delete: (key) => headersMap.delete(key),
+            entries: () => headersMap.entries(),
+            keys: () => headersMap.keys(),
+            values: () => headersMap.values(),
+            forEach: (callback) => headersMap.forEach(callback),
+          },
+          body: JSON.stringify(data),
+          json: jest.fn().mockResolvedValue(data),
+          text: jest.fn().mockResolvedValue(JSON.stringify(data)),
+        };
+      }),
+    }
+  ),
+}));
+
 // Enhanced Next.js image component mock
 jest.mock('next/image', () => ({
   __esModule: true,
@@ -121,4 +206,31 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
+}));
+
+// Mock Next.js server web APIs
+global.Request = jest.fn().mockImplementation((url, init) => ({
+  url: url || 'http://localhost:3000',
+  method: (init?.method) || 'GET',
+  headers: new Headers(init?.headers),
+  body: init?.body,
+  json: jest.fn().mockResolvedValue({}),
+  text: jest.fn().mockResolvedValue(''),
+  formData: jest.fn().mockResolvedValue(new FormData()),
+}));
+
+global.Response = jest.fn().mockImplementation((body, init) => ({
+  ok: true,
+  status: (init?.status) || 200,
+  statusText: 'OK',
+  headers: new Headers(init?.headers),
+  body,
+  json: jest.fn().mockImplementation(() => {
+    try {
+      return Promise.resolve(JSON.parse(body || '{}'));
+    } catch {
+      return Promise.reject(new Error('Invalid JSON'));
+    }
+  }),
+  text: jest.fn().mockResolvedValue(body || ''),
 }));

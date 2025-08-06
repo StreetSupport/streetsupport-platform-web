@@ -128,7 +128,7 @@ const ResourceProjectBanner: React.FC<ResourceProjectBannerProps> = ({
     // Analytics tracking would be implemented here
     if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('event', 'resource_project_cta_click', {
-        resource_type: resourceType,
+        resource_type: resourceType || 'unknown',
         resource_title: title,
         button_label: button.label,
         button_position: index + 1,
@@ -141,7 +141,7 @@ const ResourceProjectBanner: React.FC<ResourceProjectBannerProps> = ({
       window.gtag('event', 'file_download', {
         file_name: title,
         file_type: fileType || 'unknown',
-        resource_type: resourceType
+        resource_type: resourceType || 'unknown'
       });
     }
   };

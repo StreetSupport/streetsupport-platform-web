@@ -36,7 +36,7 @@ export default function NewsPage() {
         <section className="text-center">
           <h2 className="text-2xl font-bold text-brand-l mb-6">Get In Touch</h2>
           <p className="text-brand-f mb-8 max-w-2xl mx-auto">
-            For media enquiries, partnership opportunities, or to learn more about our impact, we'd love to hear from you.
+            For media enquiries, partnership opportunities, or to learn more about our impact, we&apos;d love to hear from you.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link

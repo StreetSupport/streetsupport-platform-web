@@ -43,7 +43,7 @@ export default function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps)
 
 // Helper function for tracking page views
 export const trackPageView = (url: string, title?: string) => {
-  if (typeof window !== 'undefined' && window.gtag) {
+  if (typeof window !== 'undefined' && window.gtag && process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID) {
     window.gtag('config', process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID, {
       page_title: title || document.title,
       page_location: url,
@@ -59,11 +59,13 @@ export const trackEvent = (
   value?: number
 ) => {
   if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', action, {
+    const config: Record<string, string | number | boolean> = {
       event_category: category,
-      event_label: label,
-      value: value,
-    });
+    };
+    if (label) config.event_label = label;
+    if (value !== undefined) config.value = value;
+    
+    window.gtag('event', action, config);
   }
 };
 
@@ -139,7 +141,8 @@ declare global {
     gtag: (
       command: 'config' | 'event',
       targetId: string,
-      config?: Record<string, any>
+      config?: Record<string, string | number | boolean>
     ) => void;
+    dataLayer: unknown[];
   }
 }

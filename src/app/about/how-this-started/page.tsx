@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import Image from 'next/image';
 import { Metadata } from 'next';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
@@ -65,19 +64,19 @@ export default function HowThisStartedPage() {
                 </p>
 
                 <p className="text-body">
-                  Like many of us, I'd noticed an increasing number of people facing homelessness on the streets. I felt really sad and frustrated that in a country like the UK people could find themselves without somewhere safe to sleep.
+                  Like many of us, I&apos;d noticed an increasing number of people facing homelessness on the streets. I felt really sad and frustrated that in a country like the UK people could find themselves without somewhere safe to sleep.
                 </p>
 
                 <p className="text-body">
-                  Knowing that charities advise against giving cash, I wasn't sure what I could do to help. I would often offer to buy people I saw a coffee or something to eat, but beyond that I felt helpless. Donating to a national homelessness charity made sense, but it felt so distant and intangible.
+                  Knowing that charities advise against giving cash, I wasn&apos;t sure what I could do to help. I would often offer to buy people I saw a coffee or something to eat, but beyond that I felt helpless. Donating to a national homelessness charity made sense, but it felt so distant and intangible.
                 </p>
 
                 <p className="text-body">
-                  There was a young guy I had seen locally a few times, but never knew what to say. For some reason this particular day was different. I got over my fear and made myself ask him a few gentle questions – if he was cold, where he stayed at night, how he ended up there. He was pragmatic, just told me how it was, without a complaint. It blew me away. I regret that I didn't ask his name.
+                  There was a young guy I had seen locally a few times, but never knew what to say. For some reason this particular day was different. I got over my fear and made myself ask him a few gentle questions – if he was cold, where he stayed at night, how he ended up there. He was pragmatic, just told me how it was, without a complaint. It blew me away. I regret that I didn&apos;t ask his name.
                 </p>
 
                 <p className="text-body">
-                  He had been made redundant a few months before, paid his rent until his savings ran out, and was then evicted (I found out later this is now the number 1 cause of homelessness in the UK). Without a fixed address he couldn't access benefits or get a job, and was on a 9 month waiting list for housing. As a young single male he was at the bottom of the list for temporary accommodation. I was shocked to find out that most shelters had closed, and most of the ones that are still open need to charge for a bed. Sometimes he would make enough money begging to pay for somewhere to sleep, but more often he wouldn't.
+                  He had been made redundant a few months before, paid his rent until his savings ran out, and was then evicted (I found out later this is now the number 1 cause of homelessness in the UK). Without a fixed address he couldn&apos;t access benefits or get a job, and was on a 9 month waiting list for housing. As a young single male he was at the bottom of the list for temporary accommodation. I was shocked to find out that most shelters had closed, and most of the ones that are still open need to charge for a bed. Sometimes he would make enough money begging to pay for somewhere to sleep, but more often he wouldn&apos;t.
                 </p>
 
                 <p className="text-body">
@@ -85,7 +84,7 @@ export default function HowThisStartedPage() {
                 </p>
 
                 <p className="text-body">
-                  It really affected me. I couldn't stop thinking about it. I sat with my partner trying to think of something we could do, and had lots of conversations on social media trying to come up with ideas. <a href="http://objectivesfirst.com/" className="text-brand-a hover:text-brand-b underline" target="_blank" rel="noopener noreferrer">Coming from a digital background</a> I was sure that technology could help somehow.
+                  It really affected me. I couldn&apos;t stop thinking about it. I sat with my partner trying to think of something we could do, and had lots of conversations on social media trying to come up with ideas. <a href="http://objectivesfirst.com/" className="text-brand-a hover:text-brand-b underline" target="_blank" rel="noopener noreferrer">Coming from a digital background</a> I was sure that technology could help somehow.
                 </p>
 
                 <p className="text-body">
@@ -93,25 +92,25 @@ export default function HowThisStartedPage() {
                 </p>
 
                 <p className="text-body">
-                  I felt we had something that could make a real difference, we even had a cool name 'SleepSafe', but once I started talking to experts and reading the research, I soon realised that with so few shelters it was problematic. It still encouraged a victim mentality, for the person experiencing homelessness to beg for help. It would make us feel better, but the next morning they would still be on the streets, still have other unmet needs, still be statistically much more likely to die young.
+                  I felt we had something that could make a real difference, we even had a cool name &lsquo;SleepSafe&rsquo;, but once I started talking to experts and reading the research, I soon realised that with so few shelters it was problematic. It still encouraged a victim mentality, for the person experiencing homelessness to beg for help. It would make us feel better, but the next morning they would still be on the streets, still have other unmet needs, still be statistically much more likely to die young.
                 </p>
 
                 <p className="text-body">
-                  I arranged to meet an experienced outreach worker called David, who has helped people facing homelessness for many years as a volunteer. Through conversations with him, our research, and spending time with some of the charities and voluntary groups, a bigger picture started to emerge. There were many amazing projects I knew nothing about, with different charities and voluntary groups providing a whole range of services. As the council budget cuts hit, and central services were reduced, compassionate individuals could use social media to start outreach projects and get other people on board. It was inspiring and confusing – I was really surprised that I hadn't heard so much of this was going on!
+                  I arranged to meet an experienced outreach worker called David, who has helped people facing homelessness for many years as a volunteer. Through conversations with him, our research, and spending time with some of the charities and voluntary groups, a bigger picture started to emerge. There were many amazing projects I knew nothing about, with different charities and voluntary groups providing a whole range of services. As the council budget cuts hit, and central services were reduced, compassionate individuals could use social media to start outreach projects and get other people on board. It was inspiring and confusing – I was really surprised that I hadn&apos;t heard so much of this was going on!
                 </p>
 
                 <div className="bg-brand-q p-6 rounded-lg my-8">
                   <p className="text-body mb-0">
-                    Gary asked a key question. <span className="italic">"If you could do one thing to make the situation for people facing homelessness better, what would it be?"</span> David gave the answer that was the seed of Street Support – help the existing groups know what each other are doing, so they can coordinate, be more efficient, and help more people.
+                    Gary asked a key question. <span className="italic">&ldquo;If you could do one thing to make the situation for people facing homelessness better, what would it be?&rdquo;</span> David gave the answer that was the seed of Street Support – help the existing groups know what each other are doing, so they can coordinate, be more efficient, and help more people.
                   </p>
                 </div>
 
                 <p className="text-body">
-                  All the research we found and the conversations we had had with other charities backed this up. The motivation and ideas were out there, but they weren't connected, coordinated or easily accessible from the outside.
+                  All the research we found and the conversations we had had with other charities backed this up. The motivation and ideas were out there, but they weren&apos;t connected, coordinated or easily accessible from the outside.
                 </p>
 
                 <p className="text-body">
-                  Many of us that care and want to help don't know how to get involved.
+                  Many of us that care and want to help don&apos;t know how to get involved.
                 </p>
 
                 <p className="text-body">
@@ -127,7 +126,7 @@ export default function HowThisStartedPage() {
                 </p>
 
                 <p className="text-body">
-                  I'm so glad that I took the chance to have that conversation. I hope that one day I will get the chance to thank that man, and tell him about the Street Support Network that he inspired.
+                  I&apos;m so glad that I took the chance to have that conversation. I hope that one day I will get the chance to thank that man, and tell him about the Street Support Network that he inspired.
                 </p>
 
                 <p className="text-body">

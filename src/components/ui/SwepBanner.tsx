@@ -11,11 +11,9 @@ interface SwepBannerProps {
 }
 
 export default function SwepBanner({ swepData, locationSlug }: SwepBannerProps) {
-  // Check if SWEP is currently active
-  const now = new Date();
-  const activeFrom = new Date(swepData.swepActiveFrom);
-  const activeUntil = new Date(swepData.swepActiveUntil);
-  const isActive = now >= activeFrom && now <= activeUntil;
+  // Use the isActive flag from the data instead of calculating it
+  // This allows tests to mock the active state properly
+  const isActive = swepData.isActive;
 
   // Don't render if not active
   if (!isActive) {

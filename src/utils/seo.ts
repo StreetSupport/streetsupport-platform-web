@@ -207,7 +207,7 @@ export function generateLocalBusinessStructuredData(org: {
   latitude?: number;
   longitude?: number;
 }) {
-  const structuredData: any = {
+  const structuredData: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'NonprofitOrganization',
     name: org.name,

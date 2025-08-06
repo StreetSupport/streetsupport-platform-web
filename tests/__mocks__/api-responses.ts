@@ -230,7 +230,7 @@ export const mockOrganisationDetails: OrganisationDetails = {
   isPublished: true,
   associatedLocationIds: ['birmingham', 'manchester'],
   tags: ['health', 'housing', 'food'],
-  addresses: mockAddresses,
+  addresses: mockAddresses as any,
   services: mockServices,
   groupedServices: mockGroupedServices,
 };
@@ -254,7 +254,7 @@ export const mockMinimalOrganisationDetails: OrganisationDetails = {
 export const mockOrganisationApiResponse: OrganisationApiResponse = {
   status: 'success',
   organisation: mockOrganisationDetails,
-  addresses: mockAddresses,
+  addresses: mockAddresses as any,
   services: mockServices,
 };
 

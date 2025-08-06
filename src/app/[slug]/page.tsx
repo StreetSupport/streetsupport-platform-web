@@ -4,15 +4,12 @@ import locations from '@/data/locations.json';
 import { notFound } from 'next/navigation';
 import Hero from '@/components/ui/Hero';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
-import SwepBanner from '@/components/ui/SwepBanner';
+import SwepBannerWrapper from '@/components/ui/SwepBannerWrapper';
 import LocationFindHelp from '@/components/Location/LocationFindHelp';
 import LocationStatistics from '@/components/Location/LocationStatistics';
 import LocationNews from '@/components/Location/LocationNews';
 import EmergencyContactSection from '@/components/Location/EmergencyContactSection';
 import SupporterLogos from '@/components/Location/SupporterLogos';
-import { SwepData } from '@/types';
-import { isSwepActive } from '@/utils/swep';
-import swepPlaceholderData from '@/data/swep-fallback.json';
 import { generateLocationSEOMetadata } from '@/utils/seo';
 
 export const dynamic = 'force-dynamic';
@@ -111,13 +108,7 @@ export default async function LocationPage(props) {
   const homeBackground = "/assets/img/home-header-background.png";
   const contactEmail = getLocationContactEmail(slug);
   
-  // Get SWEP placeholder data - this will be replaced with CMS integration later
-  const swepEntry = swepPlaceholderData.find(
-    (entry: SwepData) => entry.locationSlug === slug
-  );
-  
-  // Only use SWEP data if it's currently active
-  const swepData = swepEntry && isSwepActive(swepEntry) ? swepEntry : null;
+  // SWEP data is now fetched client-side by SwepBannerWrapper
 
   // Generate structured data for the location
   const locationStructuredData = {
@@ -202,10 +193,8 @@ export default async function LocationPage(props) {
         ctaLink="/find-help"
       />
 
-      {/* SWEP Banner - displays only when active */}
-      {swepData && (
-        <SwepBanner swepData={swepData} locationSlug={slug} />
-      )}
+      {/* SWEP Banner - fetches data client-side and displays when active */}
+      <SwepBannerWrapper locationSlug={slug} />
 
       <EmergencyContactSection locationName={location.name} locationSlug={slug} />
 

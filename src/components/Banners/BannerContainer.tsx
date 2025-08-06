@@ -38,7 +38,7 @@ const BannerContainer: React.FC<BannerContainerProps> = ({
       }
       
       // Validate banner props
-      const validation = validateBannerProps(banner);
+      const validation = validateBannerProps(banner as unknown as Record<string, unknown>);
       if (!validation.isValid) {
         onBannerError?.(
           `Banner validation failed: ${validation.errors.join(', ')}`,
@@ -101,8 +101,8 @@ const BannerContainer: React.FC<BannerContainerProps> = ({
 
         default:
           onBannerError?.(
-            `Unknown banner template type: ${banner.templateType}`,
-            banner.id
+            `Unknown banner template type: ${(banner as unknown as { templateType?: string }).templateType}`,
+            (banner as unknown as { id?: string }).id
           );
           return null;
       }
@@ -154,7 +154,7 @@ export const useBanners = (_locationSlug: string) => {
   const addBanner = React.useCallback(async (banner: AnyBannerProps) => {
     try {
       // Validate banner before adding
-      const validation = validateBannerProps(banner);
+      const validation = validateBannerProps(banner as unknown as Record<string, unknown>);
       if (!validation.isValid) {
         throw new Error(`Invalid banner: ${validation.errors.join(', ')}`);
       }

@@ -1,220 +1,410 @@
-# Development Documentation
+# Development Guide
 
-This directory contains technical implementation guides, development workflows, and architectural patterns for building and maintaining the Street Support Platform.
+This directory contains comprehensive technical documentation for developing and maintaining the Street Support Platform Web application.
 
-## 📋 Contents
+## 🚀 Getting Started
 
-### [API Scaffold & Database Helper Summary](./api-scaffold-and-db-helper-summary.md)
-**Purpose**: Technical guide for API implementation patterns and database integration
+### Quick Setup
+```bash
+# Clone the repository
+git clone https://github.com/streetsupport/streetsupport-platform-web.git
+cd streetsupport-platform-web
 
-**Key Topics**:
-- Next.js API route structure
-- MongoDB connection patterns
-- Error handling strategies
-- Response formatting standards
-- Query parameter validation
+# Install dependencies
+npm install
 
-**Audience**: Developers implementing new API endpoints
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your configuration
 
-### [MongoDB Connection Guide](./confirm-and-test-mongo-db.md)
-**Purpose**: Database setup, connection testing, and troubleshooting guide
+# Start development server
+npm run dev
+```
 
-**Key Topics**:
-- MongoDB Atlas configuration
-- Connection string management
-- Local development setup
-- Database testing procedures
-- Common connection issues
+Visit `http://localhost:3000` to see the application running.
 
-**Audience**: Developers setting up local environment
+## 📚 Core Documentation
 
-### [Image Optimisation](./IMAGE_OPTIMISATION.md)
-**Purpose**: Performance optimisation strategies for images and assets
+### Architecture & Implementation
+- [**Next.js 15 Implementation Guide**](./nextjs-implementation.md) - Complete Next.js patterns, dynamic routing, and performance optimisation
+- [**State Management Architecture**](./state-management.md) - React Context providers, custom hooks, and URL state synchronisation
+- [**API Scaffold & Database Helper Summary**](./api-scaffold-and-db-helper-summary.md) - API implementation patterns and database utilities
+- [**MongoDB Connection Guide**](./confirm-and-test-mongo-db.md) - Database setup, testing, and connection management
 
-**Key Topics**:
-- Next.js Image component usage
-- WebP conversion strategies
-- Responsive image implementation
-- Asset delivery optimisation
-- Performance monitoring
+### Performance & Optimisation
+- [**Image Optimisation**](./IMAGE_OPTIMISATION.md) - Performance optimisation strategies for images and assets
 
-**Audience**: Developers working on performance improvements
+## 🏗️ Project Structure
+
+```
+src/
+├── app/                          # Next.js App Router
+│   ├── api/                      # Serverless API routes
+│   ├── [location]/               # Dynamic location pages
+│   ├── about/                    # Static pages
+│   ├── find-help/                # Service discovery
+│   ├── globals.css               # Global styles
+│   ├── layout.tsx                # Root layout
+│   └── page.tsx                  # Homepage
+├── components/                   # Reusable UI components
+│   ├── Banners/                  # Campaign banner system
+│   ├── partials/                 # Layout components
+│   └── ui/                       # Base UI components
+├── contexts/                     # React Context providers
+│   ├── LocationContext.tsx       # Location state management
+│   ├── FilterContext.tsx         # Search filters
+│   └── PreferencesContext.tsx    # User preferences
+├── hooks/                        # Custom React hooks
+├── types/                        # TypeScript definitions
+├── utils/                        # Utility functions
+└── data/                         # Static data files
+```
 
 ## 🛠️ Development Workflow
 
-### Local Development Setup
-1. **Environment Configuration**: Set up MongoDB connection
-2. **Dependencies**: Install all project dependencies
-3. **Data Bootstrap**: Fetch initial data or use fallbacks
-4. **Testing**: Verify unit and E2E tests pass
-5. **Build**: Confirm production build works
+### 1. Branch Strategy
 
-### Code Standards
-- **TypeScript**: Strict mode enabled, full type coverage
-- **ESLint**: Airbnb config with custom rules for accessibility
-- **Prettier**: Consistent code formatting
-- **Git Hooks**: Pre-commit linting and testing
+```bash
+# Create feature branch from staging
+git checkout staging
+git pull origin staging
+git checkout -b feature/your-feature-name
 
-### API Development Patterns
+# Make your changes
+git add .
+git commit -m "feat: add new feature description"
 
-#### Route Structure
+# Push and create PR
+git push origin feature/your-feature-name
+```
+
+### 2. Code Standards
+
+#### TypeScript
+- Use strict TypeScript configuration
+- Define interfaces for all data structures
+- Implement proper error handling with try-catch blocks
+- Use discriminated unions for type safety
+
 ```typescript
-// /app/api/[endpoint]/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { getClientPromise } from '@/utils/mongodb';
+// Good: Proper interface definition
+interface Service {
+  _id: string;
+  ServiceProviderName: string;
+  Info: string;
+  Address: Address;
+  OpeningTimes: OpeningTime[];
+}
 
-export async function GET(request: NextRequest) {
-  try {
-    // 1. Validate query parameters
-    // 2. Connect to database
-    // 3. Execute query with error handling
-    // 4. Format response consistently
-    // 5. Return with appropriate status
-  } catch (error) {
-    // Standard error handling
-  }
+// Good: Error handling
+try {
+  const services = await getServices(lat, lng);
+  return services;
+} catch (error) {
+  console.error('Failed to fetch services:', error);
+  throw new APIError(500, 'Unable to fetch services');
 }
 ```
 
-#### Error Handling
-```typescript
-// Consistent error responses
-if (!data) {
-  return NextResponse.json(
-    { error: 'Resource not found' },
-    { status: 404 }
+#### React Components
+- Use functional components with hooks
+- Implement proper prop types with TypeScript
+- Include accessibility attributes (ARIA labels, roles)
+- Use semantic HTML elements
+
+```tsx
+// Good: Accessible component structure
+export function ServiceCard({ service, headingLevel = 'h3' }: ServiceCardProps) {
+  const HeadingTag = headingLevel as keyof JSX.IntrinsicElements;
+  
+  return (
+    <article 
+      className="service-card"
+      aria-labelledby={`service-${service._id}-title`}
+    >
+      <HeadingTag id={`service-${service._id}-title`}>
+        {service.ServiceProviderName}
+      </HeadingTag>
+      {/* Component content */}
+    </article>
   );
 }
+```
 
-// Database connection failures
-if (!mongoClient) {
-  return NextResponse.json(
-    { error: 'Database unavailable' },
-    { status: 503 }
-  );
+#### CSS/Tailwind
+- Use Tailwind CSS utility classes
+- Follow mobile-first responsive design
+- Implement proper colour contrast ratios (WCAG AA)
+- Use custom brand colours consistently
+
+```css
+/* Good: Mobile-first responsive design */
+.service-card {
+  @apply p-4 bg-white rounded-lg shadow-md;
+  
+  /* Mobile styles first */
+  @apply mb-4;
+  
+  /* Tablet and up */
+  @apply md:mb-6 md:p-6;
+  
+  /* Desktop and up */
+  @apply lg:p-8;
 }
 ```
 
-## 🏗️ Architecture Patterns
+### 3. Testing Requirements
 
-### Serverless API Design
-- **Stateless Functions**: Each API route is independent
-- **Connection Pooling**: Reuse MongoDB connections efficiently
-- **Graceful Degradation**: Fallbacks when services unavailable
-- **Caching Strategy**: Response caching where appropriate
-
-### Data Layer
-```
-Frontend Components
-        ↓
-   API Routes (Next.js)
-        ↓
-   MongoDB Helpers
-        ↓
-   MongoDB Atlas
+#### Unit Tests
+Run unit tests before committing:
+```bash
+npm run test
+npm run test:watch  # During development
 ```
 
-### Component Architecture
-```
-Pages (App Router)
-        ↓
-   Layout Components
-        ↓
-   Feature Components
-        ↓
-   UI Components (Design System)
-        ↓
-   Utility Functions
+#### E2E Tests
+Run end-to-end tests for critical user journeys:
+```bash
+npm run test:e2e
+npm run test:e2e:ui  # With browser UI
 ```
 
-## 🧪 Testing Integration
+#### Accessibility Testing
+Verify accessibility compliance:
+```bash
+npm run test:a11y
+```
+
+### 4. Code Quality Checks
+
+#### Linting and Formatting
+```bash
+npm run lint          # Check for linting issues
+npm run lint:fix      # Auto-fix linting issues
+npm run format        # Format code with Prettier
+```
+
+#### Type Checking
+```bash
+npm run type-check    # Verify TypeScript types
+```
+
+#### Build Verification
+```bash
+npm run build         # Test production build
+npm run start         # Test production server
+```
+
+## 🧪 Testing Strategy
 
 ### Unit Testing
-- **Components**: React Testing Library for UI components
-- **Utilities**: Jest for pure functions and helpers
-- **API Routes**: Supertest for endpoint testing
-- **Mocking**: MongoDB and external services
+- Use Jest and React Testing Library
+- Test component rendering and interactions
+- Mock external dependencies and APIs
+- Achieve >90% code coverage
+
+```typescript
+// Example unit test
+describe('ServiceCard', () => {
+  const mockService = createMockService();
+
+  it('renders service information correctly', () => {
+    render(<ServiceCard service={mockService} />);
+    
+    expect(screen.getByText(mockService.ServiceProviderName)).toBeInTheDocument();
+    expect(screen.getByText(mockService.Info)).toBeInTheDocument();
+  });
+
+  it('handles missing data gracefully', () => {
+    const incompleteService = { ...mockService, Info: undefined };
+    
+    expect(() => {
+      render(<ServiceCard service={incompleteService} />);
+    }).not.toThrow();
+  });
+});
+```
+
+### Integration Testing
+- Test API routes with mock databases
+- Verify component interactions
+- Test state management flows
 
 ### E2E Testing
-- **Real Scenarios**: Complete user journeys
-- **Mock System**: Fallback when database unavailable
-- **Accessibility**: Automated a11y testing
-- **Performance**: Lighthouse audits
+- Use Playwright for browser testing
+- Test critical user journeys
+- Verify accessibility with automated tools
 
-## 📊 Performance Monitoring
+## 🚀 Deployment
 
-### Key Metrics
-- **Page Load Time**: Target <2 seconds
-- **API Response Time**: Target <500ms
-- **Core Web Vitals**: LCP, FID, CLS monitoring
-- **Error Rates**: <1% error rate target
+### Environment Variables
+Required environment variables for different environments:
+
+```bash
+# Development
+NODE_ENV=development
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+
+# Production
+NODE_ENV=production
+NEXT_PUBLIC_BASE_URL=https://streetsupport.net
+MONGODB_URI=mongodb+srv://...
+MONGODB_DB=streetsupport
+```
+
+### Build Process
+```bash
+# Production build
+npm run build
+
+# Test production build locally
+npm run start
+```
+
+### Deployment Pipeline
+The application deploys automatically via GitHub Actions:
+1. Code pushed to `staging` branch
+2. Automated tests run
+3. Build verification
+4. Deploy to staging environment
+5. Manual verification
+6. Merge to `main` for production deployment
+
+## 🎯 Performance Guidelines
+
+### Core Web Vitals Targets
+- **LCP (Largest Contentful Paint)**: < 2.5s
+- **FID (First Input Delay)**: < 100ms
+- **CLS (Cumulative Layout Shift)**: < 0.1
 
 ### Optimisation Strategies
-- **Code Splitting**: Dynamic imports for large components
-- **Image Optimisation**: WebP with fallbacks
-- **Database Queries**: Efficient indexing and aggregation
-- **Caching**: Redis for frequently accessed data (future)
+1. **Image Optimisation**: Use Next.js Image component with WebP format
+2. **Code Splitting**: Implement dynamic imports for large components
+3. **Caching**: Configure appropriate cache headers for static assets
+4. **Bundle Analysis**: Monitor bundle size with `npm run analyze`
 
-## 🔧 Tools & Technologies
+### Performance Monitoring
+```bash
+# Lighthouse CI integration
+npm run lighthouse
 
-### Core Stack
-- **Framework**: Next.js 15 with App Router
-- **Database**: MongoDB Atlas with connection pooling
-- **Styling**: Tailwind CSS with custom design system
-- **Testing**: Jest, Playwright, React Testing Library
-- **Deployment**: Vercel Pro with GitHub Actions
+# Bundle analysis
+npm run analyze
 
-### Development Tools
-- **IDE**: VS Code with recommended extensions
-- **Git**: Conventional commits with automated changelog
-- **Package Manager**: npm with lockfile integrity
-- **Bundler**: Next.js built-in with SWC compiler
+# Performance profiling
+npm run perf
+```
 
-## 📈 Scalability Considerations
-
-### Current Architecture
-- **Serverless Functions**: Auto-scaling API routes
-- **CDN**: Global asset distribution via Vercel
-- **Database**: MongoDB Atlas with auto-scaling
-- **Monitoring**: Built-in Vercel analytics
-
-### Future Enhancements
-- **Caching Layer**: Redis for high-traffic endpoints
-- **CDN Strategy**: Advanced caching policies
-- **Database Optimisation**: Read replicas and sharding
-- **Microservices**: Split admin functionality when needed
-
-## 🔒 Security Practices
+## 🔒 Security Guidelines
 
 ### Data Protection
-- **Environment Variables**: Secure secret management
-- **API Validation**: Input sanitisation and validation
-- **CORS**: Appropriate cross-origin policies
-- **Rate Limiting**: Prevent abuse and DoS attacks
+- Never commit secrets or API keys
+- Use environment variables for sensitive configuration
+- Validate all user inputs server-side
+- Implement proper CORS policies
 
-### Access Control
-- **Read-Only Database**: Public API uses read-only user
-- **Secret Management**: GitHub secrets for sensitive data
-- **Audit Logging**: Track data access and changes
-- **Error Handling**: Don't leak sensitive information
-
-## 🚀 Deployment Pipeline
-
-### Development Flow
+### Content Security Policy
+```javascript
+// next.config.js CSP configuration
+const ContentSecurityPolicy = `
+  default-src 'self';
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' *.googletagmanager.com;
+  child-src *.google.com *.youtube.com;
+  style-src 'self' 'unsafe-inline' *.googleapis.com;
+  img-src * blob: data:;
+  media-src 'none';
+  connect-src *;
+  font-src 'self' *.gstatic.com;
+`;
 ```
-Feature Branch → PR → Automated Tests → Code Review → Merge → Deploy
+
+### API Security
+- Validate all request parameters
+- Implement rate limiting
+- Use HTTPS for all communications
+- Log security events for monitoring
+
+## 🐛 Debugging and Troubleshooting
+
+### Common Issues
+
+#### Build Failures
+```bash
+# Clear Next.js cache
+rm -rf .next
+npm run build
+
+# Clear node_modules
+rm -rf node_modules package-lock.json
+npm install
 ```
 
-### Quality Gates
-1. **Linting**: ESLint with accessibility rules
-2. **Type Checking**: TypeScript strict mode
-3. **Unit Tests**: Comprehensive test coverage
-4. **E2E Tests**: Full user journey validation
-5. **Build Test**: Production build verification
+#### Database Connection Issues
+```bash
+# Test MongoDB connection
+npm run test:db
 
-## 🔗 Related Documentation
+# Check environment variables
+echo $MONGODB_URI
+```
 
-- [Project Planning](../project-planning/README.md) - Strategic architecture decisions
-- [Testing](../testing/README.md) - Quality assurance strategies
-- [Deployment](../deployment/README.md) - CI/CD and release processes
-- [Design System](../design-system/README.md) - UI component patterns
+#### TypeScript Errors
+```bash
+# Generate fresh type definitions
+npm run type-check
+
+# Clear TypeScript cache
+rm -rf .next/types
+```
+
+### Development Tools
+- **React DevTools**: Browser extension for component debugging
+- **MongoDB Compass**: GUI for database exploration
+- **Lighthouse**: Performance and accessibility auditing
+- **axe DevTools**: Accessibility testing in browser
+
+## 📖 Additional Resources
+
+### External Documentation
+- [Next.js Documentation](https://nextjs.org/docs)
+- [React Documentation](https://react.dev)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [MongoDB Documentation](https://docs.mongodb.com)
+- [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
+
+### Project-Specific Guides
+- [Design System](../design-system/README.md) - UI component library and guidelines
+- [API Documentation](../api/README.md) - Complete API reference
+- [Testing Documentation](../testing/README.md) - Comprehensive testing strategy
+- [Security Documentation](../security/README.md) - Security implementation details
+- [Accessibility Guide](../accessibility/compliance-guide.md) - WCAG compliance implementation
+
+## 🤝 Contributing
+
+### Pull Request Process
+1. Create feature branch from `staging`
+2. Implement changes with tests
+3. Ensure all checks pass
+4. Request code review
+5. Address review feedback
+6. Merge after approval
+
+### Code Review Guidelines
+- Focus on functionality and maintainability
+- Check accessibility implementation
+- Verify test coverage
+- Ensure British English in user-facing text
+- Confirm professional commit messages
+
+### Community Standards
+- Be respectful and inclusive
+- Provide constructive feedback
+- Help others learn and improve
+- Follow project coding standards
+- Maintain documentation currency
+
+---
+
+*Last Updated: August 2025*
+*Development Stack: Next.js 15, React 18, TypeScript, Tailwind CSS*
+*Status: Active Development ✅*
