@@ -129,6 +129,12 @@ export async function GET() {
       priority: '0.7'
     },
     {
+      url: '/west-midlands',
+      lastmod: currentDate,
+      changefreq: 'weekly',
+      priority: '0.8'
+    },
+    {
       url: '/contact',
       lastmod: currentDate,
       changefreq: 'monthly',

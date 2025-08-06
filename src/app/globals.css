@@ -22,6 +22,82 @@
   --color-brand-s: #E1B500;
 }
 
+/* West Midlands specific styles */
+.block--west-mids-header {
+  background: linear-gradient(135deg, var(--color-brand-a) 0%, var(--color-brand-d) 100%);
+  color: white;
+  padding: 4rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.block--west-mids-locations {
+  padding: 3rem 0;
+  background-color: white;
+}
+
+.west-mids-location {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.btn--west-mids-locations {
+  background-color: var(--color-brand-i);
+  color: var(--color-brand-l);
+  border: 2px solid transparent;
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: block;
+}
+
+.btn--west-mids-locations:hover {
+  background-color: var(--color-brand-a);
+  color: white;
+  border-color: var(--color-brand-a);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.block--wmca-taskforce {
+  background-color: var(--color-brand-g);
+}
+
+.block--change-into-action {
+  padding: 4rem 0;
+  background-color: white;
+}
+
+.block__change-into-action {
+  max-width: 400px;
+  margin: 0 auto 2rem;
+  text-align: center;
+}
+
+.home__copy--change-into-action {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.block--alternative-giving-campaign {
+  padding: 4rem 0;
+  background-color: var(--color-brand-q);
+}
+
+.block__alternative-giving-campaign {
+  max-width: 400px;
+  margin: 0 auto 2rem;
+  text-align: center;
+}
+
 /* Loading animations */
 @keyframes loading-border {
   0% {
