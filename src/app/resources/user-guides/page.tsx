@@ -1,6 +1,26 @@
+import { Metadata } from 'next';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import SocialShare from '@/components/ui/SocialShare';
 import PDFDownloadLink from '@/components/ui/PDFDownloadLink';
+import { generateSEOMetadata } from '@/utils/seo';
+
+export async function generateMetadata(): Promise<Metadata> {
+  return generateSEOMetadata({
+    title: 'User Guides',
+    description: 'Essential guides to help you manage, update, and maintain organisation information on Street Support Network. Download PDF guides for administrators and organisations.',
+    keywords: [
+      'street support user guides',
+      'organisation admin guide',
+      'volunteer admin guide',
+      'how to use street support',
+      'charity admin guides',
+      'street support documentation'
+    ],
+    path: 'resources/user-guides',
+    image: '/assets/img/resource-icons/user-guides-icon.png',
+    imageAlt: 'User Guides - Street Support Network'
+  });
+}
 
 export default function UserGuidesPage() {
   return (

@@ -1,11 +1,32 @@
 import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
 import locations from '@/data/locations.json';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import { SwepData } from '@/types';
 import { isSwepActive, formatSwepActivePeriod, parseSwepBody } from '@/utils/swep';
 import swepPlaceholderData from '@/data/swep-fallback.json';
+import { generateLocationSEOMetadata } from '@/utils/seo';
 
 export const dynamic = 'force-dynamic';
+
+// @ts-expect-error Next dynamic param inference workaround
+export async function generateMetadata(props): Promise<Metadata> {
+  const { slug } = await props.params;
+
+  const location = locations.find(
+    (loc) => loc.slug === slug && loc.isPublic
+  );
+
+  if (!location) {
+    return {
+      title: 'SWEP Information Not Found | Street Support Network',
+      description: 'The requested SWEP information page could not be found.',
+      robots: 'noindex, nofollow'
+    };
+  }
+
+  return generateLocationSEOMetadata(location.name, slug, 'swep');
+}
 
 // @ts-expect-error Next dynamic param inference workaround
 export default async function SwepPage(props) {
