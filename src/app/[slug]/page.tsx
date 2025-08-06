@@ -9,6 +9,7 @@ import LocationFindHelp from '@/components/Location/LocationFindHelp';
 import LocationStatistics from '@/components/Location/LocationStatistics';
 import LocationNews from '@/components/Location/LocationNews';
 import EmergencyContactSection from '@/components/Location/EmergencyContactSection';
+import SupporterLogos from '@/components/Location/SupporterLogos';
 import { SwepData } from '@/types';
 import { isSwepActive } from '@/utils/swep';
 import swepPlaceholderData from '@/data/swep-fallback.json';
@@ -253,6 +254,9 @@ export default async function LocationPage(props) {
           </p>
         </div>
       </section>
+
+      {/* Supporter Logos Section */}
+      <SupporterLogos locationSlug={slug} />
     </main>
   );
 }
