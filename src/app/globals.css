@@ -971,7 +971,7 @@ Responsive breakpoints:
   .hero-location-wakefield {
     background-size: 70%;
     width: 100%;
-    height: 123%;
+    height: 120%;
     bottom: 10px;
   }
 }
@@ -1013,6 +1013,17 @@ Responsive breakpoints:
     height: 98%;
     bottom: 8px;
   }
+}
+
+/* SWEP Banner Styles */
+.swep-banner {
+  position: relative;
+  z-index: 40;
+}
+
+.swep-banner a {
+  position: relative;
+  z-index: 41;
 }
 
 /* Remove default marker in Chrome, Safari, Edge */

@@ -7,6 +7,7 @@ import Nav from '../components/partials/Nav';
 import SiteFooter from '../components/partials/SiteFooter';
 import { LocationProvider } from '../contexts/LocationContext';
 import FindHelpStateCleanup from '../components/FindHelp/FindHelpStateCleanup';
+import GoogleAnalytics from '../components/analytics/GoogleAnalytics';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://streetsupport.net";
 
@@ -146,6 +147,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
       </head>
       <body>
+        <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
         <LocationProvider>
           <FindHelpStateCleanup />
           <Nav />

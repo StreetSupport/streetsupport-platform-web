@@ -11,6 +11,7 @@ import { decodeText } from '@/utils/htmlDecode';
 import { getCategoryName, getSubCategoryName } from '@/utils/categoryLookup';
 import { formatDistance } from '@/utils/openingTimes';
 import openingTimesCache from '@/utils/openingTimesCache';
+import { trackServiceCardClick } from '@/components/analytics/GoogleAnalytics';
 
 interface ServiceCardProps {
   service: ServiceWithDistance;
@@ -100,6 +101,13 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
     <Link
       href={destination}
       onClick={() => {
+        // Track service card click for analytics
+        trackServiceCardClick(
+          service.id?.toString() || 'unknown',
+          decodedOrgName,
+          categoryName
+        );
+        
         if (onCardClick) {
           onCardClick();
         }

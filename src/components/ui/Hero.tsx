@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { trackFindHelpCTA } from '@/components/analytics/GoogleAnalytics';
 
 interface HeroProps {
   backgroundImage: string;
@@ -86,7 +87,11 @@ export default function Hero({
         <h1 className="hero-title">{title}</h1>
         <p className="hero-subtitle">{subtitle}</p>
         {ctaText && ctaLink && (
-          <Link href={ctaLink} className="hero-cta">
+          <Link 
+            href={ctaLink} 
+            onClick={() => trackFindHelpCTA(locationSlug || 'homepage', 'hero_banner')}
+            className="hero-cta"
+          >
             {ctaText}
           </Link>
         )}

@@ -97,3 +97,43 @@ export interface ServiceWithAccommodation extends UIFlattenedService {
 export interface ServiceWithDistance extends ServiceWithAccommodation {
   distance?: number; // Distance in kilometers, calculated by database or client-side
 }
+
+// SWEP (Severe Weather Emergency Protocol) interfaces
+export interface SwepData {
+  id: string;
+  locationSlug: string;
+  title: string;
+  body: string;
+  image?: string;
+  shortMessage: string;
+  swepActiveFrom: string; // ISO datetime string
+  swepActiveUntil: string; // ISO datetime string
+  isActive?: boolean; // Computed field based on current datetime
+  createdAt?: string; // ISO datetime string
+  updatedAt?: string; // ISO datetime string
+  createdBy?: string;
+  status?: 'draft' | 'published' | 'archived';
+  emergencyContact?: {
+    phone?: string;
+    email?: string;
+    hours?: string;
+  };
+  additionalInfo?: {
+    weatherWarning?: string;
+    triggerCriteria?: string;
+    accommodationCapacity?: number;
+    servicesAffected?: string[];
+  };
+}
+
+// Interface for location data with SWEP information
+export interface LocationWithSwep {
+  id: string;
+  key: string;
+  name: string;
+  slug: string;
+  latitude: number;
+  longitude: number;
+  isPublic: boolean;
+  swep?: SwepData;
+}
