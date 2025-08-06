@@ -69,7 +69,7 @@ export default function JobsPage() {
                         </p>
                         <a 
                           href="/about/jobs/trustee/trustee-vacancy-advert.pdf" 
-                          className="inline-flex items-center px-4 py-2 bg-brand-a text-white font-semibold rounded-lg hover:bg-brand-b transition-colors"
+                          className="inline-flex items-center px-4 py-2 bg-brand-a text-white font-semibold rounded-lg hover:bg-brand-b hover:text-white transition-colors"
                           target="_blank"
                           rel="noopener noreferrer"
                         >
@@ -100,7 +100,7 @@ export default function JobsPage() {
                         </p>
                         <Link 
                           href="/about/jobs/data-integrity/" 
-                          className="inline-flex items-center px-4 py-2 bg-brand-a text-white font-semibold rounded-lg hover:bg-brand-b transition-colors"
+                          className="inline-flex items-center px-4 py-2 bg-brand-a text-white font-semibold rounded-lg hover:bg-brand-b hover:text-white transition-colors"
                         >
                           Learn More
                           <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,7 +123,7 @@ export default function JobsPage() {
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <a
                       href="mailto:admin@streetsupport.net"
-                      className="inline-flex items-center justify-center px-6 py-3 bg-brand-a text-white font-semibold rounded-lg hover:bg-brand-b transition-colors"
+                      className="inline-flex items-center justify-center px-6 py-3 bg-brand-a text-white font-semibold rounded-lg hover:bg-brand-b hover:text-white transition-colors"
                     >
                       Get in Touch
                       <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

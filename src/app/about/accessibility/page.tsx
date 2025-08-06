@@ -192,7 +192,7 @@ export default function AccessibilityPage() {
                 <div className="flex justify-center">
                   <a
                     href="/find-help"
-                    className="inline-flex items-center justify-center px-6 py-3 bg-brand-a text-white font-semibold rounded-lg hover:bg-brand-b transition-colors"
+                    className="inline-flex items-center justify-center px-6 py-3 bg-brand-a text-white font-semibold rounded-lg hover:bg-brand-b hover:text-white transition-colors"
                   >
                     Find Help Now
                   </a>
