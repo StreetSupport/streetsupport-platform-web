@@ -368,6 +368,126 @@ test('supports keyboard navigation', async ({ page }) => {
 
 ---
 
+## Skipped Tests Strategy
+
+### Why Some Tests Are Skipped
+
+In our testing suite, some tests are deliberately skipped rather than removed entirely. This strategic approach ensures comprehensive documentation whilst maintaining CI/CD pipeline stability.
+
+### Categories of Skipped Tests
+
+#### 1. **SWEP (Severe Weather Emergency Protocol) Tests** 🚨
+**Current Status**: Frontend implementation complete, backend integration pending
+
+**Files Affected**:
+- `tests/e2e/swep-functionality.spec.ts` - E2E tests for SWEP user journeys
+- `tests/__tests__/api/locations-swep.test.ts` - API endpoint tests
+- `tests/__tests__/utils/swep.test.ts` - SWEP utility function tests
+- `tests/__tests__/components/ui/SwepBanner.test.tsx` - SWEP banner component tests
+
+**Why Skipped**: 
+- ✅ **Frontend Components**: Fully implemented and working
+- ❌ **Backend Systems**: CMS integration and database schemas not yet implemented
+- ❌ **API Endpoints**: Depend on content management system data
+- ❌ **Database Models**: SWEP data structure not finalised
+
+**Re-enablement Plan**:
+```javascript
+// TODO: Re-enable these tests once CMS and database integration is complete
+// SWEP functionality is frontend-ready but depends on backend systems not yet implemented
+describe.skip('SWEP Functionality', () => {
+```
+
+When backend integration is complete:
+1. Remove `.skip` from test descriptions
+2. Verify all API endpoints return expected data structures
+3. Update mock data to match production API responses
+4. Run full test suite to ensure integration works end-to-end
+
+#### 2. **Feature-Complete Frontend with Pending Backend** Pattern
+
+**Philosophy**: We skip tests for features that are:
+- ✅ **User Interface**: Complete and functional
+- ✅ **User Experience**: Fully designed and implemented  
+- ✅ **Component Logic**: All frontend behaviour working
+- ❌ **Data Integration**: Backend APIs, databases, or external services not ready
+
+**Benefits of This Approach**:
+- **Documentation**: Tests serve as living documentation of expected behaviour
+- **Quality Assurance**: Tests are ready to run as soon as backend is available
+- **Regression Prevention**: Prevents accidental removal of test coverage
+- **Development Continuity**: Frontend developers can continue working independently
+
+### Skipped Test Guidelines
+
+#### ✅ **When to Skip Tests**
+
+**Skip tests when:**
+- Frontend implementation is complete but depends on unimplemented backend services
+- External API integrations are planned but not yet available
+- Database schemas are being finalised
+- Third-party service integrations are pending approval/configuration
+
+**Example Pattern:**
+```javascript
+// TODO: Re-enable once [specific dependency] is implemented
+// [Feature] functionality is frontend-ready but depends on [backend system] not yet implemented
+describe.skip('[Feature] Tests', () => {
+```
+
+#### ❌ **When NOT to Skip Tests**
+
+**Don't skip tests for:**
+- Broken implementations that need fixing
+- Incomplete frontend functionality
+- Tests that are failing due to bugs
+- Features that are partially implemented
+
+**Instead:**
+- Fix the implementation first
+- Write tests for the current working state
+- Use TODO comments for additional test cases needed
+
+#### 🔄 **Re-enabling Skipped Tests**
+
+**Process for re-enabling:**
+
+1. **Verify Dependencies**: Confirm all backend systems are implemented
+2. **Update Mock Data**: Ensure test mocks match production API responses
+3. **Remove Skip Declarations**: Change `describe.skip` to `describe`
+4. **Run Individual Test Suite**: Test the specific feature in isolation
+5. **Update Test Data**: Modify test fixtures if API contracts changed
+6. **Run Full Test Suite**: Ensure no conflicts with existing tests
+7. **Document Changes**: Update test documentation with any changes made
+
+**Example Re-enablement Checklist:**
+```markdown
+- [ ] CMS integration completed
+- [ ] Database schema finalised
+- [ ] API endpoints returning correct data structure
+- [ ] Mock data updated to match production responses
+- [ ] Tests pass individually
+- [ ] Tests pass as part of full suite
+- [ ] Documentation updated
+```
+
+### Monitoring Skipped Tests
+
+#### Current Skipped Test Count: **4 Test Suites**
+- **E2E Tests**: 1 suite (SWEP functionality)
+- **Unit Tests**: 3 suites (SWEP API, utilities, component)
+
+#### Review Schedule
+**Monthly Review**: Assess which skipped tests can be re-enabled based on development progress.
+
+**Tracking**: Each skipped test includes:
+- Clear reason for skipping
+- Dependencies required for re-enablement
+- Expected timeline for completion
+- Contact person/team responsible
+
+---
+
 ## Continuous Integration
 
 ### **GitHub Actions Workflow**

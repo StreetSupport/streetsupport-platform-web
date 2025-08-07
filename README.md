@@ -93,14 +93,14 @@ Key local data sources:
 - We use `generateStaticParams` for static builds where possible, with a `force-dynamic` fallback for maximum reliability.
 
 For deeper context see:  
-- [API Project Plan](./docs/API-Project-Plan.md)  
+- [API Project Plan](./docs/project-planning/api-project-plan.md)  
 - [Next.js Workarounds Wiki](https://github.com/StreetSupport/streetsupport-platform-web/wiki)
 
 ---
 
 ## 🔄 Git Workflow
 
-✅ See the **[WORKFLOW.md](./docs/WORKFLOW.md)** for full details.
+✅ See the **[Deployment Workflow](./docs/deployment/workflow.md)** for full details.
 
 In short:
 1. Create a new feature branch from `staging`

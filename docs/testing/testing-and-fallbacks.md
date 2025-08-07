@@ -99,6 +99,17 @@ When adding new locations or categories:
 2. Ensure the structure matches the live database format
 3. Test locally with `USE_FALLBACK=true`
 
+## Skipped Tests
+
+Some tests in our test suite are deliberately skipped rather than removed. This includes tests for features like SWEP (Severe Weather Emergency Protocol) where the frontend implementation is complete but backend integration is still pending.
+
+**Skipped Test Categories**:
+- Frontend-complete features awaiting backend integration
+- Features depending on external CMS or database systems not yet implemented
+- Third-party integrations pending configuration
+
+For detailed information about our skipped tests strategy, including when to skip tests and how to re-enable them, see [`testing-philosophy.md`](./testing-philosophy.md#skipped-tests-strategy).
+
 ## Troubleshooting
 
 ### Tests still failing in PRs?
@@ -115,3 +126,8 @@ When adding new locations or categories:
 - Use `USE_FALLBACK=true` to force fallback mode
 - Check that fallback files exist in `/public/data/`
 - Verify script logic handles both scenarios
+
+### Skipped tests questions?
+- See our [testing philosophy documentation](./testing-philosophy.md#skipped-tests-strategy) for detailed guidance
+- Check if backend dependencies are now available for re-enabling tests
+- Review monthly test status updates for re-enablement timelines
