@@ -10,4 +10,7 @@ export interface RawService {
   Info?: string;
   OpeningTimes?: { day: number; start: number; end: number }[];
   ClientGroups?: string[];
+  // Accommodation-specific properties
+  accommodationData?: Record<string, unknown>;
+  sourceType?: string;
 }

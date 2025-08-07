@@ -33,7 +33,7 @@ export default function NewsSection({ posts, className }: NewsSectionProps) {
               <div className="relative float-left w-[90px] max-h-[90px] mr-2 sm:float-none sm:w-full sm:aspect-[2/1] sm:mb-2 border border-brand-h">
                 <Image
                   src={imageUrl}
-                  alt=""
+                  alt={`News image for: ${title}`}
                   fill
                   className="object-cover"
                   sizes="(max-width: 640px) 100vw, 90px"

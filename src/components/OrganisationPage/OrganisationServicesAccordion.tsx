@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Accordion from '@/components/ui/Accordion';
 import MarkdownContent from '@/components/ui/MarkdownContent';
+import Tooltip from '@/components/ui/Tooltip';
 import type { OrganisationDetails, Address } from '@/utils/organisation';
 import type { ServiceWithDistance, FlattenedService } from '@/types';
 import { isServiceOpenNow } from '@/utils/openingTimes';
@@ -14,7 +15,7 @@ import { getCategoryName, getSubCategoryName } from '@/utils/categoryLookup';
 type ServiceLocation = {
   address: Address;
   distance: number;
-  service: FlattenedService;
+  service: ServiceWithDistance;
 };
 
 // Helper function to calculate distance between two points
@@ -72,6 +73,7 @@ export default function OrganisationServicesAccordion({
   const [internalOpenAccordion, setInternalOpenAccordion] = useState<string | null>(null);
   const [internalSelectedLocationForService, setInternalSelectedLocationForService] = useState<Record<string, number>>({});
   const [loadingContent, setLoadingContent] = useState<string | null>(null);
+  const [expandedDescriptions, setExpandedDescriptions] = useState<Record<string, boolean>>({});
   
   // Use external state if provided, otherwise use internal state
   const selectedLocationForService = externalSelectedLocationForService ?? internalSelectedLocationForService;
@@ -131,10 +133,20 @@ export default function OrganisationServicesAccordion({
         
         
         if (withinRadius) {
+          // Transform FlattenedService to ServiceWithDistance by converting organisation string to object
+          const transformedService: ServiceWithDistance = {
+            ...service,
+            organisation: {
+              name: service.organisation,
+              slug: service.organisationSlug,
+              isVerified: false
+            }
+          };
+          
           grouped[category][subcategory].locations.push({
             address,
             distance,
-            service: service as FlattenedService
+            service: transformedService
           });
         }
       }
@@ -225,15 +237,8 @@ export default function OrganisationServicesAccordion({
                           
                           // Get opening status for this location
                           const service = location.service;
-                          const serviceWithDistance = {
-                            ...service,
-                            organisation: {
-                              name: service.organisation,
-                              slug: service.organisationSlug,
-                              isVerified: false,
-                            },
-                          };
-                          const openingStatus = isServiceOpenNow(serviceWithDistance as ServiceWithDistance);
+                          // service is already a ServiceWithDistance, no need to transform
+                          const openingStatus = isServiceOpenNow(service);
 
                           return (
                             <button
@@ -361,8 +366,12 @@ export default function OrganisationServicesAccordion({
                             const endTime = Number(slot.end);
                             return startTime === 0 && endTime === 2359; // 00:00 to 23:59
                           });
+
+                          // Check for accommodation service
+                          const isAccommodation = service.category === 'accom' || service.sourceType === 'accommodation';
+                          const accommodationData = service.accommodationData;
                           
-                          const hasServiceTypeIndicators = isPhoneService || is24Hour;
+                          const hasServiceTypeIndicators = isPhoneService || is24Hour || isAccommodation;
                           
                           if (!hasServiceTypeIndicators) return null;
                           
@@ -377,6 +386,351 @@ export default function OrganisationServicesAccordion({
                                 <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
                                   Open 24/7
                                 </span>
+                              )}
+                              {isAccommodation && accommodationData && (
+                                <>
+                                  <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                    🏠 {accommodationData.type === 'supported' ? 'Supported' : 
+                                         accommodationData.type === 'emergency' ? 'Emergency' :
+                                         accommodationData.type === 'hostel' ? 'Hostel' :
+                                         accommodationData.type === 'social' ? 'Social Housing' :
+                                         accommodationData.type || 'Accommodation'}
+                                  </span>
+                                  {accommodationData.referralRequired && (
+                                    <Tooltip 
+                                      content={accommodationData.referralNotes ? 
+                                        `Referral required: ${accommodationData.referralNotes}` : 
+                                        "A referral is required for this accommodation. Contact the organisation to find out how to obtain a referral."}
+                                      position="bottom"
+                                    >
+                                      <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium cursor-help" style={{backgroundColor: 'var(--color-brand-j)', color: 'white'}}>
+                                        Referral Required
+                                      </span>
+                                    </Tooltip>
+                                  )}
+                                  {accommodationData.isOpenAccess && (
+                                    <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium" style={{backgroundColor: 'var(--color-brand-b)', color: 'white'}}>
+                                      Open Access
+                                    </span>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                          );
+                        })()}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Accommodation Details */}
+                  {selectedLocation && (selectedLocation as ServiceLocation).service.category === 'accom' && (
+                    <div className="mb-4 relative">
+                      {loadingContent === accordionKey && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                        </div>
+                      )}
+                      <div className={`transition-opacity duration-200 ${loadingContent === accordionKey ? 'opacity-50' : 'opacity-100'}`}>
+                        {(() => {
+                          const accommodationData = (selectedLocation as ServiceLocation).service.accommodationData;
+                          if (!accommodationData) return null;
+
+                          return (
+                            <div className="space-y-6">
+                              <h4 className="text-lg font-semibold mb-4 border-b pb-2" style={{ color: 'var(--color-brand-k)', borderColor: 'var(--color-brand-q)' }}>
+                                Accommodation Information
+                              </h4>
+                              
+                              {/* Description with read more */}
+                              {(accommodationData.description || accommodationData.synopsis) && (
+                                <div className="mb-4">
+                                  {(() => {
+                                    // Use description if available, otherwise fall back to synopsis
+                                    const description = accommodationData.description || accommodationData.synopsis || '';
+                                    const shouldTruncate = description.length > 140;
+                                    const truncatedDescription = shouldTruncate ? description.slice(0, 140) + '...' : description;
+                                    const descriptionKey = `${accordionKey}-description`;
+                                    const isExpanded = expandedDescriptions[descriptionKey] || false;
+                                    
+                                    return (
+                                      <div className="text-sm" style={{ color: 'var(--color-brand-l)', lineHeight: '1.6' }}>
+                                        <p>
+                                          {isExpanded || !shouldTruncate ? description : truncatedDescription}
+                                          {shouldTruncate && (
+                                            <button 
+                                              onClick={() => setExpandedDescriptions(prev => ({
+                                                ...prev,
+                                                [descriptionKey]: !isExpanded
+                                              }))}
+                                              className="ml-2 text-sm font-medium underline hover:no-underline focus:outline-none focus:ring-2 focus:ring-opacity-50 rounded"
+                                              style={{ color: 'var(--color-brand-a)' }}
+                                            >
+                                              {isExpanded ? 'Read less' : 'Read more'}
+                                            </button>
+                                          )}
+                                        </p>
+                                      </div>
+                                    );
+                                  })()}
+                                </div>
+                              )}
+                              
+                              {/* Application & Contact */}
+                              <div className="rounded-lg p-4" style={{ backgroundColor: '#f0f9f7', borderLeft: '4px solid var(--color-brand-b)' }}>
+                                <h5 className="font-semibold mb-3" style={{ color: 'var(--color-brand-k)' }}>
+                                  How to Apply & Contact
+                                </h5>
+                                <div className="space-y-3">
+                                  {accommodationData.referralNotes && (
+                                    <div>
+                                      <p className="font-medium text-sm mb-1" style={{ color: 'var(--color-brand-k)' }}>Application Process:</p>
+                                      <p className="text-sm p-3 rounded" style={{ color: 'var(--color-brand-l)', backgroundColor: 'var(--color-brand-q)' }}>{accommodationData.referralNotes}</p>
+                                    </div>
+                                  )}
+                                  
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {accommodationData.contact?.name && (
+                                      <div>
+                                        <p className="font-medium text-sm" style={{ color: 'var(--color-brand-k)' }}>Contact Person:</p>
+                                        <p className="text-sm" style={{ color: 'var(--color-brand-l)' }}>{accommodationData.contact.name}</p>
+                                      </div>
+                                    )}
+                                    {accommodationData.contact?.telephone && (
+                                      <div>
+                                        <p className="font-medium text-sm" style={{ color: 'var(--color-brand-k)' }}>Phone:</p>
+                                        <p className="text-sm font-mono" style={{ color: 'var(--color-brand-l)' }}>{accommodationData.contact.telephone}</p>
+                                      </div>
+                                    )}
+                                    {accommodationData.contact?.email && (
+                                      <div>
+                                        <p className="font-medium text-sm" style={{ color: 'var(--color-brand-k)' }}>Email:</p>
+                                        <p className="text-sm" style={{ color: 'var(--color-brand-l)' }}>{accommodationData.contact.email}</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Cost & Meals */}
+                              <div className="rounded-lg p-4" style={{ backgroundColor: '#fef9e7', borderLeft: '4px solid var(--color-brand-j)' }}>
+                                <h5 className="font-semibold mb-3" style={{ color: 'var(--color-brand-k)' }}>
+                                  Cost & Meals
+                                </h5>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <div>
+                                    <p className="font-medium text-sm mb-1" style={{ color: 'var(--color-brand-k)' }}>Weekly Cost:</p>
+                                    <p className="text-lg font-bold" style={{ color: 'var(--color-brand-a)' }}>
+                                      {accommodationData.price === '0' || !accommodationData.price ? 'Free' : `£${accommodationData.price}`}
+                                    </p>
+                                  </div>
+                                  <div>
+                                    <p className="font-medium text-sm mb-1" style={{ color: 'var(--color-brand-k)' }}>Meals Included:</p>
+                                    <p className="text-sm" style={{ color: 'var(--color-brand-l)' }}>
+                                      {accommodationData.foodIncluded === 1 ? 'Yes' : 
+                                       accommodationData.foodIncluded === 0 ? 'No' : 'Not specified'}
+                                    </p>
+                                    {accommodationData.availabilityOfMeals && (
+                                      <p className="text-xs mt-1" style={{ color: 'var(--color-brand-f)' }}>{accommodationData.availabilityOfMeals}</p>
+                                    )}
+                                  </div>
+                                  <div>
+                                    <p className="font-medium text-sm mb-1" style={{ color: 'var(--color-brand-k)' }}>Housing Benefit:</p>
+                                    <p className="text-sm" style={{ color: 'var(--color-brand-l)' }}>
+                                      {accommodationData.features?.acceptsHousingBenefit === 1 ? 'Accepted' : 
+                                       accommodationData.features?.acceptsHousingBenefit === 0 ? 'Not accepted' : 'Not specified'}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Who Can Stay */}
+                              <div className="rounded-lg p-4" style={{ backgroundColor: '#f0f4ff', borderLeft: '4px solid var(--color-brand-h)' }}>
+                                <h5 className="font-semibold mb-3" style={{ color: 'var(--color-brand-k)' }}>
+                                  Who Can Stay
+                                </h5>
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+                                  {(() => {
+                                    const renderCriteria = (key: string, label: string, value: unknown) => {
+                                      const isAccepted = value === true || value === 1;
+                                      const isUnspecified = value === 2 || value === undefined || value === null;
+                                      
+                                      if (isUnspecified) {
+                                        return (
+                                          <div key={key} style={{ color: 'var(--color-brand-f)' }}>
+                                            {label} (not specified)
+                                          </div>
+                                        );
+                                      }
+                                      
+                                      return (
+                                        <div key={key} style={{ color: isAccepted ? 'var(--color-brand-b)' : 'var(--color-brand-g)' }}>
+                                          {isAccepted ? '✓' : '✗'} {label}
+                                        </div>
+                                      );
+                                    };
+                                    
+                                    return [
+                                      renderCriteria('men', 'Men', accommodationData.residentCriteria?.acceptsMen),
+                                      renderCriteria('women', 'Women', accommodationData.residentCriteria?.acceptsWomen),
+                                      renderCriteria('couples', 'Couples', accommodationData.residentCriteria?.acceptsCouples),
+                                      renderCriteria('young', 'Young People', accommodationData.residentCriteria?.acceptsYoungPeople),
+                                      renderCriteria('families', 'Families', accommodationData.residentCriteria?.acceptsFamilies),
+                                      renderCriteria('benefits', 'Benefits Claimants', accommodationData.residentCriteria?.acceptsBenefitsClaimants)
+                                    ];
+                                  })()}
+                                </div>
+                              </div>
+
+                              {/* Facilities & Features */}
+                              <div className="rounded-lg p-4" style={{backgroundColor: '#faf9f7', borderLeft: '4px solid var(--color-brand-d)'}}>
+                                <h5 className="font-semibold mb-3" style={{color: 'var(--color-brand-k)'}}>
+                                  Facilities & Features
+                                </h5>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <div>
+                                    <p className="font-medium text-sm mb-2" style={{color: 'var(--color-brand-k)'}}>Room Types:</p>
+                                    <div className="space-y-1 text-sm">
+                                      {(() => {
+                                        const singleRooms = accommodationData.features?.hasSingleRooms;
+                                        const sharedRooms = accommodationData.features?.hasSharedRooms;
+                                        
+                                        const items = [];
+                                        if (singleRooms === 1) {
+                                          items.push(<div key="single" style={{color: 'var(--color-brand-b)'}}>✓ Single rooms available</div>);
+                                        } else if (singleRooms === 0) {
+                                          items.push(<div key="single" style={{color: 'var(--color-brand-g)'}}>✗ No single rooms</div>);
+                                        }
+                                        
+                                        if (sharedRooms === 1) {
+                                          items.push(<div key="shared" style={{color: 'var(--color-brand-b)'}}>✓ Shared rooms available</div>);
+                                        } else if (sharedRooms === 0) {
+                                          items.push(<div key="shared" style={{color: 'var(--color-brand-g)'}}>✗ No shared rooms</div>);
+                                        }
+                                        
+                                        if (items.length === 0) {
+                                          items.push(<div key="none" style={{color: 'var(--color-brand-f)'}}>Room types not specified</div>);
+                                        }
+                                        
+                                        return items;
+                                      })()}
+                                    </div>
+                                  </div>
+                                  
+                                  <div>
+                                    <p className="font-medium text-sm mb-2" style={{color: 'var(--color-brand-k)'}}>Facilities:</p>
+                                    <div className="flex flex-wrap gap-1">
+                                      {(() => {
+                                        const facilities = [];
+                                        const features = accommodationData.features || {};
+                                        
+                                        if (features.hasAccessToKitchen === 1) {
+                                          facilities.push(<span key="kitchen" className="px-2 py-1 rounded text-xs font-medium" style={{backgroundColor: 'var(--color-brand-d)', color: 'white'}}>Kitchen</span>);
+                                        }
+                                        if (features.hasLaundryFacilities === 1) {
+                                          facilities.push(<span key="laundry" className="px-2 py-1 rounded text-xs font-medium" style={{backgroundColor: 'var(--color-brand-d)', color: 'white'}}>Laundry</span>);
+                                        }
+                                        if (features.hasLounge === 1) {
+                                          facilities.push(<span key="lounge" className="px-2 py-1 rounded text-xs font-medium" style={{backgroundColor: 'var(--color-brand-d)', color: 'white'}}>Lounge</span>);
+                                        }
+                                        if (features.hasShowerBathroomFacilities === 1) {
+                                          facilities.push(<span key="bathroom" className="px-2 py-1 rounded text-xs font-medium" style={{backgroundColor: 'var(--color-brand-d)', color: 'white'}}>Bathroom</span>);
+                                        }
+                                        
+                                        if (facilities.length === 0) {
+                                          facilities.push(<span key="none" className="px-2 py-1 text-xs" style={{color: 'var(--color-brand-f)'}}>Facilities not specified</span>);
+                                        }
+                                        
+                                        return facilities;
+                                      })()}
+                                    </div>
+                                  </div>
+
+                                  <div>
+                                    <p className="font-medium text-sm mb-2" style={{color: 'var(--color-brand-k)'}}>Accessibility & Policies:</p>
+                                    <div className="space-y-1 text-sm">
+                                      {(() => {
+                                        const policies = [];
+                                        const features = accommodationData.features || {};
+                                        
+                                        if (features.hasDisabledAccess === 1) {
+                                          policies.push(<div key="disabled" style={{color: 'var(--color-brand-b)'}}>✓ Wheelchair accessible</div>);
+                                        } else if (features.hasDisabledAccess === 0) {
+                                          policies.push(<div key="disabled" style={{color: 'var(--color-brand-g)'}}>✗ Not wheelchair accessible</div>);
+                                        }
+                                        
+                                        if (features.acceptsPets === 1) {
+                                          policies.push(<div key="pets" style={{color: 'var(--color-brand-b)'}}>✓ Pets allowed</div>);
+                                        } else if (features.acceptsPets === 0) {
+                                          policies.push(<div key="pets" style={{color: 'var(--color-brand-g)'}}>✗ No pets allowed</div>);
+                                        }
+                                        
+                                        if (features.allowsVisitors === 1) {
+                                          policies.push(<div key="visitors" style={{color: 'var(--color-brand-b)'}}>✓ Visitors allowed</div>);
+                                        } else if (features.allowsVisitors === 0) {
+                                          policies.push(<div key="visitors" style={{color: 'var(--color-brand-g)'}}>✗ No visitors allowed</div>);
+                                        }
+                                        
+                                        if (policies.length === 0) {
+                                          policies.push(<div key="none" style={{color: 'var(--color-brand-f)'}}>Policies not specified</div>);
+                                        }
+                                        
+                                        return policies;
+                                      })()}
+                                    </div>
+                                  </div>
+
+                                  <div>
+                                    <p className="font-medium text-sm mb-2" style={{color: 'var(--color-brand-k)'}}>Management:</p>
+                                    <div className="text-sm">
+                                      {accommodationData.features?.hasOnSiteManager === 1 ? (
+                                        <div style={{color: 'var(--color-brand-b)'}}>✓ On-site manager</div>
+                                      ) : accommodationData.features?.hasOnSiteManager === 0 ? (
+                                        <div style={{color: 'var(--color-brand-g)'}}>✗ No on-site manager</div>
+                                      ) : (
+                                        <div style={{color: 'var(--color-brand-f)'}}>Management not specified</div>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                {accommodationData.features?.additionalFeatures && (
+                                  <div className="mt-3 pt-3" style={{borderTop: '1px solid var(--color-brand-q)'}}>
+                                    <p className="font-medium text-sm mb-1" style={{color: 'var(--color-brand-k)'}}>Additional Features:</p>
+                                    <p className="text-sm p-2 rounded" style={{color: 'var(--color-brand-l)', backgroundColor: 'var(--color-brand-q)'}}>{accommodationData.features.additionalFeatures}</p>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Support Services */}
+                              {(accommodationData.support?.supportOffered?.length > 0 || accommodationData.support?.supportInfo) && (
+                                <div className="rounded-lg p-4" style={{backgroundColor: '#f8f5ff', borderLeft: '4px solid var(--color-brand-h)'}}>
+                                  <h5 className="font-semibold mb-3" style={{color: 'var(--color-brand-k)'}}>
+                                    Support Services
+                                  </h5>
+                                  {accommodationData.support.supportOffered?.length > 0 && (
+                                    <div className="mb-3">
+                                      <p className="font-medium text-sm mb-2" style={{color: 'var(--color-brand-k)'}}>Support Available For:</p>
+                                      <div className="flex flex-wrap gap-2">
+                                        {accommodationData.support.supportOffered.map((support: string, index: number) => (
+                                          <span key={index} className="px-3 py-1 rounded text-sm font-medium" style={{backgroundColor: 'var(--color-brand-h)', color: 'white'}}>
+                                            {support === 'mental health' ? 'Mental Health' :
+                                             support === 'substances' ? 'Substance Abuse' :
+                                             support === 'alcohol' ? 'Alcohol Issues' :
+                                             support === 'domestic violence' ? 'Domestic Violence' :
+                                             support === 'physical health' ? 'Physical Health' :
+                                             support.charAt(0).toUpperCase() + support.slice(1)}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                  {accommodationData.support?.supportInfo && (
+                                    <div>
+                                      <p className="font-medium text-sm mb-1" style={{color: 'var(--color-brand-k)'}}>Support Details:</p>
+                                      <p className="text-sm p-2 rounded" style={{color: 'var(--color-brand-l)', backgroundColor: 'var(--color-brand-q)'}}>{accommodationData.support.supportInfo}</p>
+                                    </div>
+                                  )}
+                                </div>
                               )}
                             </div>
                           );
@@ -460,23 +814,17 @@ export default function OrganisationServicesAccordion({
                       <div className="flex items-center gap-2 mb-1">
                         <p className="font-semibold">Opening Times:</p>
                         {(() => {
-                          const serviceWithDistance = {
-                            ...(selectedLocation as ServiceLocation).service,
-                            organisation: {
-                              name: (selectedLocation as ServiceLocation).service.organisation,
-                              slug: (selectedLocation as ServiceLocation).service.organisationSlug,
-                              isVerified: false,
-                            },
-                          };
-                          const openingStatus = isServiceOpenNow(serviceWithDistance as ServiceWithDistance);
+                          // selectedLocation.service is already a ServiceWithDistance, no transformation needed
+                          const service = (selectedLocation as ServiceLocation).service;
+                          const openingStatus = isServiceOpenNow(service);
                           
                           // Check for phone service
-                          const isPhoneService = (selectedLocation as ServiceLocation).service.subCategory.toLowerCase().includes('telephone') || 
-                                               (selectedLocation as ServiceLocation).service.subCategory.toLowerCase().includes('phone') ||
-                                               (selectedLocation as ServiceLocation).service.subCategory.toLowerCase().includes('helpline');
+                          const isPhoneService = service.subCategory.toLowerCase().includes('telephone') || 
+                                               service.subCategory.toLowerCase().includes('phone') ||
+                                               service.subCategory.toLowerCase().includes('helpline');
                           
                           // Check for 24-hour service
-                          const is24Hour = (selectedLocation as ServiceLocation).service.openTimes.some((slot) => {
+                          const is24Hour = service.openTimes.some((slot) => {
                             const startTime = Number(slot.start);
                             const endTime = Number(slot.end);
                             return startTime === 0 && endTime === 2359; // 00:00 to 23:59

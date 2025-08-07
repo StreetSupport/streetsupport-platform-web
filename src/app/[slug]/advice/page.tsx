@@ -1,9 +1,30 @@
 import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
 import locations from '@/data/locations.json';
 import AdvicePageClient from './AdvicePageClient';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import { generateLocationSEOMetadata } from '@/utils/seo';
 
 export const dynamic = 'force-dynamic';
+
+// @ts-expect-error Next dynamic param inference workaround
+export async function generateMetadata(props): Promise<Metadata> {
+  const { slug } = await props.params;
+
+  const location = locations.find(
+    (loc) => loc.slug === slug && loc.isPublic
+  );
+
+  if (!location) {
+    return {
+      title: 'Emergency Advice Not Found | Street Support Network',
+      description: 'The requested emergency advice page could not be found.',
+      robots: 'noindex, nofollow'
+    };
+  }
+
+  return generateLocationSEOMetadata(location.name, slug, 'advice');
+}
 
 // @ts-expect-error Next dynamic param inference workaround
 export default async function AdvicePage(props) {

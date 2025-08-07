@@ -4,7 +4,6 @@ export default defineConfig({
   testDir: '../tests/e2e',
   testMatch: '**/*.spec.ts',
   timeout: 60000,
-  retries: 2,
   use: {
     baseURL: 'http://localhost:3000',
     trace: 'retain-on-failure',

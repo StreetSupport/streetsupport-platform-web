@@ -36,7 +36,7 @@ export default function Accordion({
         </svg>
       </button>
 
-      <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'}`}>
+      <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-[9999px] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="px-6 py-4 border-t border-brand-q bg-white shadow-lg">
           {children}
         </div>

@@ -17,7 +17,7 @@ export default function FindHelpStateCleanup() {
     // - /find-help (main search page)
     // - /find-help/organisation/[slug] (organisation pages)
     const isInFindHelpFlow = pathname === '/find-help' || 
-                           pathname.startsWith('/find-help/organisation/');
+                           (pathname && pathname.startsWith('/find-help/organisation/'));
     
     if (!isInFindHelpFlow) {
       clearSearchState();

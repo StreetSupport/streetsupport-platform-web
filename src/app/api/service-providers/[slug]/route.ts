@@ -1,6 +1,48 @@
 import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
 import { decodeText } from '@/utils/htmlDecode';
+import { loadAccommodationDataForProvider, type AccommodationData } from '@/utils/accommodationData';
+
+// This function is now replaced by loadAccommodationDataForProvider() from utils/accommodationData.ts
+
+// Function to transform accommodation to service format for organisation pages
+function transformAccommodationToOrganisationService(accommodation: AccommodationData) {
+  return {
+    _id: accommodation.id,
+    ParentCategoryKey: 'accom',
+    SubCategoryKey: accommodation.accommodation?.type || 'other',
+    SubCategoryName: accommodation.accommodation?.type || 'Other',
+    Info: accommodation.synopsis || accommodation.description || '',
+    OpeningTimes: [],
+    ClientGroups: [],
+    Address: {
+      Location: {
+        type: 'Point',
+        coordinates: [accommodation.address?.longitude || 0, accommodation.address?.latitude || 0]
+      },
+      City: accommodation.address?.city || '',
+      Street: accommodation.address?.street1 || '',
+      Postcode: accommodation.address?.postcode || ''
+    },
+    // Add accommodation-specific data for the accordion display
+    accommodationData: {
+      type: accommodation.accommodation?.type,
+      isOpenAccess: accommodation.accommodation?.isOpenAccess,
+      referralRequired: accommodation.accommodation?.referralRequired,
+      referralNotes: accommodation.accommodation?.referralNotes,
+      price: accommodation.accommodation?.price,
+      foodIncluded: accommodation.accommodation?.foodIncluded,
+      availabilityOfMeals: accommodation.accommodation?.availabilityOfMeals,
+      features: accommodation.features || {},
+      residentCriteria: accommodation.residentCriteria || {},
+      support: accommodation.support || {},
+      contact: accommodation.contact || {},
+      synopsis: decodeText(accommodation.synopsis || ''),
+      description: decodeText(accommodation.description || '')
+    },
+    sourceType: 'accommodation'
+  };
+}
 
 export async function GET(req: Request) {
   // ✅ App Router API routes do not receive `context.params`
@@ -92,7 +134,14 @@ export async function GET(req: Request) {
       location: null // Could add location name if needed
     } : null;
 
-    const services = servicesResult;
+    // Load accommodation data for this organisation from database
+    const organisationAccommodation = await loadAccommodationDataForProvider(rawProvider.Key);
+
+    // Transform accommodation to service format
+    const accommodationServices = organisationAccommodation.map(transformAccommodationToOrganisationService);
+    
+    // Combine regular services with accommodation services
+    const services = [...servicesResult, ...accommodationServices];
 
     const provider = {
       key: rawProvider.Key,
@@ -114,19 +163,34 @@ export async function GET(req: Request) {
       addresses: rawProvider.Addresses || [],
     };
 
-    const decodedServices = services.map(service => ({
-      ...service,
-      Info: decodeText(service.Info || ''),
-      SubCategoryName: decodeText(service.SubCategoryName || '')
-    }));
+    const decodedServices = services.map(service => {
+      const decoded = {
+        ...service,
+        Info: decodeText(service.Info || ''),
+        SubCategoryName: decodeText(service.SubCategoryName || ''),
+        // Ensure accommodation data is preserved
+        ...(service.accommodationData && { accommodationData: service.accommodationData }),
+        ...(service.sourceType && { sourceType: service.sourceType })
+      };
+      
+      
+      return decoded;
+    });
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       status: 'success',
       organisation: provider,
       addresses: provider.addresses,
       services: decodedServices,
       userContext: userContext,
     });
+
+    // Add cache headers for better performance
+    response.headers.set('Cache-Control', 'public, max-age=600, s-maxage=1200, stale-while-revalidate=86400'); // 10 min browser, 20 min CDN, 24h stale
+    response.headers.set('ETag', `org-${slug}-${services.length}`);
+    response.headers.set('Vary', 'Accept-Encoding');
+    
+    return response;
 
   } catch (error) {
     console.error('[API ERROR] /api/service-providers/[slug]:', error);

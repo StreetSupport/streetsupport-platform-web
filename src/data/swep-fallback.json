@@ -1,0 +1,62 @@
+[
+  {
+    "id": "swep-wakefield-1",
+    "locationSlug": "wakefield",
+    "title": "Severe Weather Emergency Protocol - Wakefield District",
+    "body": "<p>Due to severe weather conditions, additional emergency accommodation and support services are now available in Wakefield District.</p>\n\n<h3>Emergency Accommodation</h3>\n<ul>\n  <li>Emergency shelter spaces available at several locations across the area</li>\n  <li>No appointment necessary - walk-in service available</li>\n  <li>Hot meals and warm drinks provided</li>\n  <li>Safe, warm environment for all adults experiencing homelessness</li>\n</ul>\n\n<h3>Support Services</h3>\n<ul>\n  <li>Outreach teams operating extended hours</li>\n  <li>Additional support workers available at key locations</li>\n  <li>Emergency clothing and supplies available</li>\n  <li>Connection to ongoing support services</li>\n</ul>\n\n<h3>How to Access Support</h3>\n<p>If you need emergency accommodation during this period:</p>\n<ul>\n  <li>Contact the emergency helpline: <strong>0800 123 4567</strong></li>\n  <li>Visit drop-in centres which remain open extended hours</li>\n  <li>Speak to outreach workers operating in the area</li>\n</ul>\n\n<p>If you see someone sleeping rough during this period, please contact <a href=\"https://thestreetlink.org.uk\" target=\"_blank\" rel=\"noopener noreferrer\">StreetLink</a> or call the emergency services if there is immediate danger.</p>",
+    "image": "/assets/img/swep-wakefield.jpg",
+    "shortMessage": "Emergency accommodation and services are available due to severe weather conditions.",
+    "swepActiveFrom": "2024-01-15T00:00:00Z",
+    "swepActiveUntil": "2024-01-20T23:59:59Z",
+    "isActive": false,
+    "createdAt": "2025-08-05T14:00:00Z",
+    "updatedAt": "2025-08-05T14:00:00Z",
+    "createdBy": "admin",
+    "status": "published",
+    "emergencyContact": {
+      "phone": "0800 123 4567",
+      "email": "emergency@wakefield.gov.uk",
+      "hours": "24/7 during SWEP activation"
+    },
+    "additionalInfo": {
+      "weatherWarning": "Met Office severe weather warning in effect",
+      "triggerCriteria": "Temperature forecast below 0°C for 3 consecutive nights",
+      "accommodationCapacity": 50,
+      "servicesAffected": [
+        "Extended outreach hours",
+        "Additional emergency beds",
+        "24/7 helpline activation"
+      ]
+    }
+  },
+  {
+    "id": "swep-manchester-1",
+    "locationSlug": "manchester",
+    "title": "Severe Weather Emergency Protocol - Manchester",
+    "body": "<p>Due to severe weather conditions, additional emergency accommodation and support services are now available in Manchester.</p>\n\n<h3>Emergency Accommodation</h3>\n<ul>\n  <li>Emergency shelter spaces available at several locations across the city</li>\n  <li>No appointment necessary - walk-in service available</li>\n  <li>Hot meals and warm drinks provided</li>\n</ul>\n\n<h3>Support Services</h3>\n<ul>\n  <li>Outreach teams operating extended hours</li>\n  <li>Additional support workers available at key locations</li>\n  <li>Emergency clothing and supplies available</li>\n</ul>\n\n<p>If you see someone sleeping rough during this period, please contact <a href=\"https://thestreetlink.org.uk\" target=\"_blank\" rel=\"noopener noreferrer\">StreetLink</a> or call the emergency services if there is immediate danger.</p>",
+    "image": "/assets/img/swep-manchester.jpg",
+    "shortMessage": "Emergency accommodation and services are available due to severe weather conditions.",
+    "swepActiveFrom": "2024-01-15T18:00:00Z",
+    "swepActiveUntil": "2024-01-18T09:00:00Z",
+    "isActive": false,
+    "createdAt": "2024-01-15T12:00:00Z",
+    "updatedAt": "2024-01-18T10:00:00Z",
+    "createdBy": "admin",
+    "status": "published",
+    "emergencyContact": {
+      "phone": "0161 234 5678",
+      "email": "emergency@manchester.gov.uk",
+      "hours": "24/7 during SWEP activation"
+    },
+    "additionalInfo": {
+      "weatherWarning": "Met Office severe weather warning expired",
+      "triggerCriteria": "Temperature forecast below 0°C for 3 consecutive nights",
+      "accommodationCapacity": 75,
+      "servicesAffected": [
+        "Extended outreach hours",
+        "Additional emergency beds",
+        "24/7 helpline activation"
+      ]
+    }
+  }
+]

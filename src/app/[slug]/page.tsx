@@ -1,11 +1,16 @@
 import Link from 'next/link';
+import { Metadata } from 'next';
 import locations from '@/data/locations.json';
 import { notFound } from 'next/navigation';
 import Hero from '@/components/ui/Hero';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import SwepBannerWrapper from '@/components/ui/SwepBannerWrapper';
 import LocationFindHelp from '@/components/Location/LocationFindHelp';
 import LocationStatistics from '@/components/Location/LocationStatistics';
 import LocationNews from '@/components/Location/LocationNews';
+import EmergencyContactSection from '@/components/Location/EmergencyContactSection';
+import SupporterLogos from '@/components/Location/SupporterLogos';
+import { generateLocationSEOMetadata } from '@/utils/seo';
 
 export const dynamic = 'force-dynamic';
 
@@ -69,6 +74,25 @@ function getLocationContactEmail(slug: string): string {
 }
 
 // @ts-expect-error Next dynamic param inference workaround
+export async function generateMetadata(props): Promise<Metadata> {
+  const { slug } = await props.params;
+
+  const location = locations.find(
+    (loc) => loc.slug === slug && loc.isPublic
+  );
+
+  if (!location) {
+    return {
+      title: 'Location Not Found | Street Support Network',
+      description: 'The requested location page could not be found.',
+      robots: 'noindex, nofollow'
+    };
+  }
+
+  return generateLocationSEOMetadata(location.name, slug, 'main');
+}
+
+// @ts-expect-error Next dynamic param inference workaround
 export default async function LocationPage(props) {
   const { slug } = await props.params;
 
@@ -83,9 +107,75 @@ export default async function LocationPage(props) {
   const locationImage = getLocationBackgroundImage(slug);
   const homeBackground = "/assets/img/home-header-background.png";
   const contactEmail = getLocationContactEmail(slug);
+  
+  // SWEP data is now fetched client-side by SwepBannerWrapper
+
+  // Generate structured data for the location
+  const locationStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "Place",
+    "name": location.name,
+    "description": `Street Support services and information for ${location.name}. Find homelessness support, emergency help, and local resources.`,
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": location.latitude,
+      "longitude": location.longitude
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": location.name,
+      "addressCountry": "GB"
+    },
+    "url": `https://streetsupport.net/${slug}`,
+    "additionalType": "City",
+    "containsPlace": {
+      "@type": "Organization",
+      "name": `Street Support ${location.name}`,
+      "description": `Local Street Support Network services in ${location.name}`,
+      "url": `https://streetsupport.net/${slug}`,
+      "areaServed": {
+        "@type": "City",
+        "name": location.name
+      },
+      "serviceType": "Homelessness Support Services"
+    }
+  };
+
+  const breadcrumbStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://streetsupport.net/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": location.name,
+        "item": `https://streetsupport.net/${slug}`
+      }
+    ]
+  };
 
   return (
     <main>
+      {/* Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(locationStructuredData)
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbStructuredData)
+        }}
+      />
+
       <Breadcrumbs 
         items={[
           { href: "/", label: "Home" },
@@ -103,25 +193,10 @@ export default async function LocationPage(props) {
         ctaLink="/find-help"
       />
 
-      <section className="bg-brand-i py-12">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-2xl font-bold mb-4 text-black">Help someone sleeping rough</h2>
-          <p className="mb-3 text-black">
-            If you are worried about someone you&apos;ve seen sleeping rough anywhere in {location.name}, you can inform{' '}
-            <a href="https://thestreetlink.org.uk" className="text-brand-a hover:text-brand-b underline font-semibold">StreetLink</a>.
-          </p>
-          <p className="mb-6 text-black">
-            If the person is in immediate danger or needs urgent care, please call{' '}
-            <a href="tel:999" className="text-red-600 hover:text-red-700 underline font-semibold">999</a>.
-          </p>
-          <Link
-            href={`/${location.slug}/advice`}
-            className="inline-flex items-center justify-center px-8 py-3 bg-brand-a text-white font-semibold rounded-md hover:bg-brand-b active:bg-brand-c transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-a focus:ring-offset-2"
-          >
-            See more emergency advice
-          </Link>
-        </div>
-      </section>
+      {/* SWEP Banner - fetches data client-side and displays when active */}
+      <SwepBannerWrapper locationSlug={slug} />
+
+      <EmergencyContactSection locationName={location.name} locationSlug={slug} />
 
       {/* Find Help Tools */}
       <section className="py-12">
@@ -168,6 +243,9 @@ export default async function LocationPage(props) {
           </p>
         </div>
       </section>
+
+      {/* Supporter Logos Section */}
+      <SupporterLogos locationSlug={slug} />
     </main>
   );
 }

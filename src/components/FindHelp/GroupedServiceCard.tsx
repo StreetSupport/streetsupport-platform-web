@@ -57,7 +57,7 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
     }
     
     // Add current search parameters if available
-    searchParams.forEach((value, key) => {
+    searchParams?.forEach((value, key) => {
       if (!params.has(key)) {
         params.set(key, value);
       }

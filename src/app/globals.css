@@ -22,6 +22,82 @@
   --color-brand-s: #E1B500;
 }
 
+/* West Midlands specific styles */
+.block--west-mids-header {
+  background: linear-gradient(135deg, var(--color-brand-a) 0%, var(--color-brand-d) 100%);
+  color: white;
+  padding: 4rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.block--west-mids-locations {
+  padding: 3rem 0;
+  background-color: white;
+}
+
+.west-mids-location {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.btn--west-mids-locations {
+  background-color: var(--color-brand-i);
+  color: var(--color-brand-l);
+  border: 2px solid transparent;
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: block;
+}
+
+.btn--west-mids-locations:hover {
+  background-color: var(--color-brand-a);
+  color: white;
+  border-color: var(--color-brand-a);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.block--wmca-taskforce {
+  background-color: var(--color-brand-g);
+}
+
+.block--change-into-action {
+  padding: 4rem 0;
+  background-color: white;
+}
+
+.block__change-into-action {
+  max-width: 400px;
+  margin: 0 auto 2rem;
+  text-align: center;
+}
+
+.home__copy--change-into-action {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.block--alternative-giving-campaign {
+  padding: 4rem 0;
+  background-color: var(--color-brand-q);
+}
+
+.block__alternative-giving-campaign {
+  max-width: 400px;
+  margin: 0 auto 2rem;
+  text-align: center;
+}
+
 /* Loading animations */
 @keyframes loading-border {
   0% {
@@ -102,12 +178,12 @@
 
 /* Base button styles */
 .btn-base {
-  @apply inline-flex items-center justify-center font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-a focus:ring-offset-2 focus:ring-offset-brand-q disabled:opacity-60 disabled:cursor-not-allowed;
+  @apply inline-flex items-center justify-center font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-a focus:ring-offset-2 focus:ring-offset-brand-q disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer;
 }
 
 /* Button Types */
 .btn-primary {
-  @apply bg-brand-a text-white hover:bg-brand-b active:bg-brand-c transition-colors duration-200;
+  @apply bg-brand-a text-white hover:bg-brand-b hover:text-white active:bg-brand-c active:text-white transition-colors duration-200;
 }
 
 .btn-secondary {
@@ -214,7 +290,7 @@
 
 /* Card System */
 .card {
-  @apply bg-white border border-brand-q rounded-md shadow-sm transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02];
+  @apply bg-white border border-brand-q rounded-md shadow-sm transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02] cursor-pointer;
 }
 
 .card-featured {
@@ -278,7 +354,7 @@
 }
 
 .nav-link {
-  @apply text-brand-k hover:text-brand-a transition-colors duration-200 font-medium;
+  @apply text-brand-k hover:text-brand-a transition-colors duration-200 font-medium cursor-pointer;
 }
 
 .nav-link-active {
@@ -298,7 +374,7 @@
 }
 
 .mobile-nav-link {
-  @apply block px-4 py-2 text-brand-k hover:bg-brand-i transition-colors duration-200;
+  @apply block px-4 py-2 text-brand-k hover:bg-brand-i transition-colors duration-200 cursor-pointer;
 }
 
 /* Service Tags */
@@ -971,7 +1047,7 @@ Responsive breakpoints:
   .hero-location-wakefield {
     background-size: 70%;
     width: 100%;
-    height: 123%;
+    height: 120%;
     bottom: 10px;
   }
 }
@@ -1015,6 +1091,17 @@ Responsive breakpoints:
   }
 }
 
+/* SWEP Banner Styles */
+.swep-banner {
+  position: relative;
+  z-index: 40;
+}
+
+.swep-banner a {
+  position: relative;
+  z-index: 41;
+}
+
 /* Remove default marker in Chrome, Safari, Edge */
 .custom-accordion summary::-webkit-details-marker {
   display: none;
@@ -1032,7 +1119,7 @@ a {
 
 /* Override for nav links which have their own styling */
 .nav-link {
-  @apply text-brand-k hover:text-brand-a transition-colors duration-200 font-medium;
+  @apply text-brand-k hover:text-brand-a transition-colors duration-200 font-medium cursor-pointer;
 }
 
 /* Override for button links to ensure white text */
@@ -1115,7 +1202,7 @@ a.inline-flex[class*="bg-brand-"]:active {
 
 /* Enhanced Mobile Navigation Links */
 .mobile-nav-link {
-  @apply block px-4 py-3 text-brand-k hover:bg-brand-i hover:text-brand-a transition-all duration-200 rounded-md mx-2 font-medium min-h-[48px] flex items-center text-base;
+  @apply block px-4 py-3 text-brand-k hover:bg-brand-i hover:text-brand-a transition-all duration-200 rounded-md mx-2 font-medium min-h-[48px] flex items-center text-base cursor-pointer;
   position: relative;
   border-left: 3px solid transparent;
 }
@@ -1424,4 +1511,14 @@ select:disabled {
   background-image: url('data:image/svg+xml;charset=US-ASCII,<svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L6 6L11 1" stroke="%23666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
   background-repeat: no-repeat;
   background-position: right 16px center;
+}
+
+/* Tooltip responsive styling */
+@media (max-width: 640px) {
+  .tooltip-content {
+    max-width: 250px !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+  }
 }

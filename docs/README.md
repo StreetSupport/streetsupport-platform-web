@@ -10,6 +10,9 @@ Strategic documentation and project planning materials:
 
 ### 🛠️ [Development](./development/)
 Technical implementation guides and development workflows:
+- [**Development Guide**](./development/README.md) - Comprehensive development setup and workflow guide
+- [**Next.js 15 Implementation**](./development/nextjs-implementation.md) - App Router patterns and performance optimisation
+- [**State Management Architecture**](./development/state-management.md) - React Context providers and URL state synchronisation
 - [**API Scaffold & Database Helper Summary**](./development/api-scaffold-and-db-helper-summary.md) - API implementation patterns
 - [**MongoDB Connection Guide**](./development/confirm-and-test-mongo-db.md) - Database setup and testing
 - [**Image Optimisation**](./development/IMAGE_OPTIMISATION.md) - Performance optimisation strategies
@@ -21,8 +24,16 @@ Comprehensive testing strategies and implementation guides:
 
 ### 🚀 [Deployment](./deployment/)
 CI/CD workflows and deployment configurations:
-- [**GitHub Actions Workflow**](./deployment/WORKFLOW.md) - Complete CI/CD pipeline documentation
-- [**Secrets Management**](./deployment/SECRETS.md) - Security and secrets handling guide
+- [**GitHub Actions Workflow**](./deployment/workflow.md) - Complete CI/CD pipeline documentation
+- [**Secrets Management**](./deployment/secrets.md) - Security and secrets handling guide
+- [**Vercel Configuration**](./deployment/vercel-configuration.md) - Production deployment settings
+
+### 🛡️ [Security](./security/)
+Comprehensive security documentation and procedures:
+- [**Security Overview**](./security/README.md) - Complete security strategy and implementation
+- [**Application Security**](./security/application-security.md) - Code-level security measures and CSP configuration
+- [**Infrastructure Security**](./security/infrastructure-security.md) - Deployment and hosting security
+- [**Security Monitoring**](./security/security-monitoring.md) - Monitoring, alerting, and incident response
 
 ### 🎨 [Design System](./design-system/)
 Comprehensive design system documentation:
@@ -34,6 +45,17 @@ Comprehensive design system documentation:
 - [**Forms & Inputs**](./design-system/forms-and-inputs.md) - Form design patterns
 - [**Navigation & Menus**](./design-system/navigation-and-menus.md) - Navigation components
 - [**Cards & Content**](./design-system/cards-and-content.md) - Content containers
+
+### 🚀 [Features](./features/)
+System-specific feature documentation:
+- [**News System Integration**](./features/news-system.md) - WordPress RSS integration and content management
+- [**Campaign Banner System**](./features/banner-system.md) - Dynamic banner templates and CMS integration
+- [**Location System**](./features/location-system.md) - Dynamic routing, geolocation, and search functionality
+- [**SWEP Emergency System**](./features/swep-system.md) - Severe Weather Emergency Protocol implementation and emergency notifications
+
+### ♿ [Accessibility](./accessibility/)
+Web Content Accessibility Guidelines (WCAG) compliance:
+- [**Compliance Guide**](./accessibility/compliance-guide.md) - Complete WCAG 2.1 AA implementation and testing procedures
 
 ## 🏗️ Project Overview
 
@@ -85,21 +107,31 @@ The Street Support Platform is a Next.js application that connects people experi
 - **Type Safety**: Full TypeScript implementation
 - **Performance**: Optimised builds and asset delivery
 
-## 🔄 Recent Updates
+## 🔄 Recent Updates (August 2025)
+
+### Documentation Modernisation
+Comprehensive documentation overhaul covering all aspects of the platform:
+- **Feature Documentation**: New detailed guides for news system, banner system, and location system
+- **Development Guides**: Complete Next.js 15 implementation patterns and state management architecture
+- **Accessibility Compliance**: Full WCAG 2.1 AA implementation guide with testing procedures
+- **API Documentation**: Updated with all missing endpoints including WordPress integration
+- **Development Workflow**: Enhanced development setup, testing strategies, and deployment guidelines
+
+### Technical Implementation Highlights
+Recent major improvements to the platform architecture:
+- **Next.js 15 Migration**: Full App Router implementation with dynamic routing patterns
+- **State Management**: Comprehensive React Context architecture with URL state synchronisation
+- **WordPress Integration**: RSS feed parsing with robust error handling and caching
+- **Campaign Banner System**: Three distinct banner templates with full customisation options
+- **Location-Aware Features**: Geolocation services, postcode geocoding, and location-based search
+- **Accessibility First**: WCAG 2.1 AA compliance with comprehensive testing and monitoring
 
 ### Testing Strategy Evolution
-The project has evolved from basic fallback JSON files to a sophisticated MSW-style mocking system that provides:
-- Automatic mock activation based on environment
-- Realistic API responses for comprehensive testing
-- Zero-infrastructure testing solution
-- Complete separation of test and production code
-
-### API Architecture Modernisation
-Transitioned from legacy API dependencies to a modern serverless architecture with:
-- Next.js API routes for public data
-- MongoDB fallback systems
-- Comprehensive error handling
-- Scalable, maintainable codebase
+Advanced testing infrastructure with multiple layers:
+- **Unit Testing**: >90% coverage with Jest and React Testing Library
+- **E2E Testing**: Comprehensive Playwright tests with accessibility validation
+- **API Testing**: Robust mocking systems for database-independent testing
+- **Performance Monitoring**: Lighthouse CI integration with Core Web Vitals tracking
 
 ## 📞 Support & Questions
 
@@ -119,5 +151,5 @@ This documentation is maintained alongside the codebase. When making changes:
 
 ---
 
-*Last updated: January 2025*
+*Last updated: August 2025*
 *Documentation version: 2.0*

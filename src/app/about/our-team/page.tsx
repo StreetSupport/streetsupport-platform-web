@@ -32,7 +32,7 @@ export default function OurTeamPage() {
           <div className="card card-compact text-center">
             <Image
               src="/assets/img/mugshots/matt.jpg"
-              alt=""
+              alt="Matt Lambert, Interim Managing Director at Street Support Network"
               width={200}
               height={200}
               className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
@@ -54,7 +54,7 @@ export default function OurTeamPage() {
           <div className="card card-compact text-center">
             <Image
               src="/assets/img/mugshots/james-cross.jpg"
-              alt=""
+              alt="James Cross, Digital and Technical Projects Lead at Street Support Network"
               width={200}
               height={200}
               className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
@@ -76,7 +76,7 @@ export default function OurTeamPage() {
           <div className="card card-compact text-center">
             <Image
               src="/assets/img/mugshots/mara.jpg"
-              alt=""
+              alt="Mara Airoldi, Head of Partnerships at Street Support Network"
               width={200}
               height={200}
               className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
@@ -108,7 +108,7 @@ export default function OurTeamPage() {
           <div className="card card-compact text-center">
             <Image
               src="/assets/img/mugshots/eliz.jpg"
-              alt=""
+              alt="Eliz Hopkins, West Midlands Partnership Coordinator at Street Support Network"
               width={200}
               height={200}
               className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
@@ -140,7 +140,7 @@ export default function OurTeamPage() {
           <div className="card card-compact text-center">
             <Image
               src="/assets/img/mugshots/tim.jpg"
-              alt=""
+              alt="Tim Jones, Brighton & Hove Location Administrator at Street Support Network"
               width={200}
               height={200}
               className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
@@ -162,7 +162,7 @@ export default function OurTeamPage() {
           <div className="card card-compact text-center">
             <Image
               src="/assets/img/mugshots/helen.jpg"
-              alt=""
+              alt="Helen Wilkenson, Chelmsford Location Administrator at Street Support Network"
               width={200}
               height={200}
               className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
@@ -184,7 +184,7 @@ export default function OurTeamPage() {
           <div className="card card-compact text-center">
             <Image
               src="/assets/img/mugshots/crispin.jpg"
-              alt=""
+              alt="Crispin Pailing, Liverpool Location Administrator at Street Support Network"
               width={200}
               height={200}
               className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
@@ -206,7 +206,7 @@ export default function OurTeamPage() {
           <div className="card card-compact text-center">
             <Image
               src="/assets/img/mugshots/tim-a.jpg"
-              alt=""
+              alt="Tim Archibold, Luton Location Administrator at Street Support Network"
               width={200}
               height={200}
               className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
@@ -228,7 +228,7 @@ export default function OurTeamPage() {
           <div className="card card-compact text-center">
             <Image
               src="/assets/img/mugshots/paul.jpg"
-              alt=""
+              alt="Paul Woodward, Reading Location Administrator at Street Support Network"
               width={200}
               height={200}
               className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"

@@ -1,6 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./src/**/*.{ts,tsx}'],
+  content: [
+    './src/**/*.{ts,tsx}',
+    '!./docs/**/*' // Exclude documentation files from Tailwind processing
+  ],
   theme: {
     extend: {
       colors: {

@@ -47,6 +47,9 @@ function processOrganisationData(data: { organisation: unknown; services: unknow
       latitude: coords[1],
       longitude: coords[0],
       clientGroups: service.ClientGroups || [],
+      // Preserve accommodation-specific data
+      ...(service.accommodationData && { accommodationData: service.accommodationData }),
+      ...(service.sourceType && { sourceType: service.sourceType }),
     };
   });
 

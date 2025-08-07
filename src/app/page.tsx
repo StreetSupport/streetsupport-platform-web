@@ -1,9 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Metadata } from 'next';
 import HomepageMap from '@/components/Homepage/HomepageMap';
 import LocationDropdown from '@/components/Homepage/LocationDropdown';
 import Hero from '@/components/ui/Hero';
+import { generateSEOMetadata } from '@/utils/seo';
 
 async function getStatistics() {
   try {
@@ -28,10 +30,83 @@ async function getStatistics() {
   }
 }
 
+export async function generateMetadata(): Promise<Metadata> {
+  return generateSEOMetadata({
+    title: '',
+    description: 'Street Support Network connects people experiencing homelessness with local support services across the UK. Find help, donate, volunteer, and access resources in your area.',
+    keywords: [
+      'homelessness support UK',
+      'street support',
+      'homeless help',
+      'find homeless services',
+      'donate to homeless',
+      'volunteer homeless services',
+      'crisis support',
+      'emergency accommodation',
+      'rough sleeping help'
+    ],
+    path: '',
+    image: '/assets/img/og/street-support.jpg',
+    imageAlt: 'Street Support Network - Connecting people with local support'
+  });
+}
+
 export default async function Home() {
   const stats = await getStatistics();
+
+  // Enhanced structured data for homepage
+  const homepageStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Street Support Network",
+    "alternateName": "Street Support",
+    "url": "https://streetsupport.net",
+    "description": "Street Support Network connects people experiencing homelessness with local support services across the UK.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://streetsupport.net/find-help?query={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    },
+    "mainEntity": {
+      "@type": "Organization",
+      "name": "Street Support Network",
+      "@id": "https://streetsupport.net/#organization",
+      "url": "https://streetsupport.net",
+      "logo": "https://streetsupport.net/assets/img/logo.png",
+      "description": "Street Support Network connects people experiencing homelessness with local support services.",
+      "foundingDate": "2015",
+      "nonprofitStatus": "Nonprofit501c3",
+      "areaServed": {
+        "@type": "Country",
+        "name": "United Kingdom"
+      },
+      "knowsAbout": [
+        "Homelessness Support",
+        "Emergency Accommodation",
+        "Food Banks",
+        "Crisis Support",
+        "Volunteer Coordination"
+      ],
+      "serviceArea": {
+        "@type": "Country",
+        "name": "United Kingdom"
+      }
+    }
+  };
+
   return (
     <main className="min-h-screen bg-white">
+      {/* Structured Data for Homepage */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(homepageStructuredData)
+        }}
+      />
+
       {/* Hero Section */}
       <Hero
         backgroundImage="/assets/img/home-header-background.png"

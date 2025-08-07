@@ -1,6 +1,27 @@
 import Link from 'next/link';
+import { Metadata } from 'next';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import SocialShare from '@/components/ui/SocialShare';
+import { generateSEOMetadata } from '@/utils/seo';
+
+export async function generateMetadata(): Promise<Metadata> {
+  return generateSEOMetadata({
+    title: 'About Street Support',
+    description: 'Learn about Street Support Network, our mission to connect people experiencing homelessness with local support services, and meet our team working to tackle homelessness.',
+    keywords: [
+      'about street support',
+      'street support network',
+      'homelessness charity',
+      'homeless support organisation',
+      'our mission',
+      'tackle homelessness',
+      'charity team'
+    ],
+    path: 'about',
+    image: '/assets/img/og/street-support.jpg',
+    imageAlt: 'About Street Support Network'
+  });
+}
 
 export default function AboutPage() {
   return (

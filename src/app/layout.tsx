@@ -7,6 +7,7 @@ import Nav from '../components/partials/Nav';
 import SiteFooter from '../components/partials/SiteFooter';
 import { LocationProvider } from '../contexts/LocationContext';
 import FindHelpStateCleanup from '../components/FindHelp/FindHelpStateCleanup';
+import GoogleAnalytics from '../components/analytics/GoogleAnalytics';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://streetsupport.net";
 
@@ -125,7 +126,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* Preconnect to external domains for performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        
+        {/* Enhanced Google Maps performance */}
         <link rel="preconnect" href="https://maps.googleapis.com" />
+        <link rel="preconnect" href="https://maps.gstatic.com" />
+        <link rel="dns-prefetch" href="//maps.googleapis.com" />
+        <link rel="dns-prefetch" href="//maps.gstatic.com" />
+        <link rel="dns-prefetch" href="//csi.gstatic.com" />
         
         {/* DNS Prefetch for common external resources */}
         <link rel="dns-prefetch" href="//www.google-analytics.com" />
@@ -140,6 +147,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
       </head>
       <body>
+        <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
         <LocationProvider>
           <FindHelpStateCleanup />
           <Nav />
