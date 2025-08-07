@@ -41,13 +41,25 @@ describe('/api/sitemap', () => {
     const response = await GET();
     const text = await response.text();
 
-    // Check that all major locations are included
-    const expectedLocations = [
-      'manchester', 'birmingham', 'leeds', 'liverpool', 'nottingham',
-      'glasgow', 'edinburgh', 'brighton-and-hove', 'cambridgeshire'
-    ];
+    // Load the same locations data that the sitemap uses
+    let locationsData;
+    try {
+      const fs = await import('fs');
+      const path = await import('path');
+      const filePath = path.join(process.cwd(), 'src', 'data', 'locations.json');
+      const fileContents = fs.readFileSync(filePath, 'utf8');
+      locationsData = JSON.parse(fileContents);
+    } catch {
+      locationsData = (await import('../../src/data/locations.json')).default;
+    }
 
-    expectedLocations.forEach(location => {
+    // Get all public locations from the data
+    const publicLocations = locationsData
+      .filter((location: any) => location.isPublic)
+      .map((location: any) => location.slug);
+
+    // Check that all public locations are included
+    publicLocations.forEach((location: string) => {
       expect(text).toContain(`<loc>https://streetsupport.net/${location}</loc>`);
       expect(text).toContain(`<loc>https://streetsupport.net/${location}/advice</loc>`);
     });
