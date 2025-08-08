@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { loadGoogleMaps } from '@/utils/loadGoogleMaps';
 import { updateMapBounds, shouldRecalculateBounds } from '@/utils/mapBounds';
 
@@ -40,7 +40,7 @@ interface Props {
   includeUserInBounds?: boolean; // Whether to include user location in bounds calculation
 }
 
-export default function GoogleMap({ 
+export default React.memo(function GoogleMap({ 
   center, 
   markers, 
   zoom, 
@@ -60,10 +60,9 @@ export default function GoogleMap({
   const previousMarkersRef = useRef<Marker[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
-
   const effectiveZoom = zoom ?? 12;
 
-  // Load Google Maps API
+  // Load Google Maps API immediately (simplified approach for reliability)
   useEffect(() => {
     let isCancelled = false;
     
@@ -295,4 +294,4 @@ export default function GoogleMap({
   }
 
   return <div ref={mapRef} className="w-full h-full min-h-96 rounded border" />;
-}
+});

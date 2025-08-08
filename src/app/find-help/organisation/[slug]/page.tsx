@@ -14,9 +14,9 @@ interface Props {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-// Shared cache for organisation data to eliminate double API calls
-const organisationCache = new Map<string, { data: unknown; timestamp: number }>();
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+// Enhanced shared cache for organisation data to eliminate double API calls
+const organisationCache = new Map<string, { data: unknown; timestamp: number; etag: string }>();
+const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes (extended from 5 minutes)
 
 function processOrganisationData(data: { organisation: unknown; services: unknown[] }) {
   const rawServices = (data.services || []) as RawService[];
@@ -148,9 +148,10 @@ async function fetchOrganisationData(slug: string, searchParams?: { [key: string
     }
     
     const data = await res.json();
+    const etag = res.headers.get('etag') || '';
     
-    // Cache the result
-    organisationCache.set(cacheKey, { data, timestamp: Date.now() });
+    // Cache the result with ETag for better cache validation
+    organisationCache.set(cacheKey, { data, timestamp: Date.now(), etag });
     
     return data;
   } catch {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useRef, useCallback, useEffect } from 'react';
+import React, { useMemo, useState, useRef, useCallback, useEffect } from 'react';
 import { useLocation } from '@/contexts/LocationContext';
 import { useDebounce } from '@/hooks/useDebounce';
 import ProgressiveServiceGrid from './ProgressiveServiceGrid';
@@ -113,7 +113,7 @@ function groupServicesByOrganisation(
   return Array.from(groups.values());
 }
 
-export default function FindHelpResults({ 
+export default React.memo(function FindHelpResults({ 
   services, 
   loading = false, 
   error = null, 
@@ -381,4 +381,4 @@ export default function FindHelpResults({
       </div>
     </section>
   );
-}
+});

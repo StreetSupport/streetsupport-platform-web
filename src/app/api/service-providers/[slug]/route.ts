@@ -185,10 +185,12 @@ export async function GET(req: Request) {
       userContext: userContext,
     });
 
-    // Add cache headers for better performance
-    response.headers.set('Cache-Control', 'public, max-age=600, s-maxage=1200, stale-while-revalidate=86400'); // 10 min browser, 20 min CDN, 24h stale
-    response.headers.set('ETag', `org-${slug}-${services.length}`);
-    response.headers.set('Vary', 'Accept-Encoding');
+    // Enhanced cache headers for better performance  
+    response.headers.set('Cache-Control', 'public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400'); // 30 min browser, 60 min CDN, 24h stale
+    response.headers.set('ETag', `org-${slug}-${services.length}-${Date.now().toString(36)}`);
+    response.headers.set('Vary', 'Accept-Encoding, Accept');
+    response.headers.set('Last-Modified', new Date().toUTCString());
+    response.headers.set('X-Content-Type-Options', 'nosniff');
     
     return response;
 
