@@ -28,21 +28,7 @@ export default function Hero({
 }: HeroProps) {
   // No longer need inline style for background image
 
-  // Generate location-specific CSS class
-  const locationClass = locationSlug ? `hero-location-${locationSlug}` : '';
-  
-  // Base overlay classes with optional location-specific class
-  const overlayClasses = [
-    'absolute', 
-    'inset-0', 
-    'z-5',
-    'hero-location-overlay',
-    locationClass
-  ].filter(Boolean).join(' ');
-
-  const overlayImageStyle = overlayImage ? {
-    backgroundImage: `url(${overlayImage})`
-  } : {};
+  // Generate location-specific CSS class (removed unused variables)
 
   // Check if this is a coastal location that needs sea-tile overlay
   const coastalLocations = ['brighton-and-hove', 'blackpool', 'bournemouth', 'portsmouth', 'southampton', 'edinburgh', 'glasgow'];

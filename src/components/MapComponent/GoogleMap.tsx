@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { loadGoogleMaps } from '@/utils/loadGoogleMaps';
 import { updateMapBounds, shouldRecalculateBounds } from '@/utils/mapBounds';
 

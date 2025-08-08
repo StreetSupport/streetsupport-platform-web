@@ -1,5 +1,5 @@
 // Request deduplication utility to prevent duplicate API calls
-type RequestPromise<T = any> = Promise<T>;
+type RequestPromise<T = unknown> = Promise<T>;
 
 class RequestDeduplicator {
   private requestCache = new Map<string, RequestPromise>();
@@ -89,7 +89,7 @@ export const requestDeduplicator = new RequestDeduplicator();
 /**
  * Helper function to create a deduplication key from URL and parameters
  */
-export function createRequestKey(url: string, params?: Record<string, any>): string {
+export function createRequestKey(url: string, params?: Record<string, unknown>): string {
   if (!params) return url;
   
   // Sort params for consistent keys
