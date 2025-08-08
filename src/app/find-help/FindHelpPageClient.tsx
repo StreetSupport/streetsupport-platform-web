@@ -16,7 +16,6 @@ import {
   isFromOrganisationPage,
   createSearchState
 } from '@/utils/findHelpStateUtils';
-import { requestDeduplicator, createRequestKey } from '@/utils/requestDeduplication';
 import locations from '@/data/locations.json';
 import type { ServiceWithDistance } from '@/types';
 
@@ -168,37 +167,30 @@ export default function FindHelpPageClient({ searchParams: _searchParams }: Find
     setError(null);
     setNetworkError(false);
 
-    // Create deduplication key for this request
-    const requestParams = {
-      lat: locationData.lat.toString(),
-      lng: locationData.lng.toString(),
-      radius: (locationData.radius || 5).toString(),
-      limit: '500',
-    };
-    const dedupeKey = createRequestKey('/api/services', requestParams);
+    // Create AbortController for timeout handling
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
 
     try {
-      const response = await requestDeduplicator.dedupe(dedupeKey, async () => {
-        // Create AbortController for timeout handling
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
-
-        const params = new URLSearchParams(requestParams);
-
-        // Don't apply category/subcategory filters in the API call
-        // We'll filter client-side to allow users to change filters dynamically
-
-        const response = await fetch(`/api/services?${params.toString()}`, {
-          cache: 'no-store',
-          signal: controller.signal,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        clearTimeout(timeoutId);
-        return response;
+      const params = new URLSearchParams({
+        lat: locationData.lat.toString(),
+        lng: locationData.lng.toString(),
+        radius: (locationData.radius || 5).toString(),
+        limit: '500',
       });
+
+      // Don't apply category/subcategory filters in the API call
+      // We'll filter client-side to allow users to change filters dynamically
+
+      const response = await fetch(`/api/services?${params.toString()}`, {
+        cache: 'no-store',
+        signal: controller.signal,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         if (response.status >= 500) {

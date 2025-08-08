@@ -197,7 +197,14 @@ export async function GET(req: Request) {
   const cachedResult = queryCache.get(cacheKey);
   if (cachedResult) {
     const response = NextResponse.json(cachedResult);
-    response.headers.set('Cache-Control', 'public, max-age=900, s-maxage=1800, stale-while-revalidate=86400');
+    const isTestEnv = process.env.NODE_ENV === 'test' || process.env.PLAYWRIGHT_TEST === '1';
+    
+    if (isTestEnv) {
+      response.headers.set('Cache-Control', 'no-cache');
+    } else {
+      response.headers.set('Cache-Control', 'public, max-age=900, s-maxage=1800, stale-while-revalidate=86400');
+    }
+    
     response.headers.set('X-Cache', 'HIT');
     response.headers.set('Vary', 'Accept-Encoding');
     response.headers.set('ETag', `services-${cacheKey.slice(-8)}-hit`);
@@ -428,19 +435,28 @@ export async function GET(req: Request) {
       results
     };
 
-    // Cache the result for 15 minutes (extended from 5 minutes)
-    queryCache.set(cacheKey, responseData, 900000);
+    // Cache the result (shorter cache in test environments)
+    const cacheTime = process.env.NODE_ENV === 'test' ? 60000 : 900000; // 1min for tests, 15min for production
+    queryCache.set(cacheKey, responseData, cacheTime);
 
     const response = NextResponse.json(responseData);
 
-    // Add enhanced cache headers for better performance
-    response.headers.set('Cache-Control', 'public, max-age=900, s-maxage=1800, stale-while-revalidate=86400'); // 15 min browser, 30 min CDN, 24h stale
+    // Add cache headers (less aggressive in test environments)
+    const isTestEnv = process.env.NODE_ENV === 'test' || process.env.PLAYWRIGHT_TEST === '1';
+    if (isTestEnv) {
+      // Minimal caching for tests
+      response.headers.set('Cache-Control', 'no-cache');
+    } else {
+      // Enhanced cache headers for production
+      response.headers.set('Cache-Control', 'public, max-age=900, s-maxage=1800, stale-while-revalidate=86400'); // 15 min browser, 30 min CDN, 24h stale
+      response.headers.set('X-RateLimit-Limit', '100'); // Rate limiting info
+      response.headers.set('X-RateLimit-Remaining', '99'); // Rate limiting info
+    }
+    
     response.headers.set('ETag', `services-${cacheKey.slice(-8)}-${total}-${page}`); // Use cache key for better ETag
     response.headers.set('X-Cache', 'MISS');
     response.headers.set('Vary', 'Accept-Encoding, Accept'); // Enhanced vary header
     response.headers.set('X-Content-Type-Options', 'nosniff'); // Security header
-    response.headers.set('X-RateLimit-Limit', '100'); // Rate limiting info
-    response.headers.set('X-RateLimit-Remaining', '99'); // Rate limiting info
     
     return response;
   } catch (error) {
