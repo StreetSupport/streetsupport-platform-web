@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { trackFindHelpCTA } from '@/components/analytics/GoogleAnalytics';
 
 interface HeroProps {
@@ -25,25 +26,9 @@ export default function Hero({
   ctaLink, 
   className = '' 
 }: HeroProps) {
-  const heroStyle = {
-    backgroundImage: `url(${backgroundImage})`
-  };
+  // No longer need inline style for background image
 
-  // Generate location-specific CSS class
-  const locationClass = locationSlug ? `hero-location-${locationSlug}` : '';
-  
-  // Base overlay classes with optional location-specific class
-  const overlayClasses = [
-    'absolute', 
-    'inset-0', 
-    'z-5',
-    'hero-location-overlay',
-    locationClass
-  ].filter(Boolean).join(' ');
-
-  const overlayImageStyle = overlayImage ? {
-    backgroundImage: `url(${overlayImage})`
-  } : {};
+  // Generate location-specific CSS class (removed unused variables)
 
   // Check if this is a coastal location that needs sea-tile overlay
   const coastalLocations = ['brighton-and-hove', 'blackpool', 'bournemouth', 'portsmouth', 'southampton', 'edinburgh', 'glasgow'];
@@ -66,24 +51,40 @@ export default function Hero({
   const contentClasses = isHomepage ? 'hero-content hero-content-homepage' : 'hero-content';
 
   return (
-    <section 
-      className={`hero-section ${className}`}
-      style={heroStyle}
-    >
+    <section className={`hero-section relative ${className}`}>
+      {/* Optimized background image using next/image */}
+      <Image
+        src={backgroundImage}
+        alt={`${title} background`}
+        fill
+        priority
+        className="object-cover"
+        sizes="100vw"
+        quality={85}
+      />
+      
       {overlayImage && (
-        <div 
-          className={overlayClasses}
-          style={overlayImageStyle}
-        />
+        <div className="absolute inset-0 z-10">
+          <Image
+            src={overlayImage}
+            alt={`${title} overlay`}
+            fill
+            className="object-cover"
+            sizes="100vw"
+            quality={75}
+          />
+        </div>
       )}
+      
       {overlayImage && isCoastal && (
         <div 
-          className="absolute z-6"
+          className="absolute z-20"
           style={seaTileStyle}
         />
       )}
-      <div className="hero-overlay" />
-      <div className={contentClasses}>
+      
+      <div className="hero-overlay z-30" />
+      <div className={`${contentClasses} relative z-40`}>
         <h1 className="hero-title">{title}</h1>
         <p className="hero-subtitle">{subtitle}</p>
         {ctaText && ctaLink && (
