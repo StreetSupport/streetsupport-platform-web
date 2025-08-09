@@ -53,28 +53,6 @@ export default function OurTeamPage() {
 
           <div className="card card-compact text-center">
             <Image
-              src="/assets/img/mugshots/james-cross.jpg"
-              alt="James Cross, Digital and Technical Projects Lead at Street Support Network"
-              width={200}
-              height={200}
-              className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
-              sizes="(max-width: 768px) 128px, 200px"
-            />
-            <h2 className="heading-5 mb-2">James Cross</h2>
-            <h3 className="heading-6 text-brand-a mb-3">Digital and Technical Projects Lead</h3>
-            <p className="text-brand-l mb-4">
-              James collaborates with teams and stakeholders to drive digital solutions, enhance technical systems, and mentor partners, ensuring impactful projects and user-friendly platforms.
-            </p>
-            <a 
-              href="mailto:james@streetsupport.net"
-              className="text-brand-a hover:text-brand-b underline"
-            >
-              Contact James
-            </a>
-          </div>
-
-          <div className="card card-compact text-center">
-            <Image
               src="/assets/img/mugshots/mara.jpg"
               alt="Mara Airoldi, Head of Partnerships at Street Support Network"
               width={200}
