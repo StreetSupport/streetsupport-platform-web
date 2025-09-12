@@ -144,19 +144,19 @@ export default async function Home() {
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
-              <div className="text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.organisations}</div>
-              <div className="text-xl md:text-2xl font-light">Organisations</div>
-              <div className="text-lg md:text-xl font-light text-brand-k">Listed</div>
+              <div className="statistics-value text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.organisations}</div>
+              <div className="statistics-title text-xl md:text-2xl font-light">Organisations</div>
+              <div className="statistics-title text-lg md:text-xl font-light text-brand-k">Listed</div>
             </div>
             <div>
-              <div className="text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.services}</div>
-              <div className="text-xl md:text-2xl font-light">Services</div>
-              <div className="text-lg md:text-xl font-light text-brand-k">Provided</div>
+              <div className="statistics-value text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.services}</div>
+              <div className="statistics-title text-xl md:text-2xl font-light">Services</div>
+              <div className="statistics-title text-lg md:text-xl font-light text-brand-k">Provided</div>
             </div>
             <div>
-              <div className="text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.partnerships}</div>
-              <div className="text-xl md:text-2xl font-light">Homelessness Partnerships</div>
-              <div className="text-lg md:text-xl font-light text-brand-k">Supported</div>
+              <div className="statistics-value text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.partnerships}</div>
+              <div className="statistics-title text-xl md:text-2xl font-light">Homelessness Partnerships</div>
+              <div className="statistics-title text-lg md:text-xl font-light text-brand-k">Supported</div>
             </div>
           </div>
         </div>

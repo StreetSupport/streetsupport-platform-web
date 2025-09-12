@@ -1522,3 +1522,17 @@ select:disabled {
     transform: translateX(-50%) !important;
   }
 }
+
+/* Statistics section */
+.statistics-value {
+  font-family: 'Museo Sans', Arial, sans-serif;
+  font-weight: 700;
+  color: #ffec83;
+  text-shadow: 0 4px 16px rgba(0,0,0,0.22);
+}
+
+.statistics-title {
+    font-family: 'Museo Sans', Arial, sans-serif;
+    font-weight: 500;
+    color: #ffff;
+}

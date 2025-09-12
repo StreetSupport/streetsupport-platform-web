@@ -351,6 +351,7 @@ export default function Nav() {
                 </div>
               )}
             </div>
+            <Link href={process.env.NEXT_PUBLIC_ADMIN_URL || 'http://localhost:3000/api/auth/signin'} className="nav-link">Login</Link>
           </div>
         </div>
       </div>
@@ -487,6 +488,8 @@ export default function Nav() {
               </li>
             </ul>
           )}
+
+          <Link href={process.env.NEXT_PUBLIC_ADMIN_URL || 'http://localhost:3000/api/auth/signin'} className="mobile-nav-link" onClick={handleMenuClose}>Login</Link>
         </div>
       </div>
     </nav>
