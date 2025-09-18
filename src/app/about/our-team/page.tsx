@@ -32,14 +32,14 @@ export default function OurTeamPage() {
           <div className="card card-compact text-center">
             <Image
               src="/assets/img/mugshots/matt.jpg"
-              alt="Matt Lambert, Interim Managing Director at Street Support Network"
+              alt="Matt Lambert, Managing Director at Street Support Network"
               width={200}
               height={200}
               className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
               sizes="(max-width: 768px) 128px, 200px"
             />
             <h2 className="heading-5 mb-2">Matt Lambert</h2>
-            <h3 className="heading-6 text-brand-a mb-3">Interim Managing Director</h3>
+            <h3 className="heading-6 text-brand-a mb-3">Managing Director</h3>
             <p className="text-brand-l mb-4">
               Matt works closely with partners and local organisations to strengthen collaboration, develop new opportunities, and ensure tailored support for locations across the UK.
             </p>
