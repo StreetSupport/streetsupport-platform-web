@@ -52,3 +52,9 @@ next-env.d.ts
 
 # Windsurf
 .windsurf
+# Sentry Config File
+.env.sentry-build-plugin
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
