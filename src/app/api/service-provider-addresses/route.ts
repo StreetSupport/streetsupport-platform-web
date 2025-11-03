@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
 
+// We don't use it anywhere in code, but we have it in DB. So keep it for now. But I don't handle it in streetsupport-platform-admin
 export async function GET() {
   try {
     const client = await getClientPromise();

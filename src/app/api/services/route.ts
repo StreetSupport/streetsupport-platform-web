@@ -331,15 +331,27 @@ export async function GET(req: Request) {
         _id: 1,
         name: 1,
         description: 1,
+        IsVerified: 1,
         ParentCategoryKey: 1,
         SubCategoryKey: 1,
         ServiceProviderName: 1,
         ServiceProviderKey: 1,
         OpeningTimes: 1,
+        // We don't use ClientGroups, but I leave it because afraid to break something
         ClientGroups: 1,
         'Address.Location': 1,
         organisation: 1,
-        distance: 1
+        distance: 1,
+        IsAppointmentOnly: 1,
+        IsTelephoneService: 1,
+        'Address.IsOpen247': 1,
+        // We initialized these fields in streetsupport-platform-admin, so we may need them later
+        // LocationDescription: 1,
+        // 'Address.Telephone': 1,
+        // 'Address.Street': 1,
+        // 'Address.Street1': 1,
+        // 'Address.Street2': 1,
+        // 'Address.Street3': 1
       }
     });
 
@@ -415,7 +427,7 @@ export async function GET(req: Request) {
         } : {
           name: decodeText((serviceAny.ServiceProviderName as string) || ''),
           slug: (serviceAny.ServiceProviderKey as string) || '',
-          isVerified: false
+          isVerified: Boolean(serviceAny.isVerified) || false
         }
       };
 

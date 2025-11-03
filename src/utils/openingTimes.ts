@@ -134,7 +134,7 @@ export function isServiceOpenNow(service: ServiceWithDistance): OpeningStatus {
 
 function isAppointmentOnlyService(service: ServiceWithDistance): boolean {
   // Check for telephone/phone-only services
-  if (service.subCategory === 'telephone') {
+  if (service.isAppointmentOnly || service.subCategory === 'telephone') {
     return true;
   }
   

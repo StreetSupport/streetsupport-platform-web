@@ -59,7 +59,7 @@ function processServiceData(item: unknown): ServiceWithDistance {
     } : {
       name: String(serviceItem.ServiceProviderName || serviceItem.name || ''),
       slug: String(serviceItem.ServiceProviderKey || ''),
-      isVerified: false,
+      isVerified: (serviceItem.isVerified as boolean) || false,
     },
     organisationSlug: serviceItem.organisation ? 
       String((serviceItem.organisation as Record<string, unknown>).slug || '') :
@@ -68,6 +68,9 @@ function processServiceData(item: unknown): ServiceWithDistance {
     openTimes,
     distance: Number(serviceItem.distance || 0),
     clientGroups: Array.isArray(serviceItem.ClientGroups) ? serviceItem.ClientGroups : [],
+    isTelephoneService: (serviceItem.IsTelephoneService as boolean) || false,
+    isAppointmentOnly: (serviceItem.IsAppointmentOnly as boolean) || false,
+    isOpen247: (serviceItem.Address as Record<string, unknown>)?.IsOpen247 as boolean || false
   };
 }
 

@@ -356,7 +356,7 @@ export default function OrganisationServicesAccordion({
                           const service = (selectedLocation as ServiceLocation).service;
                           
                           // Check for phone service
-                          const isPhoneService = service.subCategory.toLowerCase().includes('telephone') || 
+                          const isPhoneService = service.isTelephoneService || service.subCategory.toLowerCase().includes('telephone') || 
                                                service.subCategory.toLowerCase().includes('phone') ||
                                                service.subCategory.toLowerCase().includes('helpline');
                           
@@ -819,7 +819,7 @@ export default function OrganisationServicesAccordion({
                           const openingStatus = isServiceOpenNow(service);
                           
                           // Check for phone service
-                          const isPhoneService = service.subCategory.toLowerCase().includes('telephone') || 
+                          const isPhoneService = service.isTelephoneService || service.subCategory.toLowerCase().includes('telephone') || 
                                                service.subCategory.toLowerCase().includes('phone') ||
                                                service.subCategory.toLowerCase().includes('helpline');
                           
