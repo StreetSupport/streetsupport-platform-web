@@ -285,11 +285,12 @@ export default function OrganisationServicesAccordion({
                                           const hasOpenTimes = service.openTimes && service.openTimes.length > 0;
                                           
                                           // Check for 24-hour service
-                                          const is24Hour = hasOpenTimes && service.openTimes.some((slot) => {
+                                          // TODO: Clarify if we rely only on service.isOpen247 or also additionally check if at least 1 day per week is open 24/7 (as was already implemented by James)
+                                          const is24Hour = service.isOpen247 || (hasOpenTimes && service.openTimes.some((slot) => {
                                             const startTime = Number(slot.start);
                                             const endTime = Number(slot.end);
                                             return startTime === 0 && endTime === 2359; // 00:00 to 23:59
-                                          });
+                                          }));
                                           
                                           return (
                                             <>
@@ -361,11 +362,12 @@ export default function OrganisationServicesAccordion({
                                                service.subCategory.toLowerCase().includes('helpline');
                           
                           // Check for 24-hour service
-                          const is24Hour = service.openTimes && service.openTimes.length > 0 && service.openTimes.some((slot) => {
+                          // TODO: Clarify if we rely only on service.isOpen247 or also additionally check if at least 1 day per week is open 24/7 (as was already implemented by James)
+                          const is24Hour = service.isOpen247 || (service.openTimes && service.openTimes.length > 0 && service.openTimes.some((slot) => {
                             const startTime = Number(slot.start);
                             const endTime = Number(slot.end);
                             return startTime === 0 && endTime === 2359; // 00:00 to 23:59
-                          });
+                          }));
 
                           // Check for accommodation service
                           const isAccommodation = service.category === 'accom' || service.sourceType === 'accommodation';
@@ -795,15 +797,7 @@ export default function OrganisationServicesAccordion({
                   )}
 
                   {/* Opening Times */}
-                  {(selectedLocation as ServiceLocation | undefined)?.service?.openTimes && (selectedLocation as ServiceLocation).service.openTimes.length > 0 && (() => {
-                    // Check if organization has 24/7 tag - hide opening times if it does
-                    const orgTags = organisation.tags || [];
-                    const tagsArray = Array.isArray(orgTags) ? orgTags : [orgTags];
-                    const is24_7Service = tagsArray.some(tag => 
-                      typeof tag === 'string' && tag.toLowerCase().includes('24') && tag.toLowerCase().includes('7')
-                    );
-                    return !is24_7Service;
-                  })() && (
+                  {(selectedLocation as ServiceLocation | undefined)?.service?.openTimes && (selectedLocation as ServiceLocation).service.openTimes.length > 0 && !(selectedLocation as ServiceLocation).service.isOpen247 && (
                     <div className="relative">
                       {loadingContent === accordionKey && (
                         <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded">
@@ -824,11 +818,12 @@ export default function OrganisationServicesAccordion({
                                                service.subCategory.toLowerCase().includes('helpline');
                           
                           // Check for 24-hour service
-                          const is24Hour = service.openTimes.some((slot) => {
+                          // TODO: Clarify if we rely only on service.isOpen247 or also additionally check if at least 1 day per week is open 24/7 (as was already implemented by James)
+                          const is24Hour = service.isOpen247 || (service.openTimes.some((slot) => {
                             const startTime = Number(slot.start);
                             const endTime = Number(slot.end);
                             return startTime === 0 && endTime === 2359; // 00:00 to 23:59
-                          });
+                          }));
                           
                           return (
                             <div className="flex items-center flex-wrap gap-2">
