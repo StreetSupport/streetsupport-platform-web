@@ -24,6 +24,9 @@ function transformAccommodationToOrganisationService(accommodation: Accommodatio
       Street: accommodation.address?.street1 || '',
       Postcode: accommodation.address?.postcode || ''
     },
+    IsAppointmentOnly: false,
+    IsTelephoneService: false,
+    IsOpen247: false,
     // Add accommodation-specific data for the accordion display
     accommodationData: {
       type: accommodation.accommodation?.type,
@@ -72,7 +75,10 @@ export async function GET(req: Request) {
     const servicesCol = db.collection('ProvidedServices');
 
     const rawProvider = await providersCol.findOne(
-      { Key: { $regex: new RegExp(`^${slug}$`, 'i') } },
+      {
+        Key: { $regex: new RegExp(`^${slug}$`, 'i') },
+        IsPublished: true,
+      },
       {
         projection: {
           _id: 0,
@@ -124,6 +130,8 @@ export async function GET(req: Request) {
         // We don't use ClientGroups, but I leave it because afraid to break something
         ClientGroups: 1,
         Address: 1,
+        IsAppointmentOnly: 1,
+        IsTelephoneService: 1
       })
       .toArray();
       
@@ -167,6 +175,9 @@ export async function GET(req: Request) {
     const decodedServices = services.map(service => {
       const decoded = {
         ...service,
+        isTelephoneService: (service.IsTelephoneService as boolean) || false,
+        isAppointmentOnly: (service.IsAppointmentOnly as boolean) || false,
+        isOpen247: (service.Address as Record<string, unknown>)?.IsOpen247 as boolean || false,
         Info: decodeText(service.Info || ''),
         SubCategoryName: decodeText(service.SubCategoryName || ''),
         // Ensure accommodation data is preserved

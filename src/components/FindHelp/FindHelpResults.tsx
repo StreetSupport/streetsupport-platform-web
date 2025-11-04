@@ -110,6 +110,22 @@ function groupServicesByOrganisation(
     }
   }
 
+  // After grouping, update orgName and orgDescription to use first regular service if it's currently empty
+  // This happens when the first service was an accommodation
+  for (const group of groups.values()) {
+    if (!group.orgName) {
+      const firstRegularService = group.services.find(s => s.sourceType !== 'accommodation');
+      if (firstRegularService) {
+        group.orgName = firstRegularService.organisation?.name || '';
+        group.orgDescription = firstRegularService.description || ''; 
+      } else {
+        // If all services are accommodations, use the first one's name and description
+        group.orgName = group.services[0]?.organisation?.name || '';
+        group.orgDescription = group.services[0]?.description || '';
+      }
+    }
+  }
+
   return Array.from(groups.values());
 }
 

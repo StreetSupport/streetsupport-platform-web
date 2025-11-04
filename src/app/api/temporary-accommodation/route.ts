@@ -8,6 +8,7 @@ interface TemporaryAccommodation {
   synopsis: string;
   description: string;
   serviceProvider: string;
+  serviceProviderName: string;
   address: {
     street: string;
     street1: string;
@@ -133,6 +134,7 @@ export async function GET(req: Request) {
       synopsis: item.synopsis,
       description: item.description,
       serviceProvider: item.serviceProviderId,
+      serviceProviderName: item.serviceProviderName,
       address: {
         street: item.address.street1,
         street1: item.address.street1,

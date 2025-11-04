@@ -59,7 +59,7 @@ function processServiceData(item: unknown): ServiceWithDistance {
     } : {
       name: String(serviceItem.ServiceProviderName || serviceItem.name || ''),
       slug: String(serviceItem.ServiceProviderKey || ''),
-      isVerified: (serviceItem.isVerified as boolean) || false,
+      isVerified: (serviceItem.IsVerified as boolean) || false,
     },
     organisationSlug: serviceItem.organisation ? 
       String((serviceItem.organisation as Record<string, unknown>).slug || '') :

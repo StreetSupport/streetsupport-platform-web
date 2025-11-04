@@ -50,7 +50,7 @@ function transformAccommodationToService(accommodation: AccommodationData) {
     description: accommodation.synopsis || accommodation.description || '',
     ParentCategoryKey: 'accom',
     SubCategoryKey: accommodation.accommodation?.type || 'other',
-    ServiceProviderName: accommodation.name || '',
+    ServiceProviderName: accommodation.serviceProviderName || accommodation.name || '',
     ServiceProviderKey: accommodation.serviceProviderId,
     OpeningTimes: [],
     ClientGroups: [],
@@ -65,6 +65,9 @@ function transformAccommodationToService(accommodation: AccommodationData) {
       Street3: accommodation.address?.street3 || '',
       Postcode: accommodation.address?.postcode || ''
     },
+    IsAppointmentOnly: false,
+    IsTelephoneService: false,
+    IsOpen247: false,
     // Add accommodation-specific data
     accommodationData: {
       type: accommodation.accommodation?.type,
@@ -345,13 +348,6 @@ export async function GET(req: Request) {
         IsAppointmentOnly: 1,
         IsTelephoneService: 1,
         'Address.IsOpen247': 1,
-        // We initialized these fields in streetsupport-platform-admin, so we may need them later
-        // LocationDescription: 1,
-        // 'Address.Telephone': 1,
-        // 'Address.Street': 1,
-        // 'Address.Street1': 1,
-        // 'Address.Street2': 1,
-        // 'Address.Street3': 1
       }
     });
 
@@ -427,7 +423,7 @@ export async function GET(req: Request) {
         } : {
           name: decodeText((serviceAny.ServiceProviderName as string) || ''),
           slug: (serviceAny.ServiceProviderKey as string) || '',
-          isVerified: Boolean(serviceAny.isVerified) || false
+          isVerified: Boolean(serviceAny.IsVerified) || false
         }
       };
 

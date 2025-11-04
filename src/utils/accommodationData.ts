@@ -10,6 +10,7 @@ interface TemporaryAccommodationDocument {
     Description?: string;
     AccommodationType: string;
     ServiceProviderId: string;
+    ServiceProviderName: string;
     IsOpenAccess: boolean;
     IsPubliclyVisible?: boolean;
     IsPublished?: boolean;
@@ -78,6 +79,7 @@ export interface AccommodationData {
   synopsis: string;
   description: string;
   serviceProviderId: string;
+  serviceProviderName: string;
   address: {
     street1: string;
     street2: string;
@@ -143,6 +145,7 @@ function transformDatabaseDocumentToAccommodationData(doc: TemporaryAccommodatio
     synopsis: decodeText(doc.GeneralInfo?.Synopsis || ''),
     description: decodeText(doc.GeneralInfo?.Description || ''),
     serviceProviderId: doc.GeneralInfo?.ServiceProviderId || '',
+    serviceProviderName: doc.GeneralInfo?.ServiceProviderName || '',
     address: {
       street1: decodeText(doc.Address?.Street1 || ''),
       street2: decodeText(doc.Address?.Street2 || ''),

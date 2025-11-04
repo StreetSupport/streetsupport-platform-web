@@ -67,6 +67,19 @@ export default function OrganisationContactBlock({ organisation }: Props) {
             </a>
           </li>
         )}
+        {organisation.bluesky && (
+          <li>
+            <strong>Bluesky:</strong>{' '}
+            <a
+              href={organisation.bluesky}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand-h underline"
+            >
+              {organisation.bluesky}
+            </a>
+          </li>
+        )}
       </ul>
     </section>
   );

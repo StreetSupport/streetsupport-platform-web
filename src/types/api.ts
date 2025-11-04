@@ -13,4 +13,7 @@ export interface RawService {
   // Accommodation-specific properties
   accommodationData?: Record<string, unknown>;
   sourceType?: string;
+  isAppointmentOnly?: boolean;
+  isTelephoneService?: boolean;
+  isOpen247?: boolean;
 }
