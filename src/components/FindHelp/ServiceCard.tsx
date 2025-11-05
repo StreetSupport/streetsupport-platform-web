@@ -208,7 +208,7 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
           <ul className="list-disc pl-5 text-sm !text-black">
             {(() => {
               // Group opening times by day and consolidate multiple sessions
-              const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+              const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
               const dayGroups = new Map();
               
               const formatTime = (time: number) => {

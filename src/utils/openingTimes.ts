@@ -18,7 +18,7 @@ export interface OpeningStatus {
   };
 }
 
-const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 function normalizeOpeningTime(slot: OpeningTimeSlot) {
   const dayValue = slot.Day ?? slot.day;

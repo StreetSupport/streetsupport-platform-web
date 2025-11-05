@@ -52,6 +52,7 @@ function transformAccommodationToService(accommodation: AccommodationData) {
     SubCategoryKey: accommodation.accommodation?.type || 'other',
     ServiceProviderName: accommodation.serviceProviderName || accommodation.name || '',
     ServiceProviderKey: accommodation.serviceProviderId,
+    IsVerified: accommodation.isVerified || false,
     OpeningTimes: [],
     ClientGroups: [],
     Address: {

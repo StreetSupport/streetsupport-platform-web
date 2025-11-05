@@ -14,6 +14,7 @@ interface TemporaryAccommodationDocument {
     IsOpenAccess: boolean;
     IsPubliclyVisible?: boolean;
     IsPublished?: boolean;
+    IsVerified?: boolean;
   };
   PricingAndRequirementsInfo: {
     ReferralIsRequired: boolean;
@@ -80,6 +81,7 @@ export interface AccommodationData {
   description: string;
   serviceProviderId: string;
   serviceProviderName: string;
+  isVerified: boolean;
   address: {
     street1: string;
     street2: string;
@@ -146,6 +148,7 @@ function transformDatabaseDocumentToAccommodationData(doc: TemporaryAccommodatio
     description: decodeText(doc.GeneralInfo?.Description || ''),
     serviceProviderId: doc.GeneralInfo?.ServiceProviderId || '',
     serviceProviderName: doc.GeneralInfo?.ServiceProviderName || '',
+    isVerified: doc.GeneralInfo?.IsVerified || false,
     address: {
       street1: decodeText(doc.Address?.Street1 || ''),
       street2: decodeText(doc.Address?.Street2 || ''),

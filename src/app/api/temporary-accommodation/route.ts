@@ -9,6 +9,7 @@ interface TemporaryAccommodation {
   description: string;
   serviceProvider: string;
   serviceProviderName: string;
+  isVerified: boolean;
   address: {
     street: string;
     street1: string;
@@ -135,6 +136,7 @@ export async function GET(req: Request) {
       description: item.description,
       serviceProvider: item.serviceProviderId,
       serviceProviderName: item.serviceProviderName,
+      isVerified: item.isVerified,
       address: {
         street: item.address.street1,
         street1: item.address.street1,
