@@ -56,7 +56,7 @@ export default function OrganisationContactBlock({ organisation }: Props) {
         )}
         {organisation.twitter && (
           <li>
-            <strong>Twitter:</strong>{' '}
+            <strong>X:</strong>{' '}
             <a
               href={organisation.twitter}
               target="_blank"
