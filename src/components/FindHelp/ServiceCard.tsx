@@ -202,20 +202,13 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
         </div>
       )}
 
-      {service.openTimes && service.openTimes.length > 0 && (() => {
-        // Check if organization has 24/7 tag - hide opening times if it does
-        const orgTags = service.organisation?.tags || [];
-        const is24_7Service = orgTags.some(tag => 
-          typeof tag === 'string' && tag.toLowerCase().includes('24') && tag.toLowerCase().includes('7')
-        );
-        return !is24_7Service;
-      })() ? (
+      {service.openTimes && service.openTimes.length > 0 && !service.isOpen247 ? (
         <div className="mt-3">
           <p className="text-small font-semibold mb-1 !text-black">Opening Times:</p>
           <ul className="list-disc pl-5 text-sm !text-black">
             {(() => {
               // Group opening times by day and consolidate multiple sessions
-              const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+              const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
               const dayGroups = new Map();
               
               const formatTime = (time: number) => {

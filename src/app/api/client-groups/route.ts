@@ -1,5 +1,5 @@
 // src/app/api/client-groups/route.ts
-
+// We use it in code, but in reality we should omit it. So keep it for now. But I don't handle it in streetsupport-platform-admin
 import { NextResponse } from 'next/server';
 import { getClientGroups } from './helper';
 

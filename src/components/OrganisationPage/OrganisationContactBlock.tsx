@@ -56,7 +56,7 @@ export default function OrganisationContactBlock({ organisation }: Props) {
         )}
         {organisation.twitter && (
           <li>
-            <strong>Twitter:</strong>{' '}
+            <strong>X:</strong>{' '}
             <a
               href={organisation.twitter}
               target="_blank"
@@ -64,6 +64,19 @@ export default function OrganisationContactBlock({ organisation }: Props) {
               className="text-brand-h underline"
             >
               {organisation.twitter}
+            </a>
+          </li>
+        )}
+        {organisation.bluesky && (
+          <li>
+            <strong>Bluesky:</strong>{' '}
+            <a
+              href={organisation.bluesky}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand-h underline"
+            >
+              {organisation.bluesky}
             </a>
           </li>
         )}

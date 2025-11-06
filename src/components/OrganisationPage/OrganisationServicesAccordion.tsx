@@ -285,11 +285,11 @@ export default function OrganisationServicesAccordion({
                                           const hasOpenTimes = service.openTimes && service.openTimes.length > 0;
                                           
                                           // Check for 24-hour service
-                                          const is24Hour = hasOpenTimes && service.openTimes.some((slot) => {
+                                          const is24Hour = (hasOpenTimes && service.openTimes.some((slot) => {
                                             const startTime = Number(slot.start);
                                             const endTime = Number(slot.end);
                                             return startTime === 0 && endTime === 2359; // 00:00 to 23:59
-                                          });
+                                          }));
                                           
                                           return (
                                             <>
@@ -304,7 +304,7 @@ export default function OrganisationServicesAccordion({
                                                   )}
                                                 </>
                                               )}
-                                              {is24Hour && (
+                                              {service.isOpen247 && (
                                                 <span className="text-green-600">● Open 24/7</span>
                                               )}
                                             </>
@@ -356,22 +356,22 @@ export default function OrganisationServicesAccordion({
                           const service = (selectedLocation as ServiceLocation).service;
                           
                           // Check for phone service
-                          const isPhoneService = service.subCategory.toLowerCase().includes('telephone') || 
+                          const isPhoneService = service.isTelephoneService || service.subCategory.toLowerCase().includes('telephone') || 
                                                service.subCategory.toLowerCase().includes('phone') ||
                                                service.subCategory.toLowerCase().includes('helpline');
                           
                           // Check for 24-hour service
-                          const is24Hour = service.openTimes && service.openTimes.length > 0 && service.openTimes.some((slot) => {
+                          const is24Hour = (service.openTimes && service.openTimes.length > 0 && service.openTimes.some((slot) => {
                             const startTime = Number(slot.start);
                             const endTime = Number(slot.end);
                             return startTime === 0 && endTime === 2359; // 00:00 to 23:59
-                          });
+                          }));
 
                           // Check for accommodation service
                           const isAccommodation = service.category === 'accom' || service.sourceType === 'accommodation';
                           const accommodationData = service.accommodationData;
                           
-                          const hasServiceTypeIndicators = isPhoneService || is24Hour || isAccommodation;
+                          const hasServiceTypeIndicators = isPhoneService || is24Hour || isAccommodation || service.isOpen247;
                           
                           if (!hasServiceTypeIndicators) return null;
                           
@@ -382,9 +382,14 @@ export default function OrganisationServicesAccordion({
                                   📞 Phone Service
                                 </span>
                               )}
-                              {is24Hour && (
+                              {service.isOpen247 && (
                                 <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
                                   Open 24/7
+                                </span>
+                              )}
+                              {service.isAppointmentOnly && (
+                                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                  Call before attending
                                 </span>
                               )}
                               {isAccommodation && accommodationData && (
@@ -795,15 +800,7 @@ export default function OrganisationServicesAccordion({
                   )}
 
                   {/* Opening Times */}
-                  {(selectedLocation as ServiceLocation | undefined)?.service?.openTimes && (selectedLocation as ServiceLocation).service.openTimes.length > 0 && (() => {
-                    // Check if organization has 24/7 tag - hide opening times if it does
-                    const orgTags = organisation.tags || [];
-                    const tagsArray = Array.isArray(orgTags) ? orgTags : [orgTags];
-                    const is24_7Service = tagsArray.some(tag => 
-                      typeof tag === 'string' && tag.toLowerCase().includes('24') && tag.toLowerCase().includes('7')
-                    );
-                    return !is24_7Service;
-                  })() && (
+                  {(selectedLocation as ServiceLocation | undefined)?.service?.openTimes && (selectedLocation as ServiceLocation).service.openTimes.length > 0 && !(selectedLocation as ServiceLocation).service.isOpen247 && (
                     <div className="relative">
                       {loadingContent === accordionKey && (
                         <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded">
@@ -819,16 +816,16 @@ export default function OrganisationServicesAccordion({
                           const openingStatus = isServiceOpenNow(service);
                           
                           // Check for phone service
-                          const isPhoneService = service.subCategory.toLowerCase().includes('telephone') || 
+                          const isPhoneService = service.isTelephoneService || service.subCategory.toLowerCase().includes('telephone') || 
                                                service.subCategory.toLowerCase().includes('phone') ||
                                                service.subCategory.toLowerCase().includes('helpline');
                           
                           // Check for 24-hour service
-                          const is24Hour = service.openTimes.some((slot) => {
+                          const is24Hour = service.isOpen247 || (service.openTimes.some((slot) => {
                             const startTime = Number(slot.start);
                             const endTime = Number(slot.end);
                             return startTime === 0 && endTime === 2359; // 00:00 to 23:59
-                          });
+                          }));
                           
                           return (
                             <div className="flex items-center flex-wrap gap-2">
@@ -864,7 +861,7 @@ export default function OrganisationServicesAccordion({
                       <ul className="list-disc pl-5">
                         {(() => {
                           // Group opening times by day and consolidate multiple sessions
-                          const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                          const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                           const dayGroups = new Map<string, Array<{start: string; end: string}>>();
                           
                           // Group slots by day

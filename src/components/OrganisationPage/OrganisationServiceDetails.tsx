@@ -48,7 +48,7 @@ export default function OrganisationServiceDetails({ service }: { service: Servi
     ? `https://www.google.com/maps?q=${Address.Location.coordinates[1]},${Address.Location.coordinates[0]}`
     : null;
 
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
     <div>

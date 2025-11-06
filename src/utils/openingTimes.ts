@@ -18,7 +18,7 @@ export interface OpeningStatus {
   };
 }
 
-const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 function normalizeOpeningTime(slot: OpeningTimeSlot) {
   const dayValue = slot.Day ?? slot.day;
@@ -134,7 +134,7 @@ export function isServiceOpenNow(service: ServiceWithDistance): OpeningStatus {
 
 function isAppointmentOnlyService(service: ServiceWithDistance): boolean {
   // Check for telephone/phone-only services
-  if (service.subCategory === 'telephone') {
+  if (service.isAppointmentOnly || service.subCategory === 'telephone') {
     return true;
   }
   

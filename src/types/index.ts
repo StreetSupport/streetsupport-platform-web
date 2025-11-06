@@ -26,6 +26,9 @@ export interface FlattenedService {
   clientGroups: string[];
   latitude: number;
   longitude: number;
+  isTelephoneService?: boolean;
+  isAppointmentOnly?: boolean;
+  isOpen247?: boolean;
 }
 
 // New interface for UI components expecting nested organisation object

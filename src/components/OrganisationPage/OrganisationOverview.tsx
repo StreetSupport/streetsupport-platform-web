@@ -42,13 +42,36 @@ export default function OrganisationOverview({ organisation }: Props) {
     return nameContainsCharity;
   })();
 
+  const isNoWrongDoor = (() => {
+    if (typeof organisation.tags === 'string' && organisation.tags.length > 0) {
+      return organisation.tags.toLowerCase().includes('no-wrong-door');
+    }
+    
+    return false;
+  })();
+
+  const isCoalitionOfRelief = (() => {
+    if (typeof organisation.tags === 'string' && organisation.tags.length > 0) {
+      return organisation.tags.toLowerCase().includes('coalition-of-relief');
+    }
+    
+    return false;
+  })();
+
+  const isBigChange = (() => {
+    if (typeof organisation.tags === 'string' && organisation.tags.length > 0) {
+      return organisation.tags.toLowerCase().includes('big-change');
+    }
+    
+    return false;
+  })();
 
   return (
     <section className="mb-6">
       
-      <div className="flex items-start gap-3 mb-2">
-        <h1 className="text-2xl font-bold">{decodedName}</h1>
-        <div className="flex flex-wrap gap-2">
+      <div className="mb-2">
+        <h1 className="text-2xl font-bold mb-2">{decodedName}</h1>
+        <div className="mt-1 flex flex-wrap gap-2">
           {organisation.isVerified && (
             <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs font-medium">
               <svg
@@ -79,6 +102,52 @@ export default function OrganisationOverview({ organisation }: Props) {
                 />
               </svg>
               Registered Charity
+            </span>
+          )}
+          {isNoWrongDoor && (
+            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium" style={{ backgroundColor: 'rgb(234, 244, 242)', color: 'rgb(11, 155, 117)' }}>
+              <svg
+                className="w-3 h-3"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              No Wrong Door
+            </span>
+          )}
+          {isCoalitionOfRelief && (
+            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-medium">
+              <svg
+                className="w-3 h-3"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"
+                />
+              </svg>
+              Coalition of Relief
+            </span>
+          )}
+          {isBigChange && (
+            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium" style={{ backgroundColor: 'rgb(254, 242, 232)', color: 'rgb(255, 162, 0)' }}>
+              <svg
+                className="w-3 h-3"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Big Change
             </span>
           )}
         </div>

@@ -50,8 +50,9 @@ function transformAccommodationToService(accommodation: AccommodationData) {
     description: accommodation.synopsis || accommodation.description || '',
     ParentCategoryKey: 'accom',
     SubCategoryKey: accommodation.accommodation?.type || 'other',
-    ServiceProviderName: accommodation.name || '',
+    ServiceProviderName: accommodation.serviceProviderName || accommodation.name || '',
     ServiceProviderKey: accommodation.serviceProviderId,
+    IsVerified: accommodation.isVerified || false,
     OpeningTimes: [],
     ClientGroups: [],
     Address: {
@@ -65,6 +66,9 @@ function transformAccommodationToService(accommodation: AccommodationData) {
       Street3: accommodation.address?.street3 || '',
       Postcode: accommodation.address?.postcode || ''
     },
+    IsAppointmentOnly: false,
+    IsTelephoneService: false,
+    IsOpen247: false,
     // Add accommodation-specific data
     accommodationData: {
       type: accommodation.accommodation?.type,
@@ -331,15 +335,20 @@ export async function GET(req: Request) {
         _id: 1,
         name: 1,
         description: 1,
+        IsVerified: 1,
         ParentCategoryKey: 1,
         SubCategoryKey: 1,
         ServiceProviderName: 1,
         ServiceProviderKey: 1,
         OpeningTimes: 1,
+        // We don't use ClientGroups, but I leave it because afraid to break something
         ClientGroups: 1,
         'Address.Location': 1,
         organisation: 1,
-        distance: 1
+        distance: 1,
+        IsAppointmentOnly: 1,
+        IsTelephoneService: 1,
+        'Address.IsOpen247': 1,
       }
     });
 
@@ -415,7 +424,7 @@ export async function GET(req: Request) {
         } : {
           name: decodeText((serviceAny.ServiceProviderName as string) || ''),
           slug: (serviceAny.ServiceProviderKey as string) || '',
-          isVerified: false
+          isVerified: Boolean(serviceAny.IsVerified) || false
         }
       };
 
