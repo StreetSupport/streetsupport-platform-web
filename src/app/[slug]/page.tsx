@@ -93,9 +93,7 @@ export async function generateMetadata(props): Promise<Metadata> {
 }
 
 // @ts-expect-error Next dynamic param inference workaround
-export default async function LocationPage(props) {
-  const { slug } = await props.params;
-
+export default function LocationPage({ params: { slug } }: LocationPageProps) {
   const location = locations.find(
     (loc) => loc.slug === slug && loc.isPublic
   );
@@ -193,7 +191,7 @@ export default async function LocationPage(props) {
         ctaLink="/find-help"
       />
 
-      {/* SWEP Banner - fetches data client-side and displays when active */}
+      {/* SWEP Banner - always fetches fresh data */}
       <SwepBannerWrapper locationSlug={slug} />
 
       <EmergencyContactSection locationName={location.name} locationSlug={slug} />
