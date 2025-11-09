@@ -93,7 +93,9 @@ export async function generateMetadata(props): Promise<Metadata> {
 }
 
 // @ts-expect-error Next dynamic param inference workaround
-export default function LocationPage({ params: { slug } }: LocationPageProps) {
+export default async function LocationPage(props) {
+  const { slug } = await props.params;
+
   const location = locations.find(
     (loc) => loc.slug === slug && loc.isPublic
   );

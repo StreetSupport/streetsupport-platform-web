@@ -3,6 +3,10 @@ import { SwepData } from '@/types';
 import { isSwepActive } from '@/utils/swep';
 import { getClientPromise } from '@/utils/mongodb';
 
+// Disable caching for this API route to ensure fresh SWEP data
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 interface SwepApiParams {
   params: Promise<{ slug: string }>;
 }
@@ -63,7 +67,8 @@ export async function GET(req: Request, context: SwepApiParams) {
     // Check if SWEP is currently active
     const active = isSwepActive(swepData);
 
-    const response = NextResponse.json({
+    // Return response without caching headers to ensure fresh data
+    return NextResponse.json({
       status: 'success',
       data: {
         swep: {
@@ -73,12 +78,13 @@ export async function GET(req: Request, context: SwepApiParams) {
         isActive: active,
         location: slug
       }
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
     });
-
-    // Add cache headers - shorter cache for SWEP data since it's time-sensitive
-    response.headers.set('Cache-Control', 'public, max-age=300, s-maxage=600'); // 5 min browser, 10 min CDN
-    
-    return response;
   } catch (error) {
     console.error('[API ERROR] /api/locations/[slug]/swep:', error);
     
