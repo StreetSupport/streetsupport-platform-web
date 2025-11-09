@@ -2,8 +2,10 @@ import type { ServiceWithDistance } from '@/types';
 
 export interface OpeningTimeSlot {
   day: number;
-  start: number | string;
-  end: number | string;
+  start: number;
+  end: number;
+  // We don't use these 3 properties below, but they were defined before. 
+  // So we keep them for now.
   Day?: number;
   StartTime?: number | string;
   EndTime?: number | string;
@@ -59,9 +61,7 @@ export function isServiceOpenNow(service: ServiceWithDistance): OpeningStatus {
   }
 
   const now = new Date();
-  const jsDay = now.getDay(); // JavaScript: 0 = Sunday, 1 = Monday, etc.
-  // Convert to database format: 0 = Monday, 1 = Tuesday, ..., 6 = Sunday
-  const currentDay = jsDay === 0 ? 6 : jsDay - 1;
+  const currentDay = now.getDay();
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
 

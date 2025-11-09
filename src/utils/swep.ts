@@ -4,11 +4,7 @@ import { SwepData } from '@/types';
  * Check if SWEP is currently active based on datetime range
  */
 export function isSwepActive(swepData: SwepData): boolean {
-  const now = new Date();
-  const activeFrom = new Date(swepData.swepActiveFrom);
-  const activeUntil = new Date(swepData.swepActiveUntil);
-  
-  return now >= activeFrom && now <= activeUntil;
+  return swepData.isActive || false;
 }
 
 /**

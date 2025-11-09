@@ -12,21 +12,10 @@
     "createdAt": "2025-08-05T14:00:00Z",
     "updatedAt": "2025-08-05T14:00:00Z",
     "createdBy": "admin",
-    "status": "published",
     "emergencyContact": {
       "phone": "0800 123 4567",
       "email": "emergency@wakefield.gov.uk",
       "hours": "24/7 during SWEP activation"
-    },
-    "additionalInfo": {
-      "weatherWarning": "Met Office severe weather warning in effect",
-      "triggerCriteria": "Temperature forecast below 0°C for 3 consecutive nights",
-      "accommodationCapacity": 50,
-      "servicesAffected": [
-        "Extended outreach hours",
-        "Additional emergency beds",
-        "24/7 helpline activation"
-      ]
     }
   },
   {
@@ -42,21 +31,10 @@
     "createdAt": "2024-01-15T12:00:00Z",
     "updatedAt": "2024-01-18T10:00:00Z",
     "createdBy": "admin",
-    "status": "published",
     "emergencyContact": {
       "phone": "0161 234 5678",
       "email": "emergency@manchester.gov.uk",
       "hours": "24/7 during SWEP activation"
-    },
-    "additionalInfo": {
-      "weatherWarning": "Met Office severe weather warning expired",
-      "triggerCriteria": "Temperature forecast below 0°C for 3 consecutive nights",
-      "accommodationCapacity": 75,
-      "servicesAffected": [
-        "Extended outreach hours",
-        "Additional emergency beds",
-        "24/7 helpline activation"
-      ]
     }
   }
 ]

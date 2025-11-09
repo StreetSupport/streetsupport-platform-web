@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { SwepData } from '@/types';
 import { isSwepActive } from '@/utils/swep';
-import swepPlaceholderData from '@/data/swep-fallback.json';
+import { getClientPromise } from '@/utils/mongodb';
 
 interface SwepApiParams {
   params: Promise<{ slug: string }>;
@@ -18,8 +18,35 @@ export async function GET(req: Request, context: SwepApiParams) {
       );
     }
 
-    // Use placeholder data for now - will be replaced with CMS integration later
-    const swepData = getSwepPlaceholderData(slug);
+    // Fetch SWEP data from MongoDB
+    const client = await getClientPromise();
+    const db = client.db('streetsupport');
+    const swepCol = db.collection('SwepBanners');
+
+    const rawSwepData = await swepCol.findOne({
+      LocationSlug: slug
+    });
+
+    // Transform MongoDB document (PascalCase) to SwepData format (camelCase for web)
+    const swepData: SwepData | null = rawSwepData ? {
+      id: rawSwepData._id.toString(),
+      locationSlug: rawSwepData.LocationSlug,
+      isActive: rawSwepData.IsActive,
+      title: rawSwepData.Title,
+      body: rawSwepData.Body,
+      image: rawSwepData.Image || '',
+      shortMessage: rawSwepData.ShortMessage || '',
+      swepActiveFrom: rawSwepData.SwepActiveFrom ? rawSwepData.SwepActiveFrom.toISOString() : '',
+      swepActiveUntil: rawSwepData.SwepActiveUntil ? rawSwepData.SwepActiveUntil.toISOString() : '',
+      createdBy: rawSwepData.CreatedBy,
+      createdAt: rawSwepData.DocumentCreationDate ? rawSwepData.DocumentCreationDate.toISOString() : '',
+      updatedAt: rawSwepData.DocumentModifiedDate ? rawSwepData.DocumentModifiedDate.toISOString() : '',
+      emergencyContact: rawSwepData.EmergencyContact ? {
+        phone: rawSwepData.EmergencyContact.Phone,
+        email: rawSwepData.EmergencyContact.Email,
+        hours: rawSwepData.EmergencyContact.Hours
+      } : undefined
+    } : null;
 
     // If no SWEP data exists for this location
     if (!swepData) {
@@ -65,13 +92,4 @@ export async function GET(req: Request, context: SwepApiParams) {
       }
     }, { status: 500 });
   }
-}
-
-// Get SWEP placeholder data - this will be replaced with CMS integration later
-function getSwepPlaceholderData(locationSlug: string): SwepData | null {
-  const placeholderEntry = swepPlaceholderData.find(
-    (entry) => entry.locationSlug === locationSlug
-  );
-  
-  return placeholderEntry as SwepData || null;
 }

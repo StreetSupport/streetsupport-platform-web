@@ -45,7 +45,7 @@ describe('OrganisationContactBlock', () => {
     expect(screen.getByText('Facebook:')).toBeInTheDocument();
     expect(screen.getByText('https://facebook.com/testorg')).toBeInTheDocument();
     
-    expect(screen.getByText('Twitter:')).toBeInTheDocument();
+    expect(screen.getByText('X:')).toBeInTheDocument();
     expect(screen.getByText('https://twitter.com/testorg')).toBeInTheDocument();
 
     // Check that links have correct href attributes
@@ -77,7 +77,7 @@ describe('OrganisationContactBlock', () => {
     // These should not be in the document
     expect(screen.queryByText('Telephone:')).not.toBeInTheDocument();
     expect(screen.queryByText('Facebook:')).not.toBeInTheDocument();
-    expect(screen.queryByText('Twitter:')).not.toBeInTheDocument();
+    expect(screen.queryByText('X:')).not.toBeInTheDocument();
 
     // Count list items - should be 2 (email and website)
     const listItems = screen.getAllByRole('listitem');

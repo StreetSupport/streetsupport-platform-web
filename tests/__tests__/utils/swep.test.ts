@@ -27,7 +27,16 @@ describe.skip('SWEP Utilities', () => {
         body: 'Test body',
         shortMessage: 'Test message',
         swepActiveFrom: '2024-01-15T18:00:00Z',
-        swepActiveUntil: '2024-01-18T09:00:00Z'
+        swepActiveUntil: '2024-01-18T09:00:00Z',
+        isActive: false,
+        createdAt: '',
+        updatedAt: '',
+        createdBy: '',
+        emergencyContact: {
+          phone: '',
+          email: '',
+          hours: ''
+        }
       };
 
       expect(isSwepActive(swepData)).toBe(true);
@@ -41,7 +50,16 @@ describe.skip('SWEP Utilities', () => {
         body: 'Test body',
         shortMessage: 'Test message',
         swepActiveFrom: '2024-01-17T18:00:00Z',
-        swepActiveUntil: '2024-01-20T09:00:00Z'
+        swepActiveUntil: '2024-01-20T09:00:00Z',
+        isActive: false,
+        createdAt: '',
+        updatedAt: '',
+        createdBy: '',
+        emergencyContact: {
+          phone: '',
+          email: '',
+          hours: ''
+        }
       };
 
       expect(isSwepActive(swepData)).toBe(false);
@@ -55,7 +73,16 @@ describe.skip('SWEP Utilities', () => {
         body: 'Test body',
         shortMessage: 'Test message',
         swepActiveFrom: '2024-01-10T18:00:00Z',
-        swepActiveUntil: '2024-01-15T09:00:00Z'
+        swepActiveUntil: '2024-01-15T09:00:00Z',
+        isActive: false,
+        createdAt: '',
+        updatedAt: '',
+        createdBy: '',
+        emergencyContact: {
+          phone: '',
+          email: '',
+          hours: ''
+        }
       };
 
       expect(isSwepActive(swepData)).toBe(false);
@@ -71,7 +98,16 @@ describe.skip('SWEP Utilities', () => {
         body: 'Test body',
         shortMessage: 'Test message',
         swepActiveFrom: '2024-01-15T18:00:00Z',
-        swepActiveUntil: '2024-01-18T09:00:00Z'
+        swepActiveUntil: '2024-01-18T09:00:00Z',
+        isActive: false,
+        createdAt: '',
+        updatedAt: '',
+        createdBy: '',
+        emergencyContact: {
+          phone: '',
+          email: '',
+          hours: ''
+        }
       };
 
       expect(isSwepActive(swepData)).toBe(true);
@@ -87,7 +123,16 @@ describe.skip('SWEP Utilities', () => {
         body: 'Test body',
         shortMessage: 'Test message',
         swepActiveFrom: '2024-01-15T18:00:00Z',
-        swepActiveUntil: '2024-01-18T09:00:00Z'
+        swepActiveUntil: '2024-01-18T09:00:00Z',
+        isActive: false,
+        createdAt: '',
+        updatedAt: '',
+        createdBy: '',
+        emergencyContact: {
+          phone: '',
+          email: '',
+          hours: ''
+        }
       };
 
       expect(isSwepActive(swepData)).toBe(true);
@@ -103,7 +148,16 @@ describe.skip('SWEP Utilities', () => {
         body: 'Test body',
         shortMessage: 'Test message',
         swepActiveFrom: '2024-01-15T18:00:00Z',
-        swepActiveUntil: '2024-01-18T09:00:00Z'
+        swepActiveUntil: '2024-01-18T09:00:00Z',
+        isActive: false,
+        createdAt: '',
+        updatedAt: '',
+        createdBy: '',
+        emergencyContact: {
+          phone: '',
+          email: '',
+          hours: ''
+        }
       };
 
       const result = formatSwepActivePeriod(swepData);
@@ -122,7 +176,16 @@ describe.skip('SWEP Utilities', () => {
         body: 'Test body',
         shortMessage: 'Test message',
         swepActiveFrom: '2024-12-25T23:30:00Z',
-        swepActiveUntil: '2024-12-26T08:15:00Z'
+        swepActiveUntil: '2024-12-26T08:15:00Z',
+        isActive: false,
+        createdAt: '',
+        updatedAt: '',
+        createdBy: '',
+        emergencyContact: {
+          phone: '',
+          email: '',
+          hours: ''
+        }
       };
 
       const result = formatSwepActivePeriod(swepData);

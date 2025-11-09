@@ -1,13 +1,12 @@
 import { 
   isServiceOpenNow, 
   formatDistance,
-  OpeningTimeSlot,
-  OpeningStatus 
+  OpeningTimeSlot
 } from '@/utils/openingTimes';
 import type { ServiceWithDistance } from '@/types';
 
 // Mock Date to control time for testing
-const mockDate = new Date('2024-01-15T14:30:00.000Z'); // Monday 14:30
+const mockDate = new Date('2024-01-14T14:30:00.000Z'); // Sunday 14:30
 
 describe('openingTimes utilities', () => {
   beforeEach(() => {
@@ -53,7 +52,12 @@ describe('openingTimes utilities', () => {
       name: 'Test Service',
       category: 'test',
       subCategory: 'test',
-      organisation: 'Test Org',
+      organisation: {
+        name: 'Test Org',
+        slug: 'test-org',
+        isVerified: false,
+        tags: []
+      },
       organisationSlug: 'test-org',
       description,
       openTimes,
@@ -103,15 +107,6 @@ describe('openingTimes utilities', () => {
       expect(status.isAppointmentOnly).toBe(true);
     });
 
-    it('handles string time formats', () => {
-      const service = createMockService([
-        { day: 0, start: '09:00', end: '17:00' }
-      ]);
-      const status = isServiceOpenNow(service);
-      
-      expect(status.isOpen).toBe(true);
-    });
-
     it('handles mixed time formats (Day/StartTime/EndTime properties)', () => {
       const service = createMockService([
         { Day: 0, StartTime: 900, EndTime: 1700, day: 0, start: 900, end: 1700 }
@@ -124,7 +119,7 @@ describe('openingTimes utilities', () => {
     it('calculates next opening time correctly', () => {
       // Service closed on Monday, opens Tuesday 9:00
       const service = createMockService([
-        { day: 1, start: 900, end: 1700 } // Tuesday
+        { day: 2, start: 900, end: 1700 } // Tuesday
       ]);
       const status = isServiceOpenNow(service);
       
@@ -142,14 +137,14 @@ describe('openingTimes utilities', () => {
       ]);
       
       // Test at 23:00 (should be open)
-      jest.setSystemTime(new Date('2024-01-15T23:00:00.000Z'));
+      jest.setSystemTime(new Date('2024-01-14T23:00:00.000Z'));
       const status = isServiceOpenNow(service);
       expect(status.isOpen).toBe(true);
     });
 
     it('handles invalid time formats gracefully', () => {
       const service = createMockService([
-        { day: 0, start: 'invalid', end: 'invalid' }
+        { day: 0, start: 8888, end: 9999 }
       ]);
       const status = isServiceOpenNow(service);
       
@@ -178,7 +173,7 @@ describe('openingTimes utilities', () => {
       
       expect(status.isOpen).toBe(false);
       expect(status.nextOpen).toEqual({
-        day: 'Wednesday',
+        day: 'Tuesday',
         time: '09:00'
       });
     });

@@ -52,6 +52,7 @@ describe('accommodationData', () => {
         Description: 'Test description',
         AccommodationType: 'supported',
         ServiceProviderId: 'test-provider-123',
+        ServiceProviderName: 'Test Provider',
         IsOpenAccess: true,
         IsPubliclyVisible: true,
         IsPublished: true
@@ -327,10 +328,12 @@ describe('accommodationData', () => {
 
       const expectedAccommodation: AccommodationData = {
         id: '507f1f77bcf86cd799439011',
+        isVerified: false,
         name: 'Test Accommodation',
         synopsis: 'Test synopsis',
         description: 'Test description',
         serviceProviderId: 'test-provider-123',
+        serviceProviderName: 'Test Provider',
         address: {
           street1: '123 Test Street',
           street2: 'Test Area',

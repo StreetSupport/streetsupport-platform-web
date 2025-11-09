@@ -111,21 +111,14 @@ export interface SwepData {
   shortMessage: string;
   swepActiveFrom: string; // ISO datetime string
   swepActiveUntil: string; // ISO datetime string
-  isActive?: boolean; // Computed field based on current datetime
-  createdAt?: string; // ISO datetime string
-  updatedAt?: string; // ISO datetime string
-  createdBy?: string;
-  status?: 'draft' | 'published' | 'archived';
+  isActive: boolean; // Computed field based on current datetime
+  createdAt: string; // ISO datetime string
+  updatedAt: string; // ISO datetime string
+  createdBy: string;
   emergencyContact?: {
     phone?: string;
     email?: string;
     hours?: string;
-  };
-  additionalInfo?: {
-    weatherWarning?: string;
-    triggerCriteria?: string;
-    accommodationCapacity?: number;
-    servicesAffected?: string[];
   };
 }
 

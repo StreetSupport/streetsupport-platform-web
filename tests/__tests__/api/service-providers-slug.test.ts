@@ -81,7 +81,7 @@ describe('GET /api/service-providers/[slug]', () => {
     expect(mockDb.collection).toHaveBeenCalledWith('ServiceProviders');
     expect(mockDb.collection).toHaveBeenCalledWith('ProvidedServices');
     expect(mockProvidersCollection.findOne).toHaveBeenCalledWith(
-      { Key: { $regex: new RegExp(`^test-org$`, 'i') } },
+      { Key: { $regex: new RegExp(`^test-org$`, 'i') }, IsPublished: true },
       expect.any(Object)
     );
   });
@@ -119,7 +119,7 @@ describe('GET /api/service-providers/[slug]', () => {
     expect(data.message).toBe('Organisation not found');
     expect(mockDb.collection).toHaveBeenCalledWith('ServiceProviders');
     expect(mockProvidersCollection.findOne).toHaveBeenCalledWith(
-      { Key: { $regex: new RegExp(`^non-existent$`, 'i') } },
+      { Key: { $regex: new RegExp(`^non-existent$`, 'i') }, IsPublished: true },
       expect.any(Object)
     );
   });
@@ -157,7 +157,7 @@ describe('GET /api/service-providers/[slug]', () => {
     expect(data.message).toBe('Failed to fetch organisation details');
     expect(mockDb.collection).toHaveBeenCalledWith('ServiceProviders');
     expect(mockProvidersCollection.findOne).toHaveBeenCalledWith(
-      { Key: { $regex: new RegExp(`^test-org$`, 'i') } },
+      { Key: { $regex: new RegExp(`^test-org$`, 'i') }, IsPublished: true },
       expect.any(Object)
     );
   });
