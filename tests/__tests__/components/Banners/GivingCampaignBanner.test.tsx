@@ -115,7 +115,7 @@ describe('GivingCampaignBanner', () => {
     render(<GivingCampaignBanner {...props} />);
     
     expect(screen.getByText('Campaign ends:')).toBeInTheDocument();
-    expect(screen.getByText(/Wednesday.*1.*January.*2025/)).toBeInTheDocument();
+    expect(screen.getByText(/Tuesday.*31.*December.*2024/)).toBeInTheDocument();
   });
 
   it('should render date range when showDates is true', () => {
