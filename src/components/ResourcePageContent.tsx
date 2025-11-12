@@ -52,8 +52,8 @@ export default function ResourcePageContent({ resource }: ResourcePageContentPro
     </div>
   );
 
-  // Render pdf-link list (detailed cards)
-  const renderPdfLinkList = (linkList: LinkList) => (
+  // Render file-link list (detailed cards)
+  const renderFileLinkList = (linkList: LinkList) => (
     <div key={linkList.name}>
       {linkList.name && (
         <h2 className="heading-3 mb-4">{linkList.name}</h2>
@@ -148,7 +148,7 @@ export default function ResourcePageContent({ resource }: ResourcePageContentPro
               
               {linkList.type === 'link' && renderLinkList(linkList)}
               {linkList.type === 'card-link' && renderCardLinkList(linkList)}
-              {linkList.type === 'pdf-link' && renderPdfLinkList(linkList)}
+              {linkList.type === 'file-link' && renderFileLinkList(linkList)}
             </div>
           ))}
         </div>

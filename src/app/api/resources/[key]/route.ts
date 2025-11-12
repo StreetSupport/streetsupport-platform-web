@@ -10,6 +10,35 @@ interface ResourceApiParams {
   params: Promise<{ key: string }>;
 }
 
+// MongoDB document interfaces (PascalCase naming)
+interface MongoLink {
+  Title: string;
+  Link: string;
+  Description?: string;
+  Header?: string;
+  FileType?: string;
+}
+
+interface MongoLinkList {
+  Name: string;
+  Type: string;
+  Priority: number;
+  Links: MongoLink[];
+}
+
+interface MongoResource {
+  _id: { toString(): string };
+  Key: string;
+  Name: string;
+  Header: string;
+  ShortDescription: string;
+  Body: string;
+  LinkList?: MongoLinkList[];
+  CreatedBy: string;
+  DocumentCreationDate?: Date;
+  DocumentModifiedDate?: Date;
+}
+
 export async function GET(req: Request, context: ResourceApiParams) {
   try {
     const { key } = await context.params;
@@ -28,7 +57,7 @@ export async function GET(req: Request, context: ResourceApiParams) {
 
     const rawResourceData = await resourcesCol.findOne({
       Key: key
-    });
+    }) as MongoResource | null;
     
     // If no resource exists
     if (!rawResourceData) {
@@ -47,11 +76,11 @@ export async function GET(req: Request, context: ResourceApiParams) {
       header: rawResourceData.Header,
       shortDescription: rawResourceData.ShortDescription,
       body: rawResourceData.Body,
-      linkList: rawResourceData.LinkList ? rawResourceData.LinkList.map((linkList: any): LinkList => ({
+      linkList: rawResourceData.LinkList ? rawResourceData.LinkList.map((linkList: MongoLinkList): LinkList => ({
         name: linkList.Name,
-        type: linkList.Type,
+        type: linkList.Type as 'link' | 'card-link' | 'file-link',
         priority: linkList.Priority,
-        links: linkList.Links.map((link: any): Link => ({
+        links: linkList.Links.map((link: MongoLink): Link => ({
           title: link.Title,
           link: link.Link,
           description: link.Description,

@@ -1,6 +1,6 @@
 // Resource types for the web application (camelCase naming convention)
 
-export type LinkListType = 'link' | 'card-link' | 'pdf-link';
+export type LinkListType = 'link' | 'card-link' | 'file-link';
 
 export interface Link {
   title: string;
