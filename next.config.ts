@@ -30,13 +30,14 @@ const nextConfig = {
     minimumCacheTTL: 60,
     
     // Add any external domains if needed in the future
-    // remotePatterns: [
-    //   {
-    //     protocol: 'https',
-    //     hostname: 'example.com',
-    //     pathname: '/images/**',
-    //   },
-    // ],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: process.env.BLOB_STORAGE_HOSTNAME,
+        port: '',
+        pathname: '/**',
+      },
+    ],
   },
   
   // Enable experimental features for better performance
