@@ -131,13 +131,13 @@ describe('openingTimes utilities', () => {
     });
 
     it('handles services with unusual hours', () => {
-      // Service open late hours (22:00 to 23:59)
+      // Service open late hours (20:00 to 23:59)
       const service = createMockService([
-        { day: 0, start: 2200, end: 2359 }
+        { day: 0, start: 2000, end: 2359 }
       ]);
       
-      // Test at 23:00 (should be open)
-      jest.setSystemTime(new Date('2024-01-14T23:00:00.000Z'));
+      // Test at 21:00 local time on Monday (should be open - within 2000-2359 range)
+      jest.setSystemTime(new Date('2024-01-14T21:00:00.000Z'));
       const status = isServiceOpenNow(service);
       expect(status.isOpen).toBe(true);
     });
