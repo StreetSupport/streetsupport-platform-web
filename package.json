@@ -21,9 +21,11 @@
     "fetch:all": "npm-run-all2 fetch:locations fetch:service-categories fetch:client-groups"
   },
   "dependencies": {
+    "@google-analytics/data": "^5.2.1",
     "@googlemaps/js-api-loader": "^1.16.8",
     "@sentry/nextjs": "^10.12.0",
     "clsx": "^2.1.1",
+    "google-auth-library": "^10.5.0",
     "lucide-react": "^0.511.0",
     "mongodb": "^6.17.0",
     "next": "15.3.2",

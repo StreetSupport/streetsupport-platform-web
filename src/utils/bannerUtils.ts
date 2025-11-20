@@ -140,59 +140,60 @@ export function generateAccentGraphicClasses(position?: string): string {
   }
 }
 
+// We don't need this validation because it's already validate on Admin (CMS) part
 /**
  * Validate banner props for required fields
  */
-export function validateBannerProps(props: Record<string, unknown>): { isValid: boolean; errors: string[] } {
-  const errors: string[] = [];
+// export function validateBannerProps(props: Record<string, unknown>): { isValid: boolean; errors: string[] } {
+//   const errors: string[] = [];
   
-  if (!props.title || typeof props.title !== 'string' || !props.title.trim()) {
-    errors.push('Title is required');
-  }
+//   if (!props.title || typeof props.title !== 'string' || !props.title.trim()) {
+//     errors.push('Title is required');
+//   }
   
-  if (!props.ctaButtons || !Array.isArray(props.ctaButtons) || props.ctaButtons.length === 0) {
-    errors.push('At least one CTA button is required');
-  }
+//   if (!props.ctaButtons || !Array.isArray(props.ctaButtons) || props.ctaButtons.length === 0) {
+//     errors.push('At least one CTA button is required');
+//   }
   
-  if (Array.isArray(props.ctaButtons)) {
-    (props.ctaButtons as CTAButton[]).forEach((button: CTAButton, index: number) => {
-      if (!button.label?.trim()) {
-        errors.push(`CTA button ${index + 1} label is required`);
-      }
-      if (!button.url?.trim()) {
-        errors.push(`CTA button ${index + 1} URL is required`);
-      }
-    });
-  }
+//   if (Array.isArray(props.ctaButtons)) {
+//     (props.ctaButtons as CTAButton[]).forEach((button: CTAButton, index: number) => {
+//       if (!button.label?.trim()) {
+//         errors.push(`CTA button ${index + 1} label is required`);
+//       }
+//       if (!button.url?.trim()) {
+//         errors.push(`CTA button ${index + 1} URL is required`);
+//       }
+//     });
+//   }
   
-  interface BannerBackground {
-    type?: string;
-    value?: string;
-  }
+//   interface BannerBackground {
+//     type?: string;
+//     value?: string;
+//   }
   
-  const background = props.background as BannerBackground | null | undefined;
+//   const background = props.background as BannerBackground | null | undefined;
   
-  if (!background || !background.type) {
-    errors.push('Background type is required');
-  }
+//   if (!background || !background.type) {
+//     errors.push('Background type is required');
+//   }
   
-  if (!background || typeof background.value !== 'string' || !background.value?.trim()) {
-    errors.push('Background value is required');
-  }
+//   if (!background || typeof background.value !== 'string' || !background.value?.trim()) {
+//     errors.push('Background value is required');
+//   }
   
-  if (!props.textColour) {
-    errors.push('Text colour is required');
-  }
+//   if (!props.textColour) {
+//     errors.push('Text colour is required');
+//   }
   
-  if (!props.layoutStyle) {
-    errors.push('Layout style is required');
-  }
+//   if (!props.layoutStyle) {
+//     errors.push('Layout style is required');
+//   }
   
-  return {
-    isValid: errors.length === 0,
-    errors
-  };
-}
+//   return {
+//     isValid: errors.length === 0,
+//     errors
+//   };
+// }
 
 /**
  * Format currency for donation displays

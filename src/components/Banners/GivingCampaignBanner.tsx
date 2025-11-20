@@ -149,7 +149,7 @@ const GivingCampaignBanner: React.FC<GivingCampaignBannerProps> = ({
 
             {/* Description */}
             {description && (
-              <p className="text-lg sm:text-xl mb-6 opacity-80 leading-relaxed max-w-2xl">
+              <p className={`text-lg sm:text-xl mb-6 opacity-80 leading-relaxed max-w-2xl ${layoutStyle === 'full-width' ? 'mx-auto' : ''}`}>
                 {description}
               </p>
             )}
@@ -197,23 +197,6 @@ const GivingCampaignBanner: React.FC<GivingCampaignBannerProps> = ({
               </div>
             )}
 
-            {/* Date range */}
-            {showDates && (startDate || endDate) && (
-              <div className="mb-6 text-sm opacity-70">
-                {startDate && endDate && (
-                  <p>
-                    {new Date(startDate).toLocaleDateString('en-GB')} - {new Date(endDate).toLocaleDateString('en-GB')}
-                  </p>
-                )}
-                {startDate && !endDate && (
-                  <p>From {new Date(startDate).toLocaleDateString('en-GB')}</p>
-                )}
-                {!startDate && endDate && (
-                  <p>Until {new Date(endDate).toLocaleDateString('en-GB')}</p>
-                )}
-              </div>
-            )}
-
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
               {ctaButtons.map((button, index) => {
@@ -255,6 +238,23 @@ const GivingCampaignBanner: React.FC<GivingCampaignBannerProps> = ({
                 );
               })}
             </div>
+
+            {/* Date range */}
+            {showDates && (startDate || endDate) && (
+              <div className="mt-6 text-sm opacity-70">
+                {startDate && endDate && (
+                  <p>
+                    {new Date(startDate).toLocaleDateString('en-GB')} - {new Date(endDate).toLocaleDateString('en-GB')}
+                  </p>
+                )}
+                {startDate && !endDate && (
+                  <p>From {new Date(startDate).toLocaleDateString('en-GB')}</p>
+                )}
+                {!startDate && endDate && (
+                  <p>Until {new Date(endDate).toLocaleDateString('en-GB')}</p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Media Section */}
@@ -327,6 +327,44 @@ const GivingCampaignBanner: React.FC<GivingCampaignBannerProps> = ({
                     height={image.height || 400}
                     className="w-full h-auto object-cover"
                     sizes="(max-width: 1024px) 100vw, 800px"
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Card media */}
+          {(image || video) && layoutStyle === 'card' && (
+            <div className="mt-6">
+              {video ? (
+                <div className="relative rounded-lg overflow-hidden shadow-2xl">
+                  <video
+                    src={video.url}
+                    poster={video.poster}
+                    controls
+                    className="w-full h-auto"
+                    aria-label={video.title}
+                  >
+                    {video.captions && (
+                      <track
+                        kind="captions"
+                        src={video.captions}
+                        srcLang="en"
+                        label="English captions"
+                      />
+                    )}
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              ) : image && (
+                <div className="relative rounded-lg overflow-hidden shadow-2xl">
+                  <Image
+                    src={image.url}
+                    alt={image.alt}
+                    width={image.width || 600}
+                    height={image.height || 400}
+                    className="w-full h-auto object-cover"
+                    sizes="(max-width: 1024px) 100vw, 600px"
                   />
                 </div>
               )}

@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import Hero from '@/components/ui/Hero';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import SwepBannerWrapper from '@/components/ui/SwepBannerWrapper';
+import BannerWrapper from '@/components/Banners/BannerWrapper';
 import LocationFindHelp from '@/components/Location/LocationFindHelp';
 import LocationStatistics from '@/components/Location/LocationStatistics';
 import LocationNews from '@/components/Location/LocationNews';
@@ -195,6 +196,9 @@ export default async function LocationPage(props) {
 
       {/* SWEP Banner - always fetches fresh data */}
       <SwepBannerWrapper locationSlug={slug} />
+
+      {/* Campaign Banners - displays up to 6 active banners for this location */}
+      <BannerWrapper locationSlug={slug} />
 
       <EmergencyContactSection locationName={location.name} locationSlug={slug} />
 
