@@ -28,7 +28,7 @@ export async function GET(request: Request) {
     // In production, this would query the actual Google Analytics Data API
     const mockCount = Math.floor(Math.random() * 1000) + 50; // Random count between 50-1050
     
-    console.log(`[Analytics] Fetching download count for: ${fileName} (${fileType}, ${resourceType})`);
+    //console.log(`[Analytics] Fetching download count for: ${fileName} (${fileType}, ${resourceType})`);
     
     return NextResponse.json({ 
       count: mockCount,

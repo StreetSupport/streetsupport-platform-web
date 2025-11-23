@@ -60,8 +60,8 @@ const ResourceProjectBanner: React.FC<ResourceProjectBannerProps> = ({
           const response = await fetch(`/api/analytics/download-count?${params.toString()}`);
           
           if (response.ok) {
-            const data = await response.json();
             // TODO: Uncomment it when we get value of downloadCount from GA4
+            // const data = await response.json();
             // setDownloadCount(data.count);
             setDownloadCount(undefined);
           }
