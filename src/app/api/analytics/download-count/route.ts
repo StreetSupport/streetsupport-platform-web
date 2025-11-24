@@ -18,7 +18,7 @@ export async function GET(request: Request) {
 
   try {
     const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
-    
+var test = 5;
     if (!measurementId) {
       console.error('NEXT_PUBLIC_GA_MEASUREMENT_ID not configured');
       return NextResponse.json({ error: 'Analytics not configured' }, { status: 500 });
