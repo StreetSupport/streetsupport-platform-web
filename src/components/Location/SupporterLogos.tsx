@@ -1,9 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import supportersData from '@/data/supporters.json';
 import { Supporter, SupporterLogosProps } from '@/types/supporters';
 
 /**
@@ -14,16 +13,40 @@ const SupporterLogos: React.FC<SupporterLogosProps> = ({
   locationSlug,
   className = ''
 }) => {
-  // Get supporters for the current location
-  const locationSupporters = supportersData[locationSlug as keyof typeof supportersData] || [];
-  
-  // Filter out supporters without logo files
-  const supportersWithLogos = locationSupporters.filter(
-    (supporter): supporter is Supporter & { logoPath: string } => 
-      supporter.logoPath !== null
-  );
+  const [supportersWithLogos, setSupportersWithLogos] = useState<(Supporter & { logoPath: string })[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLogos = async () => {
+      try {
+        const response = await fetch(`/api/locations/${locationSlug}/logos`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.status === 'success' && Array.isArray(data.data)) {
+            // Filter out supporters without logo files
+            const logosWithPath = data.data.filter(
+              (supporter: Supporter): supporter is Supporter & { logoPath: string } => 
+                supporter.logoPath !== null
+            );
+            setSupportersWithLogos(logosWithPath);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching location logos:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLogos();
+  }, [locationSlug]);
 
   // Don't render if no supporters with logos
+  
+  if (loading) {
+    return null; // Or show a loading skeleton if preferred
+  }
+  
   if (supportersWithLogos.length === 0) {
     return null;
   }

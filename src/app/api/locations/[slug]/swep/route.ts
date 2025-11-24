@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
 import { SwepData } from '@/types';
 import { isSwepActive } from '@/utils/swep';
-import swepPlaceholderData from '@/data/swep-fallback.json';
+import { getClientPromise } from '@/utils/mongodb';
+
+// Disable caching for this API route to ensure fresh SWEP data
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 interface SwepApiParams {
   params: Promise<{ slug: string }>;
@@ -18,8 +22,35 @@ export async function GET(req: Request, context: SwepApiParams) {
       );
     }
 
-    // Use placeholder data for now - will be replaced with CMS integration later
-    const swepData = getSwepPlaceholderData(slug);
+    // Fetch SWEP data from MongoDB
+    const client = await getClientPromise();
+    const db = client.db('streetsupport');
+    const swepCol = db.collection('SwepBanners');
+
+    const rawSwepData = await swepCol.findOne({
+      LocationSlug: slug
+    });
+
+    // Transform MongoDB document (PascalCase) to SwepData format (camelCase for web)
+    const swepData: SwepData | null = rawSwepData ? {
+      id: rawSwepData._id.toString(),
+      locationSlug: rawSwepData.LocationSlug,
+      isActive: rawSwepData.IsActive,
+      title: rawSwepData.Title,
+      body: rawSwepData.Body,
+      image: rawSwepData.Image || '',
+      shortMessage: rawSwepData.ShortMessage || '',
+      swepActiveFrom: rawSwepData.SwepActiveFrom ? rawSwepData.SwepActiveFrom.toISOString() : '',
+      swepActiveUntil: rawSwepData.SwepActiveUntil ? rawSwepData.SwepActiveUntil.toISOString() : '',
+      createdBy: rawSwepData.CreatedBy,
+      createdAt: rawSwepData.DocumentCreationDate ? rawSwepData.DocumentCreationDate.toISOString() : '',
+      updatedAt: rawSwepData.DocumentModifiedDate ? rawSwepData.DocumentModifiedDate.toISOString() : '',
+      emergencyContact: rawSwepData.EmergencyContact ? {
+        phone: rawSwepData.EmergencyContact.Phone,
+        email: rawSwepData.EmergencyContact.Email,
+        hours: rawSwepData.EmergencyContact.Hours
+      } : undefined
+    } : null;
 
     // If no SWEP data exists for this location
     if (!swepData) {
@@ -36,7 +67,8 @@ export async function GET(req: Request, context: SwepApiParams) {
     // Check if SWEP is currently active
     const active = isSwepActive(swepData);
 
-    const response = NextResponse.json({
+    // Return response without caching headers to ensure fresh data
+    return NextResponse.json({
       status: 'success',
       data: {
         swep: {
@@ -46,12 +78,13 @@ export async function GET(req: Request, context: SwepApiParams) {
         isActive: active,
         location: slug
       }
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
     });
-
-    // Add cache headers - shorter cache for SWEP data since it's time-sensitive
-    response.headers.set('Cache-Control', 'public, max-age=300, s-maxage=600'); // 5 min browser, 10 min CDN
-    
-    return response;
   } catch (error) {
     console.error('[API ERROR] /api/locations/[slug]/swep:', error);
     
@@ -65,13 +98,4 @@ export async function GET(req: Request, context: SwepApiParams) {
       }
     }, { status: 500 });
   }
-}
-
-// Get SWEP placeholder data - this will be replaced with CMS integration later
-function getSwepPlaceholderData(locationSlug: string): SwepData | null {
-  const placeholderEntry = swepPlaceholderData.find(
-    (entry) => entry.locationSlug === locationSlug
-  );
-  
-  return placeholderEntry as SwepData || null;
 }

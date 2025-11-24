@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ResourceProjectProps } from '@/types/banners';
@@ -34,13 +34,46 @@ const ResourceProjectBanner: React.FC<ResourceProjectBannerProps> = ({
   endDate,
   badgeText,
   resourceType,
-  downloadCount,
+  downloadCount: initialDownloadCount,
   lastUpdated,
   fileSize,
   fileType,
   trackingContext = 'resource-project',
   className = ''
 }) => {
+  const [downloadCount, setDownloadCount] = useState<number | undefined>(initialDownloadCount);
+
+  // Fetch download count from Google Analytics
+  useEffect(() => {
+    const fetchDownloadCount = async () => {
+      try {
+        // Get the first CTA button (index 0) which should be the download button
+        const downloadButton = ctaButtons?.[0];
+        
+        if (downloadButton) {
+          const params = new URLSearchParams({
+            fileName: title,
+            ...(fileType && { fileType }),
+            ...(resourceType && { resourceType }),
+          });
+
+          const response = await fetch(`/api/analytics/download-count?${params.toString()}`);
+          
+          if (response.ok) {
+            // TODO: Uncomment it when we get value of downloadCount from GA4
+            // const data = await response.json();
+            // setDownloadCount(data.count);
+            setDownloadCount(undefined);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching download count:', error);
+      }
+    };
+
+    fetchDownloadCount();
+  }, [title, fileType, resourceType, ctaButtons]);
+
   const backgroundClasses = generateBackgroundClasses(background);
   const backgroundStyles = generateBackgroundStyles(background);
   const textColourClasses = generateTextColourClasses(textColour);
@@ -136,9 +169,10 @@ const ResourceProjectBanner: React.FC<ResourceProjectBannerProps> = ({
       });
     }
 
-    // Track downloads specifically
-    if (button.label.toLowerCase().includes('download') && downloadCount !== undefined) {
+    // Track downloads specifically: by default we set up file download to the first button
+    if (index === 0) {
       window.gtag('event', 'file_download', {
+        // We take title of banner
         file_name: title,
         file_type: fileType || 'unknown',
         resource_type: resourceType || 'unknown'
@@ -237,14 +271,15 @@ const ResourceProjectBanner: React.FC<ResourceProjectBannerProps> = ({
 
             {/* Description */}
             {description && (
-              <p className="text-lg sm:text-xl mb-6 opacity-80 leading-relaxed max-w-2xl">
+              <p className={`text-lg sm:text-xl mb-6 opacity-80 leading-relaxed max-w-2xl ${layoutStyle === 'full-width' ? 'mx-auto' : ''}`}>
                 {description}
               </p>
             )}
 
             {/* Resource Stats */}
-            <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {downloadCount !== undefined && (
+            {/* Update to lg:grid-cols-3 when we configure downloadCount */}
+            <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
+              {downloadCount !== undefined && downloadCount !== 0 && (
                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-1">
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
@@ -290,23 +325,6 @@ const ResourceProjectBanner: React.FC<ResourceProjectBannerProps> = ({
                 </div>
               )}
             </div>
-
-            {/* Date range */}
-            {showDates && (startDate || endDate) && (
-              <div className="mb-6 text-sm opacity-70">
-                {startDate && endDate && (
-                  <p>
-                    Available: {new Date(startDate).toLocaleDateString('en-GB')} - {new Date(endDate).toLocaleDateString('en-GB')}
-                  </p>
-                )}
-                {startDate && !endDate && (
-                  <p>Available from {new Date(startDate).toLocaleDateString('en-GB')}</p>
-                )}
-                {!startDate && endDate && (
-                  <p>Available until {new Date(endDate).toLocaleDateString('en-GB')}</p>
-                )}
-              </div>
-            )}
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
@@ -397,6 +415,23 @@ const ResourceProjectBanner: React.FC<ResourceProjectBannerProps> = ({
                 </p>
               </div>
             )}
+
+            {/* Date range */}
+            {showDates && (startDate || endDate) && (
+              <div className="mt-6 text-sm opacity-70">
+                {startDate && endDate && (
+                  <p>
+                    Available: {new Date(startDate).toLocaleDateString('en-GB')} - {new Date(endDate).toLocaleDateString('en-GB')}
+                  </p>
+                )}
+                {startDate && !endDate && (
+                  <p>Available from {new Date(startDate).toLocaleDateString('en-GB')}</p>
+                )}
+                {!startDate && endDate && (
+                  <p>Available until {new Date(endDate).toLocaleDateString('en-GB')}</p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Media Section */}
@@ -469,6 +504,44 @@ const ResourceProjectBanner: React.FC<ResourceProjectBannerProps> = ({
                     height={image.height || 400}
                     className="w-full h-auto object-cover"
                     sizes="(max-width: 1024px) 100vw, 800px"
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Card media */}
+          {(image || video) && layoutStyle === 'card' && (
+            <div className="mt-6">
+              {video ? (
+                <div className="relative rounded-lg overflow-hidden shadow-2xl">
+                  <video
+                    src={video.url}
+                    poster={video.poster}
+                    controls
+                    className="w-full h-auto"
+                    aria-label={video.title}
+                  >
+                    {video.captions && (
+                      <track
+                        kind="captions"
+                        src={video.captions}
+                        srcLang="en"
+                        label="English captions"
+                      />
+                    )}
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              ) : image && (
+                <div className="relative rounded-lg overflow-hidden shadow-2xl">
+                  <Image
+                    src={image.url}
+                    alt={image.alt}
+                    width={image.width || 600}
+                    height={image.height || 400}
+                    className="w-full h-auto object-cover"
+                    sizes="(max-width: 1024px) 100vw, 600px"
                   />
                 </div>
               )}

@@ -117,7 +117,7 @@ export default function SwepPageContent({ locationSlug, locationName }: SwepPage
               <img 
                 src={swepData.image} 
                 alt={`SWEP information for ${locationName}`}
-                className="w-full h-64 object-cover rounded-lg shadow-md"
+                className="w-full h-auto object-contain rounded-lg shadow-md"
               />
             </div>
           )}

@@ -982,10 +982,15 @@ describe('OrganisationServicesAccordion', () => {
   });
 
   describe('Organization Tags and 24/7 Services', () => {
-    it('hides opening times for 24/7 tagged organizations', () => {
+    it('hides opening times for services with isOpen247 flag', () => {
+      // Update services to have isOpen247 flag
       const org24_7 = {
         ...mockOrganisation,
-        tags: ['24/7', 'emergency']
+        tags: ['24/7', 'emergency'],
+        services: mockOrganisation.services.map(service => ({
+          ...service,
+          isOpen247: true
+        }))
       };
       
       render(<OrganisationServicesAccordion organisation={org24_7} />);
@@ -997,10 +1002,14 @@ describe('OrganisationServicesAccordion', () => {
       expect(screen.queryByText('Opening Times:')).not.toBeInTheDocument();
     });
 
-    it('handles string tag format for 24/7 detection', () => {
+    it('handles services with isOpen247 flag regardless of tag format', () => {
       const orgWithStringTag = {
         ...mockOrganisation,
-        tags: '24/7 service' as any // Single string instead of array
+        tags: '24/7 service' as any, // Single string instead of array
+        services: mockOrganisation.services.map(service => ({
+          ...service,
+          isOpen247: true
+        }))
       };
       
       render(<OrganisationServicesAccordion organisation={orgWithStringTag} />);
@@ -1012,10 +1021,14 @@ describe('OrganisationServicesAccordion', () => {
       expect(screen.queryByText('Opening Times:')).not.toBeInTheDocument();
     });
 
-    it('shows opening times for non-24/7 organizations', () => {
+    it('shows opening times for non-24/7 services', () => {
       const orgNormal = {
         ...mockOrganisation,
-        tags: ['food', 'support']
+        tags: ['food', 'support'],
+        services: mockOrganisation.services.map(service => ({
+          ...service,
+          isOpen247: false
+        }))
       };
       
       render(<OrganisationServicesAccordion organisation={orgNormal} />);

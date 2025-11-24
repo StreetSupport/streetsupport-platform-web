@@ -26,11 +26,17 @@ describe('ServiceCard 24/7 functionality', () => {
     mockUseSearchParams.mockReturnValue(new URLSearchParams() as any);
   });
 
-  it('should hide opening times for services with 24/7 tags', () => {
+  it('should hide opening times for services with isOpen247 flag', () => {
+    // Update mock service to set isOpen247 flag
+    const service247 = {
+      ...mock24_7Service,
+      isOpen247: true
+    };
+    
     render(
       <LocationContext.Provider value={mockLocationContextValue}>
         <ServiceCard 
-          service={mock24_7Service}
+          service={service247}
           isOpen={false}
           onToggle={jest.fn()}
         />

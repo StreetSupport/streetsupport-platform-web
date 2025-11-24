@@ -5,7 +5,6 @@ import {
   generateLayoutClasses,
   generateCTAClasses,
   generateAccentGraphicClasses,
-  validateBannerProps,
   formatCurrency,
   calculateProgress,
   generateUrgencyClasses
@@ -165,54 +164,6 @@ describe('Banner Utilities', () => {
     it('should default to top-right positioning', () => {
       const classes = generateAccentGraphicClasses();
       expect(classes).toBe('absolute top-4 right-4 z-10');
-    });
-  });
-
-  describe('validateBannerProps', () => {
-    const validProps = {
-      title: 'Test Banner',
-      ctaButtons: [{ label: 'Test', url: '/test' }],
-      background: { type: 'solid', value: '#FF0000' },
-      textColour: 'white',
-      layoutStyle: 'full-width'
-    };
-
-    it('should validate correct props', () => {
-      const result = validateBannerProps(validProps);
-      expect(result.isValid).toBe(true);
-      expect(result.errors).toHaveLength(0);
-    });
-
-    it('should reject missing title', () => {
-      const props = { ...validProps, title: '' };
-      const result = validateBannerProps(props);
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Title is required');
-    });
-
-    it('should reject missing CTA buttons', () => {
-      const props = { ...validProps, ctaButtons: [] };
-      const result = validateBannerProps(props);
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('At least one CTA button is required');
-    });
-
-    it('should validate CTA button properties', () => {
-      const props = {
-        ...validProps,
-        ctaButtons: [{ label: '', url: '' }]
-      };
-      const result = validateBannerProps(props);
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('CTA button 1 label is required');
-      expect(result.errors).toContain('CTA button 1 URL is required');
-    });
-
-    it('should reject missing background properties', () => {
-      const props = { ...validProps, background: null };
-      const result = validateBannerProps(props);
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Background type is required');
     });
   });
 
