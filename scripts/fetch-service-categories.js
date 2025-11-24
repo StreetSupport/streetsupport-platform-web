@@ -8,26 +8,50 @@ const OUTPUT_FILE = './src/data/service-categories.json';
 const MONGO_URI = process.env.MONGODB_URI;
 const MONGO_DB_NAME = process.env.MONGODB_DB || 'streetsupport';
 
-if (!MONGO_URI) {
-  throw new Error('❌ MONGODB_URI not found in environment');
-}
+// Remove the error throw - we'll handle this gracefully
+// MongoClient will be created only when MONGO_URI is available
 
-const client = new MongoClient(MONGO_URI);
 
-const createKey = (name) =>
-  name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
-
-const formatCategory = (doc) => ({
-  key: doc._id || doc.Key || doc.key,
-  name: doc.Name || doc.name,
-  subCategories: (doc.SubCategories || []).map((sc) => ({
-    key: sc.Key || sc.key,
-    name: sc.Name || sc.name,
-  })),
-});
+const formatCategory = (doc) => {
+  const categoryKey = doc._id || doc.Key || doc.key;
+  const categoryName = doc.Name || doc.name;
+  
+  return {
+    key: categoryKey,
+    name: categoryName,
+    subCategories: (doc.SubCategories || []).map((sc) => {
+      const subCategoryKey = sc.Key || sc.key;
+      let subCategoryName = sc.Name || sc.name;
+      
+      // Transform "General support" to "Food Banks" for the food category
+      if ((categoryKey === 'foodbank' || categoryName === 'Food') && 
+          (subCategoryKey === 'general' && subCategoryName === 'General support')) {
+        subCategoryName = 'Food Banks';
+      }
+      
+      return {
+        key: subCategoryKey,
+        name: subCategoryName,
+      };
+    }),
+  };
+};
 
 (async () => {
   try {
+    if (!MONGO_URI || process.env.USE_FALLBACK === 'true') {
+      console.log('⚠️  MONGODB_URI not available, using fallback data...');
+      
+      // Copy fallback data to expected location
+      const fallbackPath = './public/data/service-categories-fallback.json';
+      const fallbackData = fs.readFileSync(fallbackPath, 'utf8');
+      fs.writeFileSync(OUTPUT_FILE, fallbackData);
+      
+      console.log(`✅ Fallback service categories data copied to ${OUTPUT_FILE}`);
+      process.exit(0);
+    }
+
+    const client = new MongoClient(MONGO_URI);
     await client.connect();
     const db = client.db(MONGO_DB_NAME);
 

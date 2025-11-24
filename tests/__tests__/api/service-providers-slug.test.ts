@@ -3,102 +3,179 @@
  */
 
 import { GET } from '@/app/api/service-providers/[slug]/route';
+import * as mongodb from '@/utils/mongodb';
+import { mockServices, mockAddresses } from '../../__mocks__/api-responses';
+import { NextRequest } from 'next/server';
 
-// ✅ Mock Mongo client for slug route (provider + addresses + services)
+// Mock the mongodb utility
 jest.mock('@/utils/mongodb', () => ({
-  getClientPromise: async () => {
-    return {
-      db: () => ({
-        collection: (name: string) => {
-          if (name === 'ServiceProviders') {
-            return {
-              findOne: async (query: any) => {
-                if (query.Key?.$regex?.source === '^not-found$') {
-                  return null; // simulate not found
-                }
-                return {
-                  Key: 'org-1',
-                  Name: 'Test Org',
-                  ShortDescription: 'Test org description',
-                  LongDescription: 'Long description here',
-                  Website: 'https://test.org',
-                  Telephone: '123456',
-                  Email: 'info@test.org',
-                  IsVerified: true,
-                  IsPublished: true,
-                  AssociatedLocationIds: ['leeds'],
-                  Tags: [],
-                  SocialLinks: [],
-                };
-              },
-            };
-          }
-
-          if (name === 'ServiceProviderAddresses') {
-            return {
-              find: () => ({
-                project: () => ({
-                  toArray: async () => [
-                    {
-                      Key: 'address-1',
-                      ServiceProviderKey: 'org-1',
-                      Line1: '123 Test Street',
-                      City: 'Leeds',
-                      Postcode: 'LS1 1AA',
-                      Latitude: 53.8008,
-                      Longitude: -1.5491,
-                    },
-                  ],
-                }),
-              }),
-            };
-          }
-
-          if (name === 'ProvidedServices') {
-            return {
-              find: () => ({
-                project: () => ({
-                  toArray: async () => [
-                    {
-                      Key: 'service-1',
-                      Title: 'Test Service',
-                      ParentCategoryKey: 'health',
-                      SubCategoryKey: 'gp',
-                      Description: 'Service description',
-                      OpeningTimes: [],
-                      ClientGroups: [],
-                      Address: { City: 'Leeds' },
-                    },
-                  ],
-                }),
-              }),
-            };
-          }
-
-          throw new Error('Unknown collection');
-        },
-      }),
-    };
-  },
+  getClientPromise: jest.fn(),
 }));
 
 describe('GET /api/service-providers/[slug]', () => {
-  it('returns success with org, addresses and services', async () => {
-    const req = new Request('http://localhost/api/service-providers/org-1');
-    // Use Next.js dynamic param shape
-    const res = await GET(req, { params: { slug: 'org-1' } });
-    const json = await res.json();
-
-    expect(res.status).toBe(200);
-    expect(json.status).toBe('success');
-    expect(json.organisation.Name).toBe('Test Org');
-    expect(Array.isArray(json.addresses)).toBe(true);
-    expect(Array.isArray(json.services)).toBe(true);
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('returns 404 if org not found', async () => {
-    const req = new Request('http://localhost/api/service-providers/not-found');
-    const res = await GET(req, { params: { slug: 'not-found' } });
-    expect(res.status).toBe(404);
+  it('should return organisation details when found', async () => {
+    // Arrange
+    const mockProvidersCollection = {
+      findOne: jest.fn().mockResolvedValue({
+        _id: 'test-org-id',
+        Key: 'test-org',
+        Name: 'Test Organisation',
+        ShortDescription: 'A test organisation for testing purposes',
+        Description: 'This is a longer description of the test organisation',
+        Website: 'https://example.org',
+        Telephone: '0123 456 7890',
+        Email: 'contact@example.org',
+        Facebook: 'testorg',
+        Twitter: 'testorg',
+        Instagram: 'testorg',
+        Bluesky: '@testorg.bsky.social',
+        IsVerified: true,
+        IsPublished: true,
+        AssociatedLocationIds: ['birmingham', 'manchester'],
+        Tags: ['health', 'housing', 'food'],
+        Addresses: mockAddresses
+      }),
+    };
+
+    const mockServicesCollection = {
+      find: jest.fn().mockReturnValue({
+        project: jest.fn().mockReturnValue({
+          toArray: jest.fn().mockResolvedValue(mockServices),
+        }),
+      }),
+    };
+
+    const mockDb = {
+      collection: jest.fn((name) => {
+        if (name === 'ServiceProviders') return mockProvidersCollection;
+        if (name === 'ProvidedServices') return mockServicesCollection;
+        return null;
+      }),
+    };
+
+    const mockClient = {
+      db: jest.fn().mockReturnValue(mockDb),
+    };
+
+    (mongodb.getClientPromise as jest.Mock).mockResolvedValue(mockClient);
+
+    const request = new NextRequest(
+      new URL('http://localhost:3000/api/service-providers/test-org')
+    );
+
+    // Act
+    const response = await GET(request);
+    const data = await response.json();
+
+    // Assert
+    expect(response.status).toBe(200);
+    expect(data.status).toBe('success');
+    expect(data.organisation).toBeDefined();
+    expect(data.organisation.name).toBe('Test Organisation');
+    expect(data.addresses).toHaveLength(mockAddresses.length);
+    expect(data.services).toHaveLength(mockServices.length);
+    expect(mockDb.collection).toHaveBeenCalledWith('ServiceProviders');
+    expect(mockDb.collection).toHaveBeenCalledWith('ProvidedServices');
+    expect(mockProvidersCollection.findOne).toHaveBeenCalledWith(
+      { Key: { $regex: new RegExp(`^test-org$`, 'i') }, IsPublished: true },
+      expect.any(Object)
+    );
+  });
+
+  it('should return 404 when organisation is not found', async () => {
+    // Arrange
+    const mockProvidersCollection = {
+      findOne: jest.fn().mockResolvedValue(null),
+    };
+
+    const mockDb = {
+      collection: jest.fn((name) => {
+        if (name === 'ServiceProviders') return mockProvidersCollection;
+        return null;
+      }),
+    };
+
+    const mockClient = {
+      db: jest.fn().mockReturnValue(mockDb),
+    };
+
+    (mongodb.getClientPromise as jest.Mock).mockResolvedValue(mockClient);
+
+    const request = new NextRequest(
+      new URL('http://localhost:3000/api/service-providers/non-existent')
+    );
+
+    // Act
+    const response = await GET(request);
+    const data = await response.json();
+
+    // Assert
+    expect(response.status).toBe(404);
+    expect(data.status).toBe('error');
+    expect(data.message).toBe('Organisation not found');
+    expect(mockDb.collection).toHaveBeenCalledWith('ServiceProviders');
+    expect(mockProvidersCollection.findOne).toHaveBeenCalledWith(
+      { Key: { $regex: new RegExp(`^non-existent$`, 'i') }, IsPublished: true },
+      expect.any(Object)
+    );
+  });
+
+  it('should return 500 when database error occurs', async () => {
+    // Arrange
+    const mockProvidersCollection = {
+      findOne: jest.fn().mockRejectedValue(new Error('Database error')),
+    };
+
+    const mockDb = {
+      collection: jest.fn((name) => {
+        if (name === 'ServiceProviders') return mockProvidersCollection;
+        return null;
+      }),
+    };
+
+    const mockClient = {
+      db: jest.fn().mockReturnValue(mockDb),
+    };
+
+    (mongodb.getClientPromise as jest.Mock).mockResolvedValue(mockClient);
+
+    const request = new NextRequest(
+      new URL('http://localhost:3000/api/service-providers/test-org')
+    );
+
+    // Act
+    const response = await GET(request);
+    const data = await response.json();
+
+    // Assert
+    expect(response.status).toBe(500);
+    expect(data.status).toBe('error');
+    expect(data.message).toBe('Failed to fetch organisation details');
+    expect(mockDb.collection).toHaveBeenCalledWith('ServiceProviders');
+    expect(mockProvidersCollection.findOne).toHaveBeenCalledWith(
+      { Key: { $regex: new RegExp(`^test-org$`, 'i') }, IsPublished: true },
+      expect.any(Object)
+    );
+  });
+
+  it('should return 400 when slug is missing', async () => {
+    // Arrange
+    // Create a URL that will result in an empty slug when parsed
+    const request = new NextRequest(
+      new URL('http://localhost:3000/api/service-providers/')
+    );
+
+    // Act
+    const response = await GET(request);
+    const data = await response.json();
+
+    // Assert
+    expect(response.status).toBe(400);
+    expect(data.status).toBe('error');
+    expect(data.message).toBe('Slug is required');
   });
 });

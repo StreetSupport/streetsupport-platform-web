@@ -1,20 +1,38 @@
-'use client';
-
+import { Metadata } from 'next';
 import { LocationProvider } from '@/contexts/LocationContext';
-import FindHelpEntry from '@/components/FindHelp/FindHelpEntry';
-import FindHelpResults from '@/components/FindHelp/FindHelpResults';
-import rawProviders from '@/data/service-providers.json';
-import type { ServiceProvider } from '@/types';
+import FindHelpPageClient from './FindHelpPageClient';
+import { generateSEOMetadata } from '@/utils/seo';
 
-export default function FindHelpPage() {
-  const providers = rawProviders as ServiceProvider[];
+export async function generateMetadata(): Promise<Metadata> {
+  return generateSEOMetadata({
+    title: 'Find Help',
+    description: 'Search for homelessness support services near you. Find emergency accommodation, food, advice, and other essential services for people experiencing homelessness.',
+    keywords: [
+      'find homeless services',
+      'homeless support near me',
+      'emergency accommodation',
+      'food banks',
+      'homeless advice',
+      'crisis support',
+      'rough sleeping help',
+      'homelessness services UK'
+    ],
+    path: 'find-help',
+    image: '/assets/img/og/street-support.jpg',
+    imageAlt: 'Find Help - Street Support Network'
+  });
+}
 
+export default async function FindHelpPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const resolvedSearchParams = await searchParams;
+  
   return (
     <LocationProvider>
-      <div>
-        <FindHelpEntry />
-        <FindHelpResults providers={providers} />
-      </div>
+      <FindHelpPageClient searchParams={resolvedSearchParams} />
     </LocationProvider>
   );
 }

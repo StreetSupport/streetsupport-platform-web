@@ -1,26 +1,41 @@
 'use client';
-import React from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { Cloud } from 'lucide-react';
 import { SiFacebook, SiX } from 'react-icons/si';
 
 export default function OrganisationFooter() {
+  const [currentUrl, setCurrentUrl] = useState('');
+  const [currentTitle, setCurrentTitle] = useState('');
+
+  useEffect(() => {
+    // Add a comment to explain the SSR check
+    /* istanbul ignore else */
+    if (typeof window !== 'undefined') {
+      setCurrentUrl(window.location.href);
+      setCurrentTitle(document.title);
+    }
+  }, []);
+
   const shareOnBluesky = () => {
     const text = encodeURIComponent(
-      `Help is out there – check out this page on Street Support Network: ${document.title} ${window.location.href}`
+      `Help is out there – check out this page on Street Support Network: ${currentTitle} ${currentUrl}`
     );
     const shareUrl = `https://bsky.app/intent/compose?text=${text}`;
     window.open(shareUrl, 'blank', 'width=600,height=300');
   };
 
   const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-    window.location.href
+    currentUrl
   )}`;
   const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-    `Help is out there - check out this page on Street Support Network: ${document.title} ${window.location.href}`
+    `Help is out there - check out this page on Street Support Network: ${currentTitle} ${currentUrl}`
   )}`;
 
   return (
     <footer className="mt-6 text-sm text-gray-600">
+      {/** ✅ This is always rendered, immediately */}
+
       <div className="mb-4 flex items-center gap-4">
         <span>Share this page:</span>
         <button
@@ -49,7 +64,6 @@ export default function OrganisationFooter() {
           <span className="sr-only md:not-sr-only">Share on X</span>
         </a>
       </div>
-      <p>Information provided by Street Support for demonstration purposes only.</p>
     </footer>
   );
 }

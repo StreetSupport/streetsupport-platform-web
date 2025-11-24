@@ -11,7 +11,11 @@
 !.yarn/versions
 
 # testing
+/.kiro
 /coverage
+/playwright-report
+/config/playwright-report
+/test-results
 
 # next.js
 /.next/
@@ -39,7 +43,18 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-test-results/
 
 # generated data
 /src/data/locations.json
+
+# claude folder
+.claude/
+
+# Windsurf
+.windsurf
+# Sentry Config File
+.env.sentry-build-plugin
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json

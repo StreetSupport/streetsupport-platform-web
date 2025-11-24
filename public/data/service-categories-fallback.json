@@ -1,0 +1,144 @@
+[
+  {
+    "key": "accommodation",
+    "name": "Accommodation",
+    "subCategories": [
+      {
+        "key": "hostel",
+        "name": "Hostel"
+      },
+      {
+        "key": "emergency-accommodation", 
+        "name": "Emergency accommodation"
+      },
+      {
+        "key": "night-shelter",
+        "name": "Night shelter"
+      },
+      {
+        "key": "advice",
+        "name": "Advice"
+      }
+    ]
+  },
+  {
+    "key": "meals",
+    "name": "Meals",
+    "subCategories": [
+      {
+        "key": "cooked-meals",
+        "name": "Cooked meals"
+      },
+      {
+        "key": "food-parcels",
+        "name": "Food parcels"
+      },
+      {
+        "key": "hot-drinks",
+        "name": "Hot drinks"
+      }
+    ]
+  },
+  {
+    "key": "health",
+    "name": "Health",
+    "subCategories": [
+      {
+        "key": "mental-health",
+        "name": "Mental health"
+      },
+      {
+        "key": "addiction-support",
+        "name": "Addiction support"
+      },
+      {
+        "key": "gp",
+        "name": "GP/Doctor"
+      },
+      {
+        "key": "dental",
+        "name": "Dental"
+      }
+    ]
+  },
+  {
+    "key": "support",
+    "name": "Support",
+    "subCategories": [
+      {
+        "key": "advice",
+        "name": "Advice"
+      },
+      {
+        "key": "counselling",
+        "name": "Counselling"
+      },
+      {
+        "key": "advocacy",
+        "name": "Advocacy"
+      },
+      {
+        "key": "peer-support",
+        "name": "Peer support"
+      }
+    ]
+  },
+  {
+    "key": "employment",
+    "name": "Employment",
+    "subCategories": [
+      {
+        "key": "job-search",
+        "name": "Job search support"
+      },
+      {
+        "key": "training",
+        "name": "Training"
+      },
+      {
+        "key": "cv-help",
+        "name": "CV help"
+      },
+      {
+        "key": "volunteering",
+        "name": "Volunteering"
+      }
+    ]
+  },
+  {
+    "key": "money",
+    "name": "Money",
+    "subCategories": [
+      {
+        "key": "benefits",
+        "name": "Benefits"
+      },
+      {
+        "key": "debt-advice",
+        "name": "Debt advice"
+      },
+      {
+        "key": "budgeting",
+        "name": "Budgeting"
+      }
+    ]
+  },
+  {
+    "key": "communications",
+    "name": "Communications",
+    "subCategories": [
+      {
+        "key": "telephone",
+        "name": "Telephone"
+      },
+      {
+        "key": "internet",
+        "name": "Internet access"
+      },
+      {
+        "key": "wi-fi-access",
+        "name": "Wi-Fi access"
+      }
+    ]
+  }
+]

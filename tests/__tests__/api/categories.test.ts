@@ -1,7 +1,6 @@
 // tests/__tests__/api/categories.test.ts
 
 import { getCategories } from '../../../src/app/api/categories/helper';
-import { formatCategory } from '../../../src/utils/formatCategories';
 
 jest.mock('../../../src/utils/mongodb', () => ({
   getClientPromise: jest.fn(),

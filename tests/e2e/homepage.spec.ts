@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures/base-test';
 
 test.describe('Homepage Map', () => {
   test('should render the map and show location markers', async ({ page }) => {

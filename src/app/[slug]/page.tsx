@@ -1,8 +1,97 @@
 import Link from 'next/link';
+import { Metadata } from 'next';
 import locations from '@/data/locations.json';
 import { notFound } from 'next/navigation';
+import Hero from '@/components/ui/Hero';
+import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import SwepBannerWrapper from '@/components/ui/SwepBannerWrapper';
+import BannerWrapper from '@/components/Banners/BannerWrapper';
+import LocationFindHelp from '@/components/Location/LocationFindHelp';
+import LocationStatistics from '@/components/Location/LocationStatistics';
+import LocationNews from '@/components/Location/LocationNews';
+import EmergencyContactSection from '@/components/Location/EmergencyContactSection';
+import SupporterLogos from '@/components/Location/SupporterLogos';
+import { generateLocationSEOMetadata } from '@/utils/seo';
 
 export const dynamic = 'force-dynamic';
+
+// Helper function to get location background image
+function getLocationBackgroundImage(slug: string): string {
+  // Map of available location images
+  const locationImages = [
+    'birmingham', 'blackpool', 'bolton', 'bournemouth-pier-tile', 'bradford',
+    'brighton-and-hove', 'bury', 'cambridgeshire', 'chelmsford', 'coventry',
+    'derbyshire', 'dudley', 'edinburgh', 'exeter', 'glasgow', 'leeds',
+    'liverpool', 'luton', 'manchester', 'nottingham', 'oldham', 'portsmouth',
+    'reading', 'rochdale', 'salford', 'sandwell', 'solihull', 'southampton',
+    'stockport', 'tameside', 'trafford', 'wakefield', 'walsall',
+    'wigan-and-leigh', 'wolverhampton'
+  ];
+
+  // Special cases for slug mapping
+  const slugMapping: { [key: string]: string } = {
+    'bournemouth': 'bournemouth-pier-tile',
+    'wigan-leigh': 'wigan-and-leigh',
+    'bradford': 'bradford',
+    'exeter': 'exeter',
+    'portsmouth': 'portsmouth'
+  };
+
+  // Check if we have a specific mapping first
+  const mappedSlug = slugMapping[slug] || slug;
+  
+  // Check if the image exists in our available images
+  if (locationImages.includes(mappedSlug)) {
+    return `/assets/img/locations/${mappedSlug}.png`;
+  }
+  
+  // Fallback to default background
+  return `/assets/img/home-header-background.png`;
+}
+
+// Helper function to get location contact email
+function getLocationContactEmail(slug: string): string {
+  // West Midlands locations
+  const westMidlandsLocations = [
+    'birmingham', 'coventry', 'dudley', 'sandwell', 'solihull', 'walsall', 'wolverhampton'
+  ];
+  
+  // Greater Manchester locations
+  const greaterManchesterLocations = [
+    'manchester', 'bolton', 'bury', 'oldham', 'rochdale', 'salford', 
+    'stockport', 'tameside', 'trafford', 'wigan-and-leigh'
+  ];
+  
+  if (westMidlandsLocations.includes(slug)) {
+    return 'westmidlands@streetsupport.net';
+  }
+  
+  if (greaterManchesterLocations.includes(slug)) {
+    return 'greatermanchester@streetsupport.net';
+  }
+  
+  // Default to location-specific email
+  return `${slug}@streetsupport.net`;
+}
+
+// @ts-expect-error Next dynamic param inference workaround
+export async function generateMetadata(props): Promise<Metadata> {
+  const { slug } = await props.params;
+
+  const location = locations.find(
+    (loc) => loc.slug === slug && loc.isPublic
+  );
+
+  if (!location) {
+    return {
+      title: 'Location Not Found | Street Support Network',
+      description: 'The requested location page could not be found.',
+      robots: 'noindex, nofollow'
+    };
+  }
+
+  return generateLocationSEOMetadata(location.name, slug, 'main');
+}
 
 // @ts-expect-error Next dynamic param inference workaround
 export default async function LocationPage(props) {
@@ -16,115 +105,151 @@ export default async function LocationPage(props) {
     notFound();
   }
 
+  const locationImage = getLocationBackgroundImage(slug);
+  const homeBackground = "/assets/img/home-header-background.png";
+  const contactEmail = getLocationContactEmail(slug);
+  
+  // SWEP data is now fetched client-side by SwepBannerWrapper
+
+  // Generate structured data for the location
+  const locationStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "Place",
+    "name": location.name,
+    "description": `Street Support services and information for ${location.name}. Find homelessness support, emergency help, and local resources.`,
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": location.latitude,
+      "longitude": location.longitude
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": location.name,
+      "addressCountry": "GB"
+    },
+    "url": `https://streetsupport.net/${slug}`,
+    "additionalType": "City",
+    "containsPlace": {
+      "@type": "Organization",
+      "name": `Street Support ${location.name}`,
+      "description": `Local Street Support Network services in ${location.name}`,
+      "url": `https://streetsupport.net/${slug}`,
+      "areaServed": {
+        "@type": "City",
+        "name": location.name
+      },
+      "serviceType": "Homelessness Support Services"
+    }
+  };
+
+  const breadcrumbStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://streetsupport.net/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": location.name,
+        "item": `https://streetsupport.net/${slug}`
+      }
+    ]
+  };
+
   return (
-    <main className="space-y-12">
-      {/* ✅ Breadcrumbs */}
-      <nav className="bg-gray-50 py-2">
-        <div className="max-w-7xl mx-auto px-4">
-          <ol className="flex space-x-2 text-sm text-gray-700">
-            <li>
-              <Link href="/" className="hover:underline">Home</Link>
-              <span className="mx-1">/</span>
-            </li>
-            <li>{location.name}</li>
-          </ol>
-        </div>
-      </nav>
+    <main>
+      {/* Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(locationStructuredData)
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbStructuredData)
+        }}
+      />
 
-      {/* ✅ Location Header */}
-      <section className="bg-white py-12">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-3xl font-bold mb-2">
-            Street Support {location.name}
-          </h1>
-          <h2 className="text-xl text-gray-700 mb-4">
-            Connecting people and organisations locally, to tackle homelessness in {location.name}.
-          </h2>
-          <Link
-            href="/find-help"
-            className="inline-block bg-blue-600 text-white px-6 py-3 rounded shadow hover:bg-blue-700 transition"
-          >
-            Find Help
-          </Link>
-        </div>
-      </section>
+      <Breadcrumbs 
+        items={[
+          { href: "/", label: "Home" },
+          { label: location.name, current: true }
+        ]} 
+      />
 
-      {/* ✅ Emergency Highlight Block */}
-      <section className="bg-yellow-50 py-12">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <div className="flex justify-center mb-4">
-          </div>
-          <h2 className="text-2xl font-bold mb-2">Help someone sleeping rough</h2>
-          <p className="mb-2">
-            If you are worried about someone you’ve seen sleeping rough anywhere in {location.name}, you can inform 
-            <a href="https://thestreetlink.org.uk" className="text-blue-600 hover:underline"> StreetLink</a>.
-          </p>
-          <p className="mb-4">
-            If the person is in immediate danger or needs urgent care, please call 
-            <a href="tel:999" className="text-blue-600 hover:underline"> 999</a>.
-          </p>
-          <Link
-            href={`/${location.slug}/advice`}
-            className="inline-block bg-red-600 text-white px-6 py-3 rounded shadow hover:bg-red-700 transition"
-          >
-            See more emergency advice
-          </Link>
-        </div>
-      </section>
+      <Hero
+        backgroundImage={homeBackground}
+        overlayImage={locationImage !== homeBackground ? locationImage : undefined}
+        locationSlug={slug}
+        title={`Street Support ${location.name}`}
+        subtitle={`Connecting people and organisations locally, to tackle homelessness in ${location.name}.`}
+        ctaText="Find Help"
+        ctaLink="/find-help"
+      />
 
-      {/* ✅ Main Intro & Find Help Placeholder */}
+      {/* SWEP Banner - always fetches fresh data */}
+      <SwepBannerWrapper locationSlug={slug} />
+
+      {/* Campaign Banners - displays up to 6 active banners for this location */}
+      <BannerWrapper locationSlug={slug} />
+
+      <EmergencyContactSection locationName={location.name} locationSlug={slug} />
+
+      {/* Find Help Tools */}
       <section className="py-12">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-2xl font-semibold mb-4">
-            You’re in {location.name}
-          </h2>
-          <p className="text-gray-700 mb-6">
-            This section will include search and support tools for finding help in {location.name}.
-          </p>
-          <div className="w-full h-64 bg-gray-100 flex items-center justify-center text-gray-500">
-            [ Find Help Component Placeholder ]
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-semibold mb-4">
+              Find Support in {location.name}
+            </h2>
+            <p className="text-body max-w-3xl mx-auto">
+              Search for support services available near you. Use the filters below to find specific types of help, and see what&apos;s available on the map.
+            </p>
           </div>
+          <LocationFindHelp 
+            locationName={location.name}
+            latitude={location.latitude}
+            longitude={location.longitude}
+          />
         </div>
       </section>
 
-      {/* ✅ Map Placeholder */}
-      <section className="py-12 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-2xl font-semibold mb-4">Map</h2>
-          <div className="w-full h-96 bg-gray-200 flex items-center justify-center text-gray-500">
-            [ Map Placeholder ]
-          </div>
-        </div>
-      </section>
-
-      {/* ✅ Statistics & News Placeholders */}
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-gray-100 p-8 text-center">
-            <h2 className="text-xl font-semibold mb-4">Impact Statistics</h2>
-            <p>[ Statistics Placeholder ]</p>
-          </div>
-          <div className="bg-gray-100 p-8 text-center">
-            <h2 className="text-xl font-semibold mb-4">Latest News</h2>
-            <p>[ News Placeholder ]</p>
-          </div>
+          <LocationStatistics 
+            locationSlug={slug}
+            locationName={location.name}
+          />
+          <LocationNews 
+            locationSlug={slug}
+            locationName={location.name}
+          />
         </div>
       </section>
 
-      {/* ✅ Partners & CTA */}
       <section className="py-12 bg-blue-50">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h2 className="text-2xl font-semibold mb-4">Get in touch</h2>
           <p className="mb-4">
-            If you’d like to get involved or have suggestions, please contact us at 
-            <a href={`mailto:${slug}@streetsupport.net`} className="text-blue-600 hover:underline"> {slug}@streetsupport.net</a>.
+            If you&apos;d like to get involved or have suggestions, please contact us at{' '}
+            <a href={`mailto:${contactEmail}`} className="text-brand-a hover:text-brand-b underline">{contactEmail}</a>.
           </p>
           <p>
-            We are looking for businesses and organisations to 
-            <Link href="/give-help/business-support/" className="text-blue-600 hover:underline"> support us</Link> so we can keep improving this resource.
+            We are looking for businesses and organisations to{' '}
+            <Link href="/give-help/business-support/" className="text-brand-a hover:text-brand-b underline">support us</Link> so we can keep improving this resource.
           </p>
         </div>
       </section>
+
+      {/* Supporter Logos Section */}
+      <SupporterLogos locationSlug={slug} />
     </main>
   );
 }

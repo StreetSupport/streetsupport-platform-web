@@ -1,34 +1,489 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import OrganisationServicesAccordion from '@/components/OrganisationPage/OrganisationServicesAccordion';
+import type { OrganisationDetails } from '@/utils/organisation';
+import type { FlattenedService } from '@/types';
 
-jest.mock('@/components/ui/Accordion', () => ({ title, children, className }: any) => (
-  <div data-testid="accordion" data-title={title} className={className}>{children}</div>
-));
+// Define the Address interface to match the one in the component
+interface Address {
+  Street?: string;
+  Street1?: string;
+  Street2?: string;
+  Street3?: string;
+  City?: string;
+  Postcode?: string;
+  Location?: {
+    coordinates: [number, number];
+  };
+}
 
-jest.mock('@/components/FindHelp/ServiceCard', () => ({ service }: any) => (
-  <div data-testid="service-card">{service.name}</div>
-));
+// Define the extended service type with address
+interface FlattenedServiceWithAddress extends FlattenedService {
+  address?: Address;
+}
+
+// Define a type for the groupedServices that includes the address property
+type GroupedServicesWithAddress = Record<string, Record<string, FlattenedServiceWithAddress[]>>;
+
+// Mock the Accordion component with the correct props
+jest.mock('@/components/ui/Accordion', () => {
+  return {
+    __esModule: true,
+    default: ({ 
+      title, 
+      children, 
+      className, 
+      isOpen, 
+      onToggle 
+    }: {
+      title: string;
+      children: React.ReactNode;
+      className?: string;
+      isOpen: boolean;
+      onToggle: () => void;
+    }) => (
+      <div data-testid="accordion" data-title={title} className={className} data-isopen={isOpen.toString()}>
+        <button onClick={onToggle} data-testid="accordion-toggle">Toggle {title}</button>
+        {isOpen && <div data-testid="accordion-content">{children}</div>}
+      </div>
+    )
+  };
+});
 
 describe('OrganisationServicesAccordion', () => {
   it('returns null when no services', () => {
     const { container } = render(
-      <OrganisationServicesAccordion organisation={{ groupedServices: {} } as any} />
+      <OrganisationServicesAccordion organisation={{ groupedServices: {}, key: '', name: '', addresses: [], services: [] }} />
     );
     expect(container.firstChild).toBeNull();
   });
 
   it('renders grouped services inside accordions', () => {
-    const org: any = {
-      groupedServices: {
-        training: [{ id: 'a', name: 'Train' }],
-        employment: [{ id: 'b', name: 'Job1' }, { id: 'c', name: 'Job2' }],
+    // Create mock data that matches the expected structure
+    const mockServices: FlattenedService[] = [
+      {
+        id: 'a',
+        name: 'Training Skills',
+        category: 'training',
+        subCategory: 'skills',
+        organisation: 'Test Org',
+        organisationSlug: 'test-org',
+        description: 'Training description',
+        openTimes: [],
+        clientGroups: ['adults'],
+        latitude: 53,
+        longitude: -2,
       },
+      {
+        id: 'b',
+        name: 'Job Search',
+        category: 'employment',
+        subCategory: 'jobs',
+        organisation: 'Test Org',
+        organisationSlug: 'test-org',
+        description: 'Job search description',
+        openTimes: [],
+        clientGroups: ['adults'],
+        latitude: 53.1,
+        longitude: -2.1,
+      }
+    ];
+
+    // Create grouped services structure with the extended type
+    const groupedServices: GroupedServicesWithAddress = {
+      training: {
+        skills: [
+          {
+            ...mockServices[0],
+            address: {
+              Street: '123 High St',
+              City: 'Test City',
+              Postcode: 'TE1 1ST',
+              Location: { coordinates: [-2, 53] },
+            }
+          }
+        ]
+      },
+      employment: {
+        jobs: [
+          {
+            ...mockServices[1],
+            address: {
+              Street: '456 Job St',
+              City: 'Test City',
+              Postcode: 'TE2 2ST',
+              Location: { coordinates: [-2.1, 53.1] },
+            }
+          }
+        ]
+      }
     };
-    render(<OrganisationServicesAccordion organisation={org} />);
+
+    // Create a modified OrganisationDetails type that includes our extended groupedServices
+    type TestOrganisationDetails = Omit<OrganisationDetails, 'groupedServices'> & {
+      groupedServices: GroupedServicesWithAddress;
+    };
+
+    const org: TestOrganisationDetails = {
+      key: 'test-org',
+      name: 'Test Organisation',
+      addresses: [],
+      services: [
+        {
+          ...mockServices[0],
+          address: {
+            Street: '123 High St',
+            City: 'Test City',
+            Postcode: 'TE1 1ST',
+            Location: { coordinates: [-2, 53] },
+          }
+        },
+        {
+          ...mockServices[1],
+          address: {
+            Street: '456 Low St',
+            City: 'Test City',
+            Postcode: 'TE2 2ST',
+            Location: { coordinates: [-2.1, 53.1] },
+          }
+        }
+      ],
+      groupedServices
+    };
+
+    render(<OrganisationServicesAccordion organisation={org as OrganisationDetails} />);
+    
+    // Check that the section title is rendered
     expect(screen.getByText('Services')).toBeInTheDocument();
-    const accs = screen.getAllByTestId('accordion');
-    expect(accs).toHaveLength(2);
-    expect(accs[0]).toHaveAttribute('data-title', 'training');
-    expect(screen.getAllByTestId('service-card')).toHaveLength(3);
+    
+    // Check that the parent category headings are rendered
+    expect(screen.getByText('training')).toBeInTheDocument();
+    expect(screen.getByText('employment')).toBeInTheDocument();
+    
+    // Check that the accordions are rendered with the correct titles
+    const accordions = screen.getAllByTestId('accordion');
+    expect(accordions).toHaveLength(2);
+    expect(accordions[0]).toHaveAttribute('data-title', 'skills');
+    expect(accordions[1]).toHaveAttribute('data-title', 'jobs');
+    
+    // All accordions should be closed initially
+    accordions.forEach(acc => {
+      expect(acc).toHaveAttribute('data-isopen', 'false');
+    });
+    
+    // Test opening an accordion
+    const toggleButtons = screen.getAllByTestId('accordion-toggle');
+    fireEvent.click(toggleButtons[0]);
+    
+    // Now the first accordion should be open
+    expect(accordions[0]).toHaveAttribute('data-isopen', 'true');
+    expect(accordions[1]).toHaveAttribute('data-isopen', 'false');
+    
+    // Check that the content is displayed when accordion is open
+    expect(screen.getByText('Training description')).toBeInTheDocument();
+    
+    // Test opening another accordion (should close the first one)
+    fireEvent.click(toggleButtons[1]);
+    
+    // Now the second accordion should be open and the first closed
+    expect(accordions[0]).toHaveAttribute('data-isopen', 'false');
+    expect(accordions[1]).toHaveAttribute('data-isopen', 'true');
+  });
+
+  it('handles accordion toggle correctly', () => {
+    const mockServices: FlattenedService[] = [
+      {
+        id: 'a',
+        name: 'Test Service',
+        category: 'meals',
+        subCategory: 'breakfast',
+        organisation: 'Test Org',
+        organisationSlug: 'test-org',
+        description: 'Test description',
+        openTimes: [],
+        clientGroups: ['adults'],
+        latitude: 53,
+        longitude: -2,
+      }
+    ];
+
+    const groupedServices: GroupedServicesWithAddress = {
+      meals: {
+        breakfast: [
+          {
+            ...mockServices[0],
+            address: {
+              Street: '123 Test St',
+              City: 'Test City',
+              Postcode: 'TE1 1ST',
+              Location: { coordinates: [-2, 53] },
+            }
+          }
+        ]
+      }
+    };
+
+    const org: TestOrganisationDetails = {
+      key: 'test-org',
+      name: 'Test Organisation',
+      addresses: [],
+      services: mockServices,
+      groupedServices
+    };
+
+    render(<OrganisationServicesAccordion organisation={org as OrganisationDetails} />);
+    
+    const accordion = screen.getByTestId('accordion');
+    const toggleButton = screen.getByTestId('accordion-toggle');
+    
+    // Initially closed
+    expect(accordion).toHaveAttribute('data-isopen', 'false');
+    
+    // Open accordion
+    fireEvent.click(toggleButton);
+    expect(accordion).toHaveAttribute('data-isopen', 'true');
+    
+    // Close accordion
+    fireEvent.click(toggleButton);
+    expect(accordion).toHaveAttribute('data-isopen', 'false');
+  });
+
+  it('displays service information when accordion is open', () => {
+    const mockServices: FlattenedService[] = [
+      {
+        id: 'a',
+        name: 'Test Service',
+        category: 'meals',
+        subCategory: 'breakfast',
+        organisation: 'Test Org',
+        organisationSlug: 'test-org',
+        description: 'Detailed service description',
+        openTimes: [],
+        clientGroups: ['adults', 'families'],
+        latitude: 53,
+        longitude: -2,
+      }
+    ];
+
+    const groupedServices: GroupedServicesWithAddress = {
+      meals: {
+        breakfast: [
+          {
+            ...mockServices[0],
+            address: {
+              Street: '123 Test St',
+              City: 'Test City',
+              Postcode: 'TE1 1ST',
+              Location: { coordinates: [-2, 53] },
+            }
+          }
+        ]
+      }
+    };
+
+    const org: TestOrganisationDetails = {
+      key: 'test-org',
+      name: 'Test Organisation',
+      addresses: [],
+      services: mockServices,
+      groupedServices
+    };
+
+    render(<OrganisationServicesAccordion organisation={org as OrganisationDetails} />);
+    
+    // Open accordion
+    const toggleButton = screen.getByTestId('accordion-toggle');
+    fireEvent.click(toggleButton);
+    
+    // Check content is displayed
+    expect(screen.getByText('Detailed service description')).toBeInTheDocument();
+  });
+
+  it('handles multiple categories and subcategories', () => {
+    const mockServices: FlattenedService[] = [
+      {
+        id: 'a',
+        name: 'Morning Meals',
+        category: 'meals',
+        subCategory: 'breakfast',
+        organisation: 'Test Org',
+        organisationSlug: 'test-org',
+        description: 'Breakfast service',
+        openTimes: [],
+        clientGroups: ['adults'],
+        latitude: 53,
+        longitude: -2,
+      },
+      {
+        id: 'b',
+        name: 'Evening Meals',
+        category: 'meals',
+        subCategory: 'dinner',
+        organisation: 'Test Org',
+        organisationSlug: 'test-org',
+        description: 'Dinner service',
+        openTimes: [],
+        clientGroups: ['adults'],
+        latitude: 53.1,
+        longitude: -2.1,
+      },
+      {
+        id: 'c',
+        name: 'Night Shelter',
+        category: 'accommodation',
+        subCategory: 'emergency',
+        organisation: 'Test Org',
+        organisationSlug: 'test-org',
+        description: 'Emergency accommodation',
+        openTimes: [],
+        clientGroups: ['adults'],
+        latitude: 53.2,
+        longitude: -2.2,
+      }
+    ];
+
+    const groupedServices: GroupedServicesWithAddress = {
+      meals: {
+        breakfast: [{ ...mockServices[0], address: { Street: '123 Test St' } }],
+        dinner: [{ ...mockServices[1], address: { Street: '456 Test St' } }]
+      },
+      accommodation: {
+        emergency: [{ ...mockServices[2], address: { Street: '789 Test St' } }]
+      }
+    };
+
+    const org: TestOrganisationDetails = {
+      key: 'test-org',
+      name: 'Test Organisation',
+      addresses: [],
+      services: mockServices,
+      groupedServices
+    };
+
+    render(<OrganisationServicesAccordion organisation={org as OrganisationDetails} />);
+    
+    // Check category headings
+    expect(screen.getByText('meals')).toBeInTheDocument();
+    expect(screen.getByText('accommodation')).toBeInTheDocument();
+    
+    // Check accordion titles (text might be split across elements)
+    expect(screen.getByText((content, element) => content.includes('breakfast'))).toBeInTheDocument();
+    expect(screen.getByText((content, element) => content.includes('dinner'))).toBeInTheDocument();
+    expect(screen.getByText((content, element) => content.includes('emergency'))).toBeInTheDocument();
+    
+    // Should have 3 accordions
+    const accordions = screen.getAllByTestId('accordion');
+    expect(accordions).toHaveLength(3);
+  });
+
+  it('renders service with opening times correctly', () => {
+    // Create service with opening times
+    const serviceWithOpenTimes: FlattenedServiceWithAddress = {
+      id: 'c',
+      name: 'Counseling',
+      category: 'health',
+      subCategory: 'mental-health',
+      organisation: 'Test Org',
+      organisationSlug: 'test-org',
+      description: 'Counseling services',
+      openTimes: [
+        { day: 0, start: 900, end: 1700 }, // Sunday 9:00-17:00
+        { day: 2, start: 1000, end: 1600 }, // Tuesday 10:00-16:00
+      ],
+      clientGroups: ['adults'],
+      latitude: 53.2,
+      longitude: -2.2,
+      address: {
+        Street: '789 Health St',
+        City: 'Test City',
+        Postcode: 'TE3 3ST',
+        Location: { coordinates: [-2.2, 53.2] },
+      }
+    };
+
+    const groupedServices: GroupedServicesWithAddress = {
+      health: {
+        'mental-health': [serviceWithOpenTimes]
+      }
+    };
+
+    // Create a modified OrganisationDetails type that includes our extended groupedServices
+    type TestOrganisationDetails = Omit<OrganisationDetails, 'groupedServices'> & {
+      groupedServices: GroupedServicesWithAddress;
+    };
+
+    const org: TestOrganisationDetails = {
+      key: 'test-org',
+      name: 'Test Organisation',
+      addresses: [],
+      services: [serviceWithOpenTimes],
+      groupedServices
+    };
+
+    render(<OrganisationServicesAccordion organisation={org as OrganisationDetails} />);
+    
+    // Open the accordion
+    const toggleButton = screen.getByTestId('accordion-toggle');
+    fireEvent.click(toggleButton);
+    
+    // Check that opening times are displayed correctly
+    expect(screen.getByText('Opening Times:')).toBeInTheDocument();
+    expect(screen.getByText('Sun: 09:00 – 17:00')).toBeInTheDocument();
+    expect(screen.getByText('Tue: 10:00 – 16:00')).toBeInTheDocument();
+  });
+
+  it('renders service with address and map links correctly', () => {
+    // Create service with address
+    const serviceWithAddress: FlattenedServiceWithAddress = {
+      id: 'd',
+      name: 'Housing Advice',
+      category: 'housing',
+      subCategory: 'housing-advice',
+      organisation: 'Test Org',
+      organisationSlug: 'test-org',
+      description: 'Housing advice services',
+      openTimes: [],
+      clientGroups: ['adults'],
+      latitude: 53.3,
+      longitude: -2.3,
+      address: {
+        Street: '101 Housing St',
+        Street1: 'Floor 2',
+        City: 'Test City',
+        Postcode: 'TE4 4ST',
+        Location: { coordinates: [-2.3, 53.3] },
+      }
+    };
+
+    const groupedServices: GroupedServicesWithAddress = {
+      housing: {
+        'housing-advice': [serviceWithAddress]
+      }
+    };
+
+    // Create a modified OrganisationDetails type that includes our extended groupedServices
+    type TestOrganisationDetails = Omit<OrganisationDetails, 'groupedServices'> & {
+      groupedServices: GroupedServicesWithAddress;
+    };
+
+    const org: TestOrganisationDetails = {
+      key: 'test-org',
+      name: 'Test Organisation',
+      addresses: [],
+      services: [serviceWithAddress],
+      groupedServices
+    };
+
+    render(<OrganisationServicesAccordion organisation={org as OrganisationDetails} />);
+    
+    // Open the accordion
+    const toggleButton = screen.getByTestId('accordion-toggle');
+    fireEvent.click(toggleButton);
+    
+    // Check that address is displayed correctly
+    expect(screen.getByText('Address:')).toBeInTheDocument();
+    
+    // Check for the map link (we can't check the href directly with the mock)
+    const addressText = screen.getByText('101 Housing St, Test City, TE4 4ST');
+    expect(addressText).toBeInTheDocument();
   });
 });

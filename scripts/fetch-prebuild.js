@@ -1,11 +1,7 @@
 // scripts/fetch-prebuild.js
 
-if (process.env.SKIP_FETCH === 'true') {
-  console.log('⏭️  Skipping prebuild fetch');
-  process.exit(0);
-}
-
 console.log('🔄 Fetching bootstrap data before build...');
+console.log('   (Will use fallback data if MongoDB unavailable)');
 
 // ESM: use dynamic import for node:child_process
 const { execSync } = await import('node:child_process');

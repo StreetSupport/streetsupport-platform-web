@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 120">
+  <!-- Background circle in yellow -->
+  <circle cx="60" cy="60" r="50" fill="#ffde00"/>
+  
+  <!-- Purple interlocking circles forming heart shape -->
+  <!-- Left circle -->
+  <circle cx="45" cy="45" r="20" fill="none" stroke="#5a497f" stroke-width="8"/>
+  <!-- Right circle -->
+  <circle cx="75" cy="45" r="20" fill="none" stroke="#5a497f" stroke-width="8"/>
+  <!-- Bottom curve to complete heart -->
+  <path d="M 45 65 Q 60 80 75 65" fill="none" stroke="#5a497f" stroke-width="8"/>
+  
+  <!-- Yellow accent circle -->
+  <circle cx="60" cy="52" r="12" fill="none" stroke="#ffde00" stroke-width="6"/>
+  
+  <!-- Text -->
+  <text x="140" y="42" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#000000">Street Support</text>
+  <text x="140" y="78" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#000000">Network</text>
+</svg>

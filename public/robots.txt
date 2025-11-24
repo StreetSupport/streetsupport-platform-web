@@ -1,0 +1,32 @@
+# Street Support Network - Robots.txt
+# Helping search engines find and index content to help people experiencing homelessness
+
+User-agent: *
+Allow: /
+
+# Important directories for SEO
+Allow: /find-help
+Allow: /resources
+Allow: /about
+Allow: /news
+Allow: /accessibility
+
+# API endpoints should not be crawled
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+
+# Temporary files and development resources
+Disallow: /*.json$
+Disallow: /temp/
+Disallow: /test/
+
+# Allow crawling of static assets for better SEO
+Allow: /assets/img/og/
+Allow: /assets/icons/
+
+# Sitemap location
+Sitemap: https://streetsupport.net/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
