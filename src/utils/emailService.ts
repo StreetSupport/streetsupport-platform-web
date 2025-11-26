@@ -77,7 +77,6 @@ export async function sendTemplateEmail(
     }
 
     await sgMail.send(msg);
-    console.log(`Email sent successfully to ${toEmail}${ccEmail ? ` (CC: ${ccEmail})` : ''}: ${subject}`);
     return { success: true, message: 'Email sent successfully' };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';

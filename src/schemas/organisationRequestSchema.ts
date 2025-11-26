@@ -1,19 +1,6 @@
 import { z } from 'zod';
 
 /**
- * Opening time schema
- */
-const OpeningTimeSchema = z.object({
-  Day: z.string().min(1, 'Day is required'),
-  StartTime: z
-    .string()
-    .regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Start time must be in HH:MM format'),
-  EndTime: z
-    .string()
-    .regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, 'End time must be in HH:MM format'),
-});
-
-/**
  * Opening time schema that allows empty values (for when IsOpen247 is true)
  */
 const OpeningTimeSchemaOptional = z.object({
@@ -163,7 +150,7 @@ export const OrganisationRequestSchema = z.object({
 
 export type OrganisationRequestFormData = z.infer<typeof OrganisationRequestSchema>;
 export type ServiceListingFormData = z.infer<typeof ServiceListingSchema>;
-export type OpeningTimeFormData = z.infer<typeof OpeningTimeSchema>;
+export type OpeningTimeFormData = z.infer<typeof OpeningTimeSchemaOptional>;
 
 /**
  * Validate organisation request data

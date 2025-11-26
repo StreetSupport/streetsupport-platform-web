@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import { PartnershipApplicationSchema, type PartnershipApplicationFormData } from '@/schemas/partnershipApplicationSchema';
@@ -192,9 +193,9 @@ export default function PartnershipApplicationFormPage() {
                 Our Managing Director will review your application and be in touch to discuss next
                 steps.
               </p>
-              <a href="/" className="btn-base btn-primary btn-md">
+              <Link href="/" className="btn-base btn-primary btn-md">
                 Return to Homepage
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -368,7 +369,7 @@ export default function PartnershipApplicationFormPage() {
             {/* Why Interested */}
             <div className="mb-6">
               <label htmlFor="WhyInterested" className="block font-semibold text-brand-k mb-2">
-                Why You're Interested in Joining the Street Support Network{' '}
+                Why You&apos;re Interested in Joining the Street Support Network{' '}
                 <span className="text-brand-g">*</span>
               </label>
               <textarea

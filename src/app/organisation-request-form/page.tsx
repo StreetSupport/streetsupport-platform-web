@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import {
@@ -133,7 +134,7 @@ export default function OrganisationRequestFormPage() {
             <svg className="w-16 h-16 text-brand-b mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
             <h1 className="heading-2 text-brand-b mb-4">Request Submitted!</h1>
             <p className="text-body mb-6">Thank you for requesting to list your organisation. We have sent you a confirmation email.</p>
-            <a href="/" className="btn-base btn-primary btn-md">Return to Homepage</a>
+            <Link href="/" className="btn-base btn-primary btn-md">Return to Homepage</Link>
           </div></div></div></>
     );
   }
@@ -143,7 +144,7 @@ export default function OrganisationRequestFormPage() {
   return (
     <><Breadcrumbs items={[{ href: '/', label: 'Home' }, { label: 'Organisation Request', current: true }]} />
       <div className="content-container px-6 py-12">
-        <div className="mb-8"><h1 className="heading-2">Organisation Request Form</h1><p className="text-lead">Want to list your organisation's services on Street Support Network? Complete this form.</p></div>
+        <div className="mb-8"><h1 className="heading-2">Organisation Request Form</h1><p className="text-lead">Want to list your organisation&apos;s services on Street Support Network? Complete this form.</p></div>
         {submitError && <div className="bg-brand-g/10 border border-brand-g text-brand-g rounded-lg p-4 mb-6"><p className="font-medium">Error</p><p className="text-sm">{submitError}</p></div>}
         
         <form onSubmit={handleSubmit} className="max-w-3xl">
