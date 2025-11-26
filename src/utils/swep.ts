@@ -44,7 +44,7 @@ export function formatSwepActivePeriod(swepData: SwepData): string {
     const activeFrom = new Date(swepData.swepActiveFrom);
     const fromString = activeFrom.toLocaleDateString('en-GB', formatOptions);
     
-    return `SWEP will be active from ${fromString}`;
+    return `SWEP is currently active from ${fromString}`;
   } else {
     return 'Active period not specified';
   }
