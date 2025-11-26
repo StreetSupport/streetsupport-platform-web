@@ -1,6 +1,7 @@
 // tests/__tests__/api/categories.test.ts
 
 import { getCategories } from '../../../src/app/api/categories/helper';
+import type { RawCategory } from '../../../src/utils/formatCategories';
 
 jest.mock('../../../src/utils/mongodb', () => ({
   getClientPromise: jest.fn(),
@@ -23,17 +24,31 @@ describe('getCategories', () => {
   });
 
   it('should fetch categories and format them', async () => {
-    const mockRaw = [
-      { key: 'food', name: 'Food', subCategories: [] },
+    const mockDbCategories = [
+      {
+        _id: 'food',
+        Name: 'Food',
+        SubCategories: [
+          { Key: 'hot-food', Name: 'Hot Food' },
+        ],
+      },
     ];
 
-    mockClient.toArray.mockResolvedValueOnce(mockRaw);
+    const expectedNormalized = {
+      key: 'food',
+      name: 'Food',
+      subCategories: [
+        { key: 'hot-food', name: 'Hot Food' },
+      ],
+    };
+
+    mockClient.toArray.mockResolvedValueOnce(mockDbCategories);
 
     const { getClientPromise } = require('../../../src/utils/mongodb');
     getClientPromise.mockResolvedValueOnce(mockClient);
 
     const { formatCategory } = require('../../../src/utils/formatCategories');
-    formatCategory.mockImplementation((cat) => ({
+    formatCategory.mockImplementation((cat: RawCategory) => ({
       ...cat,
       formatted: true,
     }));
@@ -42,8 +57,8 @@ describe('getCategories', () => {
 
     expect(mockClient.collection).toHaveBeenCalledWith('NestedServiceCategories');
     expect(formatCategory).toHaveBeenCalledTimes(1);
-    expect(formatCategory).toHaveBeenNthCalledWith(1, mockRaw[0], 0, mockRaw);
-    expect(result).toEqual([{ ...mockRaw[0], formatted: true }]);
+    expect(formatCategory).toHaveBeenCalledWith(expectedNormalized);
+    expect(result).toEqual([{ ...expectedNormalized, formatted: true }]);
   });
 
   it('should throw if database fails', async () => {
