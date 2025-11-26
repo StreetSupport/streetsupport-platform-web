@@ -115,7 +115,14 @@ describe('GivingCampaignBanner', () => {
     render(<GivingCampaignBanner {...props} />);
     
     expect(screen.getByText('Campaign ends:')).toBeInTheDocument();
-    expect(screen.getByText(/Tuesday.*31.*December.*2024/)).toBeInTheDocument();
+    const expectedDate = new Date(props.campaignEndDate!).toLocaleDateString('en-GB', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+
+    expect(screen.getByText(expectedDate)).toBeInTheDocument();
   });
 
   it('should render date range when showDates is true', () => {
