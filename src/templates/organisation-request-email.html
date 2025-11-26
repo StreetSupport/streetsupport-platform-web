@@ -1,0 +1,209 @@
+<!-- We use it inside SendGrid account to create dynamic templates -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{#if is_admin_copy}}New Organisation Request{{else}}Your Organisation Request - Street Support Network{{/if}}</title>
+  <!--
+    SENDGRID TEMPLATE INSTRUCTIONS:
+    1. Copy this entire HTML into SendGrid Dynamic Templates
+    2. Create a new Dynamic Template in SendGrid
+    3. Use the template ID in your environment variable: SENDGRID_ORGANISATION_REQUEST_TEMPLATE_ID
+    
+    TEMPLATE VARIABLES:
+    - {{OrganisationName}} - Name of the organisation
+    - {{Description}} - Organisation description (optional)
+    - {{OrganisationEmail}} - Organisation email address
+    - {{OrganisationPhone}} - Organisation phone (optional)
+    - {{Website}} - Organisation website (optional)
+    - {{LocationsServed}} - Locations where they provide services
+    - {{ContactFullName}} - Primary contact name
+    - {{ContactEmail}} - Contact email address
+    - {{ServicesHtml}} - HTML formatted list of services
+    - {{SubmittedAt}} - Submission timestamp
+    - {{is_admin_copy}} - Boolean to differentiate admin vs requester email
+  -->
+</head>
+<body style="margin: 0; padding: 0; background-color: #f9f9f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f9f9f9;">
+    <tr>
+      <td style="padding: 20px 10px;">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          
+          <!-- Header with Logo -->
+          <tr>
+            <td style="background-color: #38ae8e; padding: 30px 20px; text-align: center; border-radius: 8px 8px 0 0;">
+              <img src="https://streetsupport.net/assets/img/StreetSupport_logo_land.png" alt="Street Support Network" width="200" style="display: block; margin: 0 auto; max-width: 100%; height: auto;">
+            </td>
+          </tr>
+
+          <!-- Email Title -->
+          <tr>
+            <td style="padding: 30px 30px 20px 30px;">
+              <h1 style="margin: 0; font-size: 24px; font-weight: bold; color: #48484a; line-height: 1.3;">
+                {{#if is_admin_copy}}
+                  New Organisation Listing Request
+                {{else}}
+                  Thank You for Your Organisation Request
+                {{/if}}
+              </h1>
+            </td>
+          </tr>
+
+          <!-- Introduction -->
+          <tr>
+            <td style="padding: 0 30px 20px 30px; font-size: 16px; line-height: 1.6; color: #29272a;">
+              {{#if is_admin_copy}}
+                <p style="margin: 0 0 15px;">A new organisation has requested to have their services listed on Street Support Network.</p>
+              {{else}}
+                <p style="margin: 0 0 15px;">Thank you for requesting to list your organisation on Street Support Network. We have received your submission and will review the details.</p>
+                <p style="margin: 0 0 15px;">Our team will review your listing and be in touch if we need any additional information.</p>
+              {{/if}}
+            </td>
+          </tr>
+
+          <!-- Organisation Details Section -->
+          <tr>
+            <td style="padding: 0 30px 20px 30px;">
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f3f3f3; border-radius: 6px;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <h2 style="margin: 0 0 15px 0; font-size: 18px; font-weight: bold; color: #38ae8e; border-bottom: 2px solid #38ae8e; padding-bottom: 10px;">
+                      🏢 Organisation Details
+                    </h2>
+                    
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr>
+                        <td style="padding: 8px 0; font-size: 14px; color: #8d8d8d; width: 40%;">Organisation Name:</td>
+                        <td style="padding: 8px 0; font-size: 14px; color: #29272a; font-weight: 600;">{{OrganisationName}}</td>
+                      </tr>
+                      {{#if Description}}
+                      <tr>
+                        <td colspan="2" style="padding: 8px 0;">
+                          <p style="margin: 0; font-size: 14px; color: #8d8d8d;">Description:</p>
+                          <p style="margin: 5px 0 0 0; font-size: 14px; color: #29272a; line-height: 1.5;">{{Description}}</p>
+                        </td>
+                      </tr>
+                      {{/if}}
+                      <tr>
+                        <td style="padding: 8px 0; font-size: 14px; color: #8d8d8d;">Email:</td>
+                        <td style="padding: 8px 0; font-size: 14px; color: #29272a;">
+                          <a href="mailto:{{OrganisationEmail}}" style="color: #38ae8e; text-decoration: none;">{{OrganisationEmail}}</a>
+                        </td>
+                      </tr>
+                      {{#if OrganisationPhone}}
+                      <tr>
+                        <td style="padding: 8px 0; font-size: 14px; color: #8d8d8d;">Phone:</td>
+                        <td style="padding: 8px 0; font-size: 14px; color: #29272a;">
+                          <a href="tel:{{OrganisationPhone}}" style="color: #38ae8e; text-decoration: none;">{{OrganisationPhone}}</a>
+                        </td>
+                      </tr>
+                      {{/if}}
+                      {{#if Website}}
+                      <tr>
+                        <td style="padding: 8px 0; font-size: 14px; color: #8d8d8d;">Website:</td>
+                        <td style="padding: 8px 0; font-size: 14px; color: #29272a;">
+                          <a href="{{Website}}" style="color: #38ae8e; text-decoration: none;">{{Website}}</a>
+                        </td>
+                      </tr>
+                      {{/if}}
+                      <tr>
+                        <td style="padding: 8px 0; font-size: 14px; color: #8d8d8d;">Locations Served:</td>
+                        <td style="padding: 8px 0; font-size: 14px; color: #29272a;">{{LocationsServed}}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Contact Person Section -->
+          <tr>
+            <td style="padding: 0 30px 20px 30px;">
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f3f3f3; border-radius: 6px;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <h2 style="margin: 0 0 15px 0; font-size: 18px; font-weight: bold; color: #38ae8e; border-bottom: 2px solid #38ae8e; padding-bottom: 10px;">
+                      👤 Contact Person
+                    </h2>
+                    
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr>
+                        <td style="padding: 8px 0; font-size: 14px; color: #8d8d8d; width: 40%;">Name:</td>
+                        <td style="padding: 8px 0; font-size: 14px; color: #29272a; font-weight: 600;">{{ContactFullName}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 8px 0; font-size: 14px; color: #8d8d8d;">Email:</td>
+                        <td style="padding: 8px 0; font-size: 14px; color: #29272a;">
+                          <a href="mailto:{{ContactEmail}}" style="color: #38ae8e; text-decoration: none;">{{ContactEmail}}</a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Services Section -->
+          <tr>
+            <td style="padding: 0 30px 20px 30px;">
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f6e9d2; border-radius: 6px;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <h2 style="margin: 0 0 15px 0; font-size: 18px; font-weight: bold; color: #48484a; border-bottom: 2px solid #e1c116; padding-bottom: 10px;">
+                      📋 Services to be Listed
+                    </h2>
+                    <div style="font-size: 14px; line-height: 1.6; color: #29272a;">
+                      {{{ServicesHtml}}}
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Submission Details -->
+          <tr>
+            <td style="padding: 0 30px 20px 30px;">
+              <p style="margin: 0; font-size: 12px; color: #8d8d8d; text-align: center;">
+                Submitted: {{SubmittedAt}}
+              </p>
+            </td>
+          </tr>
+
+          {{#if is_admin_copy}}
+          <!-- Admin Action Button -->
+          <tr>
+            <td align="center" style="padding: 10px 30px 30px 30px;">
+              <a href="mailto:{{ContactEmail}}?subject=Re: Organisation Listing Request - {{OrganisationName}}" style="background-color: #38ae8e; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 6px; font-weight: bold; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: inline-block; font-size: 16px;">
+                Reply to Requester
+              </a>
+            </td>
+          </tr>
+          {{/if}}
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #29272a; padding: 25px 30px; border-radius: 0 0 8px 8px;">
+              <p style="margin: 0 0 10px 0; font-size: 14px; color: #f3f3f3; text-align: center;">
+                {{#if is_admin_copy}}
+                  This is an automated notification from Street Support Network.
+                {{else}}
+                  If you have any questions, please contact us at <a href="mailto:info@streetsupport.net" style="color: #38ae8e;">info@streetsupport.net</a>
+                {{/if}}
+              </p>
+              <p style="margin: 0; font-size: 12px; color: #8d8d8d; text-align: center;">
+                Street Support Network | Tackling homelessness together
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
