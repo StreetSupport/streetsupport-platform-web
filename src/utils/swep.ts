@@ -38,13 +38,13 @@ export function formatSwepActivePeriod(swepData: SwepData): string {
     const fromString = activeFrom.toLocaleDateString('en-GB', formatOptions);
     const untilString = activeUntil.toLocaleDateString('en-GB', formatOptions);
     
-    if (now < activeFrom) {
-      return `SWEP will be active from ${fromString} until ${untilString}`;
-    } else if (now > activeUntil) {
-      return `SWEP was active from ${fromString} until ${untilString}`;
-    } else {
-      return `SWEP is currently active from ${fromString} until ${untilString}`;
-    }
+    return `SWEP is currently active from ${fromString} until ${untilString}`;
+  }
+  else if (swepData.swepActiveFrom && !swepData.swepActiveUntil) {
+    const activeFrom = new Date(swepData.swepActiveFrom);
+    const fromString = activeFrom.toLocaleDateString('en-GB', formatOptions);
+    
+    return `SWEP is currently active from ${fromString}`;
   } else {
     return 'Active period not specified';
   }

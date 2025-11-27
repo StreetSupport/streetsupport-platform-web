@@ -1,12 +1,17 @@
 // src/app/api/categories/helper.ts
 
 import { getClientPromise } from '@/utils/mongodb';
-import { formatCategory } from '@/utils/formatCategories';
+import { formatCategory, type RawCategory } from '@/utils/formatCategories';
 
-interface RawCategory {
-  key: string;
-  name: string;
-  subCategories: { key: string; name: string }[];
+interface DbSubCategory {
+  Key: string;
+  Name: string;
+}
+
+interface DbCategory {
+  _id: string;
+  Name: string;
+  SubCategories: DbSubCategory[];
 }
 
 export async function getCategories() {
@@ -14,9 +19,20 @@ export async function getCategories() {
   const db = client.db('streetsupport');
 
   const categories = await db
-    .collection<RawCategory>('NestedServiceCategories')
+    .collection<DbCategory>('NestedServiceCategories')
     .find({})
     .toArray();
 
-  return categories.map(formatCategory);
+  return categories.map((rawCategory) => {
+    const normalized: RawCategory = {
+      key: rawCategory._id,
+      name: rawCategory.Name,
+      subCategories: rawCategory.SubCategories.map((sub) => ({
+        key: sub.Key,
+        name: sub.Name,
+      })),
+    };
+
+    return formatCategory(normalized);
+  });
 }
