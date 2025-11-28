@@ -79,7 +79,6 @@ export async function GET(req: NextRequest) {
         layoutStyle: banner.LayoutStyle || 'full-width',
         
         // Scheduling
-        showDates: banner.ShowDates,
         startDate: banner.StartDate ? new Date(banner.StartDate).toISOString() : undefined,
         endDate: banner.EndDate ? new Date(banner.EndDate).toISOString() : undefined,
         badgeText: banner.BadgeText,

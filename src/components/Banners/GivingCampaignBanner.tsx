@@ -32,7 +32,6 @@ const GivingCampaignBanner: React.FC<GivingCampaignBannerProps> = ({
   textColour,
   layoutStyle,
   accentGraphic,
-  showDates,
   startDate,
   endDate,
   badgeText,
@@ -240,19 +239,11 @@ const GivingCampaignBanner: React.FC<GivingCampaignBannerProps> = ({
             </div>
 
             {/* Date range */}
-            {showDates && (startDate || endDate) && (
+            {startDate && endDate && (
               <div className="mt-6 text-sm opacity-70">
-                {startDate && endDate && (
-                  <p>
-                    {new Date(startDate).toLocaleDateString('en-GB')} - {new Date(endDate).toLocaleDateString('en-GB')}
-                  </p>
-                )}
-                {startDate && !endDate && (
-                  <p>From {new Date(startDate).toLocaleDateString('en-GB')}</p>
-                )}
-                {!startDate && endDate && (
-                  <p>Until {new Date(endDate).toLocaleDateString('en-GB')}</p>
-                )}
+                <p>
+                  {new Date(startDate).toLocaleDateString('en-GB')} - {new Date(endDate).toLocaleDateString('en-GB')}
+                </p>
               </div>
             )}
           </div>

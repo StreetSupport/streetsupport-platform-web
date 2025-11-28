@@ -67,7 +67,6 @@ export interface BannerProps {
   accentGraphic?: AccentGraphic;
   
   // Optional features
-  showDates?: boolean;
   startDate?: string;
   endDate?: string;
   badgeText?: string;
