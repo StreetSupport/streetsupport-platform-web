@@ -3,6 +3,7 @@ import NewsGrid from '@/components/News/NewsGrid';
 import Link from 'next/link';
 import Image from 'next/image';
 import { generateSEOMetadata } from '@/utils/seo';
+import WatsonXChat from '@/components/ui/WatsonXChat';
 
 export const metadata = generateSEOMetadata({
   title: 'Street Support West Midlands',
@@ -252,6 +253,10 @@ export default function WestMidlandsPage() {
           </div>
         </div>
       </div>
+
+      {/* WatsonX Chat for West Midlands */}
+      <WatsonXChat />
+
     </>
   );
 }

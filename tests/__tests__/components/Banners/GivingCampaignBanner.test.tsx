@@ -125,10 +125,9 @@ describe('GivingCampaignBanner', () => {
     expect(screen.getByText(expectedDate)).toBeInTheDocument();
   });
 
-  it('should render date range when showDates is true', () => {
+  it('should render date range when startDate and endDate are provided', () => {
     const props = {
       ...mockProps,
-      showDates: true,
       startDate: '2024-01-01',
       endDate: '2024-12-31'
     };

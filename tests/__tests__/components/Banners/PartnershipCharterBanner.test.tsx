@@ -148,10 +148,9 @@ describe('PartnershipCharterBanner', () => {
     expect(screen.getByText('New Initiative')).toBeInTheDocument();
   });
 
-  it('should render date range', () => {
+  it('should render date range when startDate and endDate are provided', () => {
     const props = {
       ...mockProps,
-      showDates: true,
       startDate: '2024-01-01',
       endDate: '2024-12-31'
     };
