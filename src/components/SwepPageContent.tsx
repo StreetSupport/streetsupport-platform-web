@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import { SwepData } from '@/types';
 
@@ -96,18 +97,18 @@ export default function SwepPageContent({ locationSlug, locationName }: SwepPage
             </p>
             <p className="text-brand-k mb-6">If you need help right now, please visit:</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
+              <Link
                 href={`/${locationSlug}/advice/`}
                 className="inline-flex items-center justify-center px-6 py-3 bg-brand-g text-white font-semibold rounded-md hover:bg-opacity-90 transition-colors"
               >
                 See emergency advice
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/find-help/"
                 className="inline-flex items-center justify-center px-6 py-3 bg-brand-e text-brand-l font-semibold rounded-md hover:bg-opacity-90 transition-colors"
               >
                 Find Help
-              </a>
+              </Link>
             </div>
           </div>
         </div>

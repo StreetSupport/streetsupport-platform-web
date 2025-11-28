@@ -2,6 +2,11 @@
 
 import { useEffect } from 'react';
 
+type WatsonAssistantInstance = {
+  render: () => Promise<void>;
+  destroy: () => void;
+};
+
 // Extend Window interface for WatsonX
 declare global {
   interface Window {
@@ -10,7 +15,7 @@ declare global {
       region: string;
       serviceInstanceID: string;
       clientVersion?: string;
-      onLoad: (instance: any) => Promise<void>;
+      onLoad: (instance: WatsonAssistantInstance) => Promise<void>;
     };
     watsonAssistantInstance?: {
       // The web chat instance exposes a destroy() method that removes all UI
