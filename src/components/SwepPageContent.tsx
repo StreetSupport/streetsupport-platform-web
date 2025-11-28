@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import { SwepData } from '@/types';
-import { formatSwepActivePeriod, parseSwepBody } from '@/utils/swep';
 
 interface SwepPageContentProps {
   locationSlug: string;
@@ -76,9 +75,6 @@ export default function SwepPageContent({ locationSlug, locationName }: SwepPage
     );
   }
 
-  const activePeriodText = formatSwepActivePeriod(swepData);
-  const parsedBody = parseSwepBody(swepData.body);
-
   return (
     <main>
       <Breadcrumbs 
@@ -89,25 +85,33 @@ export default function SwepPageContent({ locationSlug, locationName }: SwepPage
         ]} 
       />
 
-      {/* Header */}
-      <div className="bg-red-50 border-b-4 border-brand-g py-12">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-6 h-6 bg-brand-g rounded-full flex items-center justify-center">
-              <div className="w-3 h-3 bg-white rounded-full"></div>
+      {!swepData.isActive && (
+        <div className="bg-brand-d py-12">
+          <div className="max-w-6xl mx-auto px-6 text-center">
+            <h2 className="text-2xl font-bold text-brand-l mb-4">
+              Severe Weather Emergency Accommodation is not currently active in {locationName}
+            </h2>
+            <p className="text-brand-k mb-4">
+              This page provides information about emergency accommodation during severe weather. The service is activated when temperatures drop below freezing.
+            </p>
+            <p className="text-brand-k mb-6">If you need help right now, please visit:</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href={`/${locationSlug}/advice/`}
+                className="inline-flex items-center justify-center px-6 py-3 bg-brand-g text-white font-semibold rounded-md hover:bg-opacity-90 transition-colors"
+              >
+                See emergency advice
+              </a>
+              <a
+                href="/find-help/"
+                className="inline-flex items-center justify-center px-6 py-3 bg-brand-e text-brand-l font-semibold rounded-md hover:bg-opacity-90 transition-colors"
+              >
+                Find Help
+              </a>
             </div>
-            <h1 className="text-3xl font-bold text-red-800 mb-0">
-              {swepData.title}
-            </h1>
-          </div>
-          <p className="text-lg text-red-700 mb-4">
-            {activePeriodText}
-          </p>
-          <div className="bg-brand-g text-white px-4 py-2 rounded-md inline-block">
-            <strong>Emergency Support Available</strong>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Content */}
       <section className="py-12">
@@ -124,7 +128,7 @@ export default function SwepPageContent({ locationSlug, locationName }: SwepPage
           
           <div 
             className="prose prose-lg max-w-none"
-            dangerouslySetInnerHTML={{ __html: parsedBody }}
+            dangerouslySetInnerHTML={{ __html: swepData.body }}
           />
           
           <div className="mt-12 p-6 bg-blue-50 rounded-lg border-l-4 border-blue-600">

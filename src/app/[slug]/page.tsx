@@ -11,6 +11,7 @@ import LocationStatistics from '@/components/Location/LocationStatistics';
 import LocationNews from '@/components/Location/LocationNews';
 import EmergencyContactSection from '@/components/Location/EmergencyContactSection';
 import SupporterLogos from '@/components/Location/SupporterLogos';
+import WatsonXChat from '@/components/ui/WatsonXChat';
 import { generateLocationSEOMetadata } from '@/utils/seo';
 
 export const dynamic = 'force-dynamic';
@@ -250,6 +251,9 @@ export default async function LocationPage(props) {
 
       {/* Supporter Logos Section */}
       <SupporterLogos locationSlug={slug} />
+
+      {/* WatsonX Chat - handles West Midlands locations internally */}
+      <WatsonXChat locationSlug={slug} />
     </main>
   );
 }

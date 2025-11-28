@@ -29,7 +29,6 @@ const ResourceProjectBanner: React.FC<ResourceProjectBannerProps> = ({
   textColour,
   layoutStyle,
   accentGraphic,
-  showDates,
   startDate,
   endDate,
   badgeText,
@@ -417,19 +416,11 @@ const ResourceProjectBanner: React.FC<ResourceProjectBannerProps> = ({
             )}
 
             {/* Date range */}
-            {showDates && (startDate || endDate) && (
+            {startDate && endDate && (
               <div className="mt-6 text-sm opacity-70">
-                {startDate && endDate && (
-                  <p>
-                    Available: {new Date(startDate).toLocaleDateString('en-GB')} - {new Date(endDate).toLocaleDateString('en-GB')}
-                  </p>
-                )}
-                {startDate && !endDate && (
-                  <p>Available from {new Date(startDate).toLocaleDateString('en-GB')}</p>
-                )}
-                {!startDate && endDate && (
-                  <p>Available until {new Date(endDate).toLocaleDateString('en-GB')}</p>
-                )}
+                <p>
+                  Available: {new Date(startDate).toLocaleDateString('en-GB')} - {new Date(endDate).toLocaleDateString('en-GB')}
+                </p>
               </div>
             )}
           </div>
