@@ -20,14 +20,29 @@ async function globalSetup(config: FullConfig) {
   try {
     // Wait for the development server to be ready
     const baseURL = config.projects[0].use.baseURL || 'http://localhost:3000';
-    
+
     console.warn('Waiting for development server to be ready...');
-    
-    // Try to access the homepage to ensure server is ready
-    await page.goto(baseURL, { 
-      waitUntil: 'domcontentloaded',
-      timeout: 60000 
-    });
+
+    // Retry logic for initial connection (Next.js compilation can be slow in CI)
+    const maxRetries = 3;
+    const initialTimeout = 120000; // 2 minutes for first load
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        console.warn(`Connection attempt ${attempt}/${maxRetries}...`);
+        await page.goto(baseURL, {
+          waitUntil: 'domcontentloaded',
+          timeout: initialTimeout
+        });
+        break; // Success, exit retry loop
+      } catch (error) {
+        if (attempt === maxRetries) {
+          throw error; // Re-throw on final attempt
+        }
+        console.warn(`Attempt ${attempt} failed, retrying...`);
+        await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5s before retry
+      }
+    }
     
     // Verify the page loads correctly
     await page.waitForSelector('body', { timeout: 30000 });
