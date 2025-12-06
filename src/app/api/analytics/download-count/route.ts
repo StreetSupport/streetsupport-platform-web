@@ -84,7 +84,6 @@ export async function GET(request: Request) {
     });
 
     let count = 0;
-    debugger
     if (report.rows && report.rows.length > 0) {
       const metricValue = report.rows[0].metricValues?.[0]?.value;
       if (metricValue !== undefined) {
