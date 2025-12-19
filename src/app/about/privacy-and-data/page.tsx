@@ -104,7 +104,7 @@ export default function PrivacyAndDataPage() {
                     <p className="text-body">Your personal information is yours. Our AI respects that by only using necessary data and keeping it anonymous where possible.</p>
                   </div>
                 </div>
-                <p className="text-body mb-6">Want to learn more about how we manage AI responsibly? Check out our <Link href="/about/privacy-and-data/ai-governance" className="text-brand-a hover:text-brand-b underline">AI Governance Plan</Link> and our <Link href="/about/privacy-and-data/ai-and-environment" className="text-brand-a hover:text-brand-b underline">AI Environmental Impact Report</Link>.</p>
+                <p className="text-body mb-6">Check out our <Link href="/about/privacy-and-data/ai-policy" className="text-brand-a hover:text-brand-b underline">AI policy</Link>, our <Link href="/about/privacy-and-data/ai-governance" className="text-brand-a hover:text-brand-b underline">AI Governance Plan</Link> and our <Link href="/about/privacy-and-data/ai-and-environment" className="text-brand-a hover:text-brand-b underline">AI Environmental Impact Report</Link>.</p>
                 
                 <div className="bg-brand-q p-6 rounded-lg">
                   <h3 className="heading-4 mb-4 text-brand-l">Got Questions? We&apos;re Here to Help.</h3>
