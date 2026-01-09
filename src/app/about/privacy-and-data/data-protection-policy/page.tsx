@@ -25,18 +25,22 @@ export default function DataProtectionPolicyPage() {
         <div className="content-container">
           <div className="prose-content max-w-none">
             <div className="space-y-12">
+              <div className="mb-8">
+                <p className="text-body text-brand-f italic">Version 2.0 – November 2025</p>
+              </div>
+
               <section>
-                <h2 className="heading-2 mb-6 text-brand-l">1. Purpose</h2>
+                <h2 className="heading-2 mb-6 text-brand-l">Purpose</h2>
                 <p className="text-body">Street Support Network (Street Support Network) is committed to protecting the personal data of its employees, volunteers, partners, and service users. This policy outlines how we comply with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018, ensuring that personal data is handled lawfully, transparently, and securely.</p>
               </section>
 
               <section>
-                <h2 className="heading-2 mb-6 text-brand-l">2. Scope</h2>
+                <h2 className="heading-2 mb-6 text-brand-l">Scope</h2>
                 <p className="text-body">This policy applies to all personal data processed by Street Support Network, including data relating to employees, volunteers, partners, and service users. It covers both electronic and physical records across all Street Support Network operations, including data processed through the Street Support Network Virtual Assistant (VA).</p>
               </section>
 
               <section>
-                <h2 className="heading-2 mb-6 text-brand-l">3. Key Principles</h2>
+                <h2 className="heading-2 mb-6 text-brand-l">Key Principles</h2>
                 <p className="text-body mb-6">Street Support Network processes personal data in line with the following principles:</p>
                 <div className="space-y-6">
                   <div className="border-l-4 border-brand-e pl-6">
@@ -48,7 +52,7 @@ export default function DataProtectionPolicyPage() {
                     <p className="text-body">Data is collected for specific, explicit, and legitimate purposes and not further processed in a way incompatible with those purposes.</p>
                   </div>
                   <div className="border-l-4 border-brand-e pl-6">
-                    <h3 className="heading-4 mb-2 text-brand-l">Data Minimisation</h3>
+                    <h3 className="heading-4 mb-2 text-brand-l">Data Minimization</h3>
                     <p className="text-body">Only data necessary for the purposes described is collected and processed.</p>
                   </div>
                   <div className="border-l-4 border-brand-e pl-6">
@@ -71,7 +75,7 @@ export default function DataProtectionPolicyPage() {
               </section>
 
               <section>
-                <h2 className="heading-2 mb-6 text-brand-l">4. Roles and Responsibilities</h2>
+                <h2 className="heading-2 mb-6 text-brand-l">Roles and Responsibilities</h2>
                 <div className="space-y-6">
                   <div className="bg-brand-q p-6 rounded-lg">
                     <h3 className="heading-4 mb-3 text-brand-l">Employees and Volunteers</h3>
@@ -88,7 +92,7 @@ export default function DataProtectionPolicyPage() {
               </section>
 
               <section>
-                <h2 className="heading-2 mb-6 text-brand-l">5. Lawful Basis for Processing</h2>
+                <h2 className="heading-2 mb-6 text-brand-l">Lawful Basis for Processing</h2>
                 <p className="text-body mb-4">Street Support Network processes personal data under one or more of the following lawful bases:</p>
                 <div className="grid md:grid-cols-2 gap-4 mb-6">
                   <div className="border border-brand-q p-4 rounded-lg">
@@ -112,7 +116,7 @@ export default function DataProtectionPolicyPage() {
               </section>
 
               <section>
-                <h2 className="heading-2 mb-6 text-brand-l">6. Data Transfers & Third-Party Processing</h2>
+                <h2 className="heading-2 mb-6 text-brand-l">Data Transfers & Third-Party Processing</h2>
                 <p className="text-body mb-4">Street Support Network works with third-party providers to ensure the highest level of data security and compliance. This includes our partnership with IBM Watsonx, which powers the Virtual Assistant (VA).</p>
                 <ul className="list-disc pl-6 space-y-3 text-body">
                   <li>No personally identifiable information (PII) is collected or stored by the VA.</li>
@@ -124,109 +128,122 @@ export default function DataProtectionPolicyPage() {
                 <p className="text-body mt-4">Street Support Network reviews third-party compliance documentation regularly to ensure ongoing adherence to data protection standards.</p>
               </section>
 
-        <h2 className="heading-3 mb-4">7. Data Subject Rights & Subject Access Requests (SARs)</h2>
-        <p>Individuals have the following rights regarding their personal data:</p>
-        <ul className="list-disc pl-6 space-y-1">
-          <li><strong>Right to Access:</strong> Request access to their personal data (Subject Access Requests must be responded to within one month).</li>
-          <li><strong>Right to Rectification:</strong> Request correction of inaccurate or incomplete data.</li>
-          <li><strong>Right to Erasure:</strong> Request deletion of data where it is no longer necessary.</li>
-          <li><strong>Right to Restrict Processing:</strong> Request limited processing in specific circumstances.</li>
-          <li><strong>Right to Object:</strong> Object to processing based on legitimate interests or direct marketing.</li>
-          <li><strong>Data Portability:</strong> Request transfer of their data to another organisation, if applicable.</li>
-        </ul>
-        <p>For the Virtual Assistant, as no personally identifiable data is stored, SAR requests will be met with confirmation that Street Support Network does not retain user data from the VA. This will be clearly communicated in the privacy notice and VA interface.</p>
+              <section>
+                <h2 className="heading-2 mb-6 text-brand-l">Data Subject Rights & Subject Access Requests (SARs)</h2>
+                <p className="text-body mb-4">Individuals have the following rights regarding their personal data:</p>
+                <ul className="list-disc pl-6 space-y-3 text-body">
+                  <li><strong>Right to Access:</strong> Request access to their personal data (Subject Access Requests must be responded to within one month).</li>
+                  <li><strong>Right to Rectification:</strong> Request correction of inaccurate or incomplete data.</li>
+                  <li><strong>Right to Erasure:</strong> Request deletion of data where it is no longer necessary.</li>
+                  <li><strong>Right to Restrict Processing:</strong> Request limited processing in specific circumstances.</li>
+                  <li><strong>Right to Object:</strong> Object to processing based on legitimate interests or direct marketing.</li>
+                  <li><strong>Data Portability:</strong> Request transfer of their data to another organization, if applicable.</li>
+                </ul>
+                <p className="text-body mt-4">For the Virtual Assistant, as no personally identifiable data is stored, SAR requests will be met with confirmation that Street Support Network does not retain user data from the VA. This will be clearly communicated in the privacy notice and VA interface.</p>
+              </section>
 
-        <h2 className="heading-3 mb-4">8. Data Security</h2>
-        <p>Street Support Network implements strong security measures, including:</p>
-        <ul className="list-disc pl-6 space-y-1">
-          <li>Street Support Network uses appropriate technical and organizational measures to safeguard personal data.</li>
-          <li>Access to data is restricted to authorised personnel only.</li>
-          <li>Employees are responsible for keeping their workspaces and devices secure.</li>
-          <li>Two-factor authentication is used where available.</li>
-        </ul>
-        <p>For any concerns related to data security or compliance, please contact the Data Protection Lead (DPL) at <a href="mailto:admin@streetsupport.net" className="text-blue-600 hover:text-blue-800 underline">admin@streetsupport.net</a>.</p>
+              <section>
+                <h2 className="heading-2 mb-6 text-brand-l">Data Security</h2>
+                <p className="text-body mb-4">Street Support Network implements strong security measures, including:</p>
+                <ul className="list-disc pl-6 space-y-3 text-body">
+                  <li>Street Support Network uses appropriate technical and organizational measures to safeguard personal data.</li>
+                  <li>Access to data is restricted to authorised personnel only.</li>
+                  <li>Employees are responsible for keeping their workspaces and devices secure.</li>
+                  <li>Staff must keep any tool that can record or analyse what&apos;s on their screen switched off. This includes features like Windows Recall or Copilot Vision. These tools must not be used on devices showing personal or confidential information.</li>
+                  <li>Staff must also be alert to any new AI or smart features that switch on automatically through updates. If a new function starts processing, storing, or analysing data without clear consent, it must be turned off straight away and reported to the Data Protection Lead for review.</li>
+                </ul>
+                <p className="text-body mt-4">For any concerns related to data security or compliance, please contact the Data Protection Lead (DPL) at <a href="mailto:admin@streetsupport.net" className="text-blue-600 hover:text-blue-800 underline">admin@streetsupport.net</a>.</p>
+              </section>
 
-        <h2 className="heading-3 mb-4">9. Data Retention</h2>
-        <p>Street Support Network retains personal data only as long as necessary for the purposes for which it was collected. A detailed retention schedule is maintained below and reviewed regularly.</p>
-        
-        <div className="overflow-x-auto">
-          <table className="table-auto w-full border-collapse border border-gray-300 mt-4">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border border-gray-300 px-4 py-2 text-left">Data Category</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">Retention Period</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">Legal Basis / Guidance</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">Reason for Retention</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2">Employee Records</td>
-                <td className="border border-gray-300 px-4 py-2">6 years after employment ends</td>
-                <td className="border border-gray-300 px-4 py-2">Limitation Act 1980, ACAS guidance</td>
-                <td className="border border-gray-300 px-4 py-2">Defence against potential claims</td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2">Payroll and Tax Records</td>
-                <td className="border border-gray-300 px-4 py-2">6 years</td>
-                <td className="border border-gray-300 px-4 py-2">HMRC guidelines</td>
-                <td className="border border-gray-300 px-4 py-2">Taxation and audit purposes</td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2">Service User Records</td>
-                <td className="border border-gray-300 px-4 py-2">6 years after last interaction</td>
-                <td className="border border-gray-300 px-4 py-2">Limitation Act 1980, safeguarding best practice</td>
-                <td className="border border-gray-300 px-4 py-2">Record of services provided, safeguarding</td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2">Complaints Records</td>
-                <td className="border border-gray-300 px-4 py-2">6 years after resolution</td>
-                <td className="border border-gray-300 px-4 py-2">Limitation Act 1980</td>
-                <td className="border border-gray-300 px-4 py-2">Defence against potential claims</td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2">Health and Safety Records</td>
-                <td className="border border-gray-300 px-4 py-2">3 years after the date of incident</td>
-                <td className="border border-gray-300 px-4 py-2">Health and Safety at Work Act 1974</td>
-                <td className="border border-gray-300 px-4 py-2">Legal defence in case of incident claims</td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2">Financial Records</td>
-                <td className="border border-gray-300 px-4 py-2">6 years</td>
-                <td className="border border-gray-300 px-4 py-2">Companies Act 2006, HMRC</td>
-                <td className="border border-gray-300 px-4 py-2">Statutory reporting and audit</td>
-              </tr>
-              <tr>
-                <td className="border border-gray-300 px-4 py-2">Marketing Preferences</td>
-                <td className="border border-gray-300 px-4 py-2">Until consent is withdrawn</td>
-                <td className="border border-gray-300 px-4 py-2">UK GDPR</td>
-                <td className="border border-gray-300 px-4 py-2">Ongoing communication management</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+              <section>
+                <h2 className="heading-2 mb-6 text-brand-l">Data Retention</h2>
+                <p className="text-body mb-4">Street Support Network retains personal data only as long as necessary for the purposes for which it was collected. A detailed retention schedule is maintained below and reviewed regularly.</p>
+                
+                <div className="overflow-x-auto">
+                  <table className="table-auto w-full border-collapse border border-gray-300 mt-4">
+                    <thead>
+                      <tr className="bg-gray-100">
+                        <th className="border border-gray-300 px-4 py-2 text-left">Data Category</th>
+                        <th className="border border-gray-300 px-4 py-2 text-left">Retention Period</th>
+                        <th className="border border-gray-300 px-4 py-2 text-left">Legal Basis / Guidance</th>
+                        <th className="border border-gray-300 px-4 py-2 text-left">Reason for Retention</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border border-gray-300 px-4 py-2">Employee Records</td>
+                        <td className="border border-gray-300 px-4 py-2">6 years after employment ends</td>
+                        <td className="border border-gray-300 px-4 py-2">Limitation Act 1980, ACAS guidance</td>
+                        <td className="border border-gray-300 px-4 py-2">Defence against potential claims</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-300 px-4 py-2">Payroll and Tax Records</td>
+                        <td className="border border-gray-300 px-4 py-2">6 years</td>
+                        <td className="border border-gray-300 px-4 py-2">HMRC guidelines</td>
+                        <td className="border border-gray-300 px-4 py-2">Taxation and audit purposes</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-300 px-4 py-2">Service User Records</td>
+                        <td className="border border-gray-300 px-4 py-2">6 years after last interaction</td>
+                        <td className="border border-gray-300 px-4 py-2">Limitation Act 1980, safeguarding best practice</td>
+                        <td className="border border-gray-300 px-4 py-2">Record of services provided, safeguarding</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-300 px-4 py-2">Complaints Records</td>
+                        <td className="border border-gray-300 px-4 py-2">6 years after resolution</td>
+                        <td className="border border-gray-300 px-4 py-2">Limitation Act 1980</td>
+                        <td className="border border-gray-300 px-4 py-2">Defence against potential claims</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-300 px-4 py-2">Health and Safety Records</td>
+                        <td className="border border-gray-300 px-4 py-2">3 years after the date of incident</td>
+                        <td className="border border-gray-300 px-4 py-2">Health and Safety at Work Act 1974</td>
+                        <td className="border border-gray-300 px-4 py-2">Legal defence in case of incident claims</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-300 px-4 py-2">Financial Records</td>
+                        <td className="border border-gray-300 px-4 py-2">6 years</td>
+                        <td className="border border-gray-300 px-4 py-2">Companies Act 2006, HMRC</td>
+                        <td className="border border-gray-300 px-4 py-2">Statutory reporting and audit</td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-300 px-4 py-2">Marketing Preferences</td>
+                        <td className="border border-gray-300 px-4 py-2">Until consent is withdrawn</td>
+                        <td className="border border-gray-300 px-4 py-2">UK GDPR</td>
+                        <td className="border border-gray-300 px-4 py-2">Ongoing communication management</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-body mt-4">For the Virtual Assistant, session data is only retained for the duration of the session and is automatically deleted after 12 hours. No identifiable records are stored.</p>
+              </section>
 
-        <h2 className="heading-3 mb-4">10. Data Breaches</h2>
-        <p>In the event of a data breach:</p>
-        <ol className="list-decimal pl-6 space-y-1">
-          <li>Notify the DPL immediately.</li>
-          <li>The DPL will assess the breach and, if required, report it to the Information Commissioner&apos;s Office (ICO) within 72 hours.</li>
-          <li>Affected individuals will be informed if the breach poses a significant risk to their rights.</li>
-        </ol>
+              <section>
+                <h2 className="heading-2 mb-6 text-brand-l">Data Breaches</h2>
+                <p className="text-body mb-4">In the event of a data breach:</p>
+                <ol className="list-decimal pl-6 space-y-2 text-body">
+                  <li>Notify the DPL immediately.</li>
+                  <li>The DPL will assess the breach and, if required, report it to the Information Commissioner&apos;s Office (ICO) within 72 hours.</li>
+                  <li>Affected individuals will be informed if the breach poses a significant risk to their rights.</li>
+                </ol>
+              </section>
 
-        <h2 className="heading-3 mb-4">11. Training</h2>
-        <p>All employees and volunteers are provided with basic data protection training to ensure they understand their responsibilities.</p>
+              <section>
+                <h2 className="heading-2 mb-6 text-brand-l">Training</h2>
+                <p className="text-body">All employees and volunteers are provided with basic data protection training to ensure they understand their responsibilities.</p>
+              </section>
 
-        <h2 className="heading-3 mb-4">12. Privacy Notices</h2>
-        <p>Street Support Network provides clear and accessible privacy notices explaining how personal data is collected, used, and stored.</p>
+              <section>
+                <h2 className="heading-2 mb-6 text-brand-l">Privacy Notices</h2>
+                <p className="text-body">Street Support Network provides clear and accessible privacy notices explaining how personal data is collected, used, and stored.</p>
+              </section>
 
-        <h2 className="heading-3 mb-4">13. Monitoring and Review</h2>
-        <p>This policy is reviewed annually or when significant changes to data protection laws occur.</p>
-        <p>For any questions or concerns, please contact <a href="mailto:admin@streetsupport.net" className="text-blue-600 hover:text-blue-800 underline">admin@streetsupport.net</a>.</p>
-        <p>This policy ensures that Street Support Network remains compliant with UK GDPR while protecting the privacy and security of all individuals interacting with our services, including the Virtual Assistant.</p>
-              <div className="mt-16 pt-8 border-t border-brand-q">
-                <p className="text-sm text-brand-f italic">Last updated: 2nd April 2025</p>
-              </div>
+              <section>
+                <h2 className="heading-2 mb-6 text-brand-l">Monitoring and Review</h2>
+                <p className="text-body mb-4">This policy is reviewed annually or when significant changes to data protection laws occur.</p>
+                <p className="text-body mb-4">For any questions or concerns, please contact <a href="mailto:admin@streetsupport.net" className="text-blue-600 hover:text-blue-800 underline">admin@streetsupport.net</a>.</p>
+                <p className="text-body">This policy ensures that Street Support Network remains compliant with UK GDPR while protecting the privacy and security of all individuals interacting with our services, including the Virtual Assistant.</p>
+              </section>
             </div>
           </div>
           <SocialShare />

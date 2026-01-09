@@ -128,7 +128,6 @@ export async function GET(req: NextRequest) {
           ...baseBanner,
           templateType: 'resource-project',
           resourceType: banner.ResourceProject?.ResourceFile?.ResourceType,
-          downloadCount: banner.ResourceProject?.ResourceFile?.DownloadCount,
           lastUpdated: banner.ResourceProject?.ResourceFile?.LastUpdated 
             ? new Date(banner.ResourceProject.ResourceFile.LastUpdated).toISOString() 
             : undefined,
