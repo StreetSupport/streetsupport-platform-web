@@ -861,7 +861,8 @@ export default function OrganisationServicesAccordion({
                       <ul className="list-disc pl-5">
                         {(() => {
                           // Group opening times by day and consolidate multiple sessions
-                          const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                          // Database uses Monday-first indexing: 0=Monday, ..., 6=Sunday
+                          const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
                           const dayGroups = new Map<string, Array<{start: string; end: string}>>();
                           
                           // Group slots by day
