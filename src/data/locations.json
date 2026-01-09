@@ -9,15 +9,6 @@
     "isPublic": true
   },
   {
-    "id": "5c55fe9823c7a0408e8e695c",
-    "key": "reading",
-    "name": "Reading",
-    "slug": "reading",
-    "latitude": 51.4529758,
-    "longitude": -0.9810887,
-    "isPublic": true
-  },
-  {
     "id": "5b7452f523c7a0408e8e689e",
     "key": "bolton",
     "name": "Bolton",
@@ -105,15 +96,6 @@
     "slug": "stockport",
     "latitude": 53.397135,
     "longitude": -2.1359974,
-    "isPublic": true
-  },
-  {
-    "id": "5c5d4fdfce246147b88b1b44",
-    "key": "blackpool",
-    "name": "Blackpool",
-    "slug": "blackpool",
-    "latitude": 53.818782,
-    "longitude": -3.051672,
     "isPublic": true
   },
   {
