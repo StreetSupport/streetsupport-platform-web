@@ -161,12 +161,27 @@ const originalError = console.error;
 
 // Suppress specific React test warnings and jsdom navigation errors
 beforeAll(() => {
-  jest.spyOn(console, 'error').mockImplementation((msg) => {
-    const [text] = Array.isArray(msg) ? msg : [msg];
-    if (typeof text === 'string' && text.includes('not wrapped in act')) return;
-    if (typeof text === 'string' && text.includes('Not implemented: navigation')) return;
-    if (typeof text === 'string' && text.includes('[API ERROR]')) return;
-    originalError(...(Array.isArray(msg) ? msg : [msg]));
+  jest.spyOn(console, 'error').mockImplementation((...args) => {
+    const message = args[0];
+
+    // Extract text from string or Error object
+    const getText = (val) => {
+      if (typeof val === 'string') return val;
+      if (val instanceof Error) return val.message;
+      if (val && typeof val.toString === 'function') return val.toString();
+      return '';
+    };
+
+    const text = getText(message);
+
+    // Suppress known test noise
+    if (text.includes('not wrapped in act')) return;
+    if (text.includes('Not implemented: navigation')) return;
+    if (text.includes('[API ERROR]')) return;
+    if (text.includes('Error loading filtered accommodation data')) return;
+    if (text.includes('Error loading accommodation data')) return;
+
+    originalError(...args);
   });
 });
 
