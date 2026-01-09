@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+
 import ResourceProjectBanner from '@/components/Banners/ResourceProjectBanner';
 import { ResourceProjectProps } from '@/types/banners';
 
@@ -25,6 +26,7 @@ Object.defineProperty(window, 'gtag', {
 
 describe('ResourceProjectBanner', () => {
   const mockProps: ResourceProjectProps = {
+    id: '1',
     templateType: 'resource-project',
     title: 'Homelessness User Guide',
     description: 'Comprehensive guide for organisations working with people experiencing homelessness.',
@@ -100,14 +102,6 @@ describe('ResourceProjectBanner', () => {
     });
   });
 
-  it('should render download count stat', () => {
-    const props = { ...mockProps, downloadCount: 1234 };
-    render(<ResourceProjectBanner {...props} />);
-    
-    expect(screen.getByText('Downloads')).toBeInTheDocument();
-    expect(screen.getByText('1,234')).toBeInTheDocument();
-  });
-
   it('should render file size stat with different formats', () => {
     // Test pre-formatted file size
     const { rerender } = render(
@@ -136,18 +130,26 @@ describe('ResourceProjectBanner', () => {
   it('should render all resource stats together', () => {
     const props = {
       ...mockProps,
-      downloadCount: 500,
       fileSize: '3.2 MB',
       lastUpdated: '2024-01-15T09:00:00Z'
     };
+    const originalFetch = global.fetch;
+    (global as any).fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ count: 500 })
+    });
+
     render(<ResourceProjectBanner {...props} />);
-    
-    expect(screen.getByText('Downloads')).toBeInTheDocument();
-    expect(screen.getByText('500')).toBeInTheDocument();
-    expect(screen.getByText('File Size')).toBeInTheDocument();
-    expect(screen.getByText('3.2 MB')).toBeInTheDocument();
-    expect(screen.getByText('Last Updated')).toBeInTheDocument();
-    expect(screen.getByText(/15 Jan 2024/)).toBeInTheDocument();
+
+    return waitFor(() => {
+      expect(screen.getByText('Downloads')).toBeInTheDocument();
+      expect(screen.getByText('500')).toBeInTheDocument();
+      expect(screen.getByText('File Size')).toBeInTheDocument();
+      expect(screen.getByText('3.2 MB')).toBeInTheDocument();
+      expect(screen.getByText('Last Updated')).toBeInTheDocument();
+      expect(screen.getByText(/15 Jan 2024/)).toBeInTheDocument();
+      (global as any).fetch = originalFetch;
+    });
   });
 
   it('should render date range when startDate and endDate are provided', () => {
@@ -246,25 +248,46 @@ describe('ResourceProjectBanner', () => {
     const button = screen.getByText('Download Guide');
     fireEvent.click(button);
     
-    expect(mockGtag).toHaveBeenCalledWith('event', 'resource_project_cta_click', {
+    expect(mockGtag).toHaveBeenCalledTimes(3);
+    
+    // First call should be the main CTA click
+    expect(mockGtag).toHaveBeenNthCalledWith(1, 'event', 'resource_project_cta_click', {
       resource_type: 'guide',
       resource_title: 'Homelessness User Guide',
       button_label: 'Download Guide',
       button_position: 1,
       tracking_context: 'test-resource'
     });
+    
+    // Second call should be the resource-specific file download event
+    expect(mockGtag).toHaveBeenNthCalledWith(2, 'event', 'resource_file_download', {
+      banner_analytics_id: '1',
+      resource_title: 'Homelessness User Guide',
+      resource_type: 'guide',
+      file_type: 'unknown',
+      cta_position: 1,
+      button_label: 'Download Guide',
+      tracking_context: 'test-resource'
+    });
+
+    // Third call should be the generic file download event
+    expect(mockGtag).toHaveBeenNthCalledWith(3, 'event', 'file_download', {
+      file_name: 'Homelessness User Guide',
+      file_type: 'unknown',
+      resource_type: 'guide'
+    });
   });
 
   it('should track file downloads separately', () => {
     // Need downloadCount defined to trigger file_download event
-    const props = { ...mockProps, downloadCount: 100 };
+    const props = { ...mockProps };
     render(<ResourceProjectBanner {...props} />);
     
     const button = screen.getByText('Download Guide');
     fireEvent.click(button);
     
-    // Should trigger two analytics calls
-    expect(mockGtag).toHaveBeenCalledTimes(2);
+    // Should trigger three analytics calls: CTA click, resource file download, and generic file download
+    expect(mockGtag).toHaveBeenCalledTimes(3);
     
     // First call should be the main CTA click
     expect(mockGtag).toHaveBeenNthCalledWith(1, 'event', 'resource_project_cta_click', {
@@ -275,8 +298,19 @@ describe('ResourceProjectBanner', () => {
       tracking_context: 'test-resource'
     });
     
-    // Second call should be the file download
-    expect(mockGtag).toHaveBeenNthCalledWith(2, 'event', 'file_download', {
+    // Second call should be the resource-specific file download event
+    expect(mockGtag).toHaveBeenNthCalledWith(2, 'event', 'resource_file_download', {
+      banner_analytics_id: '1',
+      resource_title: 'Homelessness User Guide',
+      resource_type: 'unknown',
+      file_type: 'unknown',
+      cta_position: 1,
+      button_label: 'Download Guide',
+      tracking_context: 'test-resource'
+    });
+
+    // Third call should be the generic file download event
+    expect(mockGtag).toHaveBeenNthCalledWith(3, 'event', 'file_download', {
       file_name: 'Homelessness User Guide',
       file_type: 'unknown',
       resource_type: 'unknown'
@@ -285,14 +319,14 @@ describe('ResourceProjectBanner', () => {
 
   it('should track file downloads with file type', () => {
     // Need downloadCount defined to trigger file_download event
-    const props = { ...mockProps, fileType: 'PDF', resourceType: 'guide' as const, downloadCount: 100 };
+    const props = { ...mockProps, fileType: 'PDF', resourceType: 'guide' as const };
     render(<ResourceProjectBanner {...props} />);
     
     const button = screen.getByText('Download Guide');
     fireEvent.click(button);
     
-    // Should trigger two analytics calls
-    expect(mockGtag).toHaveBeenCalledTimes(2);
+    // Should trigger three analytics calls: CTA click, resource file download, and generic file download
+    expect(mockGtag).toHaveBeenCalledTimes(3);
     
     // First call should be the main CTA click
     expect(mockGtag).toHaveBeenNthCalledWith(1, 'event', 'resource_project_cta_click', {
@@ -303,8 +337,19 @@ describe('ResourceProjectBanner', () => {
       tracking_context: 'test-resource'
     });
     
-    // Second call should be the file download
-    expect(mockGtag).toHaveBeenNthCalledWith(2, 'event', 'file_download', {
+    // Second call should be the resource-specific file download event
+    expect(mockGtag).toHaveBeenNthCalledWith(2, 'event', 'resource_file_download', {
+      banner_analytics_id: '1',
+      resource_title: 'Homelessness User Guide',
+      resource_type: 'guide',
+      file_type: 'PDF',
+      cta_position: 1,
+      button_label: 'Download Guide',
+      tracking_context: 'test-resource'
+    });
+
+    // Third call should be the generic file download event
+    expect(mockGtag).toHaveBeenNthCalledWith(3, 'event', 'file_download', {
       file_name: 'Homelessness User Guide',
       file_type: 'PDF',
       resource_type: 'guide'

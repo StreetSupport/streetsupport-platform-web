@@ -18,6 +18,7 @@ interface ResourceProjectBannerProps extends ResourceProjectProps {
 }
 
 const ResourceProjectBanner: React.FC<ResourceProjectBannerProps> = ({
+  id,
   title,
   description,
   subtitle,
@@ -33,14 +34,13 @@ const ResourceProjectBanner: React.FC<ResourceProjectBannerProps> = ({
   endDate,
   badgeText,
   resourceType,
-  downloadCount: initialDownloadCount,
   lastUpdated,
   fileSize,
   fileType,
   trackingContext = 'resource-project',
   className = ''
 }) => {
-  const [downloadCount, setDownloadCount] = useState<number | undefined>(initialDownloadCount);
+  const [downloadCount, setDownloadCount] = useState<number | undefined>(0);
 
   // Fetch download count from Google Analytics
   useEffect(() => {
@@ -51,6 +51,7 @@ const ResourceProjectBanner: React.FC<ResourceProjectBannerProps> = ({
         
         if (downloadButton) {
           const params = new URLSearchParams({
+            banner_analytics_id: id,
             fileName: title,
             ...(fileType && { fileType }),
             ...(resourceType && { resourceType }),
@@ -59,10 +60,8 @@ const ResourceProjectBanner: React.FC<ResourceProjectBannerProps> = ({
           const response = await fetch(`/api/analytics/download-count?${params.toString()}`);
           
           if (response.ok) {
-            // TODO: Uncomment it when we get value of downloadCount from GA4
-            // const data = await response.json();
-            // setDownloadCount(data.count);
-            setDownloadCount(undefined);
+            const data = await response.json();
+            setDownloadCount(data.count);
           }
         }
       } catch (error) {
@@ -71,7 +70,7 @@ const ResourceProjectBanner: React.FC<ResourceProjectBannerProps> = ({
     };
 
     fetchDownloadCount();
-  }, [title, fileType, resourceType, ctaButtons]);
+  }, [title, fileType, resourceType, ctaButtons, id]);
 
   const backgroundClasses = generateBackgroundClasses(background);
   const backgroundStyles = generateBackgroundStyles(background);
@@ -166,6 +165,19 @@ const ResourceProjectBanner: React.FC<ResourceProjectBannerProps> = ({
         button_position: index + 1,
         tracking_context: button.trackingContext || trackingContext
       });
+
+      // Track downloads specifically: by default we set up file download to the first button
+      if (index === 0) {
+        window.gtag('event', 'resource_file_download', {
+          banner_analytics_id: id,
+          resource_title: title,
+          resource_type: resourceType || 'unknown',
+          file_type: fileType || 'unknown',
+          cta_position: index + 1,
+          button_label: button.label,
+          tracking_context: button.trackingContext || trackingContext
+        });
+      }
     }
 
     // Track downloads specifically: by default we set up file download to the first button
@@ -277,8 +289,8 @@ const ResourceProjectBanner: React.FC<ResourceProjectBannerProps> = ({
 
             {/* Resource Stats */}
             {/* Update to lg:grid-cols-3 when we configure downloadCount */}
-            <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
-              {downloadCount !== undefined && downloadCount !== 0 && (
+            <div className="mb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {downloadCount !== undefined && (
                 <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-1">
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
@@ -337,7 +349,7 @@ const ResourceProjectBanner: React.FC<ResourceProjectBannerProps> = ({
                     }
                   : { href: button.url };
 
-                const isDownload = button.label.toLowerCase().includes('download');
+                const isDownload = button.label.toLowerCase().includes('download') || index === 0;
 
                 return (
                   <Component
