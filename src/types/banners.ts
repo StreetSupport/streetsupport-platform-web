@@ -72,7 +72,7 @@ export interface BannerProps {
   badgeText?: string;
   
   // CMS metadata
-  id?: string;
+  id: string;
   templateType: BannerTemplateType;
   isActive?: boolean;
   locationSlug?: string;
@@ -105,7 +105,6 @@ export interface PartnershipCharterProps extends BannerProps {
 export interface ResourceProjectProps extends BannerProps {
   templateType: 'resource-project';
   resourceType?: 'guide' | 'toolkit' | 'research' | 'training' | 'event';
-  downloadCount?: number;
   lastUpdated?: string;
   fileSize?: string;
   fileType?: string;
