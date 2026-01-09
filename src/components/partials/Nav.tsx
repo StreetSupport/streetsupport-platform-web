@@ -26,6 +26,7 @@ export default function Nav() {
   const aboutCloseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const locationsButtonRef = useRef<HTMLButtonElement>(null);
   const locationsDropdownRef = useRef<HTMLDivElement>(null);
+  const locationLinksRef = useRef<Map<number, HTMLAnchorElement>>(new Map());
 
   // Group locations alphabetically
   const groupedLocations = {
@@ -101,6 +102,16 @@ export default function Nav() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isLocationsOpen]);
+
+  // Move focus to the currently focused location link
+  useEffect(() => {
+    if (focusedLocationIndex >= 0 && isLocationsOpen) {
+      const link = locationLinksRef.current.get(focusedLocationIndex);
+      if (link) {
+        link.focus();
+      }
+    }
+  }, [focusedLocationIndex, isLocationsOpen]);
 
   function handleMouseEnter() {
     if (closeTimeoutRef.current) {
@@ -207,49 +218,66 @@ export default function Nav() {
               </button>
 
               {isLocationsOpen && (
-                <div 
-                  className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[500px] z-50"
+                <div
+                  className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[650px] z-50"
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
                 >
-                  <div 
+                  <div
                     ref={locationsDropdownRef}
                     id="locations-dropdown"
                     className="bg-white border border-brand-f rounded-md shadow-lg p-4"
                     role="menu"
-                  aria-labelledby="locations-button"
-                  onKeyDown={handleLocationsKeyDown}
-                >
-                  <div className="grid grid-cols-2 gap-6">
-                    {Object.entries(groupedLocations).map(([groupName, groupLocations]) => (
-                      <div key={groupName} className="space-y-2">
-                        <h3 className="text-xs font-semibold text-brand-f uppercase tracking-wide border-b border-brand-q pb-1">
-                          {groupName}
-                        </h3>
-                        <ul className="space-y-1">
-                          {groupLocations.map((location, _index) => {
-                            const globalIndex = sortedLocations.findIndex(loc => loc.id === location.id);
-                            const isFocused = globalIndex === focusedLocationIndex;
-                            return (
-                              <li key={location.id}>
-                                <Link
-                                  href={`/${location.slug}`}
-                                  className={`block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded ${
-                                    isFocused ? 'bg-brand-i text-brand-k ring-2 ring-brand-a' : ''
-                                  }`}
-                                  onClick={handleLocationClick}
-                                  role="menuitem"
-                                  tabIndex={-1}
-                                >
-                                  {location.name}
-                                </Link>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
+                    aria-labelledby="locations-button"
+                    onKeyDown={handleLocationsKeyDown}
+                  >
+                    <div className="grid grid-cols-4 gap-4">
+                      {Object.entries(groupedLocations).map(([groupName, groupLocations]) => {
+                        const groupId = `locations-group-${groupName.toLowerCase().replace('-', '')}`;
+                        return (
+                          <div
+                            key={groupName}
+                            className="space-y-2"
+                            role="group"
+                            aria-labelledby={groupId}
+                          >
+                            <h3
+                              id={groupId}
+                              className="text-xs font-semibold text-brand-f uppercase tracking-wide border-b border-brand-q pb-1"
+                            >
+                              {groupName}
+                            </h3>
+                            <ul className="space-y-1" aria-label={`Locations ${groupName}`}>
+                              {groupLocations.map((location) => {
+                                const globalIndex = sortedLocations.findIndex(loc => loc.id === location.id);
+                                const isFocused = globalIndex === focusedLocationIndex;
+                                return (
+                                  <li key={location.id}>
+                                    <Link
+                                      href={`/${location.slug}`}
+                                      ref={(el) => {
+                                        if (el) {
+                                          locationLinksRef.current.set(globalIndex, el);
+                                        }
+                                      }}
+                                      className={`block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded focus:ring-2 focus:ring-brand-a focus:outline-none ${
+                                        isFocused ? 'bg-brand-i text-brand-k ring-2 ring-brand-a outline-none' : ''
+                                      }`}
+                                      onClick={handleLocationClick}
+                                      role="menuitem"
+                                      tabIndex={isFocused ? 0 : -1}
+                                      aria-current={isFocused ? 'true' : undefined}
+                                    >
+                                      {location.name}
+                                    </Link>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               )}
