@@ -42,8 +42,8 @@ const mockService = {
   latitude: 53.4808,
   longitude: -2.2426,
   openTimes: [
-    { day: 0, start: 900, end: 1700 }, // Sunday: 09:00 - 17:00
-    { day: 2, start: 900, end: 1700 }, // Tuesday: 09:00 - 17:00  
+    { day: 0, start: 900, end: 1700 }, // Monday: 09:00 - 17:00 (0=Mon in database)
+    { day: 2, start: 900, end: 1700 }, // Wednesday: 09:00 - 17:00 (2=Wed in database)
   ],
   clientGroups: ['age-18+', 'rough-sleepers'],
   organisation: {
@@ -94,8 +94,8 @@ describe('ServiceCard', () => {
   it('renders opening times', () => {
     renderServiceCard();
     // Note: ServiceCard component doesn't render client groups, only opening times
-    expect(screen.getByText(/Sun.*09:00.*17:00/)).toBeInTheDocument();
-    expect(screen.getByText(/Tue.*09:00.*17:00/)).toBeInTheDocument();
+    expect(screen.getByText(/Mon.*09:00.*17:00/)).toBeInTheDocument();
+    expect(screen.getByText(/Wed.*09:00.*17:00/)).toBeInTheDocument();
   });
 
   it('shows correct link destination based on organisation slug', () => {

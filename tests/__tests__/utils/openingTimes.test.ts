@@ -6,7 +6,8 @@ import {
 import type { ServiceWithDistance } from '@/types';
 
 // Mock Date to control time for testing
-const mockDate = new Date('2024-01-14T14:30:00.000Z'); // Sunday 14:30
+// Database uses Monday-first indexing: 0=Monday, 1=Tuesday, ..., 6=Sunday
+const mockDate = new Date('2024-01-15T14:30:00.000Z'); // Monday 14:30
 
 describe('openingTimes utilities', () => {
   beforeEach(() => {
@@ -119,10 +120,10 @@ describe('openingTimes utilities', () => {
     it('calculates next opening time correctly', () => {
       // Service closed on Monday, opens Tuesday 9:00
       const service = createMockService([
-        { day: 2, start: 900, end: 1700 } // Tuesday
+        { day: 1, start: 900, end: 1700 } // Tuesday (0=Mon, 1=Tue, ...)
       ]);
       const status = isServiceOpenNow(service);
-      
+
       expect(status.isOpen).toBe(false);
       expect(status.nextOpen).toEqual({
         day: 'Tuesday',
@@ -131,13 +132,13 @@ describe('openingTimes utilities', () => {
     });
 
     it('handles services with unusual hours', () => {
-      // Service open late hours (20:00 to 23:59)
+      // Service open late hours (20:00 to 23:59) on Monday
       const service = createMockService([
-        { day: 0, start: 2000, end: 2359 }
+        { day: 0, start: 2000, end: 2359 } // Monday (0=Mon in database)
       ]);
-      
-      // Test at 21:00 local time on Monday (should be open - within 2000-2359 range)
-      jest.setSystemTime(new Date('2024-01-14T21:00:00.000Z'));
+
+      // Test at 21:00 on Monday (Jan 15, 2024 was Monday)
+      jest.setSystemTime(new Date('2024-01-15T21:00:00.000Z'));
       const status = isServiceOpenNow(service);
       expect(status.isOpen).toBe(true);
     });
@@ -166,14 +167,14 @@ describe('openingTimes utilities', () => {
     it('finds next opening when service has multiple days', () => {
       // Service closed Monday, opens Wednesday and Friday
       const service = createMockService([
-        { day: 2, start: 900, end: 1700 }, // Wednesday
+        { day: 2, start: 900, end: 1700 }, // Wednesday (0=Mon, 1=Tue, 2=Wed)
         { day: 4, start: 1000, end: 1600 }  // Friday
       ]);
       const status = isServiceOpenNow(service);
-      
+
       expect(status.isOpen).toBe(false);
       expect(status.nextOpen).toEqual({
-        day: 'Tuesday',
+        day: 'Wednesday',
         time: '09:00'
       });
     });

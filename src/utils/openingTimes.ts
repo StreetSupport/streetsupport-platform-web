@@ -20,7 +20,8 @@ export interface OpeningStatus {
   };
 }
 
-const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+// Database uses Monday-first indexing: 0=Monday, 1=Tuesday, ..., 6=Sunday
+const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 function normalizeOpeningTime(slot: OpeningTimeSlot) {
   const dayValue = slot.Day ?? slot.day;
@@ -61,7 +62,9 @@ export function isServiceOpenNow(service: ServiceWithDistance): OpeningStatus {
   }
 
   const now = new Date();
-  const currentDay = now.getDay();
+  // Convert JavaScript day (0=Sunday) to database day (0=Monday)
+  const jsDay = now.getDay();
+  const currentDay = (jsDay + 6) % 7;  // JS 0(Sun)->6, JS 1(Mon)->0, etc.
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
 
