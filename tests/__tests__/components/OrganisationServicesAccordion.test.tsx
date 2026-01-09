@@ -386,8 +386,8 @@ describe('OrganisationServicesAccordion', () => {
       organisationSlug: 'test-org',
       description: 'Counseling services',
       openTimes: [
-        { day: 0, start: 900, end: 1700 }, // Sunday 9:00-17:00
-        { day: 2, start: 1000, end: 1600 }, // Tuesday 10:00-16:00
+        { day: 0, start: 900, end: 1700 }, // Monday 9:00-17:00 (0=Mon in database)
+        { day: 2, start: 1000, end: 1600 }, // Wednesday 10:00-16:00 (2=Wed in database)
       ],
       clientGroups: ['adults'],
       latitude: 53.2,
@@ -427,8 +427,8 @@ describe('OrganisationServicesAccordion', () => {
     
     // Check that opening times are displayed correctly
     expect(screen.getByText('Opening Times:')).toBeInTheDocument();
-    expect(screen.getByText('Sun: 09:00 – 17:00')).toBeInTheDocument();
-    expect(screen.getByText('Tue: 10:00 – 16:00')).toBeInTheDocument();
+    expect(screen.getByText('Mon: 09:00 – 17:00')).toBeInTheDocument();
+    expect(screen.getByText('Wed: 10:00 – 16:00')).toBeInTheDocument();
   });
 
   it('renders service with address and map links correctly', () => {
