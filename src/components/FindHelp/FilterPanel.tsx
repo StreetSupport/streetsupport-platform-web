@@ -82,7 +82,7 @@ export default function FilterPanel({
         </label>
         <select
           id="subCategory"
-          className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-brand-a bg-white disabled:bg-gray-50 disabled:text-gray-500 disabled:border-gray-200"
+          className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-brand-a bg-white disabled:bg-gray-100 disabled:text-brand-l disabled:border-gray-300 disabled:cursor-not-allowed"
           value={selectedSubCategory}
           onChange={(e) => setSelectedSubCategory(e.target.value)}
           disabled={!selectedCategory}

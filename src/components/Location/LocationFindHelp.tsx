@@ -18,6 +18,7 @@ interface Props {
   locationName: string;
   latitude: number;
   longitude: number;
+  radius?: number;
 }
 
 interface MapMarker {
@@ -78,7 +79,7 @@ const categories = (rawCategories as Category[]).sort((a, b) =>
   a.name.localeCompare(b.name)
 );
 
-export default function LocationFindHelp({ locationName, latitude, longitude }: Props) {
+export default function LocationFindHelp({ locationName, latitude, longitude, radius = 5 }: Props) {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubCategory, setSelectedSubCategory] = useState('');
@@ -112,7 +113,7 @@ export default function LocationFindHelp({ locationName, latitude, longitude }: 
     }
   }, [selectedSubCategory, subCategories]);
 
-  // Load all services in 5km radius on initial load
+  // Load all services in radius on initial load
   const loadAllServices = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -121,7 +122,7 @@ export default function LocationFindHelp({ locationName, latitude, longitude }: 
       const params = new URLSearchParams({
         lat: latitude.toString(),
         lng: longitude.toString(),
-        radius: '5', // 5km radius
+        radius: radius.toString(),
         limit: '1000', // Get all services in area
       });
 
@@ -149,7 +150,7 @@ export default function LocationFindHelp({ locationName, latitude, longitude }: 
     } finally {
       setLoading(false);
     }
-  }, [latitude, longitude]);
+  }, [latitude, longitude, radius]);
 
   // Load services on mount
   useEffect(() => {
@@ -192,7 +193,7 @@ export default function LocationFindHelp({ locationName, latitude, longitude }: 
     const params = new URLSearchParams({
       lat: latitude.toString(),
       lng: longitude.toString(),
-      radius: '5',
+      radius: radius.toString(),
     });
 
     if (selectedCategory) {
@@ -244,7 +245,7 @@ export default function LocationFindHelp({ locationName, latitude, longitude }: 
                 value={selectedSubCategory}
                 onChange={(e) => setSelectedSubCategory(e.target.value)}
                 disabled={subCategories.length === 0}
-                className="w-full px-3 py-2 border border-brand-f rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-transparent disabled:bg-gray-100"
+                className="w-full px-3 py-2 border border-brand-f rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-transparent disabled:bg-gray-100 disabled:text-brand-l disabled:cursor-not-allowed"
               >
                 <option value="">All {selectedCategory ? getCategoryName(selectedCategory) : 'subcategories'}</option>
                 {subCategories.map((subCategory) => (
@@ -259,7 +260,7 @@ export default function LocationFindHelp({ locationName, latitude, longitude }: 
           <div className="mt-6 pt-4 border-t border-brand-f">
             <div className="flex items-center justify-between mb-4">
               <p className="text-sm text-brand-f">
-                Within 5km of {locationName}
+                Within {radius}km of {locationName}
               </p>
               {(selectedCategory || selectedSubCategory) && (
                 <button
@@ -285,7 +286,7 @@ export default function LocationFindHelp({ locationName, latitude, longitude }: 
                 <button
                   onClick={handleShowResults}
                   disabled={filteredServices.length === 0 || loading}
-                  className="w-full inline-flex items-center justify-center px-6 py-3 bg-brand-a text-white font-semibold rounded-md hover:bg-brand-b active:bg-brand-c transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-a focus:ring-offset-2 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  className="w-full inline-flex items-center justify-center px-6 py-3 bg-brand-a text-white font-semibold rounded-md hover:bg-brand-b active:bg-brand-c transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-a focus:ring-offset-2 disabled:bg-brand-f disabled:text-brand-l disabled:cursor-not-allowed"
                 >
                   Show {filteredServices.length} results
                 </button>
@@ -321,9 +322,9 @@ export default function LocationFindHelp({ locationName, latitude, longitude }: 
             includeUserInBounds={false}
             userLocation={
               // Use the location page's coordinates as the "user location" for marker navigation
-              // This ensures that when users click markers, the organisation page will show 
+              // This ensures that when users click markers, the organisation page will show
               // a user pin at this location's coordinates
-              { lat: latitude, lng: longitude, radius: 5 }
+              { lat: latitude, lng: longitude, radius }
             }
           />
         )}

@@ -199,38 +199,6 @@ export default function ImpactPage() {
                 </div>
               </section>
 
-              {/* Impact Reports */}
-              <section className="bg-brand-q p-8 rounded-lg">
-                <h2 className="heading-3 mb-6 text-brand-l text-center">Detailed Impact Reports</h2>
-                <p className="text-center text-brand-l mb-6">
-                  Explore our comprehensive impact reports to understand the full scope of our work and achievements.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <a 
-                    href="https://drive.google.com/file/d/16nsU03iAbJH_T0mpc_eUGkiK0ZiDgNzR/view" 
-                    target="_blank" 
-                    className="inline-flex items-center justify-center px-6 py-3 bg-brand-a text-white font-semibold rounded-lg hover:bg-brand-b hover:text-white transition-colors"
-                    rel="noopener noreferrer"
-                  >
-                    Key Highlights Report 2016-2019
-                    <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                  </a>
-                  <a 
-                    href="https://drive.google.com/file/d/14T4Wq7FINX0Je2YQ3kW9jPh4bQ6aVStS/view" 
-                    target="_blank" 
-                    className="inline-flex items-center justify-center px-6 py-3 border-2 border-brand-a !text-brand-l font-semibold rounded-lg hover:bg-brand-a hover:!text-white transition-colors"
-                    rel="noopener noreferrer"
-                  >
-                    Full Impact Report 2016-2019
-                    <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                  </a>
-                </div>
-              </section>
-
               {/* Statistics Note */}
               <section className="text-center bg-brand-i p-6 rounded-lg">
                 <p className="text-brand-l text-sm">

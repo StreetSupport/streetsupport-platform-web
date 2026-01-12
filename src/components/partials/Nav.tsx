@@ -379,7 +379,7 @@ export default function Nav() {
                 </div>
               )}
             </div>
-            <Link href={process.env.NEXT_PUBLIC_ADMIN_URL || 'http://localhost:3000/api/auth/signin'} className="nav-link">Login</Link>
+            <Link href={process.env.NEXT_PUBLIC_ADMIN_URL || 'http://localhost:3000/api/auth/signin'} className="bg-brand-h !text-white hover:!text-white px-4 py-2 rounded hover:bg-brand-n transition-colors duration-200">Login</Link>
           </div>
         </div>
       </div>
@@ -517,7 +517,7 @@ export default function Nav() {
             </ul>
           )}
 
-          <Link href={process.env.NEXT_PUBLIC_ADMIN_URL || 'http://localhost:3000/api/auth/signin'} className="mobile-nav-link" onClick={handleMenuClose}>Login</Link>
+          <Link href={process.env.NEXT_PUBLIC_ADMIN_URL || 'http://localhost:3000/api/auth/signin'} className="block bg-brand-h !text-white hover:!text-white px-4 py-2 rounded hover:bg-brand-n transition-colors duration-200 text-center mt-2" onClick={handleMenuClose}>Login</Link>
         </div>
       </div>
     </nav>

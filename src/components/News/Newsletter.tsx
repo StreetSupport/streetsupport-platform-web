@@ -43,18 +43,25 @@ export default function Newsletter() {
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-            <input 
-              type="email" 
-              placeholder="Enter your email address" 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={status === 'loading'}
-              className="flex-1 px-4 py-3 rounded-lg text-brand-l border border-gray-300 focus:ring-2 focus:ring-brand-a focus:border-transparent transition-all disabled:opacity-50"
-            />
+            <div className="flex-1">
+              <label htmlFor="newsletter-email-main" className="sr-only">
+                Email address
+              </label>
+              <input
+                type="email"
+                id="newsletter-email-main"
+                placeholder="Enter your email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={status === 'loading'}
+                aria-describedby={message ? 'newsletter-status-main' : undefined}
+                className="w-full px-4 py-3 rounded-lg text-brand-l border border-gray-300 focus:ring-2 focus:ring-brand-a focus:border-transparent transition-all disabled:bg-gray-100 disabled:text-brand-f disabled:cursor-not-allowed"
+              />
+            </div>
             <button 
               type="submit"
               disabled={status === 'loading' || !email}
-              className="px-6 py-3 bg-transparent border-2 border-brand-a text-brand-a font-semibold rounded-lg hover:bg-brand-a hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[120px]"
+              className="px-6 py-3 bg-transparent border-2 border-brand-a text-brand-a font-semibold rounded-lg hover:bg-brand-a hover:text-white transition-colors disabled:border-brand-f disabled:text-brand-f disabled:cursor-not-allowed min-w-[120px]"
             >
               {status === 'loading' ? (
                 <div className="flex items-center justify-center">
@@ -71,11 +78,16 @@ export default function Newsletter() {
           </div>
           
           {message && (
-            <div className={`p-4 rounded-lg text-sm ${
-              status === 'success' 
-                ? 'bg-green-100 text-green-800 border border-green-200' 
-                : 'bg-red-100 text-red-800 border border-red-200'
-            }`}>
+            <div
+              id="newsletter-status-main"
+              role="status"
+              aria-live="polite"
+              className={`p-4 rounded-lg text-sm ${
+                status === 'success'
+                  ? 'bg-green-100 text-green-800 border border-green-200'
+                  : 'bg-red-100 text-red-800 border border-red-200'
+              }`}
+            >
               {message}
             </div>
           )}
