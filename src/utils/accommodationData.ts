@@ -236,7 +236,7 @@ export async function loadFilteredAccommodationData({
     const tempAccomCol = db.collection('TemporaryAccommodation');
 
     // Build base query conditions
-    const baseConditions = [
+    const baseConditions: Record<string, unknown>[] = [
       {
         'GeneralInfo.ServiceProviderId': {
           $exists: true,
@@ -260,14 +260,14 @@ export async function loadFilteredAccommodationData({
     if (location) {
       baseConditions.push({
         'Address.City': { $regex: new RegExp(`^${location}`, 'i') }
-      } as Record<string, unknown>);
+      });
     }
 
     // Add subcategory filter
     if (subcategory) {
       baseConditions.push({
         'GeneralInfo.AccommodationType': { $regex: new RegExp(`^${subcategory}`, 'i') }
-      } as Record<string, unknown>);
+      });
     }
 
     // Use $geoNear aggregation for geospatial queries to get distance from MongoDB
