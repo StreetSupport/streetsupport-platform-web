@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import Hero from '@/components/ui/Hero';
 import GetInTouchBanner from '@/components/ui/GetInTouchBanner';
