@@ -244,7 +244,7 @@ export default function LocationFindHelp({ locationName, latitude, longitude }: 
                 value={selectedSubCategory}
                 onChange={(e) => setSelectedSubCategory(e.target.value)}
                 disabled={subCategories.length === 0}
-                className="w-full px-3 py-2 border border-brand-f rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-transparent disabled:bg-gray-100"
+                className="w-full px-3 py-2 border border-brand-f rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-transparent disabled:bg-gray-100 disabled:text-brand-l disabled:cursor-not-allowed"
               >
                 <option value="">All {selectedCategory ? getCategoryName(selectedCategory) : 'subcategories'}</option>
                 {subCategories.map((subCategory) => (
@@ -285,7 +285,7 @@ export default function LocationFindHelp({ locationName, latitude, longitude }: 
                 <button
                   onClick={handleShowResults}
                   disabled={filteredServices.length === 0 || loading}
-                  className="w-full inline-flex items-center justify-center px-6 py-3 bg-brand-a text-white font-semibold rounded-md hover:bg-brand-b active:bg-brand-c transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-a focus:ring-offset-2 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  className="w-full inline-flex items-center justify-center px-6 py-3 bg-brand-a text-white font-semibold rounded-md hover:bg-brand-b active:bg-brand-c transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brand-a focus:ring-offset-2 disabled:bg-brand-f disabled:text-brand-l disabled:cursor-not-allowed"
                 >
                   Show {filteredServices.length} results
                 </button>

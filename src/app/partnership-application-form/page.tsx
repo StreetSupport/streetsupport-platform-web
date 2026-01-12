@@ -526,7 +526,7 @@ export default function PartnershipApplicationFormPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="btn-base btn-primary btn-lg w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-base btn-primary btn-lg w-full sm:w-auto disabled:bg-brand-f disabled:text-brand-l disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <>
