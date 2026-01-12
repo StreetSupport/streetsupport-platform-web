@@ -10,7 +10,9 @@ import {
 
 // Mock MongoDB and dependencies
 const mockFind = jest.fn();
+const mockAggregate = jest.fn();
 const mockToArray = jest.fn();
+const mockAggregateToArray = jest.fn();
 const mockCollection = jest.fn();
 const mockDb = jest.fn();
 const mockConnect = jest.fn();
@@ -33,11 +35,13 @@ jest.mock('@/utils/htmlDecode', () => ({
 describe('accommodationData', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Setup default mock chain
     mockToArray.mockResolvedValue([]);
+    mockAggregateToArray.mockResolvedValue([]);
     mockFind.mockReturnValue({ toArray: mockToArray });
-    mockCollection.mockReturnValue({ find: mockFind });
+    mockAggregate.mockReturnValue({ toArray: mockAggregateToArray });
+    mockCollection.mockReturnValue({ find: mockFind, aggregate: mockAggregate });
     mockDb.mockReturnValue({ collection: mockCollection });
     mockConnect.mockResolvedValue(undefined);
     mockClose.mockResolvedValue(undefined);
@@ -231,8 +235,8 @@ describe('accommodationData', () => {
       });
     });
 
-    it('should add geospatial filter when coordinates provided', async () => {
-      mockToArray.mockResolvedValue([]);
+    it('should use $geoNear aggregation when coordinates provided', async () => {
+      mockAggregateToArray.mockResolvedValue([]);
 
       await loadFilteredAccommodationData({
         category: 'accom',
@@ -241,38 +245,47 @@ describe('accommodationData', () => {
         radiusKm: 5
       });
 
-      expect(mockFind).toHaveBeenCalledWith({
-        $and: [
-          {
-            'GeneralInfo.ServiceProviderId': {
-              $exists: true,
-              $nin: [null, ''],
-              $type: 'string'
-            }
-          },
-          {
-            $or: [
-              { 'GeneralInfo.IsPubliclyVisible': true },
-              { 'GeneralInfo.IsPublished': true },
-              {
-                'GeneralInfo.IsPublished': { $exists: false },
-                'GeneralInfo.IsPubliclyVisible': { $ne: false }
-              }
-            ]
-          },
-          {
-            'Address.Location': {
-              $geoWithin: {
-                $centerSphere: [[-2.2426, 53.4808], 5 / 6371]
-              }
+      // Should use aggregate with $geoNear instead of find with $geoWithin
+      expect(mockAggregate).toHaveBeenCalledWith([
+        {
+          $geoNear: {
+            near: {
+              type: 'Point',
+              coordinates: [-2.2426, 53.4808]
+            },
+            distanceField: 'distance',
+            maxDistance: 5000, // 5km in meters
+            spherical: true,
+            query: {
+              $and: [
+                {
+                  'GeneralInfo.ServiceProviderId': {
+                    $exists: true,
+                    $nin: [null, ''],
+                    $type: 'string'
+                  }
+                },
+                {
+                  $or: [
+                    { 'GeneralInfo.IsPubliclyVisible': true },
+                    { 'GeneralInfo.IsPublished': true },
+                    {
+                      'GeneralInfo.IsPublished': { $exists: false },
+                      'GeneralInfo.IsPubliclyVisible': { $ne: false }
+                    }
+                  ]
+                }
+              ]
             }
           }
-        ]
-      });
+        }
+      ]);
+      // find should not be called for geospatial queries
+      expect(mockFind).not.toHaveBeenCalled();
     });
 
-    it('should combine all filters when provided', async () => {
-      mockToArray.mockResolvedValue([]);
+    it('should combine all filters with $geoNear when coordinates provided', async () => {
+      mockAggregateToArray.mockResolvedValue([]);
 
       await loadFilteredAccommodationData({
         category: 'accom',
@@ -283,40 +296,49 @@ describe('accommodationData', () => {
         radiusKm: 10
       });
 
-      expect(mockFind).toHaveBeenCalledWith({
-        $and: [
-          {
-            'GeneralInfo.ServiceProviderId': {
-              $exists: true,
-              $nin: [null, ''],
-              $type: 'string'
-            }
-          },
-          {
-            $or: [
-              { 'GeneralInfo.IsPubliclyVisible': true },
-              { 'GeneralInfo.IsPublished': true },
-              {
-                'GeneralInfo.IsPublished': { $exists: false },
-                'GeneralInfo.IsPubliclyVisible': { $ne: false }
-              }
-            ]
-          },
-          {
-            'Address.City': { $regex: /^Manchester/i }
-          },
-          {
-            'GeneralInfo.AccommodationType': { $regex: /^emergency/i }
-          },
-          {
-            'Address.Location': {
-              $geoWithin: {
-                $centerSphere: [[-2.2426, 53.4808], 10 / 6371]
-              }
+      // Should use aggregate with $geoNear, with location and subcategory filters in query
+      expect(mockAggregate).toHaveBeenCalledWith([
+        {
+          $geoNear: {
+            near: {
+              type: 'Point',
+              coordinates: [-2.2426, 53.4808]
+            },
+            distanceField: 'distance',
+            maxDistance: 10000, // 10km in meters
+            spherical: true,
+            query: {
+              $and: [
+                {
+                  'GeneralInfo.ServiceProviderId': {
+                    $exists: true,
+                    $nin: [null, ''],
+                    $type: 'string'
+                  }
+                },
+                {
+                  $or: [
+                    { 'GeneralInfo.IsPubliclyVisible': true },
+                    { 'GeneralInfo.IsPublished': true },
+                    {
+                      'GeneralInfo.IsPublished': { $exists: false },
+                      'GeneralInfo.IsPubliclyVisible': { $ne: false }
+                    }
+                  ]
+                },
+                {
+                  'Address.City': { $regex: /^Manchester/i }
+                },
+                {
+                  'GeneralInfo.AccommodationType': { $regex: /^emergency/i }
+                }
+              ]
             }
           }
-        ]
-      });
+        }
+      ]);
+      // find should not be called for geospatial queries
+      expect(mockFind).not.toHaveBeenCalled();
     });
 
     it('should transform document data correctly', async () => {
@@ -453,7 +475,7 @@ describe('accommodationData', () => {
 
       expect(result).toEqual([]);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        '❌ Error loading filtered accommodation data:',
+        'Error loading filtered accommodation data:',
         expect.any(Error)
       );
 
