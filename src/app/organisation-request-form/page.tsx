@@ -146,37 +146,37 @@ export default function OrganisationRequestFormPage() {
       <div className="content-container px-6 py-12">
         <div className="mb-8"><h1 className="heading-2">Organisation Request</h1><p className="text-lead">If your organisation provides services to people experiencing homelessness and you would like to be listed on Street Support, you can use this form to tell us about your services.</p></div>
         {submitError && <div className="bg-brand-g/10 border border-brand-g text-brand-g rounded-lg p-4 mb-6"><p className="font-medium">Error</p><p className="text-sm">{submitError}</p></div>}
-        
+
         <form onSubmit={handleSubmit} className="max-w-3xl">
           <div className="mb-8"><h2 className="heading-4 mb-4 pb-2 border-b border-brand-q">Organisation details</h2>
-            <div className="mb-6"><label className="block font-semibold text-brand-k mb-2">Organisation Name <span className="text-brand-g">*</span></label>
-              <input type="text" name="OrganisationName" value={formData.OrganisationName} onChange={handleInputChange} className={inputClass(validationErrors.OrganisationName)} placeholder="Organisation name" />
+            <div className="mb-6"><label htmlFor="organisation-name" className="block font-semibold text-brand-k mb-2">Organisation Name <span className="text-brand-g">*</span></label>
+              <input type="text" id="organisation-name" name="OrganisationName" value={formData.OrganisationName} onChange={handleInputChange} className={inputClass(validationErrors.OrganisationName)} placeholder="Organisation name" />
               {validationErrors.OrganisationName && <p className="text-brand-g text-sm mt-1">{validationErrors.OrganisationName}</p>}</div>
-            <div className="mb-6"><label className="block font-semibold text-brand-k mb-2">Description</label>
-              <textarea name="Description" value={formData.Description} onChange={handleInputChange} rows={3} className={inputClass()} placeholder="Brief description..." /></div>
-            <div className="mb-6"><label className="block font-semibold text-brand-k mb-2">Organisation Email <span className="text-brand-g">*</span></label>
-              <input type="email" name="OrganisationEmail" value={formData.OrganisationEmail} onChange={handleInputChange} className={inputClass(validationErrors.OrganisationEmail)} placeholder="info@org.org" />
+            <div className="mb-6"><label htmlFor="organisation-description" className="block font-semibold text-brand-k mb-2">Description</label>
+              <textarea id="organisation-description" name="Description" value={formData.Description} onChange={handleInputChange} rows={3} className={inputClass()} placeholder="Brief description..." /></div>
+            <div className="mb-6"><label htmlFor="organisation-email" className="block font-semibold text-brand-k mb-2">Organisation Email <span className="text-brand-g">*</span></label>
+              <input type="email" id="organisation-email" name="OrganisationEmail" value={formData.OrganisationEmail} onChange={handleInputChange} className={inputClass(validationErrors.OrganisationEmail)} placeholder="info@org.org" />
               {validationErrors.OrganisationEmail && <p className="text-brand-g text-sm mt-1">{validationErrors.OrganisationEmail}</p>}</div>
-            <div className="mb-6"><label className="block font-semibold text-brand-k mb-2">Phone</label>
-              <input type="tel" name="OrganisationPhone" value={formData.OrganisationPhone} onChange={handleInputChange} className={inputClass()} placeholder="0xxx xxx xxxx" /></div>
-            <div className="mb-6"><label className="block font-semibold text-brand-k mb-2">Website</label>
-              <input type="url" name="Website" value={formData.Website} onChange={handleInputChange} className={inputClass(validationErrors.Website)} placeholder="https://..." />
+            <div className="mb-6"><label htmlFor="organisation-phone" className="block font-semibold text-brand-k mb-2">Phone</label>
+              <input type="tel" id="organisation-phone" name="OrganisationPhone" value={formData.OrganisationPhone} onChange={handleInputChange} className={inputClass()} placeholder="0xxx xxx xxxx" /></div>
+            <div className="mb-6"><label htmlFor="organisation-website" className="block font-semibold text-brand-k mb-2">Website</label>
+              <input type="url" id="organisation-website" name="Website" value={formData.Website} onChange={handleInputChange} className={inputClass(validationErrors.Website)} placeholder="https://..." />
               {validationErrors.Website && <p className="text-brand-g text-sm mt-1">{validationErrors.Website}</p>}</div>
-            <div className="mb-6"><label className="block font-semibold text-brand-k mb-2">Locations Served <span className="text-brand-g">*</span></label>
-              <p className="text-sm text-brand-f mb-2">Hold Ctrl/Cmd for multiple</p>
+            <div className="mb-6"><label htmlFor="locations-served" className="block font-semibold text-brand-k mb-2">Locations Served <span className="text-brand-g">*</span></label>
+              <p id="locations-served-hint" className="text-sm text-brand-f mb-2">Hold Ctrl/Cmd for multiple</p>
               {isLoading ? <div className="px-4 py-3 border-2 border-brand-q rounded-md bg-brand-q">Loading...</div> :
-                <select multiple value={formData.LocationsServed} onChange={handleLocationChange} className={`${inputClass(validationErrors.LocationsServed)} min-h-[150px]`}>
+                <select id="locations-served" multiple value={formData.LocationsServed} onChange={handleLocationChange} aria-describedby="locations-served-hint" className={`${inputClass(validationErrors.LocationsServed)} min-h-[150px]`}>
                   {locations.map(l => <option key={l.id} value={l.name}>{l.name}</option>)}
                 </select>}
               {validationErrors.LocationsServed && <p className="text-brand-g text-sm mt-1">{validationErrors.LocationsServed}</p>}</div>
           </div>
 
           <div className="mb-8"><h2 className="heading-4 mb-4 pb-2 border-b border-brand-q">Contact person</h2>
-            <div className="mb-6"><label className="block font-semibold text-brand-k mb-2">Full Name <span className="text-brand-g">*</span></label>
-              <input type="text" name="ContactFullName" value={formData.ContactFullName} onChange={handleInputChange} className={inputClass(validationErrors.ContactFullName)} placeholder="Your name" />
+            <div className="mb-6"><label htmlFor="contact-full-name" className="block font-semibold text-brand-k mb-2">Full Name <span className="text-brand-g">*</span></label>
+              <input type="text" id="contact-full-name" name="ContactFullName" value={formData.ContactFullName} onChange={handleInputChange} className={inputClass(validationErrors.ContactFullName)} placeholder="Your name" />
               {validationErrors.ContactFullName && <p className="text-brand-g text-sm mt-1">{validationErrors.ContactFullName}</p>}</div>
-            <div className="mb-6"><label className="block font-semibold text-brand-k mb-2">Email <span className="text-brand-g">*</span></label>
-              <input type="email" name="ContactEmail" value={formData.ContactEmail} onChange={handleInputChange} className={inputClass(validationErrors.ContactEmail)} placeholder="email@org.org" />
+            <div className="mb-6"><label htmlFor="contact-email" className="block font-semibold text-brand-k mb-2">Email <span className="text-brand-g">*</span></label>
+              <input type="email" id="contact-email" name="ContactEmail" value={formData.ContactEmail} onChange={handleInputChange} className={inputClass(validationErrors.ContactEmail)} placeholder="email@org.org" />
               {validationErrors.ContactEmail && <p className="text-brand-g text-sm mt-1">{validationErrors.ContactEmail}</p>}</div>
           </div>
 
@@ -185,40 +185,41 @@ export default function OrganisationRequestFormPage() {
               <div key={sIdx} className="bg-brand-q/50 rounded-lg p-6 mb-6 border border-brand-q">
                 <div className="flex justify-between items-center mb-4"><h3 className="font-semibold">Service {sIdx + 1}</h3>
                   {formData.Services.length > 1 && <button type="button" onClick={() => removeService(sIdx)} className="text-brand-g text-sm">Remove</button>}</div>
-                <div className="mb-4"><label className="block font-semibold text-brand-k mb-2">Title <span className="text-brand-g">*</span></label>
-                  <input type="text" value={svc.ServiceTitle} onChange={e => handleServiceChange(sIdx, 'ServiceTitle', e.target.value)} className={inputClass(validationErrors[`Services.${sIdx}.ServiceTitle`])} />
+                <div className="mb-4"><label htmlFor={`service-${sIdx}-title`} className="block font-semibold text-brand-k mb-2">Title <span className="text-brand-g">*</span></label>
+                  <input type="text" id={`service-${sIdx}-title`} value={svc.ServiceTitle} onChange={e => handleServiceChange(sIdx, 'ServiceTitle', e.target.value)} className={inputClass(validationErrors[`Services.${sIdx}.ServiceTitle`])} />
                   {validationErrors[`Services.${sIdx}.ServiceTitle`] && <p className="text-brand-g text-sm mt-1">{validationErrors[`Services.${sIdx}.ServiceTitle`]}</p>}</div>
-                <div className="mb-4"><label className="block font-semibold text-brand-k mb-2">Description <span className="text-brand-g">*</span></label>
-                  <textarea value={svc.ServiceDescription} onChange={e => handleServiceChange(sIdx, 'ServiceDescription', e.target.value)} rows={3} className={inputClass(validationErrors[`Services.${sIdx}.ServiceDescription`])} />
+                <div className="mb-4"><label htmlFor={`service-${sIdx}-description`} className="block font-semibold text-brand-k mb-2">Description <span className="text-brand-g">*</span></label>
+                  <textarea id={`service-${sIdx}-description`} value={svc.ServiceDescription} onChange={e => handleServiceChange(sIdx, 'ServiceDescription', e.target.value)} rows={3} className={inputClass(validationErrors[`Services.${sIdx}.ServiceDescription`])} />
                   {validationErrors[`Services.${sIdx}.ServiceDescription`] && <p className="text-brand-g text-sm mt-1">{validationErrors[`Services.${sIdx}.ServiceDescription`]}</p>}</div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div><label className="block font-semibold text-brand-k mb-2">Category <span className="text-brand-g">*</span></label>
-                    <select value={svc.ServiceCategory} onChange={e => handleCategoryChange(sIdx, e.target.value)} className={inputClass(validationErrors[`Services.${sIdx}.ServiceCategory`])}>
+                  <div><label htmlFor={`service-${sIdx}-category`} className="block font-semibold text-brand-k mb-2">Category <span className="text-brand-g">*</span></label>
+                    <select id={`service-${sIdx}-category`} value={svc.ServiceCategory} onChange={e => handleCategoryChange(sIdx, e.target.value)} className={inputClass(validationErrors[`Services.${sIdx}.ServiceCategory`])}>
                       <option value="">Select</option>{categories.map(c => <option key={c.key} value={c.key}>{c.name}</option>)}</select></div>
-                  <div><label className="block font-semibold text-brand-k mb-2">Subcategory <span className="text-brand-g">*</span></label>
-                    <select value={svc.ServiceSubcategory} onChange={e => handleServiceChange(sIdx, 'ServiceSubcategory', e.target.value)} disabled={!svc.ServiceCategory} className={inputClass(validationErrors[`Services.${sIdx}.ServiceSubcategory`])}>
+                  <div><label htmlFor={`service-${sIdx}-subcategory`} className="block font-semibold text-brand-k mb-2">Subcategory <span className="text-brand-g">*</span></label>
+                    <select id={`service-${sIdx}-subcategory`} value={svc.ServiceSubcategory} onChange={e => handleServiceChange(sIdx, 'ServiceSubcategory', e.target.value)} disabled={!svc.ServiceCategory} className={inputClass(validationErrors[`Services.${sIdx}.ServiceSubcategory`])}>
                       <option value="">Select</option>{getSubcategories(svc.ServiceCategory).map(s => <option key={s.key} value={s.key}>{s.name}</option>)}</select></div>
                 </div>
-                <div className="mb-4"><label className="block font-semibold text-brand-k mb-2">Address <span className="text-brand-g">*</span></label>
-                  <input type="text" value={svc.Address} onChange={e => handleServiceChange(sIdx, 'Address', e.target.value)} className={inputClass(validationErrors[`Services.${sIdx}.Address`])} /></div>
-                
+                <div className="mb-4"><label htmlFor={`service-${sIdx}-address`} className="block font-semibold text-brand-k mb-2">Address <span className="text-brand-g">*</span></label>
+                  <input type="text" id={`service-${sIdx}-address`} value={svc.Address} onChange={e => handleServiceChange(sIdx, 'Address', e.target.value)} className={inputClass(validationErrors[`Services.${sIdx}.Address`])} /></div>
+
                 <div className="mb-4">
-                  <label className="flex items-start gap-3 cursor-pointer mb-3">
-                    <input 
-                      type="checkbox" 
-                      checked={svc.IsOpen247} 
-                      onChange={e => handleServiceChange(sIdx, 'IsOpen247', e.target.checked)} 
-                      className="mt-1 w-5 h-5 rounded border-2 border-brand-f" 
+                  <div className="flex items-start gap-3 mb-3">
+                    <input
+                      type="checkbox"
+                      id={`service-${sIdx}-open247`}
+                      checked={svc.IsOpen247}
+                      onChange={e => handleServiceChange(sIdx, 'IsOpen247', e.target.checked)}
+                      className="mt-1 w-5 h-5 rounded border-2 border-brand-f"
                     />
-                    <span className="font-semibold text-brand-k">Open 24/7</span>
-                  </label>
+                    <label htmlFor={`service-${sIdx}-open247`} className="font-semibold text-brand-k cursor-pointer">Open 24/7</label>
+                  </div>
                 </div>
 
                 {!svc.IsOpen247 && (
-                  <div className="mb-4">
-                    <label className="block font-semibold text-brand-k mb-2">
+                  <div className="mb-4" role="group" aria-labelledby={`service-${sIdx}-opening-times-label`}>
+                    <span id={`service-${sIdx}-opening-times-label`} className="block font-semibold text-brand-k mb-2">
                       Opening Times <span className="text-brand-g">*</span>
-                    </label>
+                    </span>
                     {svc.OpeningTimes.map((t, tIdx) => {
                       const dayError = validationErrors[`Services.${sIdx}.OpeningTimes.${tIdx}.Day`];
                       const startError = validationErrors[`Services.${sIdx}.OpeningTimes.${tIdx}.StartTime`];
@@ -226,39 +227,45 @@ export default function OrganisationRequestFormPage() {
                       return (
                         <div key={tIdx} className="mb-3">
                           <div className="flex flex-wrap gap-2 items-center">
-                            <select 
-                              value={t.Day} 
-                              onChange={e => handleOpeningTimeChange(sIdx, tIdx, 'Day', e.target.value)} 
+                            <select
+                              id={`service-${sIdx}-opening-${tIdx}-day`}
+                              aria-label={`Opening time ${tIdx + 1} day`}
+                              value={t.Day}
+                              onChange={e => handleOpeningTimeChange(sIdx, tIdx, 'Day', e.target.value)}
                               className={`px-3 py-2 border-2 rounded-md ${dayError ? 'border-brand-g' : 'border-brand-q'}`}
                             >
                               <option value="">Day</option>{DAYS_OF_WEEK.map(d => <option key={d} value={d}>{d}</option>)}
                             </select>
-                            <input 
-                              type="time" 
-                              step="60" 
-                              value={t.StartTime} 
-                              onChange={e => handleOpeningTimeChange(sIdx, tIdx, 'StartTime', e.target.value)} 
-                              className={`px-3 py-2 border-2 rounded-md ${startError ? 'border-brand-g' : 'border-brand-q'}`} 
+                            <input
+                              type="time"
+                              id={`service-${sIdx}-opening-${tIdx}-start`}
+                              aria-label={`Opening time ${tIdx + 1} start time`}
+                              step="60"
+                              value={t.StartTime}
+                              onChange={e => handleOpeningTimeChange(sIdx, tIdx, 'StartTime', e.target.value)}
+                              className={`px-3 py-2 border-2 rounded-md ${startError ? 'border-brand-g' : 'border-brand-q'}`}
                             />
-                            <span>to</span>
-                            <input 
-                              type="time" 
-                              step="60" 
-                              value={t.EndTime} 
-                              onChange={e => handleOpeningTimeChange(sIdx, tIdx, 'EndTime', e.target.value)} 
-                              className={`px-3 py-2 border-2 rounded-md ${endError ? 'border-brand-g' : 'border-brand-q'}`} 
+                            <span aria-hidden="true">to</span>
+                            <input
+                              type="time"
+                              id={`service-${sIdx}-opening-${tIdx}-end`}
+                              aria-label={`Opening time ${tIdx + 1} end time`}
+                              step="60"
+                              value={t.EndTime}
+                              onChange={e => handleOpeningTimeChange(sIdx, tIdx, 'EndTime', e.target.value)}
+                              className={`px-3 py-2 border-2 rounded-md ${endError ? 'border-brand-g' : 'border-brand-q'}`}
                             />
-                            <button type="button" onClick={() => cloneOpeningTime(sIdx, tIdx)} className="text-brand-a text-sm px-2 py-1 border border-brand-a rounded hover:bg-brand-a/10" title="Clone this time">
+                            <button type="button" onClick={() => cloneOpeningTime(sIdx, tIdx)} className="text-brand-a text-sm px-2 py-1 border border-brand-a rounded hover:bg-brand-a/10" title="Clone this time" aria-label={`Copy opening time ${tIdx + 1}`}>
                               Copy
                             </button>
                             {svc.OpeningTimes.length > 1 && (
-                              <button type="button" onClick={() => removeOpeningTime(sIdx, tIdx)} className="text-brand-g text-sm px-2 py-1">
+                              <button type="button" onClick={() => removeOpeningTime(sIdx, tIdx)} className="text-brand-g text-sm px-2 py-1" aria-label={`Remove opening time ${tIdx + 1}`}>
                                 ×
                               </button>
                             )}
                           </div>
                           {(dayError || startError || endError) && (
-                            <p className="text-brand-g text-sm mt-1">
+                            <p className="text-brand-g text-sm mt-1" role="alert">
                               {dayError || startError || endError}
                             </p>
                           )}
@@ -274,19 +281,20 @@ export default function OrganisationRequestFormPage() {
                   </div>
                 )}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div><label className="block font-semibold text-brand-k mb-2">Contact Email</label>
-                    <input type="email" value={svc.ContactEmail} onChange={e => handleServiceChange(sIdx, 'ContactEmail', e.target.value)} className={inputClass()} /></div>
-                  <div><label className="block font-semibold text-brand-k mb-2">Contact Phone</label>
-                    <input type="tel" value={svc.ContactPhone} onChange={e => handleServiceChange(sIdx, 'ContactPhone', e.target.value)} className={inputClass()} /></div>
+                  <div><label htmlFor={`service-${sIdx}-contact-email`} className="block font-semibold text-brand-k mb-2">Contact Email</label>
+                    <input type="email" id={`service-${sIdx}-contact-email`} value={svc.ContactEmail} onChange={e => handleServiceChange(sIdx, 'ContactEmail', e.target.value)} className={inputClass()} /></div>
+                  <div><label htmlFor={`service-${sIdx}-contact-phone`} className="block font-semibold text-brand-k mb-2">Contact Phone</label>
+                    <input type="tel" id={`service-${sIdx}-contact-phone`} value={svc.ContactPhone} onChange={e => handleServiceChange(sIdx, 'ContactPhone', e.target.value)} className={inputClass()} /></div>
                 </div>
               </div>))}
             <button type="button" onClick={addService} className="btn-base btn-secondary btn-md">+ Add Another Service</button>
           </div>
 
           <div className="mb-8"><h2 className="heading-4 mb-4 pb-2 border-b border-brand-q">Agreement</h2>
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input type="checkbox" name="ConfirmsAccuracy" checked={formData.ConfirmsAccuracy} onChange={handleInputChange} className="mt-1 w-5 h-5 rounded border-2 border-brand-f" />
-              <span>I confirm the information is accurate and understand the listing will be reviewed. <span className="text-brand-g">*</span></span></label>
+            <div className="flex items-start gap-3">
+              <input type="checkbox" id="confirms-accuracy" name="ConfirmsAccuracy" checked={formData.ConfirmsAccuracy} onChange={handleInputChange} className="mt-1 w-5 h-5 rounded border-2 border-brand-f" />
+              <label htmlFor="confirms-accuracy" className="cursor-pointer">I confirm the information is accurate and understand the listing will be reviewed. <span className="text-brand-g">*</span></label>
+            </div>
             {validationErrors.ConfirmsAccuracy && <p className="text-brand-g text-sm mt-1 ml-8">{validationErrors.ConfirmsAccuracy}</p>}
           </div>
 
