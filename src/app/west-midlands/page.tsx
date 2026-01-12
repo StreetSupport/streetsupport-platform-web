@@ -15,7 +15,8 @@ import WatsonXChat from '@/components/ui/WatsonXChat';
 const WEST_MIDLANDS_CENTRE = {
   latitude: 52.50,
   longitude: -1.85,
-  radius: 30 // 30km to cover all 7 locations including Coventry
+  radius: 30, // 30km to cover all 7 locations including Coventry
+  limit: 1500 // Higher limit to include all ~1400 services across the region
 };
 
 export const metadata = generateSEOMetadata({
@@ -87,6 +88,7 @@ export default function WestMidlandsPage() {
             latitude={WEST_MIDLANDS_CENTRE.latitude}
             longitude={WEST_MIDLANDS_CENTRE.longitude}
             radius={WEST_MIDLANDS_CENTRE.radius}
+            limit={WEST_MIDLANDS_CENTRE.limit}
           />
         </div>
       </section>
