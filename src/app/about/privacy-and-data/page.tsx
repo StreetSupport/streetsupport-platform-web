@@ -20,6 +20,46 @@ export default function PrivacyAndDataPage() {
         </div>
       </section>
 
+      {/* Quick Navigation */}
+      <section className="bg-brand-q py-6">
+        <div className="content-container">
+          <nav aria-label="Policy documents">
+            <ul className="flex flex-wrap justify-center gap-3">
+              <li>
+                <Link href="/about/privacy-and-data/privacy-policy" className="btn-base btn-secondary btn-md">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/about/privacy-and-data/data-protection-policy" className="btn-base btn-secondary btn-md">
+                  Data Protection
+                </Link>
+              </li>
+              <li>
+                <Link href="/about/privacy-and-data/terms-and-conditions" className="btn-base btn-secondary btn-md">
+                  Terms & Conditions
+                </Link>
+              </li>
+              <li>
+                <Link href="/about/privacy-and-data/ai-policy" className="btn-base btn-secondary btn-md">
+                  AI Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/about/privacy-and-data/ai-governance" className="btn-base btn-secondary btn-md">
+                  AI Governance
+                </Link>
+              </li>
+              <li>
+                <Link href="/about/privacy-and-data/ai-and-environment" className="btn-base btn-secondary btn-md">
+                  AI & Environment
+                </Link>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </section>
+
       {/* Content */}
       <section className="section-spacing">
         <div className="content-container">

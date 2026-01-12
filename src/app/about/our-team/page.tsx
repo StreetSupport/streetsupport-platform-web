@@ -23,7 +23,7 @@ export default function OurTeamPage() {
       {/* Core Team Section */}
       <div className="max-w-6xl mx-auto p-6">
         <div className="mb-16">
-          <h1 className="heading-3 text-white mb-4">Our Core Team</h1>
+          <h1 className="heading-3 text-white mb-4">Our Core Team of 2</h1>
           <p className="text-lead mb-8">
             We&apos;re your everyday people, your first port of call. We cover a fair bit between us, so please get in touch with whatever you need.
           </p>
@@ -115,72 +115,6 @@ export default function OurTeamPage() {
         </p>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <div className="card card-compact text-center">
-            <Image
-              src="/assets/img/mugshots/tim.jpg"
-              alt="Tim Jones, Brighton & Hove Location Administrator at Street Support Network"
-              width={200}
-              height={200}
-              className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
-              sizes="(max-width: 768px) 128px, 200px"
-            />
-            <h2 className="heading-5 mb-2">Tim Jones</h2>
-            <h3 className="heading-6 text-brand-a mb-3">Brighton & Hove</h3>
-            <p className="text-brand-l mb-4">
-              Tim Jones is City Administrator for Street Support in Brighton and Hove where he has lived for the best part of two decades. Tim came to Brighton to pursue a first degree in Computer Science and works as a pastor and teacher for Emmanuel church.
-            </p>
-            <a 
-              href="mailto:brightonandhove@streetsupport.net"
-              className="text-brand-a hover:text-brand-b underline"
-            >
-              Contact Tim
-            </a>
-          </div>
-
-          <div className="card card-compact text-center">
-            <Image
-              src="/assets/img/mugshots/helen.jpg"
-              alt="Helen Wilkenson, Chelmsford Location Administrator at Street Support Network"
-              width={200}
-              height={200}
-              className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
-              sizes="(max-width: 768px) 128px, 200px"
-            />
-            <h2 className="heading-5 mb-2">Helen Wilkenson</h2>
-            <h3 className="heading-6 text-brand-a mb-3">Chelmsford</h3>
-            <p className="text-brand-l mb-4">
-              Helen first started volunteering with Cool to be Kind, helping with their marketing and raising awareness regarding the setting up and the launch of Street Support Chelmsford. She provides support for the organisations listed on Street Support Chelmsford site and is a key contact for the Chelmsford Street Support network.
-            </p>
-            <a 
-              href="mailto:chelmsford@streetsupport.net"
-              className="text-brand-a hover:text-brand-b underline"
-            >
-              Contact Helen
-            </a>
-          </div>
-
-          <div className="card card-compact text-center">
-            <Image
-              src="/assets/img/mugshots/crispin.jpg"
-              alt="Crispin Pailing, Liverpool Location Administrator at Street Support Network"
-              width={200}
-              height={200}
-              className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
-              sizes="(max-width: 768px) 128px, 200px"
-            />
-            <h2 className="heading-5 mb-2">Crispin Pailing</h2>
-            <h3 className="heading-6 text-brand-a mb-3">Liverpool</h3>
-            <p className="text-brand-l mb-4">
-              Crispin works in the voluntary and charitable sector and leads a multi-agency campaign group called Change Liverpool, bringing together business, charity and local authority stakeholders for a coordinated approach to homelessness and rough sleeping in Liverpool.
-            </p>
-            <a 
-              href="mailto:liverpool@streetsupport.net"
-              className="text-brand-a hover:text-brand-b underline"
-            >
-              Contact Crispin
-            </a>
-          </div>
-
           <div className="card card-compact text-center">
             <Image
               src="/assets/img/mugshots/tim-a.jpg"

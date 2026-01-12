@@ -117,7 +117,7 @@ export default function JobsPage() {
               <section className="bg-brand-k text-white p-8 rounded-lg">
                 <div className="text-center">
                   <h2 className="heading-3 mb-4 !text-brand-i">Want to Get Involved?</h2>
-                  <p className="text-brand-f mb-6 max-w-2xl mx-auto">
+                  <p className="text-white mb-6 max-w-2xl mx-auto">
                     Whether you&apos;re looking for paid opportunities or want to volunteer your time and skills, we&apos;d love to hear from you. Together, we can make a real difference in supporting people experiencing homelessness.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">

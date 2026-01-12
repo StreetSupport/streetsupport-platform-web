@@ -7,23 +7,20 @@ interface NewsHeaderProps {
 }
 
 const categories = [
-  { 
-    name: 'Stories', 
+  {
+    name: 'Stories',
     slug: 'stories',
-    description: 'Personal experiences and impact stories from our community',
-    color: 'bg-brand-a'
+    description: 'Personal experiences and impact stories from our community'
   },
-  { 
-    name: 'Articles', 
+  {
+    name: 'Articles',
     slug: 'articles',
-    description: 'In-depth analysis and insights on homelessness and housing',
-    color: 'bg-yellow-600'
+    description: 'In-depth analysis and insights on homelessness and housing'
   },
-  { 
-    name: 'Latest News', 
+  {
+    name: 'Latest News',
     slug: 'latest-news',
-    description: 'Platform updates and sector developments',
-    color: 'bg-purple-700'
+    description: 'Platform updates and sector developments'
   }
 ];
 
@@ -48,15 +45,15 @@ export default function NewsHeader({ title, description, showCategories = true }
                 href={`https://news.streetsupport.net/category/${category.slug}/`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`${category.color} text-white p-6 rounded-lg hover:opacity-90 transition-all duration-300 group shadow-lg`}
+                className="bg-white p-6 rounded-lg hover:bg-brand-q transition-all duration-300 group shadow-lg"
               >
-                <h3 className="font-semibold text-lg mb-2 text-white">
+                <h3 className="font-semibold text-lg mb-2 text-brand-l">
                   {category.name}
                 </h3>
-                <p className="text-sm text-white opacity-90 mb-4">
+                <p className="text-sm text-brand-f mb-4">
                   {category.description}
                 </p>
-                <div className="flex items-center text-sm font-medium text-white">
+                <div className="flex items-center text-sm font-medium text-brand-a">
                   Explore category
                   <svg className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
