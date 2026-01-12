@@ -132,7 +132,7 @@ export default function OrganisationRequestFormPage() {
         <div className="content-container px-6 py-12"><div className="max-w-2xl mx-auto text-center">
           <div className="bg-brand-b/10 border border-brand-b rounded-lg p-8">
             <svg className="w-16 h-16 text-brand-b mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            <h1 className="heading-2 text-brand-b mb-4">Request Submitted!</h1>
+            <h1 className="heading-2 text-brand-b mb-4">Request submitted</h1>
             <p className="text-body mb-6">Thank you for requesting to list your organisation. We have sent you a confirmation email.</p>
             <Link href="/" className="btn-base btn-primary btn-md">Return to Homepage</Link>
           </div></div></div></>
@@ -144,11 +144,11 @@ export default function OrganisationRequestFormPage() {
   return (
     <><Breadcrumbs items={[{ href: '/', label: 'Home' }, { label: 'Organisation Request', current: true }]} />
       <div className="content-container px-6 py-12">
-        <div className="mb-8"><h1 className="heading-2">Organisation Request Form</h1><p className="text-lead">Want to list your organisation&apos;s services on Street Support Network? Complete this form.</p></div>
+        <div className="mb-8"><h1 className="heading-2">Organisation Request</h1><p className="text-lead">If your organisation provides services to people experiencing homelessness and you would like to be listed on Street Support, you can use this form to tell us about your services.</p></div>
         {submitError && <div className="bg-brand-g/10 border border-brand-g text-brand-g rounded-lg p-4 mb-6"><p className="font-medium">Error</p><p className="text-sm">{submitError}</p></div>}
         
         <form onSubmit={handleSubmit} className="max-w-3xl">
-          <div className="mb-8"><h2 className="heading-4 mb-4 pb-2 border-b border-brand-q">🏢 Organisation Details</h2>
+          <div className="mb-8"><h2 className="heading-4 mb-4 pb-2 border-b border-brand-q">Organisation details</h2>
             <div className="mb-6"><label className="block font-semibold text-brand-k mb-2">Organisation Name <span className="text-brand-g">*</span></label>
               <input type="text" name="OrganisationName" value={formData.OrganisationName} onChange={handleInputChange} className={inputClass(validationErrors.OrganisationName)} placeholder="Organisation name" />
               {validationErrors.OrganisationName && <p className="text-brand-g text-sm mt-1">{validationErrors.OrganisationName}</p>}</div>
@@ -171,7 +171,7 @@ export default function OrganisationRequestFormPage() {
               {validationErrors.LocationsServed && <p className="text-brand-g text-sm mt-1">{validationErrors.LocationsServed}</p>}</div>
           </div>
 
-          <div className="mb-8"><h2 className="heading-4 mb-4 pb-2 border-b border-brand-q">👤 Contact Person</h2>
+          <div className="mb-8"><h2 className="heading-4 mb-4 pb-2 border-b border-brand-q">Contact person</h2>
             <div className="mb-6"><label className="block font-semibold text-brand-k mb-2">Full Name <span className="text-brand-g">*</span></label>
               <input type="text" name="ContactFullName" value={formData.ContactFullName} onChange={handleInputChange} className={inputClass(validationErrors.ContactFullName)} placeholder="Your name" />
               {validationErrors.ContactFullName && <p className="text-brand-g text-sm mt-1">{validationErrors.ContactFullName}</p>}</div>
@@ -180,7 +180,7 @@ export default function OrganisationRequestFormPage() {
               {validationErrors.ContactEmail && <p className="text-brand-g text-sm mt-1">{validationErrors.ContactEmail}</p>}</div>
           </div>
 
-          <div className="mb-8"><h2 className="heading-4 mb-4 pb-2 border-b border-brand-q">📋 Services</h2>
+          <div className="mb-8"><h2 className="heading-4 mb-4 pb-2 border-b border-brand-q">Services</h2>
             {formData.Services.map((svc, sIdx) => (
               <div key={sIdx} className="bg-brand-q/50 rounded-lg p-6 mb-6 border border-brand-q">
                 <div className="flex justify-between items-center mb-4"><h3 className="font-semibold">Service {sIdx + 1}</h3>
@@ -249,7 +249,7 @@ export default function OrganisationRequestFormPage() {
                               className={`px-3 py-2 border-2 rounded-md ${endError ? 'border-brand-g' : 'border-brand-q'}`} 
                             />
                             <button type="button" onClick={() => cloneOpeningTime(sIdx, tIdx)} className="text-brand-a text-sm px-2 py-1 border border-brand-a rounded hover:bg-brand-a/10" title="Clone this time">
-                              📋
+                              Copy
                             </button>
                             {svc.OpeningTimes.length > 1 && (
                               <button type="button" onClick={() => removeOpeningTime(sIdx, tIdx)} className="text-brand-g text-sm px-2 py-1">
@@ -283,7 +283,7 @@ export default function OrganisationRequestFormPage() {
             <button type="button" onClick={addService} className="btn-base btn-secondary btn-md">+ Add Another Service</button>
           </div>
 
-          <div className="mb-8"><h2 className="heading-4 mb-4 pb-2 border-b border-brand-q">✅ Agreement</h2>
+          <div className="mb-8"><h2 className="heading-4 mb-4 pb-2 border-b border-brand-q">Agreement</h2>
             <label className="flex items-start gap-3 cursor-pointer">
               <input type="checkbox" name="ConfirmsAccuracy" checked={formData.ConfirmsAccuracy} onChange={handleInputChange} className="mt-1 w-5 h-5 rounded border-2 border-brand-f" />
               <span>I confirm the information is accurate and understand the listing will be reviewed. <span className="text-brand-g">*</span></span></label>

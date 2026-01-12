@@ -184,14 +184,13 @@ export default function PartnershipApplicationFormPage() {
                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <h1 className="heading-2 text-brand-b mb-4">Application Submitted!</h1>
+              <h1 className="heading-2 text-brand-b mb-4">Application submitted</h1>
               <p className="text-body mb-6">
                 Thank you for your interest in joining the Street Support Network partnership model.
                 We have sent you a confirmation email with a copy of your application.
               </p>
               <p className="text-body mb-6">
-                Our Managing Director will review your application and be in touch to discuss next
-                steps.
+                Our Managing Director will review your application and be in touch to discuss next steps.
               </p>
               <Link href="/" className="btn-base btn-primary btn-md">
                 Return to Homepage
@@ -215,10 +214,9 @@ export default function PartnershipApplicationFormPage() {
       <div className="content-container px-6 py-12">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="heading-2">Partnership Application Form</h1>
+          <h1 className="heading-2">Partnership Application</h1>
           <p className="text-lead">
-            Interested in joining the Street Support Network partnership model? Complete this form
-            to express your interest and help us understand your organisation.
+            If you are interested in joining the Street Support Network partnership model, you can use this form to tell us about your organisation.
           </p>
         </div>
 
@@ -235,7 +233,7 @@ export default function PartnershipApplicationFormPage() {
           {/* Organisation Details Section */}
           <div className="mb-8">
             <h2 className="heading-4 mb-4 pb-2 border-b border-brand-q">
-              🏢 Organisation Details
+              Organisation details
             </h2>
 
             {/* Organisation Name */}
@@ -303,13 +301,13 @@ export default function PartnershipApplicationFormPage() {
               )}
             </div>
 
-            {/* Locations of Operation */}
+            {/* Location of Organisation */}
             <div className="mb-6">
               <label
                 htmlFor="LocationsOfOperation"
                 className="block font-semibold text-brand-k mb-2"
               >
-                Location(s) of Operation <span className="text-brand-g">*</span>
+                Location of Organisation <span className="text-brand-g">*</span>
               </label>
               <p className="text-sm text-brand-f mb-2">
                 Hold Ctrl (Cmd on Mac) to select multiple locations
@@ -393,7 +391,7 @@ export default function PartnershipApplicationFormPage() {
 
           {/* Main Contact Section */}
           <div className="mb-8">
-            <h2 className="heading-4 mb-4 pb-2 border-b border-brand-q">👤 Main Contact</h2>
+            <h2 className="heading-4 mb-4 pb-2 border-b border-brand-q">Main contact</h2>
 
             {/* Contact Full Name */}
             <div className="mb-6">
@@ -477,7 +475,7 @@ export default function PartnershipApplicationFormPage() {
           {/* Consent Section */}
           <div className="mb-8">
             <h2 className="heading-4 mb-4 pb-2 border-b border-brand-q">
-              🔒 Consent and Agreement
+              Consent and agreement
             </h2>
 
             {/* Consent to Contact */}
