@@ -1,4 +1,5 @@
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
+import GetInTouchBanner from '@/components/ui/GetInTouchBanner';
 import NewsGrid from '@/components/News/NewsGrid';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -237,22 +238,7 @@ export default function WestMidlandsPage() {
         />
       </div>
 
-      {/* Partners and Support */}
-      <div className="block block--highlight block--promo">
-        <div className="container">
-          <div className="block__content partners">
-            <p>
-              We are looking for businesses and organisations to{' '}
-              <Link href="/give-help/business-support">support us</Link>{' '}
-              so that we can continue to develop this resource.
-            </p>
-            <p>
-              If you share our vision of a society without homelessness, please{' '}
-              <Link href="mailto:westmidlands@streetsupport.net">get in touch</Link>.
-            </p>
-          </div>
-        </div>
-      </div>
+      <GetInTouchBanner email="westmidlands@streetsupport.net" />
 
       {/* WatsonX Chat for West Midlands */}
       <WatsonXChat />

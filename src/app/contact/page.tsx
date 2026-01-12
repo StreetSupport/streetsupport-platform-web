@@ -30,46 +30,13 @@ export default function ContactPage() {
 
         <h2 className="heading-4">General enquiries</h2>
         <p className="mb-8">If you have any questions, ideas, or would like to know more about us, you can get in touch at{' '}
-          <a href="mailto:info@streetsupport.net" className="text-brand-a hover:text-brand-b underline">info@streetsupport.net</a>.</p>
+          <a href="mailto:admin@streetsupport.net" className="text-brand-a hover:text-brand-b underline">admin@streetsupport.net</a>.</p>
 
-        <h2 className="heading-4">Locations</h2>
-        <p className="mb-4">For questions specific to one of our locations, please contact our city admins at one of the following addresses:</p>
-
-        <ul className="list-disc pl-6 space-y-1 mb-8">
-          <li>
-            <a href="mailto:bournemouth@streetsupport.net" className="text-brand-a hover:text-brand-b underline">bournemouth@streetsupport.net</a>
-          </li>
-          <li>
-            <a href="mailto:brightonandhove@streetsupport.net" className="text-brand-a hover:text-brand-b underline">brightonandhove@streetsupport.net</a>
-          </li>
-          <li>
-            <a href="mailto:cambridge@streetsupport.net" className="text-brand-a hover:text-brand-b underline">cambridge@streetsupport.net</a>
-          </li>
-          <li>
-            <a href="mailto:edinburgh@streetsupport.net" className="text-brand-a hover:text-brand-b underline">edinburgh@streetsupport.net</a>
-          </li>
-          <li>
-            <a href="mailto:greatermanchester@streetsupport.net" className="text-brand-a hover:text-brand-b underline">greatermanchester@streetsupport.net</a>
-          </li>
-          <li>
-            <a href="mailto:luton@streetsupport.net" className="text-brand-a hover:text-brand-b underline">luton@streetsupport.net</a>
-          </li>
-          <li>
-            <a href="mailto:nottingham@streetsupport.net" className="text-brand-a hover:text-brand-b underline">nottingham@streetsupport.net</a>
-          </li>
-          <li>
-            <a href="mailto:reading@streetsupport.net" className="text-brand-a hover:text-brand-b underline">reading@streetsupport.net</a>
-          </li>
-          <li>
-            <a href="mailto:southampton@streetsupport.net" className="text-brand-a hover:text-brand-b underline">southampton@streetsupport.net</a>
-          </li>
-          <li>
-            <a href="mailto:wakefield@streetsupport.net" className="text-brand-a hover:text-brand-b underline">wakefield@streetsupport.net</a>
-          </li>
-          <li>
-            <a href="mailto:westmidlands@streetsupport.net" className="text-brand-a hover:text-brand-b underline">westmidlands@streetsupport.net</a>
-          </li>
-        </ul>
+        <h2 className="heading-4">For organisations</h2>
+        <p className="mb-4">If your organisation provides services to people experiencing homelessness and you would like to be listed on Street Support, you can{' '}
+          <Link href="/organisation-request-form" className="text-brand-a hover:text-brand-b underline">submit an organisation request</Link>.</p>
+        <p className="mb-8">If you are interested in partnering with Street Support Network, you can find out more and apply via our{' '}
+          <Link href="/partnership-application-form" className="text-brand-a hover:text-brand-b underline">partnership application form</Link>.</p>
 
         <h2 className="heading-4">Join the conversation</h2>
         <p>You can join the conversation on{' '}

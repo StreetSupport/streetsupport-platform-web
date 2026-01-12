@@ -1,10 +1,10 @@
-import Link from 'next/link';
 import { Metadata } from 'next';
 import locations from '@/data/locations.json';
 import { notFound } from 'next/navigation';
 import Hero from '@/components/ui/Hero';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import SwepBannerWrapper from '@/components/ui/SwepBannerWrapper';
+import GetInTouchBanner from '@/components/ui/GetInTouchBanner';
 import BannerWrapper from '@/components/Banners/BannerWrapper';
 import LocationFindHelp from '@/components/Location/LocationFindHelp';
 import LocationStatistics from '@/components/Location/LocationStatistics';
@@ -235,19 +235,7 @@ export default async function LocationPage(props) {
         </div>
       </section>
 
-      <section className="py-12 bg-blue-50">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-2xl font-semibold mb-4">Get in touch</h2>
-          <p className="mb-4">
-            If you&apos;d like to get involved or have suggestions, please contact us at{' '}
-            <a href={`mailto:${contactEmail}`} className="text-brand-a hover:text-brand-b underline">{contactEmail}</a>.
-          </p>
-          <p>
-            We are looking for businesses and organisations to{' '}
-            <Link href="/give-help/business-support/" className="text-brand-a hover:text-brand-b underline">support us</Link> so we can keep improving this resource.
-          </p>
-        </div>
-      </section>
+      <GetInTouchBanner email={contactEmail} />
 
       {/* Supporter Logos Section */}
       <SupporterLogos locationSlug={slug} />
