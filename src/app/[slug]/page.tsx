@@ -198,9 +198,6 @@ export default async function LocationPage(props) {
       {/* SWEP Banner - always fetches fresh data */}
       <SwepBannerWrapper locationSlug={slug} />
 
-      {/* Campaign Banners - displays up to 6 active banners for this location */}
-      <BannerWrapper locationSlug={slug} />
-
       <EmergencyContactSection locationName={location.name} locationSlug={slug} />
 
       {/* Find Help Tools */}
@@ -214,13 +211,16 @@ export default async function LocationPage(props) {
               Search for support services available near you. Use the filters below to find specific types of help, and see what&apos;s available on the map.
             </p>
           </div>
-          <LocationFindHelp 
+          <LocationFindHelp
             locationName={location.name}
             latitude={location.latitude}
             longitude={location.longitude}
           />
         </div>
       </section>
+
+      {/* Campaign Banners - displays up to 6 active banners for this location */}
+      <BannerWrapper locationSlug={slug} />
 
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8">
