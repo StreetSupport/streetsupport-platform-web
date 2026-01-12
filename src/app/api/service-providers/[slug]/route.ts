@@ -116,25 +116,6 @@ export async function GET(req: Request) {
       IsPublished: true,
     };
 
-    // Always return all services for this organisation (no geospatial filtering)
-    // Organisation pages should show ALL services, not filter by user location
-    const servicesResult = await servicesCol
-      .find(servicesQuery)
-      .project({
-        _id: 1,
-        ParentCategoryKey: 1,
-        SubCategoryKey: 1,
-        SubCategoryName: 1,
-        Info: 1,
-        OpeningTimes: 1,
-        // We don't use ClientGroups, but I leave it because afraid to break something
-        ClientGroups: 1,
-        Address: 1,
-        IsAppointmentOnly: 1,
-        IsTelephoneService: 1
-      })
-      .toArray();
-      
     // Add user context for distance calculations (but don't filter)
     const userContext = lat && lng ? {
       lat: parseFloat(lat) || null,
@@ -143,8 +124,29 @@ export async function GET(req: Request) {
       location: null // Could add location name if needed
     } : null;
 
-    // Load accommodation data for this organisation from database
-    const organisationAccommodation = await loadAccommodationDataForProvider(rawProvider.Key);
+    // Fetch services and accommodation in parallel for better performance
+    const [servicesResult, organisationAccommodation] = await Promise.all([
+      // Always return all services for this organisation (no geospatial filtering)
+      // Organisation pages should show ALL services, not filter by user location
+      servicesCol
+        .find(servicesQuery)
+        .project({
+          _id: 1,
+          ParentCategoryKey: 1,
+          SubCategoryKey: 1,
+          SubCategoryName: 1,
+          Info: 1,
+          OpeningTimes: 1,
+          // We don't use ClientGroups, but I leave it because afraid to break something
+          ClientGroups: 1,
+          Address: 1,
+          IsAppointmentOnly: 1,
+          IsTelephoneService: 1
+        })
+        .toArray(),
+      // Load accommodation data for this organisation from database
+      loadAccommodationDataForProvider(rawProvider.Key)
+    ]);
 
     // Transform accommodation to service format
     const accommodationServices = organisationAccommodation.map(transformAccommodationToOrganisationService);

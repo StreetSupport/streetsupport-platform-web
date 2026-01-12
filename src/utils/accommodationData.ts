@@ -209,6 +209,7 @@ function transformDatabaseDocumentToAccommodationData(doc: TemporaryAccommodatio
 
 
 // Load accommodation data with filtering (optimized for find-help searches)
+// Returns AccommodationData with optional distance field when geospatial query is used
 export async function loadFilteredAccommodationData({
   location,
   category,
@@ -223,7 +224,7 @@ export async function loadFilteredAccommodationData({
   latitude?: number;
   longitude?: number;
   radiusKm?: number;
-}): Promise<AccommodationData[]> {
+}): Promise<(AccommodationData & { distance?: number })[]> {
   try {
     // If not searching for accommodation category, return empty array early
     if (category && category.toLowerCase() !== 'accom') {
@@ -233,63 +234,76 @@ export async function loadFilteredAccommodationData({
     const client = await getClientPromise();
     const db = client.db('streetsupport');
     const tempAccomCol = db.collection('TemporaryAccommodation');
-    
-    // Build query with filters
-    const query: Record<string, unknown> & { $and: Array<Record<string, unknown>> } = {
-      $and: [
-        { 
-          'GeneralInfo.ServiceProviderId': { 
-            $exists: true, 
-            $nin: [null, ''], // Use $nin instead of multiple $ne
-            $type: 'string' // Ensure it's actually a string, not null
-          } 
-        },
-        {
-          $or: [
-            { 'GeneralInfo.IsPubliclyVisible': true },
-            { 'GeneralInfo.IsPublished': true },
-            { 
-              'GeneralInfo.IsPublished': { $exists: false },
-              'GeneralInfo.IsPubliclyVisible': { $ne: false }
-            }
-          ]
+
+    // Build base query conditions
+    const baseConditions = [
+      {
+        'GeneralInfo.ServiceProviderId': {
+          $exists: true,
+          $nin: [null, ''], // Use $nin instead of multiple $ne
+          $type: 'string' // Ensure it's actually a string, not null
         }
-      ]
-    };
+      },
+      {
+        $or: [
+          { 'GeneralInfo.IsPubliclyVisible': true },
+          { 'GeneralInfo.IsPublished': true },
+          {
+            'GeneralInfo.IsPublished': { $exists: false },
+            'GeneralInfo.IsPubliclyVisible': { $ne: false }
+          }
+        ]
+      }
+    ];
 
     // Add location filter
     if (location) {
-      query.$and.push({
+      baseConditions.push({
         'Address.City': { $regex: new RegExp(`^${location}`, 'i') }
-      });
+      } as Record<string, unknown>);
     }
 
     // Add subcategory filter
     if (subcategory) {
-      query.$and.push({
+      baseConditions.push({
         'GeneralInfo.AccommodationType': { $regex: new RegExp(`^${subcategory}`, 'i') }
-      });
+      } as Record<string, unknown>);
     }
 
-    // Add geospatial filtering if coordinates provided
+    // Use $geoNear aggregation for geospatial queries to get distance from MongoDB
     if (latitude !== undefined && longitude !== undefined && radiusKm !== undefined) {
-      query.$and.push({
-        'Address.Location': {
-          $geoWithin: {
-            $centerSphere: [[longitude, latitude], radiusKm / 6371] // Earth radius in km
+      const pipeline = [
+        {
+          $geoNear: {
+            near: {
+              type: 'Point',
+              coordinates: [longitude, latitude]
+            },
+            distanceField: 'distance',
+            maxDistance: radiusKm * 1000, // Convert km to meters
+            spherical: true,
+            query: { $and: baseConditions }
           }
         }
-      });
+      ];
+
+      const documents = await tempAccomCol.aggregate(pipeline).toArray() as unknown as (TemporaryAccommodationDocument & { distance?: number })[];
+
+      // Transform documents and preserve distance from MongoDB
+      return documents.map(doc => ({
+        ...transformDatabaseDocumentToAccommodationData(doc),
+        distance: doc.distance // Distance in meters from MongoDB
+      }));
     }
-    
+
+    // Non-geospatial query - use simple find
+    const query = { $and: baseConditions };
     const documents = await tempAccomCol.find(query).toArray() as unknown as TemporaryAccommodationDocument[];
-    
+
     // Transform documents to match the expected JSON structure
-    const transformedData = documents.map(transformDatabaseDocumentToAccommodationData);
-    
-    return transformedData;
+    return documents.map(transformDatabaseDocumentToAccommodationData);
   } catch (error) {
-    console.error('❌ Error loading filtered accommodation data:', error);
+    console.error('Error loading filtered accommodation data:', error);
     return [];
   }
 }
