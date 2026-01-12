@@ -127,7 +127,7 @@ export default function NewsGrid({
       {title && (
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-brand-l mb-4">{title}</h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-brand-a to-brand-d mx-auto rounded-full"></div>
+          <div className="w-24 h-1 bg-gradient-to-r from-brand-d to-brand-a mx-auto rounded-full"></div>
         </div>
       )}
 
