@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import {
   OrganisationRequestSchema,
@@ -35,6 +35,19 @@ export default function OrganisationRequestFormPage() {
     Website: '', LocationsServed: [], ContactFullName: '', ContactEmail: '',
     Services: [{ ...emptyService }], ConfirmsAccuracy: false,
   });
+
+  // Refs for focus management
+  const serviceRefs = useRef<Map<number, HTMLInputElement>>(new Map());
+  const openingTimeRefs = useRef<Map<string, HTMLSelectElement>>(new Map());
+  const addServiceButtonRef = useRef<HTMLButtonElement>(null);
+  const addOpeningTimeRefs = useRef<Map<number, HTMLButtonElement>>(new Map());
+  const [announcement, setAnnouncement] = useState<string>('');
+
+  // Announce changes to screen readers
+  const announce = useCallback((message: string) => {
+    setAnnouncement(message);
+    setTimeout(() => setAnnouncement(''), 1000);
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -90,24 +103,74 @@ export default function OrganisationRequestFormPage() {
   };
 
   const addOpeningTime = (idx: number) => {
+    const newTimeIdx = formData.Services[idx].OpeningTimes.length;
     setFormData(p => ({ ...p, Services: p.Services.map((s, i) => i === idx ? { ...s, OpeningTimes: [...s.OpeningTimes, { ...emptyOpeningTime }] } : s) }));
+    announce(`Opening time ${newTimeIdx + 1} added`);
+    // Focus on the new opening time's day select after state update
+    setTimeout(() => {
+      const key = `${idx}-${newTimeIdx}`;
+      openingTimeRefs.current.get(key)?.focus();
+    }, 0);
   };
 
   const cloneOpeningTime = (sIdx: number, tIdx: number) => {
+    const newTimeIdx = formData.Services[sIdx].OpeningTimes.length;
     setFormData(p => ({
       ...p,
       Services: p.Services.map((s, si) =>
         si === sIdx ? { ...s, OpeningTimes: [...s.OpeningTimes, { ...s.OpeningTimes[tIdx] }] } : s
       ),
     }));
+    announce(`Opening time ${tIdx + 1} copied`);
+    // Focus on the cloned opening time's day select
+    setTimeout(() => {
+      const key = `${sIdx}-${newTimeIdx}`;
+      openingTimeRefs.current.get(key)?.focus();
+    }, 0);
   };
 
   const removeOpeningTime = (sIdx: number, tIdx: number) => {
+    const remainingCount = formData.Services[sIdx].OpeningTimes.length - 1;
     setFormData(p => ({ ...p, Services: p.Services.map((s, si) => si === sIdx ? { ...s, OpeningTimes: s.OpeningTimes.filter((_, ti) => ti !== tIdx) } : s) }));
+    announce(`Opening time ${tIdx + 1} removed`);
+    // Focus on the previous opening time, or the add button if none remain above
+    setTimeout(() => {
+      if (tIdx > 0) {
+        const key = `${sIdx}-${tIdx - 1}`;
+        openingTimeRefs.current.get(key)?.focus();
+      } else if (remainingCount > 0) {
+        const key = `${sIdx}-0`;
+        openingTimeRefs.current.get(key)?.focus();
+      } else {
+        addOpeningTimeRefs.current.get(sIdx)?.focus();
+      }
+    }, 0);
   };
 
-  const addService = () => setFormData(p => ({ ...p, Services: [...p.Services, { ...emptyService, OpeningTimes: [{ ...emptyOpeningTime }] }] }));
-  const removeService = (idx: number) => { if (formData.Services.length > 1) setFormData(p => ({ ...p, Services: p.Services.filter((_, i) => i !== idx) })); };
+  const addService = () => {
+    const newServiceIdx = formData.Services.length;
+    setFormData(p => ({ ...p, Services: [...p.Services, { ...emptyService, OpeningTimes: [{ ...emptyOpeningTime }] }] }));
+    announce(`Service ${newServiceIdx + 1} added`);
+    // Focus on the new service's title input after state update
+    setTimeout(() => {
+      serviceRefs.current.get(newServiceIdx)?.focus();
+    }, 0);
+  };
+
+  const removeService = (idx: number) => {
+    if (formData.Services.length > 1) {
+      setFormData(p => ({ ...p, Services: p.Services.filter((_, i) => i !== idx) }));
+      announce(`Service ${idx + 1} removed`);
+      // Focus on the previous service, or the add button if this was the first
+      setTimeout(() => {
+        if (idx > 0) {
+          serviceRefs.current.get(idx - 1)?.focus();
+        } else {
+          serviceRefs.current.get(0)?.focus();
+        }
+      }, 0);
+    }
+  };
   const getSubcategories = (key: string) => categories.find(c => c.key === key)?.subCategories || [];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -148,6 +211,11 @@ export default function OrganisationRequestFormPage() {
         {submitError && <div className="bg-brand-g/10 border border-brand-g text-brand-g rounded-lg p-4 mb-6"><p className="font-medium">Error</p><p className="text-sm">{submitError}</p></div>}
 
         <form onSubmit={handleSubmit} className="max-w-3xl">
+          {/* Screen reader announcements for dynamic form changes */}
+          <div aria-live="polite" aria-atomic="true" className="sr-only">
+            {announcement}
+          </div>
+
           <div className="mb-8"><h2 className="heading-4 mb-4 pb-2 border-b border-brand-q">Organisation details</h2>
             <div className="mb-6"><label htmlFor="organisation-name" className="block font-semibold text-brand-k mb-2">Organisation Name <span className="text-brand-g">*</span></label>
               <input type="text" id="organisation-name" name="OrganisationName" value={formData.OrganisationName} onChange={handleInputChange} className={inputClass(validationErrors.OrganisationName)} placeholder="Organisation name" />
@@ -184,9 +252,9 @@ export default function OrganisationRequestFormPage() {
             {formData.Services.map((svc, sIdx) => (
               <div key={sIdx} className="bg-brand-q/50 rounded-lg p-6 mb-6 border border-brand-q">
                 <div className="flex justify-between items-center mb-4"><h3 className="font-semibold">Service {sIdx + 1}</h3>
-                  {formData.Services.length > 1 && <button type="button" onClick={() => removeService(sIdx)} className="text-brand-g text-sm">Remove</button>}</div>
+                  {formData.Services.length > 1 && <button type="button" onClick={() => removeService(sIdx)} className="text-brand-g text-sm" aria-label={`Remove service ${sIdx + 1}`}>Remove</button>}</div>
                 <div className="mb-4"><label htmlFor={`service-${sIdx}-title`} className="block font-semibold text-brand-k mb-2">Title <span className="text-brand-g">*</span></label>
-                  <input type="text" id={`service-${sIdx}-title`} value={svc.ServiceTitle} onChange={e => handleServiceChange(sIdx, 'ServiceTitle', e.target.value)} className={inputClass(validationErrors[`Services.${sIdx}.ServiceTitle`])} />
+                  <input type="text" id={`service-${sIdx}-title`} ref={el => { if (el) serviceRefs.current.set(sIdx, el); }} value={svc.ServiceTitle} onChange={e => handleServiceChange(sIdx, 'ServiceTitle', e.target.value)} className={inputClass(validationErrors[`Services.${sIdx}.ServiceTitle`])} />
                   {validationErrors[`Services.${sIdx}.ServiceTitle`] && <p className="text-brand-g text-sm mt-1">{validationErrors[`Services.${sIdx}.ServiceTitle`]}</p>}</div>
                 <div className="mb-4"><label htmlFor={`service-${sIdx}-description`} className="block font-semibold text-brand-k mb-2">Description <span className="text-brand-g">*</span></label>
                   <textarea id={`service-${sIdx}-description`} value={svc.ServiceDescription} onChange={e => handleServiceChange(sIdx, 'ServiceDescription', e.target.value)} rows={3} className={inputClass(validationErrors[`Services.${sIdx}.ServiceDescription`])} />
@@ -229,6 +297,7 @@ export default function OrganisationRequestFormPage() {
                           <div className="flex flex-wrap gap-2 items-center">
                             <select
                               id={`service-${sIdx}-opening-${tIdx}-day`}
+                              ref={el => { if (el) openingTimeRefs.current.set(`${sIdx}-${tIdx}`, el); }}
                               aria-label={`Opening time ${tIdx + 1} day`}
                               value={t.Day}
                               onChange={e => handleOpeningTimeChange(sIdx, tIdx, 'Day', e.target.value)}
@@ -272,7 +341,7 @@ export default function OrganisationRequestFormPage() {
                         </div>
                       );
                     })}
-                    <button type="button" onClick={() => addOpeningTime(sIdx)} className="text-brand-a text-sm font-medium mt-2">
+                    <button type="button" ref={el => { if (el) addOpeningTimeRefs.current.set(sIdx, el); }} onClick={() => addOpeningTime(sIdx)} className="text-brand-a text-sm font-medium mt-2">
                       + Add time
                     </button>
                     {validationErrors[`Services.${sIdx}.OpeningTimes`] && (
@@ -287,7 +356,7 @@ export default function OrganisationRequestFormPage() {
                     <input type="tel" id={`service-${sIdx}-contact-phone`} value={svc.ContactPhone} onChange={e => handleServiceChange(sIdx, 'ContactPhone', e.target.value)} className={inputClass()} /></div>
                 </div>
               </div>))}
-            <button type="button" onClick={addService} className="btn-base btn-secondary btn-md">+ Add Another Service</button>
+            <button type="button" ref={addServiceButtonRef} onClick={addService} className="btn-base btn-secondary btn-md">+ Add Another Service</button>
           </div>
 
           <div className="mb-8"><h2 className="heading-4 mb-4 pb-2 border-b border-brand-q">Agreement</h2>
@@ -299,7 +368,7 @@ export default function OrganisationRequestFormPage() {
           </div>
 
           <div className="pt-6 border-t border-brand-q">
-            <button type="submit" disabled={isSubmitting} className="btn-base btn-primary btn-lg w-full sm:w-auto disabled:opacity-50">
+            <button type="submit" disabled={isSubmitting} className="btn-base btn-primary btn-lg w-full sm:w-auto disabled:bg-brand-f disabled:text-brand-l disabled:cursor-not-allowed">
               {isSubmitting ? 'Submitting...' : 'Submit Request'}</button>
             <p className="text-sm text-brand-f mt-4">You will receive a confirmation email. Our team will review and be in touch.</p>
           </div>

@@ -136,6 +136,7 @@ export default function SiteFooter() {
                     placeholder="Enter your email address"
                     required
                     disabled={isSubmitting}
+                    aria-describedby={status !== 'idle' ? 'newsletter-footer-status' : undefined}
                     className="w-full px-4 py-3 border border-brand-f rounded-md focus:outline-none focus:ring-2 focus:ring-brand-a focus:border-transparent text-brand-q placeholder-brand-f text-sm"
                     suppressHydrationWarning
                   />
@@ -143,20 +144,20 @@ export default function SiteFooter() {
                 <button
                   type="submit"
                   disabled={isSubmitting || !email}
-                  className="w-full btn-base btn-primary btn-md disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full btn-base btn-primary btn-md disabled:bg-brand-f disabled:text-brand-l disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? 'Subscribing...' : 'Subscribe'}
                 </button>
               </form>
               
               {status === 'success' && (
-                <p className="mt-4 text-brand-b text-sm">
+                <p id="newsletter-footer-status" role="status" aria-live="polite" className="mt-4 text-brand-b text-sm">
                   Thanks for subscribing! Please check your email to confirm.
                 </p>
               )}
-              
+
               {status === 'error' && (
-                <p className="mt-4 text-brand-g text-sm">
+                <p id="newsletter-footer-status" role="alert" aria-live="assertive" className="mt-4 text-brand-g text-sm">
                   Something went wrong. Please try again later.
                 </p>
               )}
