@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useCookieConsent } from '@/contexts/CookieConsentContext';
 
 type WatsonAssistantInstance = {
   render: () => Promise<void>;
@@ -47,8 +48,12 @@ interface WatsonXChatProps {
  *                       If not provided, chat is always shown (for west-midlands hub page)
  */
 export default function WatsonXChat({ locationSlug }: WatsonXChatProps) {
-  // Determine if we should show the chat widget
-  const shouldShowChat = !locationSlug || WATSON_X_LOCATIONS.includes(locationSlug);
+  const { hasConsent } = useCookieConsent();
+
+  // Determine if we should show the chat widget (requires functional consent)
+  const isWatsonLocation = !locationSlug || WATSON_X_LOCATIONS.includes(locationSlug);
+  const hasFunctionalConsent = hasConsent('functional');
+  const shouldShowChat = isWatsonLocation && hasFunctionalConsent;
 
   useEffect(() => {
     // Only run on client side
@@ -121,7 +126,7 @@ export default function WatsonXChat({ locationSlug }: WatsonXChatProps) {
       // Clean up the global options
       delete window.watsonAssistantChatOptions;
     };
-  }, [shouldShowChat, locationSlug]);
+  }, [shouldShowChat, locationSlug, hasFunctionalConsent]);
 
   // This component doesn't render anything visible
   return null;

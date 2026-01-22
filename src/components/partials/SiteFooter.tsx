@@ -3,11 +3,13 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useCookieConsent } from '@/contexts/CookieConsentContext';
 
 export default function SiteFooter() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const { openPreferences } = useCookieConsent();
 
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -248,6 +250,13 @@ export default function SiteFooter() {
               <Link href="/about/privacy-and-data/cookie-policy" className="hover:text-brand-a transition-colors duration-200">
                 Cookie Policy
               </Link>
+              <button
+                type="button"
+                onClick={openPreferences}
+                className="hover:text-brand-a transition-colors duration-200"
+              >
+                Cookie Settings
+              </button>
               <Link href="/about/accessibility" className="hover:text-brand-a transition-colors duration-200">
                 Accessibility
               </Link>
