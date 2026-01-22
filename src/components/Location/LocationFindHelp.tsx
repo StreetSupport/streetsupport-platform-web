@@ -19,6 +19,7 @@ interface Props {
   latitude: number;
   longitude: number;
   radius?: number;
+  limit?: number;
 }
 
 interface MapMarker {
@@ -79,7 +80,7 @@ const categories = (rawCategories as Category[]).sort((a, b) =>
   a.name.localeCompare(b.name)
 );
 
-export default function LocationFindHelp({ locationName, latitude, longitude, radius = 5 }: Props) {
+export default function LocationFindHelp({ locationName, latitude, longitude, radius = 5, limit = 1000 }: Props) {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubCategory, setSelectedSubCategory] = useState('');
@@ -123,7 +124,7 @@ export default function LocationFindHelp({ locationName, latitude, longitude, ra
         lat: latitude.toString(),
         lng: longitude.toString(),
         radius: radius.toString(),
-        limit: '1000', // Get all services in area
+        limit: String(limit), // Get all services in area
       });
 
       const response = await fetch(`/api/services?${params.toString()}`, {

@@ -88,43 +88,12 @@ function transformAccommodationToService(accommodation: AccommodationData) {
   };
 }
 
-// Function to filter accommodation by geospatial criteria
-function filterAccommodationByLocation(accommodations: AccommodationData[], latitude: number, longitude: number, radiusKm: number) {
-  return accommodations.filter(accommodation => {
-    const lat = accommodation.address?.latitude;
-    const lng = accommodation.address?.longitude;
-    
-    if (!lat || !lng) return false;
-    
-    // Calculate distance using Haversine formula
-    const R = 6371; // Earth's radius in km
-    const dLat = (lat - latitude) * Math.PI / 180;
-    const dLng = (lng - longitude) * Math.PI / 180;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(latitude * Math.PI / 180) * Math.cos(lat * Math.PI / 180) *
-              Math.sin(dLng/2) * Math.sin(dLng/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    const distance = R * c;
-    
-    return distance <= radiusKm;
-  }).map(accommodation => {
-    // Calculate and add distance
-    const lat = accommodation.address.latitude;
-    const lng = accommodation.address.longitude;
-    const R = 6371;
-    const dLat = (lat - latitude) * Math.PI / 180;
-    const dLng = (lng - longitude) * Math.PI / 180;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(latitude * Math.PI / 180) * Math.cos(lat * Math.PI / 180) *
-              Math.sin(dLng/2) * Math.sin(dLng/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    const distance = R * c * 1000; // Convert to meters for consistency
-    
-    return {
-      ...transformAccommodationToService(accommodation),
-      distance
-    };
-  });
+// Function to transform accommodation with distance (distance now comes from MongoDB $geoNear)
+function transformAccommodationWithDistance(accommodation: AccommodationData & { distance?: number }) {
+  return {
+    ...transformAccommodationToService(accommodation),
+    distance: accommodation.distance // Distance in meters from MongoDB
+  };
 }
 
 
@@ -369,10 +338,12 @@ export async function GET(req: Request) {
     });
 
     // Transform accommodation data to service format
+    // Distance is now calculated by MongoDB $geoNear, no need for JS Haversine
     let accommodationResults: ReturnType<typeof transformAccommodationToService>[] = [];
     if (accommodationData.length > 0) {
       if (latitude !== undefined && longitude !== undefined && radiusKm !== undefined) {
-        accommodationResults = filterAccommodationByLocation(accommodationData, latitude, longitude, radiusKm);
+        // Accommodation data already filtered by MongoDB $geoNear with distance included
+        accommodationResults = accommodationData.map(transformAccommodationWithDistance);
       } else {
         accommodationResults = accommodationData.map(transformAccommodationToService);
       }

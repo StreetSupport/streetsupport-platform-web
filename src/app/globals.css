@@ -232,9 +232,9 @@
   @apply p-2;
 }
 
-/* Disabled state override */
+/* Disabled state override - using brand-l text for WCAG AA contrast (4.5:1 minimum) */
 .btn-base:disabled {
-  @apply bg-brand-q text-brand-f border-brand-f;
+  @apply bg-brand-q text-brand-l border-brand-f;
 }
 
 /* Loading state */
