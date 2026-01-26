@@ -6,6 +6,7 @@ import { BannerProps } from '@/types/banners';
 import {
   generateBackgroundClasses,
   generateBackgroundStyles,
+  generateBorderStyles,
   generateTextColourClasses,
   generateCTAClasses
 } from '@/utils/bannerUtils';
@@ -37,6 +38,7 @@ const Banner: React.FC<BannerProps> = ({
   logo,
   ctaButtons,
   background,
+  border,
   textColour,
   layoutStyle,
   id,
@@ -44,6 +46,7 @@ const Banner: React.FC<BannerProps> = ({
 }) => {
   const backgroundClasses = generateBackgroundClasses(background);
   const backgroundStyles = generateBackgroundStyles(background);
+  const borderStyles = generateBorderStyles(border);
   const textClasses = generateTextColourClasses(textColour);
 
   const renderMedia = () => {
@@ -116,7 +119,7 @@ const Banner: React.FC<BannerProps> = ({
       role="banner"
       aria-labelledby={`banner-title-${id}`}
       className={`${backgroundClasses} ${textClasses} ${className} ${needsOverlay ? 'relative' : ''}`}
-      style={backgroundStyles}
+      style={{ ...backgroundStyles, ...borderStyles }}
     >
       {needsOverlay && (
         <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
@@ -142,7 +145,7 @@ const Banner: React.FC<BannerProps> = ({
               </h1>
               {description && (
                 <div
-                  className="text-lg opacity-90 prose prose-sm max-w-none"
+                  className={`text-lg opacity-90 prose prose-sm max-w-none ${textColour === 'white' ? 'prose-invert' : ''}`}
                   dangerouslySetInnerHTML={{ __html: sanitiseBannerDescription(description) }}
                 />
               )}
@@ -172,7 +175,7 @@ const Banner: React.FC<BannerProps> = ({
             </h1>
             {description && (
               <div
-                className="text-lg md:text-xl opacity-90 max-w-2xl mx-auto prose prose-lg"
+                className={`text-lg md:text-xl opacity-90 max-w-2xl mx-auto prose prose-lg ${textColour === 'white' ? 'prose-invert' : ''}`}
                 dangerouslySetInnerHTML={{ __html: sanitiseBannerDescription(description) }}
               />
             )}
