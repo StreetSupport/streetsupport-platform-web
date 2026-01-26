@@ -1,4 +1,4 @@
-import { BannerBackground, TextColour, LayoutStyle, CTAButton } from '@/types/banners';
+import { BannerBackground, BannerBorder, TextColour, LayoutStyle, CTAButton } from '@/types/banners';
 
 export function generateBackgroundClasses(background: BannerBackground): string {
   const { type, overlay } = background;
@@ -47,6 +47,14 @@ export function generateBackgroundStyles(background: BannerBackground): React.CS
   }
 
   return styles;
+}
+
+export function generateBorderStyles(border?: BannerBorder): React.CSSProperties {
+  if (!border?.showBorder) return {};
+  return {
+    borderTop: `50px solid ${border.colour}`,
+    borderBottom: `50px solid ${border.colour}`,
+  };
 }
 
 export function generateTextColourClasses(textColour: TextColour): string {

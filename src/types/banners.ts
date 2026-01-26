@@ -40,6 +40,11 @@ export interface BannerBackground {
   };
 }
 
+export interface BannerBorder {
+  showBorder: boolean;
+  colour: string;
+}
+
 export interface BannerProps {
   // Core content
   title: string;
@@ -57,6 +62,7 @@ export interface BannerProps {
 
   // Styling
   background: BannerBackground;
+  border?: BannerBorder;
   textColour: TextColour;
   layoutStyle: LayoutStyle;
 
