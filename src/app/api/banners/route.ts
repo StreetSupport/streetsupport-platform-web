@@ -67,6 +67,10 @@ export async function GET(req: NextRequest) {
           opacity: banner.Background.Overlay.Opacity
         } : undefined
       },
+      border: banner.Border ? {
+        showBorder: banner.Border.ShowBorder,
+        colour: banner.Border.Colour
+      } : undefined,
       textColour: banner.TextColour || 'black',
       layoutStyle: banner.LayoutStyle || 'full-width',
 
