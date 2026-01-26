@@ -145,7 +145,7 @@ const Banner: React.FC<BannerProps> = ({
               </h1>
               {description && (
                 <div
-                  className="text-lg opacity-90 prose prose-sm max-w-none"
+                  className={`text-lg opacity-90 prose prose-sm max-w-none ${textColour === 'white' ? 'prose-invert' : ''}`}
                   dangerouslySetInnerHTML={{ __html: sanitiseBannerDescription(description) }}
                 />
               )}
@@ -175,7 +175,7 @@ const Banner: React.FC<BannerProps> = ({
             </h1>
             {description && (
               <div
-                className="text-lg md:text-xl opacity-90 max-w-2xl mx-auto prose prose-lg"
+                className={`text-lg md:text-xl opacity-90 max-w-2xl mx-auto prose prose-lg ${textColour === 'white' ? 'prose-invert' : ''}`}
                 dangerouslySetInnerHTML={{ __html: sanitiseBannerDescription(description) }}
               />
             )}
