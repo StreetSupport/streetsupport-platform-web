@@ -9,6 +9,7 @@ import {
   generateTextColourClasses,
   generateCTAClasses
 } from '@/utils/bannerUtils';
+import { sanitiseBannerDescription } from '@/utils/sanitiseHtml';
 
 function getYouTubeEmbedUrl(url: string): string | null {
   const patterns = [
@@ -140,7 +141,10 @@ const Banner: React.FC<BannerProps> = ({
                 {title}
               </h1>
               {description && (
-                <p className="text-lg opacity-90">{description}</p>
+                <div
+                  className="text-lg opacity-90 prose prose-sm max-w-none"
+                  dangerouslySetInnerHTML={{ __html: sanitiseBannerDescription(description) }}
+                />
               )}
               {renderCTAs()}
             </div>
@@ -167,7 +171,10 @@ const Banner: React.FC<BannerProps> = ({
               {title}
             </h1>
             {description && (
-              <p className="text-lg md:text-xl opacity-90 max-w-2xl mx-auto">{description}</p>
+              <div
+                className="text-lg md:text-xl opacity-90 max-w-2xl mx-auto prose prose-lg"
+                dangerouslySetInnerHTML={{ __html: sanitiseBannerDescription(description) }}
+              />
             )}
             {renderMedia()}
             {renderCTAs()}
