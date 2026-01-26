@@ -35,7 +35,7 @@ export default function ResourcesPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Alternative Giving */}
-            <article className="card card-compact flex flex-col h-full p-8 shadow-lg">
+            <article className="bg-white border border-brand-q rounded-md flex flex-col h-full p-8 shadow-lg">
               <div className="flex items-center mb-6">
                 <Image
                   src="/assets/img/resource-icons/alternative-giving-icon.png"
@@ -54,7 +54,7 @@ export default function ResourcesPage() {
             </article>
 
             {/* Effective Volunteering */}
-            <article className="card card-compact flex flex-col h-full p-8 shadow-lg">
+            <article className="bg-white border border-brand-q rounded-md flex flex-col h-full p-8 shadow-lg">
               <div className="flex items-center mb-6">
                 <Image
                   src="/assets/img/resource-icons/volunteering-icon.png"
@@ -73,7 +73,7 @@ export default function ResourcesPage() {
             </article>
 
             {/* Homelessness Charters */}
-            <article className="card card-compact flex flex-col h-full p-8 shadow-lg">
+            <article className="bg-white border border-brand-q rounded-md flex flex-col h-full p-8 shadow-lg">
               <div className="flex items-center mb-6">
                 <Image
                   src="/assets/img/resource-icons/charters-icon.png"
@@ -92,7 +92,7 @@ export default function ResourcesPage() {
             </article>
 
             {/* Street Feeding */}
-            <article className="card card-compact flex flex-col h-full p-8 shadow-lg">
+            <article className="bg-white border border-brand-q rounded-md flex flex-col h-full p-8 shadow-lg">
               <div className="flex items-center mb-6">
                 <Image
                   src="/assets/img/resource-icons/streetfeeding-icon.png"
@@ -119,7 +119,7 @@ export default function ResourcesPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Branding */}
-            <article className="card card-compact flex flex-col h-full p-8 shadow-lg">
+            <article className="bg-white border border-brand-q rounded-md flex flex-col h-full p-8 shadow-lg">
               <div className="flex items-center mb-6">
                 <Image
                   src="/assets/img/resource-icons/branding-icon.png"
@@ -138,7 +138,7 @@ export default function ResourcesPage() {
             </article>
 
             {/* Partnership Communications */}
-            <article className="card card-compact flex flex-col h-full p-8 shadow-lg">
+            <article className="bg-white border border-brand-q rounded-md flex flex-col h-full p-8 shadow-lg">
               <div className="flex items-center mb-6">
                 <Image
                   src="/assets/img/resource-icons/partnership-comms-icon.png"
@@ -157,7 +157,7 @@ export default function ResourcesPage() {
             </article>
 
             {/* Marketing */}
-            <article className="card card-compact flex flex-col h-full p-8 shadow-lg">
+            <article className="bg-white border border-brand-q rounded-md flex flex-col h-full p-8 shadow-lg">
               <div className="flex items-center mb-6">
                 <Image
                   src="/assets/img/resource-icons/marketing-icon.png"
@@ -176,7 +176,7 @@ export default function ResourcesPage() {
             </article>
 
             {/* User Guides */}
-            <article className="card card-compact flex flex-col h-full p-8 shadow-lg">
+            <article className="bg-white border border-brand-q rounded-md flex flex-col h-full p-8 shadow-lg">
               <div className="flex items-center mb-6">
                 <Image
                   src="/assets/img/resource-icons/user-guides-icon.png"

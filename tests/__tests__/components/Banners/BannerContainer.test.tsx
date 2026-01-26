@@ -1,82 +1,63 @@
-﻿import React from 'react';
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import BannerContainer from '@/components/Banners/BannerContainer';
-import { AnyBannerProps, GivingCampaignProps, PartnershipCharterProps, ResourceProjectProps } from '@/types/banners';
+import { BannerProps } from '@/types/banners';
 
-// Mock the individual banner components
-jest.mock('@/components/Banners/GivingCampaignBanner', () => {
-  return function MockGivingCampaignBanner({ title, className }: any) {
-    return <div data-testid='giving-campaign-banner' className={className}>{title}</div>;
-  };
-});
-
-jest.mock('@/components/Banners/PartnershipCharterBanner', () => {
-  return function MockPartnershipCharterBanner({ title, className }: any) {
-    return <div data-testid='partnership-charter-banner' className={className}>{title}</div>;
-  };
-});
-
-jest.mock('@/components/Banners/ResourceProjectBanner', () => {
-  return function MockResourceProjectBanner({ title, className }: any) {
-    return <div data-testid='resource-project-banner' className={className}>{title}</div>;
+jest.mock('@/components/Banners/Banner', () => {
+  return function MockBanner({ title, className }: { title: string; className?: string }) {
+    return <div data-testid="banner" className={className}>{title}</div>;
   };
 });
 
 describe('BannerContainer', () => {
-  const mockGivingCampaign: GivingCampaignProps = {
-    id: '1',
-    templateType: 'giving-campaign',
-    title: 'Support Campaign',
-    ctaButtons: [{ label: 'Donate', url: '/donate' }],
-    background: { type: 'solid', value: '#000' },
-    textColour: 'white',
-    layoutStyle: 'full-width'
-  };
-
-  const mockPartnershipCharter: PartnershipCharterProps = {
-    id: '2',
-    templateType: 'partnership-charter',
-    title: 'Join Charter',
-    ctaButtons: [{ label: 'Sign', url: '/sign' }],
-    background: { type: 'solid', value: '#000' },
-    textColour: 'white',
-    layoutStyle: 'full-width'
-  };
-
-  const mockResourceProject: ResourceProjectProps = {
-    id: '3',
-    templateType: 'resource-project',
-    title: 'Download Guide',
-    ctaButtons: [{ label: 'Download', url: '/guide' }],
-    background: { type: 'solid', value: '#000' },
-    textColour: 'white',
-    layoutStyle: 'full-width'
-  };
-
-  const mockBanners: AnyBannerProps[] = [
-    mockGivingCampaign,
-    mockPartnershipCharter,
-    mockResourceProject
+  const mockBanners: BannerProps[] = [
+    {
+      id: '1',
+      title: 'First Banner',
+      mediaType: 'image',
+      ctaButtons: [{ label: 'Click', url: '/click' }],
+      background: { type: 'solid', value: '#000' },
+      textColour: 'white',
+      layoutStyle: 'split'
+    },
+    {
+      id: '2',
+      title: 'Second Banner',
+      mediaType: 'youtube',
+      youtubeUrl: 'https://youtube.com/watch?v=abc123',
+      ctaButtons: [],
+      background: { type: 'gradient', value: 'linear-gradient(#000, #fff)' },
+      textColour: 'white',
+      layoutStyle: 'full-width'
+    }
   ];
 
   it('should render all banners', () => {
     render(<BannerContainer banners={mockBanners} />);
-    
-    expect(screen.getByTestId('giving-campaign-banner')).toBeInTheDocument();
-    expect(screen.getByTestId('partnership-charter-banner')).toBeInTheDocument();
-    expect(screen.getByTestId('resource-project-banner')).toBeInTheDocument();
+
+    expect(screen.getByText('First Banner')).toBeInTheDocument();
+    expect(screen.getByText('Second Banner')).toBeInTheDocument();
   });
 
-  it('should apply CSS classes correctly', () => {
-    render(<BannerContainer banners={[mockGivingCampaign]} className='custom-container' />);
-    
-    const banner = screen.getByTestId('giving-campaign-banner');
-    expect(banner).toHaveClass('banner-giving-campaign');
-    expect(banner).toHaveClass('custom-container');
+  it('should apply custom className to banners', () => {
+    render(<BannerContainer banners={mockBanners} className="custom-class" />);
+
+    const banners = screen.getAllByTestId('banner');
+    banners.forEach(banner => {
+      expect(banner).toHaveClass('custom-class');
+    });
   });
 
-  it('should handle empty banner array', () => {
+  it('should return null when banners array is empty', () => {
     const { container } = render(<BannerContainer banners={[]} />);
     expect(container.firstChild).toBeNull();
+  });
+
+  it('should render banners in order', () => {
+    render(<BannerContainer banners={mockBanners} />);
+
+    const banners = screen.getAllByTestId('banner');
+    expect(banners[0]).toHaveTextContent('First Banner');
+    expect(banners[1]).toHaveTextContent('Second Banner');
   });
 });

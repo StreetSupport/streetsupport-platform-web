@@ -3,13 +3,9 @@ import {
   generateBackgroundStyles,
   generateTextColourClasses,
   generateLayoutClasses,
-  generateCTAClasses,
-  generateAccentGraphicClasses,
-  formatCurrency,
-  calculateProgress,
-  generateUrgencyClasses
+  generateCTAClasses
 } from '@/utils/bannerUtils';
-import { BannerBackground, TextColour, LayoutStyle, CTAButton } from '@/types/banners';
+import { BannerBackground, CTAButton } from '@/types/banners';
 
 describe('Banner Utilities', () => {
   describe('generateBackgroundClasses', () => {
@@ -108,9 +104,9 @@ describe('Banner Utilities', () => {
       expect(classes).toBe('text-center');
     });
 
-    it('should generate card layout classes', () => {
-      const classes = generateLayoutClasses('card');
-      expect(classes).toBe('max-w-4xl mx-auto bg-white/10 backdrop-blur-sm rounded-lg p-8');
+    it('should return empty string for unknown layout', () => {
+      const classes = generateLayoutClasses('unknown' as never);
+      expect(classes).toBe('');
     });
   });
 
@@ -147,94 +143,6 @@ describe('Banner Utilities', () => {
       const button: CTAButton = { label: 'Test', url: '/test' };
       const classes = generateCTAClasses(button, 'white');
       expect(classes).toContain('bg-white text-gray-900');
-    });
-  });
-
-  describe('generateAccentGraphicClasses', () => {
-    it('should generate top-left positioning', () => {
-      const classes = generateAccentGraphicClasses('top-left');
-      expect(classes).toBe('absolute top-4 left-4 z-10');
-    });
-
-    it('should generate center positioning', () => {
-      const classes = generateAccentGraphicClasses('center');
-      expect(classes).toBe('absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0');
-    });
-
-    it('should default to top-right positioning', () => {
-      const classes = generateAccentGraphicClasses();
-      expect(classes).toBe('absolute top-4 right-4 z-10');
-    });
-  });
-
-  describe('formatCurrency', () => {
-    it('should format GBP currency', () => {
-      const formatted = formatCurrency(1000, 'GBP');
-      expect(formatted).toBe('£1,000');
-    });
-
-    it('should format without decimals', () => {
-      const formatted = formatCurrency(1000.50, 'GBP');
-      expect(formatted).toBe('£1,001');
-    });
-
-    it('should handle large numbers', () => {
-      const formatted = formatCurrency(1000000, 'GBP');
-      expect(formatted).toBe('£1,000,000');
-    });
-
-    it('should default to GBP', () => {
-      const formatted = formatCurrency(100);
-      expect(formatted).toBe('£100');
-    });
-  });
-
-  describe('calculateProgress', () => {
-    it('should calculate percentage correctly', () => {
-      const progress = calculateProgress(250, 1000);
-      expect(progress).toBe(25);
-    });
-
-    it('should cap at 100%', () => {
-      const progress = calculateProgress(1500, 1000);
-      expect(progress).toBe(100);
-    });
-
-    it('should handle zero values', () => {
-      const progress = calculateProgress(0, 1000);
-      expect(progress).toBe(0);
-    });
-
-    it('should round to nearest integer', () => {
-      const progress = calculateProgress(333, 1000);
-      expect(progress).toBe(33);
-    });
-  });
-
-  describe('generateUrgencyClasses', () => {
-    it('should generate critical urgency classes', () => {
-      const classes = generateUrgencyClasses('critical');
-      expect(classes).toBe('bg-red-600 text-white animate-pulse');
-    });
-
-    it('should generate high urgency classes', () => {
-      const classes = generateUrgencyClasses('high');
-      expect(classes).toBe('bg-red-500 text-white');
-    });
-
-    it('should generate medium urgency classes', () => {
-      const classes = generateUrgencyClasses('medium');
-      expect(classes).toBe('bg-yellow-500 text-gray-900');
-    });
-
-    it('should generate low urgency classes', () => {
-      const classes = generateUrgencyClasses('low');
-      expect(classes).toBe('bg-green-500 text-white');
-    });
-
-    it('should default to blue for unknown urgency', () => {
-      const classes = generateUrgencyClasses('unknown');
-      expect(classes).toBe('bg-blue-500 text-white');
     });
   });
 });

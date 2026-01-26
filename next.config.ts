@@ -29,16 +29,22 @@ const nextConfig = {
     // Minimize layout shift by enforcing size requirements
     minimumCacheTTL: 60,
     
-    // Add any external domains if needed in the future
-    remotePatterns: process.env.BLOB_STORAGE_HOSTNAME
-      ? [
-        {
-          protocol: 'https',
-          hostname: process.env.BLOB_STORAGE_HOSTNAME,
-          pathname: '/**',
-        },
-      ]
-      : [],
+    remotePatterns: [
+      ...(process.env.BLOB_STORAGE_HOSTNAME
+        ? [
+          {
+            protocol: 'https' as const,
+            hostname: process.env.BLOB_STORAGE_HOSTNAME,
+            pathname: '/**',
+          },
+        ]
+        : []),
+      {
+        protocol: 'https' as const,
+        hostname: 'placekitten.com',
+        pathname: '/**',
+      },
+    ],
   },
   
   // Enable experimental features for better performance
