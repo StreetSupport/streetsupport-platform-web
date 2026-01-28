@@ -329,6 +329,22 @@ export default function OrganisationServicesAccordion({
                     </div>
                   )}
 
+                  {/* Service Type Pills - Prominent display at top */}
+                  {selectedLocation && (
+                    <div className="mb-4 flex flex-wrap gap-2">
+                      {(selectedLocation as ServiceLocation).service.isOpen247 && (
+                        <span className="service-tag always-open">
+                          Open 24/7
+                        </span>
+                      )}
+                      {(selectedLocation as ServiceLocation).service.isAppointmentOnly && (
+                        <span className="service-tag limited">
+                          Appointment Only
+                        </span>
+                      )}
+                    </div>
+                  )}
+
                   {/* Service Description */}
                   {(selectedLocation as ServiceLocation | undefined)?.service?.description && (
                     <div className="mb-4 relative">
@@ -371,7 +387,7 @@ export default function OrganisationServicesAccordion({
                           const isAccommodation = service.category === 'accom' || service.sourceType === 'accommodation';
                           const accommodationData = service.accommodationData;
                           
-                          const hasServiceTypeIndicators = isPhoneService || is24Hour || isAccommodation || service.isOpen247;
+                          const hasServiceTypeIndicators = isPhoneService || is24Hour || isAccommodation || service.isOpen247 || service.isAppointmentOnly;
                           
                           if (!hasServiceTypeIndicators) return null;
                           
