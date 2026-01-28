@@ -402,6 +402,10 @@
   @apply bg-brand-j text-brand-k;
 }
 
+.service-tag.always-open {
+  @apply bg-orange-100 text-orange-800;
+}
+
 /* Layout and Spacing */
 .section-spacing {
   @apply py-12 lg:py-16;

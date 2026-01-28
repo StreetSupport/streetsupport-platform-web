@@ -64,16 +64,20 @@ export default function Hero({
       />
       
       {overlayImage && (
-        <div className="absolute inset-0 z-10">
-          <Image
-            src={overlayImage}
-            alt={`${title} overlay`}
-            fill
-            className="object-cover"
-            sizes="100vw"
-            quality={75}
-          />
-        </div>
+        <>
+          {/* Dark grey strip at bottom to fill gaps in layered images */}
+          <div className="absolute bottom-0 left-0 right-0 h-5 bg-gray-700 z-[5]" />
+          <div className="absolute inset-0 z-10">
+            <Image
+              src={overlayImage}
+              alt={`${title} overlay`}
+              fill
+              className="object-contain object-bottom"
+              sizes="100vw"
+              quality={75}
+            />
+          </div>
+        </>
       )}
       
       {overlayImage && isCoastal && (
