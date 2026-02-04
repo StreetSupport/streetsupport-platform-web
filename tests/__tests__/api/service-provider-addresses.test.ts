@@ -40,8 +40,7 @@ jest.mock('@/utils/mongodb', () => ({
 
 describe('GET /api/service-provider-addresses', () => {
   it('returns success and addresses array', async () => {
-    const req = new Request('http://localhost/api/service-provider-addresses');
-    const res = await GET(req);
+    const res = await GET();
     const json = await res.json();
 
     expect(res.status).toBe(200);

@@ -47,9 +47,6 @@ next-env.d.ts
 # generated data
 /src/data/locations.json
 
-# claude folder
-.claude/
-
 # Windsurf
 .windsurf
 # Sentry Config File

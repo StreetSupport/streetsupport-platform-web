@@ -24,6 +24,9 @@ interface FlattenedServiceWithAddress extends FlattenedService {
 // Define a type for the groupedServices that includes the address property
 type GroupedServicesWithAddress = Record<string, Record<string, FlattenedServiceWithAddress[]>>;
 
+// Type alias for test organisation data (subset of OrganisationDetails)
+type TestOrganisationDetails = Pick<OrganisationDetails, 'key' | 'name' | 'addresses' | 'services' | 'groupedServices'>;
+
 // Mock the Accordion component with the correct props
 jest.mock('@/components/ui/Accordion', () => {
   return {

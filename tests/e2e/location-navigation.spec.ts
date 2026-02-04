@@ -1,5 +1,25 @@
 import { test, expect } from './fixtures/base-test';
 
+// Extend Window interface for test context
+declare global {
+  interface Window {
+    __mockLocationContext?: {
+      source: string;
+      lat: number;
+      lng: number;
+      location: string;
+      radius: number;
+    };
+    __testLocationContext?: {
+      source: string;
+      lat: number;
+      lng: number;
+      location: string;
+      radius: number;
+    };
+  }
+}
+
 // Test navigation context detection from location pages to find help
 test.describe('Location Navigation Context', () => {
   test.beforeEach(async ({ page }) => {
