@@ -1,8 +1,6 @@
 import { test, expect } from './fixtures/base-test';
 
-// TODO: Re-enable these tests once CMS and database integration is complete
-// SWEP functionality is frontend-ready but depends on backend systems not yet implemented
-test.describe.skip('SWEP (Severe Weather Emergency Protocol) Functionality', () => {
+test.describe('SWEP (Severe Weather Emergency Protocol) Functionality', () => {
   const mockActiveSwepData = {
     id: 'swep-manchester-1',
     locationSlug: 'manchester',
@@ -271,8 +269,7 @@ test.describe.skip('SWEP (Severe Weather Emergency Protocol) Functionality', () 
 
     test('works without image when not provided', async ({ page }) => {
       // Mock SWEP data without image
-      const swepDataWithoutImage = { ...mockActiveSwepData };
-      delete swepDataWithoutImage.image;
+      const { image: _image, ...swepDataWithoutImage } = mockActiveSwepData;
 
       await page.route('**/api/locations/manchester/swep', async (route) => {
         await route.fulfill({

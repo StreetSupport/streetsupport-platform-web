@@ -151,7 +151,7 @@ export default function LocationFindHelp({ locationName, latitude, longitude, ra
     } finally {
       setLoading(false);
     }
-  }, [latitude, longitude, radius]);
+  }, [latitude, longitude, radius, limit]);
 
   // Load services on mount
   useEffect(() => {

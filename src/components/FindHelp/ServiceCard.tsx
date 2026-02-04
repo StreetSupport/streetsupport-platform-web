@@ -193,9 +193,14 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
+              e.nativeEvent.stopImmediatePropagation();
               onToggle();
             }}
-            className="btn-base btn-tertiary btn-sm transition-all duration-200 cursor-pointer hover:scale-105 hover:shadow-sm"
+            onMouseDown={(e) => {
+              // Prevent Link from capturing the click
+              e.stopPropagation();
+            }}
+            className="btn-base btn-tertiary btn-sm transition-all duration-200 cursor-pointer hover:scale-105 hover:shadow-sm relative z-10"
           >
             {isOpen ? 'Show less' : 'Read more'}
           </button>

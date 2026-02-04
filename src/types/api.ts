@@ -2,6 +2,7 @@ export interface RawService {
   _id?: string;
   Address?: {
     Location?: {
+      type?: 'Point';
       coordinates?: [number, number];
     };
   };

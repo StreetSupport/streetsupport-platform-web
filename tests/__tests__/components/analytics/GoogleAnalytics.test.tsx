@@ -12,19 +12,26 @@ jest.mock('next/script', () => {
 });
 
 describe('GoogleAnalytics Component', () => {
-  const originalEnv = process.env;
+  const originalEnv = process.env.NODE_ENV;
 
   beforeEach(() => {
     jest.resetModules();
-    process.env = { ...originalEnv };
   });
 
-  afterAll(() => {
-    process.env = originalEnv;
+  afterEach(() => {
+    Object.defineProperty(process.env, 'NODE_ENV', {
+      value: originalEnv,
+      writable: true,
+      configurable: true,
+    });
   });
 
   it('should render analytics scripts when measurement ID is provided and conditions are met', () => {
-    process.env.NODE_ENV = 'production';
+    Object.defineProperty(process.env, 'NODE_ENV', {
+      value: 'production',
+      writable: true,
+      configurable: true,
+    });
     const measurementId = 'G-YW6NQ7QLBR';
 
     const { container } = render(<GoogleAnalytics measurementId={measurementId} />);
@@ -48,7 +55,11 @@ describe('GoogleAnalytics Component', () => {
   });
 
   it('should not render when no measurement ID is provided', () => {
-    process.env.NODE_ENV = 'production';
+    Object.defineProperty(process.env, 'NODE_ENV', {
+      value: 'production',
+      writable: true,
+      configurable: true,
+    });
 
     const { container } = render(<GoogleAnalytics />);
     
@@ -57,7 +68,11 @@ describe('GoogleAnalytics Component', () => {
   });
 
   it('should not render in development mode unless explicitly enabled', () => {
-    process.env.NODE_ENV = 'development';
+    Object.defineProperty(process.env, 'NODE_ENV', {
+      value: 'development',
+      writable: true,
+      configurable: true,
+    });
     const measurementId = 'G-YW6NQ7QLBR';
 
     const { container } = render(<GoogleAnalytics measurementId={measurementId} />);
@@ -68,7 +83,11 @@ describe('GoogleAnalytics Component', () => {
   });
 
   it('should render when NEXT_PUBLIC_ENABLE_ANALYTICS is true', () => {
-    process.env.NODE_ENV = 'development';
+    Object.defineProperty(process.env, 'NODE_ENV', {
+      value: 'development',
+      writable: true,
+      configurable: true,
+    });
     process.env.NEXT_PUBLIC_ENABLE_ANALYTICS = 'true';
     const measurementId = 'G-YW6NQ7QLBR';
 
@@ -79,7 +98,11 @@ describe('GoogleAnalytics Component', () => {
   });
 
   it('should include proper gtag configuration', () => {
-    process.env.NODE_ENV = 'production';
+    Object.defineProperty(process.env, 'NODE_ENV', {
+      value: 'production',
+      writable: true,
+      configurable: true,
+    });
     const measurementId = 'G-YW6NQ7QLBR';
 
     const { container } = render(<GoogleAnalytics measurementId={measurementId} />);
