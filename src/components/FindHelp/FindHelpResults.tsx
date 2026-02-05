@@ -376,7 +376,7 @@ export default React.memo(function FindHelpResults({
               </div>
             </div>
           ) : sortedGroups.length === 0 ? (
-            <div className="text-center py-8">
+            <div className="text-center py-8" data-testid="no-results">
               <p className="text-gray-600 mb-2">No services found matching your criteria.</p>
               <p className="text-sm text-gray-500">Try adjusting your filters or search in a different area.</p>
             </div>

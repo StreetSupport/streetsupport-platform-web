@@ -105,6 +105,7 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
       }}
       className={`card card-compact ${isLoading ? 'loading-card' : ''}`}
       aria-label={`View details for ${decodedOrgName}`}
+      data-testid="service-card"
     >
       <div className="flex justify-between items-start mb-2">
         <div className="flex items-center gap-2 flex-wrap">
