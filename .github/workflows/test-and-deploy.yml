@@ -53,13 +53,18 @@ jobs:
           echo "Running data fetch (will use fallbacks if MongoDB unavailable)..."
           npm run fetch:all
 
-      # Run tests and build for all PRs and pushes
-      - name: Run tests and build
+      - name: Run unit tests
+        run: npm run test
+
+      - name: Build application
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
-        run: |
-          echo "Running full test suite and build..."
-          npm run build
+        run: npx next build
+
+      - name: Run E2E tests
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        run: npm run test:e2e
 
       # Upload Playwright test results
       - name: Upload Playwright test results
