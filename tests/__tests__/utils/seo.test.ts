@@ -1,15 +1,37 @@
-import {
-  generateCanonicalUrl,
-  generateSEOMetadata,
-  generateLocationSEOMetadata,
-  generateOrganisationSEOMetadata,
-  generateFAQStructuredData,
-  generateLocalBusinessStructuredData,
-  generateServiceStructuredData,
-  generateBreadcrumbStructuredData
-} from '@/utils/seo';
-
 describe('SEO Utilities', () => {
+  const originalEnv = process.env.NEXT_PUBLIC_BASE_URL;
+
+  // Functions will be imported dynamically after setting env
+  let generateCanonicalUrl: typeof import('@/utils/seo').generateCanonicalUrl;
+  let generateSEOMetadata: typeof import('@/utils/seo').generateSEOMetadata;
+  let generateLocationSEOMetadata: typeof import('@/utils/seo').generateLocationSEOMetadata;
+  let generateOrganisationSEOMetadata: typeof import('@/utils/seo').generateOrganisationSEOMetadata;
+  let generateFAQStructuredData: typeof import('@/utils/seo').generateFAQStructuredData;
+  let generateLocalBusinessStructuredData: typeof import('@/utils/seo').generateLocalBusinessStructuredData;
+  let generateServiceStructuredData: typeof import('@/utils/seo').generateServiceStructuredData;
+  let generateBreadcrumbStructuredData: typeof import('@/utils/seo').generateBreadcrumbStructuredData;
+
+  beforeAll(async () => {
+    // Set the base URL before importing
+    process.env.NEXT_PUBLIC_BASE_URL = 'https://streetsupport.net';
+
+    // Reset module cache and re-import
+    jest.resetModules();
+    const seo = await import('@/utils/seo');
+    generateCanonicalUrl = seo.generateCanonicalUrl;
+    generateSEOMetadata = seo.generateSEOMetadata;
+    generateLocationSEOMetadata = seo.generateLocationSEOMetadata;
+    generateOrganisationSEOMetadata = seo.generateOrganisationSEOMetadata;
+    generateFAQStructuredData = seo.generateFAQStructuredData;
+    generateLocalBusinessStructuredData = seo.generateLocalBusinessStructuredData;
+    generateServiceStructuredData = seo.generateServiceStructuredData;
+    generateBreadcrumbStructuredData = seo.generateBreadcrumbStructuredData;
+  });
+
+  afterAll(() => {
+    process.env.NEXT_PUBLIC_BASE_URL = originalEnv;
+  });
+
   describe('generateCanonicalUrl', () => {
     it('should generate correct canonical URLs', () => {
       expect(generateCanonicalUrl('about')).toBe('https://streetsupport.net/about');
@@ -33,7 +55,7 @@ describe('SEO Utilities', () => {
       expect(metadata.alternates?.canonical).toBe('https://streetsupport.net/test');
       expect(metadata.keywords).toContain('test');
       expect(metadata.keywords).toContain('seo');
-      expect(metadata.keywords).toContain('homelessness support'); // Default keyword
+      expect(metadata.keywords).toContain('homelessness support');
     });
 
     it('should generate OpenGraph metadata', () => {
@@ -56,10 +78,11 @@ describe('SEO Utilities', () => {
         description: 'Test description'
       });
 
-      expect(metadata.twitter?.card).toBe('summary_large_image');
-      expect(metadata.twitter?.title).toBe('Test Page | Street Support Network');
-      expect(metadata.twitter?.description).toBe('Test description');
-      expect(metadata.twitter?.site).toBe('@StreetSupport');
+      const twitter = metadata.twitter as { card: string; title: string; description: string; site: string };
+      expect(twitter?.card).toBe('summary_large_image');
+      expect(twitter?.title).toBe('Test Page | Street Support Network');
+      expect(twitter?.description).toBe('Test description');
+      expect(twitter?.site).toBe('@StreetSupport');
     });
 
     it('should handle noIndex and noFollow directives', () => {
@@ -102,8 +125,9 @@ describe('SEO Utilities', () => {
     it('should use location-specific OG image', () => {
       const metadata = generateLocationSEOMetadata('Manchester', 'manchester');
 
-      expect(metadata.openGraph?.images?.[0].url).toBe('/assets/img/og/street-support-manchester.jpg');
-      expect(metadata.openGraph?.images?.[0].alt).toBe('Street Support Manchester');
+      const images = metadata.openGraph?.images as Array<{ url: string; alt: string }>;
+      expect(images?.[0].url).toBe('/assets/img/og/street-support-manchester.jpg');
+      expect(images?.[0].alt).toBe('Street Support Manchester');
     });
   });
 
@@ -159,13 +183,13 @@ describe('SEO Utilities', () => {
           longitude: -2.2426
         };
 
-        const structuredData = generateLocalBusinessStructuredData(org);
+        const structuredData = generateLocalBusinessStructuredData(org) as Record<string, unknown>;
 
         expect(structuredData['@context']).toBe('https://schema.org');
         expect(structuredData['@type']).toBe('NonprofitOrganization');
         expect(structuredData.name).toBe('Test Charity');
-        expect(structuredData.address['@type']).toBe('PostalAddress');
-        expect(structuredData.geo['@type']).toBe('GeoCoordinates');
+        expect((structuredData.address as Record<string, unknown>)['@type']).toBe('PostalAddress');
+        expect((structuredData.geo as Record<string, unknown>)['@type']).toBe('GeoCoordinates');
         expect(structuredData.telephone).toBe('0161 123 4567');
         expect(structuredData.email).toBe('info@testcharity.org');
       });
@@ -182,12 +206,12 @@ describe('SEO Utilities', () => {
           availableChannel: 'https://testcharity.org/emergency-help'
         };
 
-        const structuredData = generateServiceStructuredData(service);
+        const structuredData = generateServiceStructuredData(service) as Record<string, unknown>;
 
         expect(structuredData['@context']).toBe('https://schema.org');
         expect(structuredData['@type']).toBe('Service');
-        expect(structuredData.provider.name).toBe('Test Charity');
-        expect(structuredData.areaServed.name).toBe('Manchester');
+        expect((structuredData.provider as Record<string, unknown>).name).toBe('Test Charity');
+        expect((structuredData.areaServed as Record<string, unknown>)?.name).toBe('Manchester');
       });
     });
 

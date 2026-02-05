@@ -50,7 +50,7 @@ describe('getFaqs', () => {
   });
 
   it('should pass locationKey to the query when provided', async () => {
-    const mockData = [];
+    const mockData: unknown[] = [];
     mockClient.toArray.mockResolvedValueOnce(mockData);
 
     const { getClientPromise } = require('../../../src/utils/mongodb');

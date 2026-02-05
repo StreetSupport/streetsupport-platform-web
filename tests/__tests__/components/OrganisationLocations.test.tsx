@@ -80,7 +80,7 @@ describe('OrganisationLocations', () => {
       key: undefined,
     };
 
-    render(<OrganisationLocations organisation={orgNoSlug as OrganisationDetails} />);
+    render(<OrganisationLocations organisation={orgNoSlug as unknown as OrganisationDetails} />);
     expect((globalThis as any).mapProps.markers[0].organisationSlug).toBe(
       'org-location'
     );

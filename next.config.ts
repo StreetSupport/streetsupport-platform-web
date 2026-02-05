@@ -30,7 +30,12 @@ const nextConfig = {
     minimumCacheTTL: 60,
     
     remotePatterns: [
-      ...(process.env.BLOB_STORAGE_HOSTNAME
+      {
+        protocol: 'https' as const,
+        hostname: 'streetsupportstorageprod.blob.core.windows.net',
+        pathname: '/**',
+      },
+      ...(process.env.BLOB_STORAGE_HOSTNAME && process.env.BLOB_STORAGE_HOSTNAME !== 'streetsupportstorageprod.blob.core.windows.net'
         ? [
           {
             protocol: 'https' as const,

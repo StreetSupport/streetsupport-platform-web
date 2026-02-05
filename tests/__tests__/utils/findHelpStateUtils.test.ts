@@ -17,12 +17,12 @@ const mockSessionStorageRemoveItem = jest.fn();
 const mockDocumentReferrer = jest.fn();
 
 // Mock the functions that depend on browser APIs by creating spies
-let getURLSearchParamsSpy: jest.SpyInstance;
-let updateURLSearchParamsSpy: jest.SpyInstance;
-let saveSearchStateSpy: jest.SpyInstance;
-let loadSearchStateSpy: jest.SpyInstance;
-let clearSearchStateSpy: jest.SpyInstance;
-let isFromOrganisationPageSpy: jest.SpyInstance;
+let getURLSearchParamsSpy: jest.SpyInstance | undefined;
+let updateURLSearchParamsSpy: jest.SpyInstance | undefined;
+let saveSearchStateSpy: jest.SpyInstance | undefined;
+let loadSearchStateSpy: jest.SpyInstance | undefined;
+let clearSearchStateSpy: jest.SpyInstance | undefined;
+let isFromOrganisationPageSpy: jest.SpyInstance | undefined;
 
 describe('findHelpStateUtils', () => {
   beforeEach(() => {

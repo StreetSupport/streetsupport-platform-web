@@ -6,7 +6,7 @@ describe('fetch-client-groups script output', () => {
     const data = JSON.parse(raw);
 
     expect(Array.isArray(data)).toBe(true);
-    data.forEach(group => {
+    data.forEach((group: { _id: string; key: string; name: string }) => {
       expect(group).toHaveProperty('_id');
       expect(group).toHaveProperty('key');
       expect(group).toHaveProperty('name');
