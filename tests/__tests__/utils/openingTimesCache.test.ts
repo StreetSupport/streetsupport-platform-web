@@ -10,26 +10,28 @@ jest.mock('@/utils/openingTimes', () => ({
 const mockIsServiceOpenNow = isServiceOpenNow as jest.MockedFunction<typeof isServiceOpenNow>;
 
 describe('OpeningTimesCache', () => {
-  const mockService: ServiceWithDistance = {
+  const mockService = {
     id: 'test-service-1',
     name: 'Test Service',
     description: 'A test service',
     category: 'meals',
-    location: {
-      streetAddress: '123 Test St',
-      city: 'Manchester',
-      postcode: 'M1 1AA',
-      latitude: 53.4808,
-      longitude: -2.2426,
+    subCategory: 'breakfast',
+    organisation: { name: 'Test Org', slug: 'test-org' },
+    address: {
+      Street: '123 Test St',
+      City: 'Manchester',
+      Postcode: 'M1 1AA',
     },
+    latitude: 53.4808,
+    longitude: -2.2426,
     distance: 0.5,
-    organisation_id: 'test-org',
-    openingTimes: [],
-    tags: [],
-  };
+    openTimes: [],
+    clientGroups: [],
+  } as unknown as ServiceWithDistance;
 
   const mockOpeningStatus = {
     isOpen: true,
+    isAppointmentOnly: false,
     nextChange: null,
     statusText: 'Open now',
   };
@@ -245,6 +247,7 @@ describe('OpeningTimesCache', () => {
     it('should cache different opening statuses correctly', () => {
       const closedStatus = {
         isOpen: false,
+        isAppointmentOnly: false,
         nextChange: new Date(),
         statusText: 'Closed',
       };

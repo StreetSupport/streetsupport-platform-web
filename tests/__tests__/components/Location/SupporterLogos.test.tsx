@@ -64,11 +64,12 @@ const mockSupportersData: Record<string, any[]> = {
 
 // Mock global fetch
 beforeEach(() => {
-  global.fetch = jest.fn((url: string) => {
+  global.fetch = jest.fn().mockImplementation((input: RequestInfo | URL) => {
+    const url = typeof input === 'string' ? input : input.toString();
     const match = url.match(/\/api\/locations\/(.+)\/logos/);
     const locationSlug = match ? match[1] : '';
     const data = mockSupportersData[locationSlug] || [];
-    
+
     return Promise.resolve({
       ok: true,
       json: async () => ({
@@ -76,7 +77,7 @@ beforeEach(() => {
         data
       })
     } as Response);
-  });
+  }) as jest.Mock;
 });
 
 afterEach(() => {

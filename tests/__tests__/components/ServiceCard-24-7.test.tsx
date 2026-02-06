@@ -16,9 +16,13 @@ const mockUseSearchParams = useSearchParams as jest.MockedFunction<typeof useSea
 const mockLocationContextValue = {
   location: null,
   setLocation: jest.fn(),
+  setLocationFromCoordinates: jest.fn(),
   updateRadius: jest.fn(),
+  requestLocation: jest.fn(),
   clearLocation: jest.fn(),
+  error: null,
   isLoading: false,
+  clearError: jest.fn(),
 };
 
 describe('ServiceCard 24/7 functionality', () => {

@@ -9,6 +9,7 @@ export interface Address {
     };
   };
   Location?: {
+    type?: 'Point';
     coordinates?: [number, number];
   };
   Street?: string;

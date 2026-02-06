@@ -28,7 +28,7 @@ export interface LocationError {
   message: string;
 }
 
-interface LocationContextType {
+export interface LocationContextType {
   location: LocationState | null;
   setLocation: (location: LocationState) => void;
   setLocationFromCoordinates: (coords: { lat: number; lng: number; label?: string; radius?: number; source: LocationSource; slug?: string }) => void;
