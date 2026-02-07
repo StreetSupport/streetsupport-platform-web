@@ -22,7 +22,7 @@ export default function CookiePolicyPage() {
       <section className="bg-brand-i py-12">
         <div className="content-container">
           <h1 className="heading-1 text-white">Cookie Policy</h1>
-          <p className="mt-2 text-white"><span className="italic">Effective date: 22 January 2026</span></p>
+          <p className="mt-2 text-white"><span className="italic">Effective date: 7 February 2026</span></p>
         </div>
       </section>
 
@@ -43,6 +43,11 @@ export default function CookiePolicyPage() {
                 Manage Cookie Preferences
               </button>
             </div>
+
+            <section className="mb-8">
+              <p className="text-body mb-4">The UK Data (Use and Access) Act 2025, which came into force on 5 February 2026, introduced a statutory exception allowing the use of analytics cookies without prior consent, provided that users are clearly informed and given a straightforward way to opt out. We rely on this lawful basis for our analytics cookies.</p>
+              <p className="text-body">Functional cookies (such as the Watson Assistant chat widget) continue to require your explicit consent before being set.</p>
+            </section>
 
             <h2 className="heading-2 mb-6 text-brand-l">Types of Cookies We Use</h2>
 
@@ -89,7 +94,7 @@ export default function CookiePolicyPage() {
             <section className="mb-8">
               <h3 className="heading-3 mb-4">2. Analytics Cookies</h3>
               <p className="text-body mb-4">These cookies help us analyse website traffic and user behaviour, allowing us to improve the performance and functionality of our site. We use Google Analytics for this purpose.</p>
-              <p className="text-body mb-4">You can choose to accept or reject these cookies.</p>
+              <p className="text-body mb-4">Under the UK Data (Use and Access) Act 2025, analytics cookies are active by default as they fall within the statutory exception for audience measurement. You do not need to give prior consent for these cookies, but you can opt out at any time via the cookie notice banner or by clicking &quot;Manage Cookie Preferences&quot; above.</p>
 
               <div className="overflow-x-auto my-4">
                 <table className="min-w-full border border-brand-f text-sm">
@@ -135,7 +140,7 @@ export default function CookiePolicyPage() {
             <section className="mb-8">
               <h3 className="heading-3 mb-4">3. Functional Cookies</h3>
               <p className="text-body mb-4">These cookies enable additional features and functionality on our website, such as the Watson Assistant chat widget that provides automated help for users in certain locations.</p>
-              <p className="text-body mb-4">You can choose to accept or reject these cookies.</p>
+              <p className="text-body mb-4">Unlike analytics cookies, functional cookies are not covered by the DUAA statutory exception and require your explicit consent before being set. They are disabled by default.</p>
 
               <div className="overflow-x-auto my-4">
                 <table className="min-w-full border border-brand-f text-sm">
@@ -161,7 +166,13 @@ export default function CookiePolicyPage() {
 
             <section className="mb-8">
               <h2 className="heading-2 mb-6 text-brand-l">Managing Your Cookie Preferences</h2>
-              <p className="text-body">You can control your cookie preferences through our cookie consent banner, which appears when you first visit our site, or by clicking the &quot;Manage Cookie Preferences&quot; button at the top of this page. You can also access your cookie settings at any time via the &quot;Cookie Settings&quot; link in the footer of our website.</p>
+              <p className="text-body mb-4">When you first visit our site, a cookie notice banner informs you that analytics cookies are active by default. From the banner you can:</p>
+              <ul className="list-disc pl-6 space-y-2 text-body mb-4">
+                <li><strong>OK</strong> — accept the defaults (analytics on, functional off) and dismiss the notice</li>
+                <li><strong>Opt Out</strong> — disable all optional cookies and dismiss the notice</li>
+                <li><strong>Manage Preferences</strong> — open a dialog to choose exactly which cookie categories to enable or disable</li>
+              </ul>
+              <p className="text-body">You can revisit your preferences at any time by clicking the &quot;Manage Cookie Preferences&quot; button at the top of this page, or via the &quot;Cookie Settings&quot; link in the footer of our website.</p>
             </section>
 
             <section className="mb-8">

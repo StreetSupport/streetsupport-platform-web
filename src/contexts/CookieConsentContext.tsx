@@ -70,7 +70,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const hasConsent = useCallback((category: CookieCategory): boolean => {
-    if (!consentState) return category === 'necessary';
+    if (!consentState) return category === 'necessary' || category === 'analytics';
     return consentState.categories[category];
   }, [consentState]);
 
@@ -105,7 +105,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
   const updateConsent = useCallback((categories: Partial<ConsentState['categories']>) => {
     const currentCategories = consentState?.categories || {
       necessary: true,
-      analytics: false,
+      analytics: true,
       functional: false,
     };
 
