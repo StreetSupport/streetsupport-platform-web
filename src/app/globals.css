@@ -1,6 +1,24 @@
 
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Museo Sans';
+  src: url('/assets/fonts/MuseoSansRounded-300-webfont.woff2') format('woff2'),
+       url('/assets/fonts/MuseoSansRounded-300-webfont.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Museo Sans';
+  src: url('/assets/fonts/MuseoSansRounded-500-webfont.woff2') format('woff2'),
+       url('/assets/fonts/MuseoSansRounded-500-webfont.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --color-brand-a: #38ae8e;
   --color-brand-b: #0b9b75;
@@ -290,7 +308,7 @@
 
 /* Card System */
 .card {
-  @apply bg-white border border-brand-q rounded-md shadow-sm transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02] cursor-pointer;
+  @apply bg-white border border-brand-q rounded-md shadow-sm transition-transform duration-300 ease-out hover:shadow-lg hover:-translate-y-1 hover:scale-[1.02] cursor-pointer;
 }
 
 .card-featured {
@@ -583,518 +601,6 @@
   box-shadow: 0 0 0 2px #38ae8e;
 }
 
-/* Location-Specific Hero Banner Styling */
-/* 
-LOCATION CUSTOMIZATION GUIDE:
-Each location banner can be customized using the pattern: .hero-location-{slug}
-
-Available CSS properties for customization:
-- background-position: Controls image positioning (left/center/right + top/center/bottom)
-- background-size: Controls image scaling (cover, contain, or percentage like 110%)
-- opacity: Controls image transparency (0.0 - 1.0)
-
-Examples:
-.hero-location-manchester {
-  background-position: center bottom;  // Centers horizontally, aligns to bottom
-  background-size: cover;             // Fills entire area, may crop
-}
-
-.hero-location-birmingham {
-  background-position: left center;   // Aligns to left, centers vertically  
-  background-size: 110%;             // Scales image to 110% (slight zoom)
-}
-
-.hero-location-glasgow {
-  background-position: center top;    // Centers horizontally, aligns to top
-  background-size: contain;          // Shows entire image, may show gaps
-  opacity: 0.8;                     // Makes image 80% opaque
-}
-
-Location slug mappings (found in /src/app/[slug]/page.tsx):
-- bournemouth → bournemouth-pier-tile
-- wigan-leigh → wigan-and-leigh
-- All other locations use their slug directly
-
-Responsive breakpoints:
-- Base (mobile): Default styles
-- @media (min-width: 768px): Tablet adjustments
-- @media (min-width: 1024px): Desktop adjustments
-*/
-
-/* Base location overlay styles - fallback for all locations */
-.hero-location-overlay {
-  background-size: 0;
-  background-position: center bottom;
-  background-repeat: no-repeat;
-  width: 100%;
-  height: 98%;
-  left: 0;
-  transform: none;
-}
-
-@media (min-width: 768px) {
-  .hero-location-overlay {
-    background-size: 70%;
-  }
-}
-
-/* Individual location customizations - adjust as needed for each location */
-
-.hero-location-birmingham {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-birmingham {
-    background-size: 75%;
-    width: 100%;
-    height: 96%;
-    bottom: 8px;
-  }
-}
-
-.hero-location-manchester {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-manchester {
-    background-size: 70%;
-    width: 100%;
-    height: 99.5%;
-    bottom: 5px;
-  }
-}
-
-.hero-location-leeds {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-leeds {
-    background-size: 70%;
-    width: 100%;
-    height: 99%;
-    bottom: 10px;
-  }
-}
-
-.hero-location-liverpool {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-liverpool {
-    background-size: 60%;
-    width: 100%;
-    height: 97%;
-    bottom: 6px;
-  }
-}
-
-.hero-location-glasgow {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-glasgow {
-    background-size: 75%;
-    width: 100%;
-    height: 98%;
-    bottom: 8px;
-  }
-}
-
-.hero-location-edinburgh {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-edinburgh {
-    background-size: 85%;
-    width: 100%;
-    height: 135%;
-    bottom: 7px;
-  }
-}
-
-.hero-location-nottingham {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-nottingham {
-    background-size: 70%;
-    width: 100%;
-    height: 96%;
-    bottom: 10px;
-  }
-}
-
-.hero-location-brighton-and-hove {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-brighton-and-hove {
-    background-size: 50%;
-    width: 100%;
-    height: 99%;
-    bottom: 8px;
-  }
-}
-
-.hero-location-blackpool {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-blackpool {
-    background-size: 45%;
-    width: 100%;
-    height: 98%;
-    bottom: 12px;
-  }
-}
-
-.hero-location-bolton {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-bolton {
-    background-size: 70%;
-    width: 100%;
-    height: 99%;
-    bottom: 10px;
-  }
-}
-
-.hero-location-bournemouth {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-bournemouth {
-    background-size: 75%;
-    width: 100%;
-    height: 85%;
-    bottom: 8px;
-  }
-}
-
-.hero-location-bradford {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-bradford {
-    background-size: 70%;
-    width: 100%;
-    height: 85%;
-    bottom: 10px;
-  }
-}
-
-.hero-location-bury {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-bury {
-    background-size: 80%;
-    width: 100%;
-    height: 99%;
-    bottom: 8px;
-  }
-}
-
-.hero-location-cambridgeshire {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-cambridgeshire {
-    background-size: 60%;
-    width: 100%;
-    height: 96%;
-    bottom: 7px;
-  }
-}
-
-.hero-location-chelmsford {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-chelmsford {
-    background-size: 70%;
-    width: 100%;
-    height: 96%;
-    bottom: 8px;
-  }
-}
-
-.hero-location-coventry {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-coventry {
-    background-size: 70%;
-    width: 100%;
-    height: 98%;
-    bottom: 10px;
-  }
-}
-
-.hero-location-derbyshire {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-derbyshire {
-    background-size: 75%;
-    width: 100%;
-    height: 98%;
-    bottom: 8px;
-  }
-}
-
-.hero-location-dudley {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-dudley {
-    background-size: 70%;
-    width: 100%;
-    height: 94%;
-    bottom: 10px;
-  }
-}
-
-.hero-location-exeter {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-exeter {
-    background-size: 75%;
-    width: 100%;
-    height: 85%;
-    bottom: 8px;
-  }
-}
-
-.hero-location-luton {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-luton {
-    background-size: 80%;
-    width: 100%;
-    height: 96%;
-    bottom: 10px;
-  }
-}
-
-.hero-location-oldham {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-oldham {
-    background-size: 75%;
-    width: 100%;
-    height: 100%;
-    bottom: 8px;
-  }
-}
-
-.hero-location-portsmouth {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-portsmouth {
-    background-size: 80%;
-    width: 100%;
-    height: 87%;
-    bottom: 7px;
-  }
-}
-
-.hero-location-reading {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-reading {
-    background-size: 50%;
-    width: 100%;
-    height: 105%;
-    bottom: 8px;
-  }
-}
-
-.hero-location-rochdale {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-rochdale {
-    background-size: 75%;
-    width: 100%;
-    height: 106%;
-    bottom: 10px;
-  }
-}
-
-.hero-location-salford {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-salford {
-    background-size: 55%;
-    width: 100%;
-    height: 115%;
-    bottom: 8px;
-  }
-}
-
-.hero-location-sandwell {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-sandwell {
-    background-size: 80%;
-    width: 100%;
-    height: 98%;
-    bottom: 10px;
-  }
-}
-
-.hero-location-solihull {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-solihull {
-    background-size: 75%;
-    width: 100%;
-    height: 98%;
-    bottom: 8px;
-  }
-}
-
-.hero-location-southampton {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-southampton {
-    background-size: 90%;
-    width: 100%;
-    height: 97%;
-    bottom: 7px;
-  }
-}
-
-.hero-location-stockport {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-stockport {
-    background-size: 75%;
-    width: 100%;
-    height: 96%;
-    bottom: 8px;
-  }
-}
-
-.hero-location-tameside {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-tameside {
-    background-size: 60%;
-    width: 100%;
-    height: 98%;
-    bottom: 10px;
-  }
-}
-
-.hero-location-trafford {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-trafford {
-    background-size: 60%;
-    width: 100%;
-    height: 103%;
-    bottom: 8px;
-  }
-}
-
-.hero-location-wakefield {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-wakefield {
-    background-size: 70%;
-    width: 100%;
-    height: 120%;
-    bottom: 10px;
-  }
-}
-
-.hero-location-walsall {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-walsall {
-    background-size: 80%;
-    width: 100%;
-    height: 98%;
-    bottom: 8px;
-  }
-}
-
-.hero-location-wigan-and-leigh {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-wigan-and-leigh {
-    background-size: 60%;
-    width: 100%;
-    height: 99%;
-    bottom: 10px;
-  }
-}
-
-.hero-location-wolverhampton {
-  background-size: 0;
-}
-
-@media (min-width: 768px) {
-  .hero-location-wolverhampton {
-    background-size: 60%;
-    width: 100%;
-    height: 98%;
-    bottom: 8px;
-  }
-}
-
 /* SWEP Banner Styles */
 .swep-banner {
   position: relative;
@@ -1182,19 +688,21 @@ a.inline-flex[class*="bg-brand-"]:active {
 /* Mobile Menu Animations */
 .mobile-menu-container {
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .mobile-menu-closed {
   max-height: 0;
   opacity: 0;
   transform: translateY(-10px);
+  pointer-events: none;
 }
 
 .mobile-menu-open {
   max-height: 100vh;
   opacity: 1;
   transform: translateY(0);
+  pointer-events: auto;
 }
 
 .mobile-menu {
@@ -1231,12 +739,10 @@ a.inline-flex[class*="bg-brand-"]:active {
 @keyframes slideDown {
   from {
     opacity: 0;
-    max-height: 0;
     transform: translateY(-10px);
   }
   to {
     opacity: 1;
-    max-height: 80vh;
     transform: translateY(0);
   }
 }
@@ -1554,12 +1060,10 @@ select:disabled {
 .statistics-value {
   font-family: 'Museo Sans', Arial, sans-serif;
   font-weight: 700;
-  color: #ffec83;
   text-shadow: 0 4px 16px rgba(0,0,0,0.22);
 }
 
 .statistics-title {
     font-family: 'Museo Sans', Arial, sans-serif;
     font-weight: 500;
-    color: #ffff;
 }
