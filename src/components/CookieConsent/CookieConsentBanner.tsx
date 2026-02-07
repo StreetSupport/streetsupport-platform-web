@@ -14,7 +14,7 @@ export default function CookieConsentBanner() {
     <div
       className="fixed bottom-0 left-0 right-0 z-50 bg-brand-q border-t border-brand-f shadow-lg"
       role="dialog"
-      aria-modal="false"
+      aria-modal="true"
       aria-label="Cookie consent"
     >
       <div className="page-container py-4 md:py-6">
