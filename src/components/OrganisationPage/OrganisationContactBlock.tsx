@@ -67,6 +67,19 @@ export default function OrganisationContactBlock({ organisation }: Props) {
             </a>
           </li>
         )}
+        {organisation.instagram && (
+          <li>
+            <strong>Instagram:</strong>{' '}
+            <a
+              href={organisation.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand-h underline"
+            >
+              {organisation.instagram}
+            </a>
+          </li>
+        )}
         {organisation.bluesky && (
           <li>
             <strong>Bluesky:</strong>{' '}

@@ -48,7 +48,7 @@ export default function ResourcesPage() {
                 <h3 className="heading-5">Alternative Giving</h3>
               </div>
               <p className="text-small mb-6 flex-grow">What it means to give differently, and why you should be thinking about it.</p>
-              <Link href="/resources/alternative-giving" className="btn-base btn-primary btn-md w-full mt-auto">
+              <Link href="/resources/alternative-giving" className="btn-base btn-primary btn-md w-full mt-auto" aria-label="Learn more about alternative giving">
                 Learn more
               </Link>
             </article>
@@ -67,7 +67,7 @@ export default function ResourcesPage() {
                 <h3 className="heading-5">Effective Volunteering</h3>
               </div>
               <p className="text-small mb-6 flex-grow">How to make the most impact with your volunteering.</p>
-              <Link href="/resources/effective-volunteering" className="btn-base btn-primary btn-md w-full mt-auto">
+              <Link href="/resources/effective-volunteering" className="btn-base btn-primary btn-md w-full mt-auto" aria-label="Learn more about effective volunteering">
                 Learn more
               </Link>
             </article>
@@ -86,7 +86,7 @@ export default function ResourcesPage() {
                 <h3 className="heading-5">Homelessness Charters</h3>
               </div>
               <p className="text-small mb-6 flex-grow">What is a Homelessness Charter, and do you need one?</p>
-              <Link href="/resources/charters" className="btn-base btn-primary btn-md w-full mt-auto">
+              <Link href="/resources/charters" className="btn-base btn-primary btn-md w-full mt-auto" aria-label="Learn more about homelessness charters">
                 Learn more
               </Link>
             </article>
@@ -105,7 +105,7 @@ export default function ResourcesPage() {
                 <h3 className="heading-5">Street Feeding</h3>
               </div>
               <p className="text-small mb-6 flex-grow">Our stance on Street Feeding for sustainable support and change.</p>
-              <Link href="/resources/street-feeding-groups" className="btn-base btn-primary btn-md w-full mt-auto">
+              <Link href="/resources/street-feeding-groups" className="btn-base btn-primary btn-md w-full mt-auto" aria-label="Learn more about street feeding">
                 Learn more
               </Link>
             </article>
@@ -132,7 +132,7 @@ export default function ResourcesPage() {
                 <h3 className="heading-5">Branding</h3>
               </div>
               <p className="text-small mb-6 flex-grow">Guidelines to adapt and align with the Street Support Network identity.</p>
-              <Link href="/resources/branding" className="btn-base btn-primary btn-md w-full mt-auto">
+              <Link href="/resources/branding" className="btn-base btn-primary btn-md w-full mt-auto" aria-label="Learn more about branding">
                 Learn more
               </Link>
             </article>
@@ -151,7 +151,7 @@ export default function ResourcesPage() {
                 <h3 className="heading-5">Partnership Communications</h3>
               </div>
               <p className="text-small mb-6 flex-grow">How to make the most of being part of Street Support Network.</p>
-              <Link href="/resources/partnership-comms" className="btn-base btn-primary btn-md w-full mt-auto">
+              <Link href="/resources/partnership-comms" className="btn-base btn-primary btn-md w-full mt-auto" aria-label="Learn more about partnership communications">
                 Learn more
               </Link>
             </article>
@@ -170,7 +170,7 @@ export default function ResourcesPage() {
                 <h3 className="heading-5">Marketing</h3>
               </div>
               <p className="text-small mb-6 flex-grow">Strategies to raise awareness and engage your community effectively.</p>
-              <Link href="/resources/marketing" className="btn-base btn-primary btn-md w-full mt-auto">
+              <Link href="/resources/marketing" className="btn-base btn-primary btn-md w-full mt-auto" aria-label="Learn more about marketing">
                 Learn more
               </Link>
             </article>
@@ -189,7 +189,7 @@ export default function ResourcesPage() {
                 <h3 className="heading-5">User Guides</h3>
               </div>
               <p className="text-small mb-6 flex-grow">Step-by-step documentation to help you manage and update organisation data effortlessly.</p>
-              <Link href="/resources/user-guides" className="btn-base btn-primary btn-md w-full mt-auto">
+              <Link href="/resources/user-guides" className="btn-base btn-primary btn-md w-full mt-auto" aria-label="Learn more about user guides">
                 Learn more
               </Link>
             </article>

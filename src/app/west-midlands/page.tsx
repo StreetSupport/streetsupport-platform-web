@@ -47,7 +47,7 @@ const westMidlandsLocations = [
   { name: 'Wolverhampton', slug: 'wolverhampton', image: '/assets/img/locations/wolverhampton.png' }
 ];
 
-export default function WestMidlandsPage() {
+export default async function WestMidlandsPage() {
   return (
     <>
       <Breadcrumbs 
