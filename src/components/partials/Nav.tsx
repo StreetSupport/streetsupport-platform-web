@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import rawLocations from '@/data/locations.json';
 import { clearSearchState } from '@/utils/findHelpStateUtils';
 
@@ -16,6 +17,7 @@ interface Location {
 const locations = rawLocations.filter(loc => loc.isPublic) as Location[];
 
 export default function Nav() {
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLocationsOpen, setIsLocationsOpen] = useState(false);
   const [mobileLocationsOpen, setMobileLocationsOpen] = useState(false);
@@ -77,7 +79,9 @@ export default function Nav() {
         if (focusedLocationIndex >= 0) {
           const focusedLocation = sortedLocations[focusedLocationIndex];
           if (focusedLocation) {
-            window.location.href = `/${focusedLocation.slug}`;
+            setIsLocationsOpen(false);
+            setFocusedLocationIndex(-1);
+            router.push(`/${focusedLocation.slug}`);
           }
         }
         break;
@@ -295,7 +299,7 @@ export default function Nav() {
                 className="nav-link focus:outline-none focus:ring-2 focus:ring-brand-a rounded flex items-center gap-1"
                 onMouseEnter={handleAboutMouseEnter}
                 onMouseLeave={handleAboutMouseLeave}
-                onClick={() => window.location.href = '/about'}
+                onClick={() => { setIsAboutOpen(false); router.push('/about'); }}
               >
                 About
                 <svg className={`w-4 h-4 transition-transform duration-200 ${isAboutOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
