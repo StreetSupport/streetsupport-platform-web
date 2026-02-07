@@ -125,6 +125,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <meta httpEquiv="x-ua-compatible" content="ie=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         
+        {/* Preload LCP hero image for faster discovery */}
+        <link rel="preload" as="image" href="/assets/img/home-header-background.png" />
+
         {/* Preconnect to external domains for performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -149,11 +152,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
       </head>
       <body>
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:bg-white focus:px-4 focus:py-2 focus:text-brand-a">
+          Skip to main content
+        </a>
         <CookieConsentProvider>
           <ConditionalGoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
           <LocationProvider>
             <FindHelpStateCleanup />
             <Nav />
+            <div id="main-content" />
             {children}
             <SiteFooter />
           </LocationProvider>

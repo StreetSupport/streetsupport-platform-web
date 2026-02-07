@@ -46,7 +46,7 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     
     // Minimize layout shift by enforcing size requirements
-    minimumCacheTTL: 60,
+    minimumCacheTTL: 31536000,
     
     remotePatterns: [
       {
