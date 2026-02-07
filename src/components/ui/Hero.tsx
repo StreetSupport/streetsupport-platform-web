@@ -30,6 +30,15 @@ export default function Hero({
 
   // Generate location-specific CSS class (removed unused variables)
 
+  // Per-location overlay adjustments (scale + vertical shift)
+  const overlayAdjustments: Record<string, { transform: string; transformOrigin: string }> = {
+    wakefield: { transform: 'scale(1.2) translateY(19%)', transformOrigin: 'center bottom' },
+    rochdale: { transform: 'scale(1.0) translateY(9%)', transformOrigin: 'center bottom' },
+    salford: { transform: 'scale(1.1) translateY(14.3%)', transformOrigin: 'center bottom' },
+    edinburgh: { transform: 'scale(1.2) translateY(16%)', transformOrigin: 'center bottom' },
+  };
+  const overlayStyle = locationSlug ? overlayAdjustments[locationSlug] : undefined;
+
   // Check if this is a coastal location that needs sea-tile overlay
   const coastalLocations = ['brighton-and-hove', 'blackpool', 'bournemouth', 'portsmouth', 'southampton', 'edinburgh', 'glasgow'];
   const isCoastal = locationSlug && coastalLocations.includes(locationSlug);
@@ -67,7 +76,10 @@ export default function Hero({
         <>
           {/* Dark grey strip at bottom to fill gaps in layered images */}
           <div className="absolute bottom-0 left-0 right-0 h-5 bg-gray-700 z-[5]" />
-          <div className="absolute inset-0 z-10">
+          <div
+            className="absolute inset-0 z-10"
+            style={overlayStyle || undefined}
+          >
             <Image
               src={overlayImage}
               alt={`${title} overlay`}
