@@ -1,4 +1,7 @@
-// ✅ src/utils/htmlDecode.ts
+export function isHtmlContent(content: string): boolean {
+  if (!content) return false;
+  return /<(p|strong|em|a\s|ul|ol|li|br\s*\/?)[\s>]/i.test(content);
+}
 
 export function decodeHtmlEntities(str: string): string {
   if (!str) return '';

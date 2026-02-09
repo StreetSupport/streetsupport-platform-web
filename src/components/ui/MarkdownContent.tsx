@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { decodeHtmlEntities } from '@/utils/htmlDecode';
+import { decodeHtmlEntities, isHtmlContent } from '@/utils/htmlDecode';
+import { sanitiseDescription } from '@/utils/sanitiseHtml';
 
 interface MarkdownContentProps {
   content: string;
@@ -108,8 +109,14 @@ function processSimpleMarkdown(text: string): string {
 }
 
 export default function MarkdownContent({ content, className = '' }: MarkdownContentProps) {
-  const decodedContent = decodeHtmlEntities(content);
-  const processedContent = processSimpleMarkdown(decodedContent);
+  let processedContent: string;
+
+  if (isHtmlContent(content)) {
+    processedContent = sanitiseDescription(content);
+  } else {
+    const decodedContent = decodeHtmlEntities(content);
+    processedContent = processSimpleMarkdown(decodedContent);
+  }
   
   return (
     <div 
