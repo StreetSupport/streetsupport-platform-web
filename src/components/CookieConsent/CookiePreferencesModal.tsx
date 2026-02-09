@@ -75,7 +75,7 @@ export default function CookiePreferencesModal() {
       setAnalyticsEnabled(consentState.categories.analytics);
       setFunctionalEnabled(consentState.categories.functional);
     } else {
-      setAnalyticsEnabled(false);
+      setAnalyticsEnabled(true);
       setFunctionalEnabled(false);
     }
   }, [consentState, isPreferencesOpen]);
@@ -207,8 +207,9 @@ export default function CookiePreferencesModal() {
         <div className="px-6 py-4">
           <p className="text-sm text-brand-l mb-6">
             We use cookies to enhance your browsing experience and analyse site traffic.
-            You can choose which categories of cookies you allow below. Note that disabling
-            some cookies may affect your experience on the site.
+            Under the UK Data (Use and Access) Act 2025, analytics cookies are enabled by
+            default and do not require prior consent. You can opt out of analytics cookies
+            below. Functional cookies still require your consent.
           </p>
 
           <div>
@@ -224,7 +225,7 @@ export default function CookiePreferencesModal() {
             <CategoryToggle
               id="analytics-cookies"
               label="Analytics"
-              description="Help us understand how visitors interact with our website. We use Google Analytics to collect anonymous usage data."
+              description="Help us understand how visitors interact with our website. We use Google Analytics to collect anonymous usage data. Under UK law, these cookies are active by default. You can opt out here."
               checked={analyticsEnabled}
               onChange={setAnalyticsEnabled}
             />

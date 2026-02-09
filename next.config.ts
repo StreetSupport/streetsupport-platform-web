@@ -3,6 +3,25 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
 const nextConfig = {
+  async redirects() {
+    return [
+      {
+        source: '/wm',
+        destination: '/west-midlands',
+        permanent: true,
+      },
+      {
+        source: '/westmids',
+        destination: '/west-midlands',
+        permanent: true,
+      },
+      {
+        source: '/westmidlands',
+        destination: '/west-midlands',
+        permanent: true,
+      },
+    ];
+  },
   reactStrictMode: true,
   env: {
     NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,

@@ -10,6 +10,7 @@ import { CookieConsentProvider } from '../contexts/CookieConsentContext';
 import FindHelpStateCleanup from '../components/FindHelp/FindHelpStateCleanup';
 import ConditionalGoogleAnalytics from '../components/analytics/ConditionalGoogleAnalytics';
 import { CookieConsentBanner, CookiePreferencesModal } from '../components/CookieConsent';
+import ProgressBar from '../components/ui/ProgressBar';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://streetsupport.net";
 
@@ -152,6 +153,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
       </head>
       <body>
+        <ProgressBar />
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:bg-white focus:px-4 focus:py-2 focus:text-brand-a">
           Skip to main content
         </a>

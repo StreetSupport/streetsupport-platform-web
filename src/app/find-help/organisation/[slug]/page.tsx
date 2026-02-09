@@ -142,9 +142,15 @@ async function fetchOrganisationData(slug: string, searchParams?: { [key: string
   }
   
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+
     const res = await fetch(url.toString(), {
       cache: 'no-store',
+      signal: controller.signal,
     });
+
+    clearTimeout(timeout);
     
     if (!res.ok) {
       return null;

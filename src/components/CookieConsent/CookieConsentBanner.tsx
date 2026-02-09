@@ -10,18 +10,27 @@ export default function CookieConsentBanner() {
     return null;
   }
 
+  const handleOk = () => {
+    acceptAll();
+  };
+
+  const handleOptOut = () => {
+    rejectAll();
+  };
+
   return (
     <div
       className="fixed bottom-0 left-0 right-0 z-50 bg-brand-q border-t border-brand-f shadow-lg"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Cookie consent"
+      role="status"
+      aria-label="Cookie notice"
     >
       <div className="page-container py-4 md:py-6">
         <div className="flex flex-col gap-4">
           <div className="text-sm text-brand-k">
             <p>
-              We use cookies to improve your experience and analyse site usage.{' '}
+              We use analytics cookies to understand how visitors use our site and to help us improve it.
+              Under UK law, these cookies are active by default and do not require prior consent.
+              You can opt out at any time.{' '}
               <Link
                 href="/about/privacy-and-data/cookie-policy"
                 className="text-brand-a hover:text-brand-b underline"
@@ -41,17 +50,17 @@ export default function CookieConsentBanner() {
             </button>
             <button
               type="button"
-              onClick={rejectAll}
+              onClick={handleOptOut}
               className="btn-base btn-secondary btn-sm order-2"
             >
-              Reject All
+              Opt Out
             </button>
             <button
               type="button"
-              onClick={acceptAll}
+              onClick={handleOk}
               className="btn-base btn-primary btn-sm order-1 sm:order-3"
             >
-              Accept All
+              OK
             </button>
           </div>
         </div>
