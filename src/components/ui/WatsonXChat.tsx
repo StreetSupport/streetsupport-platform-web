@@ -18,10 +18,6 @@ declare global {
       clientVersion?: string;
       onLoad: (instance: WatsonAssistantInstance) => Promise<void>;
     };
-    watsonAssistantInstance?: {
-      // The web chat instance exposes a destroy() method that removes all UI
-      destroy: () => void;
-    } | null;
   }
 }
 
@@ -40,10 +36,37 @@ interface WatsonXChatProps {
   locationSlug?: string;
 }
 
+// Module-level state — survives React Strict Mode unmount/remount cycles.
+// The Watson SDK script is a one-shot global resource that cannot be safely
+// removed and re-added, so we track it outside the component lifecycle.
+let watsonInstance: WatsonAssistantInstance | null = null;
+let scriptAdded = false;
+let pendingCleanup: ReturnType<typeof setTimeout> | null = null;
+
+function doCleanup() {
+  pendingCleanup = null;
+  if (watsonInstance) {
+    try {
+      watsonInstance.destroy();
+    } catch (error) {
+      console.error('Error destroying Watson Assistant instance', error);
+    }
+    watsonInstance = null;
+  }
+  scriptAdded = false;
+  delete window.watsonAssistantChatOptions;
+  const existing = document.querySelector(
+    'script[src*="WatsonAssistantChatEntry.js"]'
+  );
+  if (existing) {
+    existing.remove();
+  }
+}
+
 /**
  * WatsonX Chat component for West Midlands locations
  * Injects the IBM WatsonX Assistant chat widget
- * 
+ *
  * @param locationSlug - Optional location slug to determine if chat should be shown
  *                       If not provided, chat is always shown (for west-midlands hub page)
  */
@@ -56,32 +79,21 @@ export default function WatsonXChat({ locationSlug }: WatsonXChatProps) {
   const shouldShowChat = isWatsonLocation && hasFunctionalConsent;
 
   useEffect(() => {
-    // Only run on client side
-    if (typeof window === 'undefined') return;
+    // Cancel any scheduled cleanup (e.g. from Strict Mode unmount/remount)
+    if (pendingCleanup) {
+      clearTimeout(pendingCleanup);
+      pendingCleanup = null;
+    }
 
-    // Don't initialize if this location shouldn't have the chat
     if (!shouldShowChat) {
-      // Clean up any existing instance when navigating away from WM locations
-      if (window.watsonAssistantInstance) {
-        try {
-          window.watsonAssistantInstance.destroy();
-        } catch (error) {
-          console.error('Error destroying Watson Assistant instance', error);
-        }
-        window.watsonAssistantInstance = null;
-      }
-      const existingScript = document.querySelector(
-        'script[src*="WatsonAssistantChatEntry.js"]'
-      );
-      if (existingScript) {
-        existingScript.remove();
-      }
-      delete window.watsonAssistantChatOptions;
+      doCleanup();
       return;
     }
 
-    // Check if already initialized
-    if (window.watsonAssistantChatOptions) return;
+    // Already have a live instance or the script is loading — nothing to do
+    if (watsonInstance || scriptAdded) return;
+
+    scriptAdded = true;
 
     // Set up Watson Assistant options
     window.watsonAssistantChatOptions = {
@@ -89,44 +101,24 @@ export default function WatsonXChat({ locationSlug }: WatsonXChatProps) {
       region: 'eu-gb',
       serviceInstanceID: 'a3a6beaa-5967-4039-8390-d48ace365d86',
       onLoad: async (instance) => {
-        // Keep a reference so we can destroy it when the component unmounts
-        window.watsonAssistantInstance = instance;
+        watsonInstance = instance;
         await instance.render();
       }
     };
 
     // Load the Watson Assistant script
     const script = document.createElement('script');
-    script.src = `https://web-chat.global.assistant.watson.appdomain.cloud/versions/${
-      window.watsonAssistantChatOptions.clientVersion || 'latest'
-    }/WatsonAssistantChatEntry.js`;
+    script.src =
+      'https://web-chat.global.assistant.watson.appdomain.cloud/versions/latest/WatsonAssistantChatEntry.js';
     script.async = true;
     document.head.appendChild(script);
 
-    // Cleanup on unmount
     return () => {
-      // Destroy the existing chat instance so the widget disappears
-      if (window.watsonAssistantInstance) {
-        try {
-          window.watsonAssistantInstance.destroy();
-        } catch (error) {
-          console.error('Error destroying Watson Assistant instance', error);
-        }
-        window.watsonAssistantInstance = null;
-      }
-
-      // Remove the script if component unmounts
-      const existingScript = document.querySelector(
-        'script[src*="WatsonAssistantChatEntry.js"]'
-      );
-      if (existingScript) {
-        existingScript.remove();
-      }
-
-      // Clean up the global options
-      delete window.watsonAssistantChatOptions;
+      // Defer cleanup so a Strict Mode remount can cancel it.
+      // If no remount follows (real unmount), cleanup fires after the timeout.
+      pendingCleanup = setTimeout(doCleanup, 0);
     };
-  }, [shouldShowChat, locationSlug, hasFunctionalConsent]);
+  }, [shouldShowChat]);
 
   // This component doesn't render anything visible
   return null;
