@@ -86,7 +86,9 @@ function ProgressBarInner() {
         try {
           const target = new URL(url, window.location.origin);
           if (target.pathname !== pathname) {
-            start();
+            // Defer to avoid scheduling state updates from within useInsertionEffect,
+            // which Next.js may use internally during router transitions.
+            setTimeout(start, 0);
           }
         } catch {
           // ignore invalid URLs
