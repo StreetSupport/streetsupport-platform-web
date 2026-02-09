@@ -1,6 +1,7 @@
 import DOMPurify from 'dompurify';
 
 const BANNER_ALLOWED_TAGS = ['p', 'br', 'strong', 'em', 'u', 'a'];
+const DESCRIPTION_ALLOWED_TAGS = ['p', 'br', 'strong', 'em', 'u', 'ul', 'ol', 'li', 'a'];
 
 /**
  * Sanitises HTML content for banner descriptions.
@@ -17,6 +18,17 @@ export function sanitiseBannerDescription(html: string): string {
   return DOMPurify.sanitize(html, {
     KEEP_CONTENT: true,
     ALLOWED_TAGS: BANNER_ALLOWED_TAGS,
+    ALLOWED_ATTR: ['href', 'target', 'rel'],
+  });
+}
+
+export function sanitiseDescription(html: string): string {
+  if (!html) return '';
+  if (typeof window === 'undefined') return html;
+
+  return DOMPurify.sanitize(html, {
+    KEEP_CONTENT: true,
+    ALLOWED_TAGS: DESCRIPTION_ALLOWED_TAGS,
     ALLOWED_ATTR: ['href', 'target', 'rel'],
   });
 }

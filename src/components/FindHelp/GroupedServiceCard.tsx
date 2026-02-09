@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useLocation } from '@/contexts/LocationContext';
 
 import LazyMarkdownContent from '@/components/ui/LazyMarkdownContent';
-import { decodeText } from '@/utils/htmlDecode';
+import { decodeText, isHtmlContent } from '@/utils/htmlDecode';
 import { getCategoryName, getSubCategoryName } from '@/utils/categoryLookup';
 import { formatDistance } from '@/utils/openingTimes';
 import type { ServiceWithDistance } from '@/types';
@@ -88,11 +88,13 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
     return parentCategory ? getSubCategoryName(parentCategory, subcat) : subcat;
   });
 
-  const decodedDescription = group.orgDescription ? decodeText(group.orgDescription) : '';
-  const shouldTruncate = decodedDescription.length > 100;
-  const displayDescription = shouldTruncate && !isDescriptionOpen
-    ? decodedDescription.slice(0, 100) + '...'
-    : decodedDescription;
+  const isHtml = group.orgDescription ? isHtmlContent(group.orgDescription) : false;
+  const decodedDescription = group.orgDescription
+    ? (isHtml ? group.orgDescription : decodeText(group.orgDescription))
+    : '';
+  const shouldTruncate = isHtml
+    ? (group.orgDescription?.length ?? 0) > 150
+    : decodedDescription.length > 100;
 
 
   return (
@@ -181,10 +183,12 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
       {group.orgDescription && (
         <div className="mb-3">
           <div>
-            <LazyMarkdownContent 
-              content={isDescriptionOpen ? group.orgDescription : displayDescription} 
-              className="text-sm mb-2 !text-black" 
-            />
+            <div className={!isDescriptionOpen && isHtml ? 'line-clamp-3' : ''}>
+              <LazyMarkdownContent
+                content={isDescriptionOpen || isHtml ? group.orgDescription : decodedDescription.slice(0, 100) + '...'}
+                className="text-sm mb-2 !text-black"
+              />
+            </div>
             {shouldTruncate && (
               <button
                 type="button"
