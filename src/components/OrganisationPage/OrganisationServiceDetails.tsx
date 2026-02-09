@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import { isHtmlContent } from '@/utils/htmlDecode';
+import { sanitiseDescription } from '@/utils/sanitiseHtml';
 
 interface OpeningTime {
   StartTime: number;
@@ -54,7 +56,14 @@ export default function OrganisationServiceDetails({ service }: { service: Servi
   return (
     <div>
       {text && (
-        <p className="mb-2 whitespace-pre-line">{text}</p>
+        isHtmlContent(text) ? (
+          <div
+            className="mb-2 prose prose-gray max-w-none prose-sm"
+            dangerouslySetInnerHTML={{ __html: sanitiseDescription(text) }}
+          />
+        ) : (
+          <p className="mb-2 whitespace-pre-line">{text}</p>
+        )
       )}
 
       {fullAddress && (

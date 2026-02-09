@@ -7,7 +7,7 @@ import { useLocation } from '@/contexts/LocationContext';
 
 import type { ServiceWithDistance } from '@/types';
 import LazyMarkdownContent from '@/components/ui/LazyMarkdownContent';
-import { decodeText } from '@/utils/htmlDecode';
+import { decodeText, isHtmlContent } from '@/utils/htmlDecode';
 import { getCategoryName, getSubCategoryName } from '@/utils/categoryLookup';
 import { formatDistance } from '@/utils/openingTimes';
 import openingTimesCache from '@/utils/openingTimesCache';
@@ -52,14 +52,20 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
       destination = `/find-help/organisation/${service.organisation.slug}${params.toString() ? `?${params.toString()}` : ''}`;
     }
 
-    const decodedDescription = decodeText(service.description);
+    const isHtml = isHtmlContent(service.description);
+    const decodedDescription = isHtml ? service.description : decodeText(service.description);
     const decodedName = decodeText(service.name);
     const decodedOrgName = decodeText(service.organisation?.name || '');
 
-    const preview =
-      decodedDescription.length > 120
+    const shouldTruncate = isHtml
+      ? service.description.length > 150
+      : decodedDescription.length > 120;
+
+    const preview = isHtml
+      ? service.description
+      : (decodedDescription.length > 120
         ? decodedDescription.slice(0, 120) + '...'
-        : decodedDescription;
+        : decodedDescription);
 
     // Get formatted category and subcategory names
     const categoryName = getCategoryName(service.category);
@@ -77,6 +83,8 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
       decodedName,
       decodedOrgName,
       preview,
+      isHtml,
+      shouldTruncate,
       formattedCategory,
       categoryName,
       subCategoryName,
@@ -87,10 +95,10 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
 
   const {
     destination,
-    decodedDescription,
     decodedName,
     decodedOrgName,
-    preview,
+    isHtml,
+    shouldTruncate,
     categoryName,
     subCategoryName,
     openingStatus,
@@ -179,14 +187,14 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
         </div>
       </div>
 
-      <div className="!text-black mb-2">
-        <LazyMarkdownContent 
-          content={isOpen ? service.description : preview} 
-          className="text-sm !text-black" 
+      <div className={`!text-black mb-2 ${!isOpen && isHtml ? 'line-clamp-3' : ''}`}>
+        <LazyMarkdownContent
+          content={isOpen || isHtml ? service.description : memoizedData.preview}
+          className="text-sm !text-black"
         />
       </div>
-      
-      {decodedDescription.length > 120 && (
+
+      {shouldTruncate && (
         <div className="mb-2">
           <button
             type="button"
