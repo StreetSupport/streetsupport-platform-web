@@ -12,7 +12,7 @@ describe('MarkdownContent', () => {
 
     const { container } = render(<MarkdownContent content={content} />);
     
-    expect(container.innerHTML).toContain('<ul>');
+    expect(container.innerHTML).toContain('<ul');
     expect(container.innerHTML).toContain('<li>First bullet point</li>');
     expect(container.innerHTML).toContain('<li>Second bullet point</li>');
     expect(container.innerHTML).toContain('<li>Third bullet point</li>');
@@ -26,7 +26,7 @@ describe('MarkdownContent', () => {
 
     const { container } = render(<MarkdownContent content={content} />);
 
-    expect(container.innerHTML).toContain('<ul>');
+    expect(container.innerHTML).toContain('<ul');
     expect(container.innerHTML).toContain('<li>First bullet point</li>');
     expect(container.innerHTML).toContain('<li>Second bullet point</li>');
   });
@@ -44,7 +44,7 @@ Another paragraph.
     const { container } = render(<MarkdownContent content={content} />);
 
     expect(container.innerHTML).toContain('This is a paragraph.');
-    expect(container.innerHTML).toContain('<ul>');
+    expect(container.innerHTML).toContain('<ul');
     expect(container.innerHTML).toContain('<li>First bullet point</li>');
     expect(container.innerHTML).toContain('Another paragraph.');
   });
@@ -62,7 +62,7 @@ Additional text here.
     const { container } = render(<MarkdownContent content={content} />);
 
     expect(container.innerHTML).toContain('We can provide support for the following:');
-    expect(container.innerHTML).toContain('<ul>');
+    expect(container.innerHTML).toContain('<ul');
     expect(container.innerHTML).toContain('<li>Confidential emotional support</li>');
     expect(container.innerHTML).toContain('<li>Advocacy &amp; support to attend appointments</li>');
     expect(container.innerHTML).toContain('<li>Safety planning</li>');
@@ -83,7 +83,7 @@ More information below.
     const { container } = render(<MarkdownContent content={content} />);
 
     expect(container.innerHTML).toContain('Support to access other services:-');
-    expect(container.innerHTML).toContain('<ul>');
+    expect(container.innerHTML).toContain('<ul');
     expect(container.innerHTML).toContain('<li>Sexual health</li>');
     expect(container.innerHTML).toContain('<li>Substance misuse</li>');
     expect(container.innerHTML).toContain('<li>Domestic abuse</li>');

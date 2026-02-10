@@ -2,16 +2,10 @@
 
 import React from 'react';
 import { decodeHtmlEntities } from '@/utils/htmlDecode';
-import { sanitiseCmsHtml } from '@/utils/sanitiseHtml';
 
 interface MarkdownContentProps {
   content: string;
   className?: string;
-}
-
-/** Detects whether content is rich text HTML from the CMS editor */
-function isRichTextHtml(text: string): boolean {
-  return /<(p|h[1-6]|ul|ol|li|blockquote)[\s>]/i.test(text);
 }
 
 // Simple HTML renderer for basic markup without heavy dependencies
@@ -115,20 +109,7 @@ function processSimpleMarkdown(text: string): string {
 
 export default function MarkdownContent({ content, className = '' }: MarkdownContentProps) {
   const decodedContent = decodeHtmlEntities(content);
-
-  // Rich text HTML from the CMS editor — sanitise and render directly
-  if (isRichTextHtml(decodedContent)) {
-    const sanitised = sanitiseCmsHtml(decodedContent);
-    return (
-      <div
-        className={`prose prose-gray max-w-none leading-relaxed prose-sm prose-p:text-sm prose-p:leading-normal prose-p:text-gray-800 ${className}`}
-        dangerouslySetInnerHTML={{ __html: sanitised }}
-      />
-    );
-  }
-
-  // Old-format plain text with markdown-style formatting
-  const processedContent = sanitiseCmsHtml(processSimpleMarkdown(decodedContent));
+  const processedContent = processSimpleMarkdown(decodedContent);
 
   return (
     <div
