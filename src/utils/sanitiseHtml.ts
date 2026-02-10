@@ -51,7 +51,7 @@ export function sanitiseDescription(html: string): string {
 
   return DOMPurify.sanitize(html, {
     KEEP_CONTENT: true,
-    ALLOWED_TAGS: DESCRIPTION_ALLOWED_TAGS,
-    ALLOWED_ATTR: ['href', 'target', 'rel'],
+    ALLOWED_TAGS: CMS_ALLOWED_TAGS,
+    ALLOWED_ATTR: CMS_ALLOWED_ATTR,
   });
 }
