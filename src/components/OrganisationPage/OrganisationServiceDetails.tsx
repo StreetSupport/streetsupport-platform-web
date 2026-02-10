@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { isHtmlContent } from '@/utils/htmlDecode';
-import { sanitiseDescription } from '@/utils/sanitiseHtml';
+import { sanitiseCmsHtml } from '@/utils/sanitiseHtml';
 
 interface OpeningTime {
   StartTime: number;
@@ -59,7 +59,7 @@ export default function OrganisationServiceDetails({ service }: { service: Servi
         isHtmlContent(text) ? (
           <div
             className="mb-2 prose prose-gray max-w-none prose-sm"
-            dangerouslySetInnerHTML={{ __html: sanitiseDescription(text) }}
+            dangerouslySetInnerHTML={{ __html: sanitiseCmsHtml(text) }}
           />
         ) : (
           <p className="mb-2 whitespace-pre-line">{text}</p>

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Resource, LinkList } from '@/types/resources';
 import FileDownloadLink from '@/components/ui/FileDownloadLink';
+import { sanitiseCmsHtml } from '@/utils/sanitiseHtml';
 
 interface ResourcePageContentProps {
   resource: Resource;
@@ -88,8 +89,7 @@ export default function ResourcePageContent({ resource }: ResourcePageContentPro
     </div>
   );
 
-  // Parse and sanitize HTML for body content
-  const parsedBody = resource.body;
+  const parsedBody = sanitiseCmsHtml(resource.body);
 
   return (
     <>
