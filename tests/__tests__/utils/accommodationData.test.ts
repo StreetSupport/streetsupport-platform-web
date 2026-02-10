@@ -29,7 +29,8 @@ jest.mock('@/utils/mongodb', () => ({
 }));
 
 jest.mock('@/utils/htmlDecode', () => ({
-  decodeText: jest.fn((text: string) => text) // Return text as-is for testing
+  decodeText: jest.fn((text: string) => text),
+  decodeHtmlEntities: jest.fn((text: string) => text)
 }));
 
 describe('accommodationData', () => {

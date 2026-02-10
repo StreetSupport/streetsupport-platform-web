@@ -1,5 +1,5 @@
 import { getClientPromise } from '@/utils/mongodb';
-import { decodeText } from '@/utils/htmlDecode';
+import { decodeText, decodeHtmlEntities } from '@/utils/htmlDecode';
 
 // Interface for the database document structure
 interface TemporaryAccommodationDocument {
@@ -144,8 +144,8 @@ function transformDatabaseDocumentToAccommodationData(doc: TemporaryAccommodatio
   return {
     id: doc._id,
     name: decodeText(doc.GeneralInfo?.Name || ''),
-    synopsis: decodeText(doc.GeneralInfo?.Synopsis || ''),
-    description: decodeText(doc.GeneralInfo?.Description || ''),
+    synopsis: decodeHtmlEntities(doc.GeneralInfo?.Synopsis || ''),
+    description: decodeHtmlEntities(doc.GeneralInfo?.Description || ''),
     serviceProviderId: doc.GeneralInfo?.ServiceProviderId || '',
     serviceProviderName: doc.GeneralInfo?.ServiceProviderName || '',
     isVerified: doc.GeneralInfo?.IsVerified || false,
@@ -163,16 +163,16 @@ function transformDatabaseDocumentToAccommodationData(doc: TemporaryAccommodatio
       name: decodeText(doc.ContactInformation?.Name || ''),
       telephone: decodeText(doc.ContactInformation?.Telephone || ''),
       email: decodeText(doc.ContactInformation?.Email || ''),
-      additionalInfo: decodeText(doc.ContactInformation?.AdditionalInfo || ''),
+      additionalInfo: decodeHtmlEntities(doc.ContactInformation?.AdditionalInfo || ''),
     },
     accommodation: {
       type: doc.GeneralInfo?.AccommodationType || 'other',
       isOpenAccess: doc.GeneralInfo?.IsOpenAccess || false,
       referralRequired: doc.PricingAndRequirementsInfo?.ReferralIsRequired || false,
-      referralNotes: decodeText(doc.PricingAndRequirementsInfo?.ReferralNotes || ''),
+      referralNotes: decodeHtmlEntities(doc.PricingAndRequirementsInfo?.ReferralNotes || ''),
       price: doc.PricingAndRequirementsInfo?.Price || '0',
       foodIncluded: doc.PricingAndRequirementsInfo?.FoodIsIncluded || 2,
-      availabilityOfMeals: decodeText(doc.PricingAndRequirementsInfo?.AvailabilityOfMeals || ''),
+      availabilityOfMeals: decodeHtmlEntities(doc.PricingAndRequirementsInfo?.AvailabilityOfMeals || ''),
     },
     features: {
       acceptsHousingBenefit: doc.FeaturesWithDiscretionary?.AcceptsHousingBenefit || 2,
@@ -189,7 +189,7 @@ function transformDatabaseDocumentToAccommodationData(doc: TemporaryAccommodatio
       hasLounge: doc.FeaturesWithDiscretionary?.HasLounge || 2,
       allowsVisitors: doc.FeaturesWithDiscretionary?.AllowsVisitors || 2,
       hasOnSiteManager: doc.FeaturesWithDiscretionary?.HasOnSiteManager || 2,
-      additionalFeatures: decodeText(doc.FeaturesWithDiscretionary?.AdditionalFeatures || ''),
+      additionalFeatures: decodeHtmlEntities(doc.FeaturesWithDiscretionary?.AdditionalFeatures || ''),
     },
     residentCriteria: {
       acceptsMen: doc.ResidentCriteriaInfo?.AcceptsMen || false,
@@ -202,7 +202,7 @@ function transformDatabaseDocumentToAccommodationData(doc: TemporaryAccommodatio
     support: {
       hasOnSiteManager: doc.SupportProvidedInfo?.HasOnSiteManager || 2,
       supportOffered: doc.SupportProvidedInfo?.SupportOffered || [],
-      supportInfo: decodeText(doc.SupportProvidedInfo?.SupportInfo || ''),
+      supportInfo: decodeHtmlEntities(doc.SupportProvidedInfo?.SupportInfo || ''),
     },
   };
 }

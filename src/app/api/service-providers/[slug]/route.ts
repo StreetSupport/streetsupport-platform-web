@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
-import { decodeText } from '@/utils/htmlDecode';
+import { decodeText, decodeHtmlEntities } from '@/utils/htmlDecode';
 import { loadAccommodationDataForProvider, type AccommodationData } from '@/utils/accommodationData';
 
 // This function is now replaced by loadAccommodationDataForProvider() from utils/accommodationData.ts
@@ -40,8 +40,8 @@ function transformAccommodationToOrganisationService(accommodation: Accommodatio
       residentCriteria: accommodation.residentCriteria || {},
       support: accommodation.support || {},
       contact: accommodation.contact || {},
-      synopsis: decodeText(accommodation.synopsis || ''),
-      description: decodeText(accommodation.description || '')
+      synopsis: decodeHtmlEntities(accommodation.synopsis || ''),
+      description: decodeHtmlEntities(accommodation.description || '')
     },
     sourceType: 'accommodation'
   };
@@ -157,8 +157,8 @@ export async function GET(req: Request) {
     const provider = {
       key: rawProvider.Key,
       name: decodeText(rawProvider.Name),
-      shortDescription: decodeText(rawProvider.ShortDescription || ''),
-      description: decodeText(rawProvider.Description || ''),
+      shortDescription: decodeHtmlEntities(rawProvider.ShortDescription || ''),
+      description: decodeHtmlEntities(rawProvider.Description || ''),
       website: rawProvider.Website,
       telephone: rawProvider.Telephone,
       email: rawProvider.Email,
@@ -180,7 +180,7 @@ export async function GET(req: Request) {
         isTelephoneService: (service.IsTelephoneService as boolean) || false,
         isAppointmentOnly: (service.IsAppointmentOnly as boolean) || false,
         isOpen247: (service.Address as Record<string, unknown>)?.IsOpen247 as boolean || false,
-        Info: decodeText(service.Info || ''),
+        Info: decodeHtmlEntities(service.Info || ''),
         SubCategoryName: decodeText(service.SubCategoryName || ''),
         // Ensure accommodation data is preserved
         ...(service.accommodationData && { accommodationData: service.accommodationData }),
