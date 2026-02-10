@@ -44,3 +44,14 @@ export function sanitiseBannerDescription(html: string): string {
     ALLOWED_ATTR: CMS_ALLOWED_ATTR,
   });
 }
+
+export function sanitiseDescription(html: string): string {
+  if (!html) return '';
+  if (typeof window === 'undefined') return html;
+
+  return DOMPurify.sanitize(html, {
+    KEEP_CONTENT: true,
+    ALLOWED_TAGS: DESCRIPTION_ALLOWED_TAGS,
+    ALLOWED_ATTR: ['href', 'target', 'rel'],
+  });
+}
