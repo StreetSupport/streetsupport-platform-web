@@ -1,12 +1,17 @@
 'use client';
 
 import React from 'react';
-import { decodeHtmlEntities, isHtmlContent } from '@/utils/htmlDecode';
-import { sanitiseDescription } from '@/utils/sanitiseHtml';
+import { decodeHtmlEntities } from '@/utils/htmlDecode';
+import { sanitiseCmsHtml } from '@/utils/sanitiseHtml';
 
 interface MarkdownContentProps {
   content: string;
   className?: string;
+}
+
+/** Detects whether content is rich text HTML from the CMS editor */
+function isRichTextHtml(text: string): boolean {
+  return /<(p|h[1-6]|ul|ol|li|blockquote)[\s>]/i.test(text);
 }
 
 // Simple HTML renderer for basic markup without heavy dependencies
@@ -23,10 +28,10 @@ function processSimpleMarkdown(text: string): string {
   const result = [];
   let inBulletSection = false;
   let currentBulletItems = [];
-  
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
-    
+
     // Check if this line ends with "following:" or "services:-" and should start a bullet section
     if (line.endsWith('following:') || line.endsWith('services:-')) {
       result.push(line);
@@ -55,13 +60,13 @@ function processSimpleMarkdown(text: string): string {
       result.push(line);
     }
   }
-  
+
   // Handle any remaining bullet items at the end
   if (currentBulletItems.length > 0) {
     const listItems = currentBulletItems.map(item => `<li>${item}</li>`).join('');
     result.push(`<ul style="list-style-type: disc; padding-left: 1.5rem; margin: 0.5rem 0;">${listItems}</ul>`);
   }
-  
+
   const finalResult = result.join('\n')
     // Handle explicit bullet points with asterisk (* item) and dash (- item)
     // Support multiple spaces after the bullet marker and handle HTML entities
@@ -71,12 +76,12 @@ function processSimpleMarkdown(text: string): string {
     // Handle HTML entity asterisks
     .replace(/^&ast;\s+(.+)$/gm, '<li>$1</li>')
     .replace(/^\s*&ast;\s+(.+)$/gm, '<li>$1</li>');
-    
+
   // Only wrap loose li elements that are NOT already inside ul tags
   const finalLines = finalResult.split('\n');
   const wrappedResult = [];
   let looseLiItems = [];
-  
+
   for (const line of finalLines) {
     if (line.trim().startsWith('<li>') && !line.includes('<ul')) {
       looseLiItems.push(line.trim());
@@ -88,12 +93,12 @@ function processSimpleMarkdown(text: string): string {
       wrappedResult.push(line);
     }
   }
-  
+
   // Handle any remaining loose items
   if (looseLiItems.length > 0) {
     wrappedResult.push(`<ul style="list-style-type: disc; padding-left: 1.5rem; margin: 0.5rem 0;">${looseLiItems.join('')}</ul>`);
   }
-  
+
   return wrappedResult.join('\n')
     // Handle line breaks
     .replace(/\n/g, '<br>')
@@ -109,17 +114,24 @@ function processSimpleMarkdown(text: string): string {
 }
 
 export default function MarkdownContent({ content, className = '' }: MarkdownContentProps) {
-  let processedContent: string;
+  const decodedContent = decodeHtmlEntities(content);
 
-  if (isHtmlContent(content)) {
-    processedContent = sanitiseDescription(content);
-  } else {
-    const decodedContent = decodeHtmlEntities(content);
-    processedContent = processSimpleMarkdown(decodedContent);
+  // Rich text HTML from the CMS editor — sanitise and render directly
+  if (isRichTextHtml(decodedContent)) {
+    const sanitised = sanitiseCmsHtml(decodedContent);
+    return (
+      <div
+        className={`prose prose-gray max-w-none leading-relaxed prose-sm prose-p:text-sm prose-p:leading-normal prose-p:text-gray-800 ${className}`}
+        dangerouslySetInnerHTML={{ __html: sanitised }}
+      />
+    );
   }
-  
+
+  // Old-format plain text with markdown-style formatting
+  const processedContent = sanitiseCmsHtml(processSimpleMarkdown(decodedContent));
+
   return (
-    <div 
+    <div
       className={`prose prose-gray max-w-none leading-relaxed prose-sm prose-p:text-sm prose-p:leading-normal prose-p:text-gray-800 ${className}`}
       dangerouslySetInnerHTML={{ __html: processedContent }}
     />
