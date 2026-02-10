@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import { SwepData } from '@/types';
-import { sanitiseCmsHtml } from '@/utils/sanitiseHtml';
 
 interface SwepPageContentProps {
   locationSlug: string;
@@ -130,7 +129,7 @@ export default function SwepPageContent({ locationSlug, locationName }: SwepPage
           
           <div 
             className="prose prose-lg max-w-none"
-            dangerouslySetInnerHTML={{ __html: sanitiseCmsHtml(swepData.body) }}
+            dangerouslySetInnerHTML={{ __html: swepData.body }}
           />
           
           <div className="mt-12 p-6 bg-blue-50 rounded-lg border-l-4 border-blue-600">
