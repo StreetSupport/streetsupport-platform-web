@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
-import { decodeText } from '@/utils/htmlDecode';
+import { decodeText, decodeHtmlEntities } from '@/utils/htmlDecode';
 import queryCache from '@/utils/queryCache';
 import { loadFilteredAccommodationData, type AccommodationData } from '@/utils/accommodationData';
 
@@ -385,7 +385,7 @@ export async function GET(req: Request) {
       const result: Record<string, unknown> = {
         ...service,
         name: decodeText((serviceAny.name as string) || (serviceAny.ServiceProviderName as string) || ''),
-        description: decodeText((serviceAny.description as string) || (serviceAny.Info as string) || ''),
+        description: decodeHtmlEntities((serviceAny.description as string) || (serviceAny.Info as string) || ''),
         organisationSlug: (serviceAny.organisation as { slug?: string })?.slug || (serviceAny.ServiceProviderKey as string),
         // Ensure organisation data is properly decoded
         organisation: serviceAny.organisation ? {
