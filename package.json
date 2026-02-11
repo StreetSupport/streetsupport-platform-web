@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@google-analytics/data": "^5.2.1",
-    "@googlemaps/js-api-loader": "^1.16.10",
+    "@googlemaps/js-api-loader": "^2.0.2",
     "@sendgrid/mail": "^8.1.6",
     "@sentry/nextjs": "^10.38.0",
     "clsx": "^2.1.1",
