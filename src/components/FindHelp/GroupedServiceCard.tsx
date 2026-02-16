@@ -27,16 +27,12 @@ interface GroupedServiceCardProps {
   group: ServiceGroup;
   isDescriptionOpen?: boolean;
   onToggleDescription?: () => void;
-  isLoading?: boolean;
-  onCardClick?: () => void;
 }
 
-const GroupedServiceCard = React.memo(function GroupedServiceCard({ 
-  group, 
-  isDescriptionOpen = false, 
-  onToggleDescription,
-  isLoading = false,
-  onCardClick
+const GroupedServiceCard = React.memo(function GroupedServiceCard({
+  group,
+  isDescriptionOpen = false,
+  onToggleDescription
 }: GroupedServiceCardProps) {
   const { location } = useLocation();
   const searchParams = useSearchParams();
@@ -97,12 +93,7 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
   return (
     <Link
       href={destination}
-      onClick={() => {
-        if (onCardClick) {
-          onCardClick();
-        }
-      }}
-      className={`card card-compact ${isLoading ? 'loading-card' : ''}`}
+      className="card card-compact"
       aria-label={`View details for ${decodedOrgName}`}
     >
       <div className="flex justify-between items-start mb-2">

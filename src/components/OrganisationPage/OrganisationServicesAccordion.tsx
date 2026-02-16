@@ -72,7 +72,6 @@ export default function OrganisationServicesAccordion({
 }: Props) {
   const [internalOpenAccordion, setInternalOpenAccordion] = useState<string | null>(null);
   const [internalSelectedLocationForService, setInternalSelectedLocationForService] = useState<Record<string, number>>({});
-  const [loadingContent, setLoadingContent] = useState<string | null>(null);
   const [expandedDescriptions, setExpandedDescriptions] = useState<Record<string, boolean>>({});
 
   // Use external state if provided, otherwise use internal state
@@ -202,14 +201,7 @@ export default function OrganisationServicesAccordion({
   };
 
   const renderLocationDetails = (location: ServiceLocation, accordionKey: string) => {
-    const isLoading = loadingContent === accordionKey;
     const service = location.service;
-    const loadingOverlay = isLoading ? (
-      <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded">
-        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
-      </div>
-    ) : null;
-    const contentClass = `transition-opacity duration-200 ${isLoading ? 'opacity-50' : 'opacity-100'}`;
 
     return (
       <>
@@ -229,18 +221,13 @@ export default function OrganisationServicesAccordion({
 
         {/* Service Description */}
         {service?.description && (
-          <div className="mb-4 relative">
-            {loadingOverlay}
-            <div className={contentClass}>
-              <MarkdownContent content={service.description} />
-            </div>
+          <div className="mb-4">
+            <MarkdownContent content={service.description} />
           </div>
         )}
 
         {/* Service Type Indicators */}
-        <div className="mb-4 relative">
-          {loadingOverlay}
-          <div className={contentClass}>
+        <div className="mb-4">
             {(() => {
               const isPhoneService = service.isTelephoneService || service.subCategory.toLowerCase().includes('telephone') ||
                                    service.subCategory.toLowerCase().includes('phone') ||
@@ -307,14 +294,11 @@ export default function OrganisationServicesAccordion({
                 </div>
               );
             })()}
-          </div>
         </div>
 
         {/* Accommodation Details */}
         {service.category === 'accom' && (
-          <div className="mb-4 relative">
-            {loadingOverlay}
-            <div className={contentClass}>
+          <div className="mb-4">
               {(() => {
                 const accommodationData = service.accommodationData;
                 if (!accommodationData) return null;
@@ -618,14 +602,11 @@ export default function OrganisationServicesAccordion({
                   </div>
                 );
               })()}
-            </div>
           </div>
         )}
 
         {/* Address and Map Links */}
-        <div className="mb-4 relative">
-          {loadingOverlay}
-          <div className={contentClass}>
+        <div className="mb-4">
             <p className="font-semibold mb-1">Address:</p>
             {(() => {
               const fullAddress = formatAddress(location.address);
@@ -668,14 +649,11 @@ export default function OrganisationServicesAccordion({
                 </div>
               );
             })()}
-          </div>
         </div>
 
         {/* Opening Times */}
         {service?.openTimes && service.openTimes.length > 0 && !service.isOpen247 && (
-          <div className="relative">
-            {loadingOverlay}
-            <div className={contentClass}>
+          <div>
               <div className="flex items-center gap-2 mb-1">
                 <p className="font-semibold">Opening Times:</p>
                 {(() => {
@@ -758,7 +736,6 @@ export default function OrganisationServicesAccordion({
                   });
                 })()}
               </ul>
-            </div>
           </div>
         )}
       </>
@@ -807,9 +784,6 @@ export default function OrganisationServicesAccordion({
                                 type="button"
                                 onClick={() => {
                                   setSelectedLocation(category, subcategory, locationIndex);
-
-                                  setLoadingContent(accordionKey);
-                                  setTimeout(() => setLoadingContent(null), 800);
 
                                   const coordinates = (location.address as Address).Location?.coordinates;
                                   if (onLocationClick && coordinates) {
