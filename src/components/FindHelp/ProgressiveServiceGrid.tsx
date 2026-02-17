@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import ServiceCard from './ServiceCard';
 import GroupedServiceCard from './GroupedServiceCard';
 import type { ServiceWithDistance } from '@/types';
@@ -43,10 +43,8 @@ export default function ProgressiveServiceGrid({
   scrollTargetRef
 }: ProgressiveServiceGridProps) {
   const [currentPage, setCurrentPage] = useState(initialPage);
-  const [loadingCardId, setLoadingCardId] = useState<string | null>(null);
   const [shouldScrollOnPageChange, setShouldScrollOnPageChange] = useState(false);
   const itemsPerPage = batchSize;
-  const gridRef = useRef<HTMLDivElement>(null);
   
   // Calculate pagination values
   const totalPages = Math.ceil(groups.length / itemsPerPage);
@@ -62,7 +60,6 @@ export default function ProgressiveServiceGrid({
   // Reset page when groups change
   useEffect(() => {
     setCurrentPage(1);
-    setLoadingCardId(null); // Clear loading state when groups change
     setShouldScrollOnPageChange(false); // Don't scroll when groups change (filter/search)
   }, [groups]);
 
@@ -82,18 +79,6 @@ export default function ProgressiveServiceGrid({
     }
   }, [currentPage, shouldScrollOnPageChange, scrollTargetRef]);
   
-  // Generate page numbers to display
-  // Handle card click to show loading state
-  const handleCardClick = (cardId: string) => {
-    setLoadingCardId(cardId);
-    
-    // Clear loading state after navigation (simulated delay)
-    // In practice, this would be cleared when the new page loads
-    setTimeout(() => {
-      setLoadingCardId(null);
-    }, 3000);
-  };
-
   const getPageNumbers = () => {
     const pages = [];
     const maxPagesToShow = 5;
@@ -124,7 +109,7 @@ export default function ProgressiveServiceGrid({
 
   return (
     <>
-      <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {visibleGroups.map((group) => (
           <div
             key={group.orgId}
@@ -135,16 +120,12 @@ export default function ProgressiveServiceGrid({
                 service={group.services[0]}
                 isOpen={openDescriptionId === group.services[0].id}
                 onToggle={() => onToggleDescription(group.services[0].id)}
-                isLoading={loadingCardId === group.services[0].id}
-                onCardClick={() => handleCardClick(group.services[0].id)}
               />
             ) : (
               <GroupedServiceCard
                 group={group}
                 isDescriptionOpen={openDescriptionId === group.orgId}
                 onToggleDescription={() => onToggleDescription(group.orgId)}
-                isLoading={loadingCardId === group.orgId}
-                onCardClick={() => handleCardClick(group.orgId)}
               />
             )}
           </div>

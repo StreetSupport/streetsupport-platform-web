@@ -17,11 +17,9 @@ interface ServiceCardProps {
   service: ServiceWithDistance;
   isOpen: boolean;
   onToggle: () => void;
-  isLoading?: boolean;
-  onCardClick?: () => void;
 }
 
-const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle, isLoading = false, onCardClick }: ServiceCardProps) {
+const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle }: ServiceCardProps) {
   const { location } = useLocation();
   const searchParams = useSearchParams();
   
@@ -108,12 +106,8 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle,
           decodedOrgName,
           categoryName
         );
-        
-        if (onCardClick) {
-          onCardClick();
-        }
       }}
-      className={`card card-compact ${isLoading ? 'loading-card' : ''}`}
+      className="card card-compact"
       aria-label={`View details for ${decodedName}`}
     >
       <div className="flex justify-between items-start mb-2">
