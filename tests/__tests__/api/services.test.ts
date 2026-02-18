@@ -80,66 +80,31 @@ const createMockServicesCollection = (shouldThrow = false, customData?: any[], a
   const mockAggregate = jest.fn().mockImplementation((pipeline: any[]) => ({
     toArray: jest.fn().mockImplementation(async () => {
       if (shouldThrow) throw new Error('Database error');
-      
-      // Check if this is a count pipeline (contains $count stage)
-      const hasCountStage = pipeline.some(stage => stage.$count);
-      if (hasCountStage) {
-        // Apply same filtering logic for count
-        let dataToCount = aggregateData || customData || mockServices;
-        
-        // Apply location filtering if specified in pipeline
-        const matchStage = pipeline.find(stage => stage.$match);
-        if (matchStage && matchStage.$match['Address.City']) {
-          const cityRegex = matchStage.$match['Address.City'].$regex;
-          dataToCount = dataToCount.filter(service => 
-            cityRegex.test(service.Address?.City || '')
-          );
-        }
-        
-        // Apply category filtering if specified in pipeline
-        if (matchStage && matchStage.$match['ParentCategoryKey']) {
-          const categoryRegex = matchStage.$match['ParentCategoryKey'].$regex;
-          dataToCount = dataToCount.filter(service => 
-            categoryRegex.test(service.ParentCategoryKey || '')
-          );
-        }
-        
-        return [{ total: dataToCount.length }];
-      }
-      
+
       // Simulate filtering based on the pipeline stages
       let filteredServices = aggregateData || customData || mockServices;
-      
+
       // Apply location filtering if specified in pipeline
       const matchStage = pipeline.find(stage => stage.$match);
       if (matchStage && matchStage.$match['Address.City']) {
         const cityRegex = matchStage.$match['Address.City'].$regex;
-        filteredServices = filteredServices.filter(service => 
+        filteredServices = filteredServices.filter(service =>
           cityRegex.test(service.Address?.City || '')
         );
       }
-      
+
       // Apply category filtering if specified in pipeline
       if (matchStage && matchStage.$match['ParentCategoryKey']) {
         const categoryRegex = matchStage.$match['ParentCategoryKey'].$regex;
-        filteredServices = filteredServices.filter(service => 
+        filteredServices = filteredServices.filter(service =>
           categoryRegex.test(service.ParentCategoryKey || '')
         );
       }
-      
-      // Apply pagination
-      const skipStage = pipeline.find(stage => stage.$skip);
-      const limitStage = pipeline.find(stage => stage.$limit);
-      const skip = skipStage?.$skip || 0;
-      const limit = limitStage?.$limit || filteredServices.length;
-      
-      filteredServices = filteredServices.slice(skip, skip + limit);
-      
-      // Return with provider data from lookup
-      return filteredServices.map(service => ({
+
+      // Enrich with provider data
+      const enriched = filteredServices.map(service => ({
         ...service,
         distance: service.distance || 5000,
-        // Add provider data from lookup
         provider: mockProviders.find(p => p.Key === service.ServiceProviderKey),
         name: service.Title || service.ServiceProviderName || service.name,
         description: service.Description || service.Info || service.description,
@@ -149,6 +114,17 @@ const createMockServicesCollection = (shouldThrow = false, customData?: any[], a
           isVerified: mockProviders.find(p => p.Key === service.ServiceProviderKey)?.IsVerified || false
         } : null
       }));
+
+      // If pipeline contains $facet, return wrapped structure
+      const hasFacet = pipeline.some(stage => stage.$facet);
+      if (hasFacet) {
+        return [{
+          results: enriched,
+          totalCount: enriched.length > 0 ? [{ count: enriched.length }] : []
+        }];
+      }
+
+      return enriched;
     }),
   }));
 

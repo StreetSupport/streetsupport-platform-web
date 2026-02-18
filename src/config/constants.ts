@@ -6,6 +6,8 @@ export const DEFAULT_SERVICE_LIMIT = 20;
 export const DEFAULT_SERVICE_PROVIDER_LIMIT = 20;
 export const DEFAULT_ACCOMMODATION_LIMIT = 50;
 export const DEFAULT_ORG_SEARCH_LIMIT = 10;
+// Must load all results because services and accommodation are interleaved by distance client-side.
+// Raised from 100 to 500 for dense urban areas.
 export const MAX_SERVICES_FETCH_LIMIT = 500;
 export const FALLBACK_SERVICES_LIMIT = 50;
 export const DEFAULT_SEARCH_RADIUS_KM = 5;

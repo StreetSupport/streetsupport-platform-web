@@ -154,56 +154,59 @@ describe('GET /api/services - Error Handling and Geospatial Tests', () => {
     });
 
     it('handles edge case coordinates when database is available', async () => {
-      // Mock successful database connection
+      // Mock successful database connection with $facet result structure
+      const emptyFacetResult = [{ results: [], totalCount: [] }];
       const mockClient = {
         db: jest.fn().mockReturnValue({
           collection: jest.fn().mockReturnValue({
             aggregate: jest.fn().mockReturnValue({
-              toArray: jest.fn().mockResolvedValue([])
+              toArray: jest.fn().mockResolvedValue(emptyFacetResult)
             })
           })
         })
       };
       mockGetClientPromise.mockResolvedValue(mockClient);
-      
+
       const req = new Request('http://localhost/api/services?lat=-89.9&lng=179.9&radius=10');
       const res = await GET(req);
       const json = await res.json();
-      
+
       expect(res.status).toBe(200);
       expect(json.status).toBe('success');
       expect(Array.isArray(json.results)).toBe(true);
     });
 
     it('handles very large radius values when database is available', async () => {
-      // Mock successful database connection
+      // Mock successful database connection with $facet result structure
+      const emptyFacetResult = [{ results: [], totalCount: [] }];
       const mockClient = {
         db: jest.fn().mockReturnValue({
           collection: jest.fn().mockReturnValue({
             aggregate: jest.fn().mockReturnValue({
-              toArray: jest.fn().mockResolvedValue([])
+              toArray: jest.fn().mockResolvedValue(emptyFacetResult)
             })
           })
         })
       };
       mockGetClientPromise.mockResolvedValue(mockClient);
-      
+
       const req = new Request('http://localhost/api/services?lat=53.8008&lng=-1.5491&radius=20000');
       const res = await GET(req);
       const json = await res.json();
-      
+
       expect(res.status).toBe(200);
       expect(json.status).toBe('success');
       expect(Array.isArray(json.results)).toBe(true);
     });
 
     it('handles very small radius values when database is available', async () => {
-      // Mock successful database connection
+      // Mock successful database connection with $facet result structure
+      const emptyFacetResult = [{ results: [], totalCount: [] }];
       const mockClient = {
         db: jest.fn().mockReturnValue({
           collection: jest.fn().mockReturnValue({
             aggregate: jest.fn().mockReturnValue({
-              toArray: jest.fn().mockResolvedValue([])
+              toArray: jest.fn().mockResolvedValue(emptyFacetResult)
             })
           })
         })
