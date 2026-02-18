@@ -14,7 +14,6 @@ function transformAccommodationToOrganisationService(accommodation: Accommodatio
     SubCategoryName: accommodation.accommodation?.type || 'Other',
     Info: accommodation.synopsis || accommodation.description || '',
     OpeningTimes: [],
-    ClientGroups: [],
     Address: {
       Location: {
         type: 'Point',
@@ -137,8 +136,6 @@ export async function GET(req: Request) {
           SubCategoryName: 1,
           Info: 1,
           OpeningTimes: 1,
-          // We don't use ClientGroups, but I leave it because afraid to break something
-          ClientGroups: 1,
           Address: 1,
           IsAppointmentOnly: 1,
           IsTelephoneService: 1

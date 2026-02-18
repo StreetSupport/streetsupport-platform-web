@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-// import Link from 'next/link'; // Unused import
 import { useLocation } from '@/contexts/LocationContext';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import LocationPrompt from '@/components/Location/LocationPrompt';
@@ -51,7 +50,6 @@ function processServiceData(item: unknown): ServiceWithDistance {
     organisationSlug: serviceItem.organisation ? 
       (serviceItem.organisation as Record<string, unknown>).slug || serviceItem.ServiceProviderKey || '' : 
       serviceItem.ServiceProviderKey || '',
-    clientGroups: serviceItem.ClientGroups || [],
     openTimes,
     distance: serviceItem.distance,
     isTelephoneService: (serviceItem.IsTelephoneService as boolean) || false,

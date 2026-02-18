@@ -72,7 +72,6 @@ describe('OrganisationServicesAccordion', () => {
         organisationSlug: 'test-org',
         description: 'Training description',
         openTimes: [],
-        clientGroups: ['adults'],
         latitude: 53,
         longitude: -2,
       },
@@ -85,7 +84,6 @@ describe('OrganisationServicesAccordion', () => {
         organisationSlug: 'test-org',
         description: 'Job search description',
         openTimes: [],
-        clientGroups: ['adults'],
         latitude: 53.1,
         longitude: -2.1,
       }
@@ -203,7 +201,6 @@ describe('OrganisationServicesAccordion', () => {
         organisationSlug: 'test-org',
         description: 'Test description',
         openTimes: [],
-        clientGroups: ['adults'],
         latitude: 53,
         longitude: -2,
       }
@@ -261,7 +258,6 @@ describe('OrganisationServicesAccordion', () => {
         organisationSlug: 'test-org',
         description: 'Detailed service description',
         openTimes: [],
-        clientGroups: ['adults', 'families'],
         latitude: 53,
         longitude: -2,
       }
@@ -312,7 +308,6 @@ describe('OrganisationServicesAccordion', () => {
         organisationSlug: 'test-org',
         description: 'Breakfast service',
         openTimes: [],
-        clientGroups: ['adults'],
         latitude: 53,
         longitude: -2,
       },
@@ -325,7 +320,6 @@ describe('OrganisationServicesAccordion', () => {
         organisationSlug: 'test-org',
         description: 'Dinner service',
         openTimes: [],
-        clientGroups: ['adults'],
         latitude: 53.1,
         longitude: -2.1,
       },
@@ -338,7 +332,6 @@ describe('OrganisationServicesAccordion', () => {
         organisationSlug: 'test-org',
         description: 'Emergency accommodation',
         openTimes: [],
-        clientGroups: ['adults'],
         latitude: 53.2,
         longitude: -2.2,
       }
@@ -392,7 +385,6 @@ describe('OrganisationServicesAccordion', () => {
         { day: 0, start: 900, end: 1700 }, // Monday 9:00-17:00 (0=Mon in database)
         { day: 2, start: 1000, end: 1600 }, // Wednesday 10:00-16:00 (2=Wed in database)
       ],
-      clientGroups: ['adults'],
       latitude: 53.2,
       longitude: -2.2,
       address: {
@@ -445,7 +437,6 @@ describe('OrganisationServicesAccordion', () => {
       organisationSlug: 'test-org',
       description: 'Housing advice services',
       openTimes: [],
-      clientGroups: ['adults'],
       latitude: 53.3,
       longitude: -2.3,
       address: {

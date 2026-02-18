@@ -3,19 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import ServiceCard from './ServiceCard';
 import GroupedServiceCard from './GroupedServiceCard';
-import type { ServiceWithDistance } from '@/types';
-
-interface ServiceGroup {
-  orgId: string;
-  orgName: string;
-  orgSlug: string;
-  isVerified: boolean;
-  orgDescription?: string;
-  services: ServiceWithDistance[];
-  categories: string[];
-  subcategories: string[];
-  distance: number;
-}
+import type { ServiceGroup } from '@/types';
 
 interface ProgressiveServiceGridProps {
   groups: ServiceGroup[];

@@ -9,19 +9,7 @@ import LazyMarkdownContent from '@/components/ui/LazyMarkdownContent';
 import { decodeText } from '@/utils/htmlDecode';
 import { getCategoryName, getSubCategoryName } from '@/utils/categoryLookup';
 import { formatDistance } from '@/utils/openingTimes';
-import type { ServiceWithDistance } from '@/types';
-
-interface ServiceGroup {
-  orgId: string;
-  orgName: string;
-  orgSlug: string;
-  isVerified: boolean;
-  orgDescription?: string;
-  services: ServiceWithDistance[];
-  categories: string[];
-  subcategories: string[];
-  distance: number;
-}
+import type { ServiceGroup } from '@/types';
 
 interface GroupedServiceCardProps {
   group: ServiceGroup;

@@ -238,7 +238,6 @@ describe('OrganisationShell', () => {
           organisationSlug: 'test-org',
           description: 'Test service description',
           openTimes: [],
-          clientGroups: ['adults'],
           latitude: 53.4808,
           longitude: -2.2426,
           address: {
@@ -285,7 +284,6 @@ describe('OrganisationShell', () => {
           organisationSlug: 'test-org',
           description: 'Test service description',
           openTimes: [],
-          clientGroups: ['adults'],
           latitude: 53.4808,
           longitude: -2.2426,
           address: {
@@ -327,7 +325,6 @@ describe('OrganisationShell', () => {
           organisationSlug: 'test-org',
           description: 'Test service description',
           openTimes: [],
-          clientGroups: ['adults'],
           latitude: 53.5,
           longitude: -2.3,
           address: {

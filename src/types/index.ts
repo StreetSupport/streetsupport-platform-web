@@ -22,8 +22,7 @@ export interface FlattenedService {
   organisationSlug: string;
   description: string;
   address?: Address;
-  openTimes: { day: number; start: number; end: number }[];  // changed to number
-  clientGroups: string[];
+  openTimes: { day: number; start: number; end: number }[];
   latitude: number;
   longitude: number;
   isTelephoneService?: boolean;
@@ -99,6 +98,18 @@ export interface ServiceWithAccommodation extends UIFlattenedService {
 // Interface for services with distance calculation from geospatial queries
 export interface ServiceWithDistance extends ServiceWithAccommodation {
   distance?: number; // Distance in kilometers, calculated by database or client-side
+}
+
+export interface ServiceGroup {
+  orgId: string;
+  orgName: string;
+  orgSlug: string;
+  isVerified: boolean;
+  orgDescription?: string;
+  services: ServiceWithDistance[];
+  categories: string[];
+  subcategories: string[];
+  distance: number;
 }
 
 // SWEP (Severe Weather Emergency Protocol) interfaces

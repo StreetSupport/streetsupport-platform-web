@@ -7,7 +7,7 @@ import ProgressiveServiceGrid from './ProgressiveServiceGrid';
 import FilterPanel from './FilterPanel';
 import RadiusFilter from './RadiusFilter';
 import GoogleMap from '@/components/MapComponent/GoogleMap';
-import type { ServiceWithDistance } from '@/types';
+import type { ServiceWithDistance, ServiceGroup } from '@/types';
 
 interface Props {
   services: ServiceWithDistance[];
@@ -43,19 +43,6 @@ interface MapMarker {
   distanceKm?: number;
   icon?: string | google.maps.Icon;
   type?: string;
-}
-
-// Grouping interfaces
-interface ServiceGroup {
-  orgId: string;
-  orgName: string;
-  orgSlug: string;
-  isVerified: boolean;
-  orgDescription?: string;
-  services: ServiceWithDistance[];
-  categories: string[];
-  subcategories: string[];
-  distance: number; // Minimum distance from any service in the group
 }
 
 // Optimized grouping function moved outside component to prevent recreation

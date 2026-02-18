@@ -62,7 +62,6 @@ describe('openingTimes utilities', () => {
       organisationSlug: 'test-org',
       description,
       openTimes,
-      clientGroups: [],
       latitude: 53.4808,
       longitude: -2.2426,
       distance: 1000
