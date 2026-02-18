@@ -9,6 +9,7 @@ import type { ServiceWithDistance, FlattenedService } from '@/types';
 import { isServiceOpenNow } from '@/utils/openingTimes';
 import { decodeText } from '@/utils/htmlDecode';
 import { getCategoryName, getSubCategoryName } from '@/utils/categoryLookup';
+import OpeningTimesList from '@/components/ui/OpeningTimesList';
 
 
 // Type for service location data
@@ -700,42 +701,7 @@ export default function OrganisationServicesAccordion({
                   );
                 })()}
               </div>
-              <ul className="list-disc pl-5">
-                {(() => {
-                  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-                  const dayGroups = new Map<string, Array<{start: string; end: string}>>();
-
-                  service.openTimes.forEach((slot) => {
-                    const dayIndex = Number(slot.day);
-                    const startTime = Number(slot.start);
-                    const endTime = Number(slot.end);
-
-                    if (dayIndex >= 0 && dayIndex <= 6) {
-                      const dayName = days[dayIndex];
-                      if (!dayGroups.has(dayName)) {
-                        dayGroups.set(dayName, []);
-                      }
-                      dayGroups.get(dayName)!.push({
-                        start: formatTime(startTime),
-                        end: formatTime(endTime)
-                      });
-                    }
-                  });
-
-                  const orderedDays = days.filter(day => dayGroups.has(day));
-
-                  return orderedDays.map((dayName) => {
-                    const slots = dayGroups.get(dayName) || [];
-                    const timeRanges = slots.map(slot => `${slot.start} – ${slot.end}`).join(', ');
-
-                    return (
-                      <li key={dayName}>
-                        {dayName}: {timeRanges}
-                      </li>
-                    );
-                  });
-                })()}
-              </ul>
+              <OpeningTimesList openTimes={service.openTimes} className="list-disc pl-5" />
           </div>
         )}
       </>
@@ -868,7 +834,3 @@ export default function OrganisationServicesAccordion({
   );
 }
 
-function formatTime(num: number) {
-  const str = num.toString().padStart(4, '0');
-  return `${str.slice(0, 2)}:${str.slice(2)}`;
-}
