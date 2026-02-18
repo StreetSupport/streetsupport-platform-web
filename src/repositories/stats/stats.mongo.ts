@@ -5,11 +5,12 @@
 
 import { getClientPromise } from '@/utils/mongodb';
 import type { StatsRepository, Stats } from './stats.repository';
+import { DB_NAME } from '@/config/constants';
 
 export const createMongoStatsRepository = (): StatsRepository => ({
   async getStats(): Promise<Stats> {
     const client = await getClientPromise();
-    const db = client.db('streetsupport');
+    const db = client.db(DB_NAME);
 
     // Count published organisations
     const organisationsCount = await db

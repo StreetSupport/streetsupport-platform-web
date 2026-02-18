@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { CACHE_HEADERS } from '@/config/constants';
 
 interface LocationNewsParams {
   params: Promise<{ slug: string }>;
@@ -87,8 +88,7 @@ export async function GET(req: Request, context: LocationNewsParams) {
       }
     });
 
-    // Add cache headers
-    newsResponse.headers.set('Cache-Control', 'public, max-age=1800, s-maxage=3600'); // 30 min browser, 1 hour CDN
+    newsResponse.headers.set('Cache-Control', CACHE_HEADERS.news);
     
     return newsResponse;
   } catch (error) {

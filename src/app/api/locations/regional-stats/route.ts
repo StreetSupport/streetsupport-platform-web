@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
+import { DB_NAME, CACHE_HEADERS } from '@/config/constants';
 
 export async function GET(req: Request) {
   try {
@@ -23,7 +24,7 @@ export async function GET(req: Request) {
     }
 
     const client = await getClientPromise();
-    const db = client.db('streetsupport');
+    const db = client.db(DB_NAME);
 
     const organisationsCol = db.collection('ServiceProviders');
     const servicesCol = db.collection('ProvidedServices');
@@ -71,8 +72,7 @@ export async function GET(req: Request) {
       data: stats
     });
 
-    // Add cache headers
-    response.headers.set('Cache-Control', 'public, max-age=3600, s-maxage=7200');
+    response.headers.set('Cache-Control', CACHE_HEADERS.locationStats);
 
     return response;
   } catch (error) {

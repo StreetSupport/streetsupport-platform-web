@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
+import { DB_NAME, NO_CACHE_RESPONSE_HEADERS } from '@/config/constants';
 import { BannerProps } from '@/types/banners';
 
 export const dynamic = 'force-dynamic';
@@ -11,7 +12,7 @@ export async function GET(req: NextRequest) {
     const locationSlug = searchParams.get('location');
 
     const client = await getClientPromise();
-    const db = client.db('streetsupport');
+    const db = client.db(DB_NAME);
     const bannersCol = db.collection('Banners');
 
     const query: Record<string, unknown> = {
@@ -90,11 +91,7 @@ export async function GET(req: NextRequest) {
       status: 'success',
       banners
     }, {
-      headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
-        'Pragma': 'no-cache',
-        'Expires': '0'
-      }
+      headers: NO_CACHE_RESPONSE_HEADERS
     });
   } catch (error) {
     console.error('[API ERROR] /api/banners:', error);

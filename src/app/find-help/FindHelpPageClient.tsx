@@ -17,6 +17,7 @@ import {
 } from '@/utils/findHelpStateUtils';
 import locations from '@/data/locations.json';
 import type { ServiceWithDistance } from '@/types';
+import { API_TIMEOUT_MS, FALLBACK_TIMEOUT_MS, MAX_SERVICES_FETCH_LIMIT, FALLBACK_SERVICES_LIMIT, DEFAULT_SEARCH_RADIUS_KM } from '@/config/constants';
 
 // Utility function to process raw service data
 function processServiceData(item: unknown): ServiceWithDistance {
@@ -171,14 +172,14 @@ export default function FindHelpPageClient({ searchParams: _searchParams }: Find
 
     // Create AbortController for timeout handling
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
 
     try {
       const params = new URLSearchParams({
         lat: locationData.lat.toString(),
         lng: locationData.lng.toString(),
-        radius: (locationData.radius || 5).toString(),
-        limit: '500',
+        radius: (locationData.radius || DEFAULT_SEARCH_RADIUS_KM).toString(),
+        limit: MAX_SERVICES_FETCH_LIMIT.toString(),
       });
 
       // Don't apply category/subcategory filters in the API call
@@ -244,9 +245,9 @@ export default function FindHelpPageClient({ searchParams: _searchParams }: Find
       if (!isRetry && !isNetworkIssue) {
         try {
           const fallbackController = new AbortController();
-          const fallbackTimeoutId = setTimeout(() => fallbackController.abort(), 10000);
+          const fallbackTimeoutId = setTimeout(() => fallbackController.abort(), FALLBACK_TIMEOUT_MS);
 
-          const fallbackResponse = await fetch('/api/services?limit=50', {
+          const fallbackResponse = await fetch(`/api/services?limit=${FALLBACK_SERVICES_LIMIT}`, {
             cache: 'no-store',
             signal: fallbackController.signal,
           });

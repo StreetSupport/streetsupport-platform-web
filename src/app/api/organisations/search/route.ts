@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
+import { DB_NAME, DEFAULT_ORG_SEARCH_LIMIT } from '@/config/constants';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const query = searchParams.get('q');
-  const limit = parseInt(searchParams.get('limit') || '10', 10);
+  const limit = parseInt(searchParams.get('limit') || String(DEFAULT_ORG_SEARCH_LIMIT), 10);
 
   if (!query || query.trim().length === 0) {
     return NextResponse.json(
@@ -22,7 +23,7 @@ export async function GET(req: Request) {
 
   try {
     const client = await getClientPromise();
-    const db = client.db('streetsupport');
+    const db = client.db(DB_NAME);
     const collection = db.collection('ServiceProviders');
 
     // Create text search query

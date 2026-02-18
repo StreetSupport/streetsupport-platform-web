@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
 import { decodeText, decodeHtmlEntities } from '@/utils/htmlDecode';
 import { loadAccommodationDataForProvider, type AccommodationData } from '@/utils/accommodationData';
+import { DB_NAME, CACHE_HEADERS } from '@/config/constants';
 
 // This function is now replaced by loadAccommodationDataForProvider() from utils/accommodationData.ts
 
@@ -68,7 +69,7 @@ export async function GET(req: Request) {
 
   try {
     const client = await getClientPromise();
-    const db = client.db('streetsupport');
+    const db = client.db(DB_NAME);
 
     const providersCol = db.collection('ServiceProviders');
     const servicesCol = db.collection('ProvidedServices');
@@ -196,8 +197,7 @@ export async function GET(req: Request) {
       userContext: userContext,
     });
 
-    // Enhanced cache headers for better performance  
-    response.headers.set('Cache-Control', 'public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400'); // 30 min browser, 60 min CDN, 24h stale
+    response.headers.set('Cache-Control', CACHE_HEADERS.serviceProviders);
     response.headers.set('ETag', `org-${slug}-${services.length}-${Date.now().toString(36)}`);
     response.headers.set('Vary', 'Accept-Encoding, Accept');
     response.headers.set('Last-Modified', new Date().toUTCString());
