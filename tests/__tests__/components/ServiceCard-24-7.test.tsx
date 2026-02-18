@@ -30,16 +30,15 @@ describe('ServiceCard 24/7 functionality', () => {
     mockUseSearchParams.mockReturnValue(new URLSearchParams() as any);
   });
 
-  it('should hide opening times for services with isOpen247 flag', () => {
-    // Update mock service to set isOpen247 flag
+  it('should hide opening times and show 24/7 pill for services with isOpen247 flag', () => {
     const service247 = {
       ...mock24_7Service,
       isOpen247: true
     };
-    
+
     render(
       <LocationContext.Provider value={mockLocationContextValue}>
-        <ServiceCard 
+        <ServiceCard
           service={service247}
           isOpen={false}
           onToggle={jest.fn()}
@@ -47,28 +46,43 @@ describe('ServiceCard 24/7 functionality', () => {
       </LocationContext.Provider>
     );
 
-    // The service name should be visible
     expect(screen.getByText('24/7 Crisis Support')).toBeInTheDocument();
-    
-    // Opening times should NOT be visible for 24/7 services
     expect(screen.queryByText('Opening Times:')).not.toBeInTheDocument();
-    
-    // Should show "No opening times available" instead
-    expect(screen.getByText('No opening times available')).toBeInTheDocument();
+    expect(screen.queryByText('No opening times available')).not.toBeInTheDocument();
+    expect(screen.getByText('Open 24/7')).toBeInTheDocument();
+    expect(screen.queryByText('Open Now')).not.toBeInTheDocument();
   });
 
-  it('should show opening times for services without 24/7 tags', () => {
+  it('should detect 24-hour services from opening times with 00:00-23:59 slots', () => {
+    // mock24_7Service has openTimes with start: 0, end: 2359 but no isOpen247 flag
+    render(
+      <LocationContext.Provider value={mockLocationContextValue}>
+        <ServiceCard
+          service={mock24_7Service}
+          isOpen={false}
+          onToggle={jest.fn()}
+        />
+      </LocationContext.Provider>
+    );
+
+    expect(screen.queryByText('Opening Times:')).not.toBeInTheDocument();
+    expect(screen.getByText('Open 24/7')).toBeInTheDocument();
+    expect(screen.queryByText('Open Now')).not.toBeInTheDocument();
+  });
+
+  it('should show opening times for services with regular hours', () => {
     const regularService = {
       ...mock24_7Service,
-      organisation: {
-        ...mock24_7Service.organisation,
-        tags: ['crisis', 'emergency'], // No 24/7 tag
-      }
+      isOpen247: false,
+      openTimes: [
+        { day: 1, start: 900, end: 1700 },
+        { day: 2, start: 900, end: 1700 },
+      ],
     };
 
     render(
       <LocationContext.Provider value={mockLocationContextValue}>
-        <ServiceCard 
+        <ServiceCard
           service={regularService}
           isOpen={false}
           onToggle={jest.fn()}
@@ -76,7 +90,7 @@ describe('ServiceCard 24/7 functionality', () => {
       </LocationContext.Provider>
     );
 
-    // Opening times should be visible for regular services
     expect(screen.getByText('Opening Times:')).toBeInTheDocument();
+    expect(screen.queryByText('Open 24/7')).not.toBeInTheDocument();
   });
 });

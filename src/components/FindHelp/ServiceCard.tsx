@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useLocation } from '@/contexts/LocationContext';
@@ -70,6 +70,12 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
     
     const distanceText = formatDistance(service.distance);
 
+    const is24Hour = service.isOpen247 || (service.openTimes && service.openTimes.some((slot) => {
+      const startTime = Number(slot.start);
+      const endTime = Number(slot.end);
+      return startTime === 0 && endTime === 2359;
+    }));
+
     return {
       destination,
       decodedDescription,
@@ -81,7 +87,8 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
       categoryName,
       subCategoryName,
       openingStatus,
-      distanceText
+      distanceText,
+      is24Hour
     };
   }, [service, location, searchParams]);
 
@@ -93,21 +100,24 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
     categoryName,
     subCategoryName,
     openingStatus,
-    distanceText
+    distanceText,
+    is24Hour
   } = memoizedData;
+
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <Link
       href={destination}
       onClick={() => {
-        // Track service card click for analytics
+        setIsLoading(true);
         trackServiceCardClick(
           service.id?.toString() || 'unknown',
           decodedOrgName,
           categoryName
         );
       }}
-      className="card card-compact"
+      className={`card card-compact${isLoading ? ' card-loading' : ''}`}
       aria-label={`View details for ${decodedName}`}
     >
       <div className="flex justify-between items-start mb-2">
@@ -132,17 +142,23 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
             </span>
           )}
           
-          {openingStatus.isOpen && (
-            <span className="service-tag open">
-              Open Now
+          {is24Hour ? (
+            <span className="service-tag always-open">
+              Open 24/7
             </span>
-          )}
-          
-          {/* Appointment Only indicator */}
-          {openingStatus.isAppointmentOnly && (
-            <span className="service-tag limited">
-              Appointment Only
-            </span>
+          ) : (
+            <>
+              {openingStatus.isOpen && (
+                <span className="service-tag open">
+                  Open Now
+                </span>
+              )}
+              {openingStatus.isAppointmentOnly && (
+                <span className="service-tag limited">
+                  Appointment Only
+                </span>
+              )}
+            </>
           )}
         </div>
         
@@ -202,7 +218,7 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
         </div>
       )}
 
-      {service.openTimes && service.openTimes.length > 0 && !service.isOpen247 ? (
+      {is24Hour ? null : service.openTimes && service.openTimes.length > 0 ? (
         <div className="mt-3">
           <p className="text-small font-semibold mb-1 !text-black">Opening Times:</p>
           <ul className="list-disc pl-5 text-sm !text-black">
@@ -211,19 +227,19 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
               // Database uses Monday-first indexing: 0=Monday, ..., 6=Sunday
               const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
               const dayGroups = new Map();
-              
+
               const formatTime = (time: number) => {
                 if (isNaN(time)) return '00:00';
                 const str = time.toString().padStart(4, '0');
                 return `${str.slice(0, 2)}:${str.slice(2)}`;
               };
-              
+
               // Group slots by day
               service.openTimes.forEach((slot) => {
                 const dayIndex = Number(slot.day);
                 const startTime = Number(slot.start);
                 const endTime = Number(slot.end);
-                
+
                 if (dayIndex >= 0 && dayIndex <= 6) {
                   const dayName = days[dayIndex];
                   if (!dayGroups.has(dayName)) {
@@ -235,14 +251,14 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
                   });
                 }
               });
-              
+
               // Sort days in proper order and format consolidated times
               const orderedDays = days.filter(day => dayGroups.has(day));
-              
+
               return orderedDays.map((dayName) => {
                 const slots = dayGroups.get(dayName);
                 const timeRanges = slots.map((slot: { start: string; end: string }) => `${slot.start} – ${slot.end}`).join(', ');
-                
+
                 return (
                   <li key={dayName}>
                     {dayName}: {timeRanges}
