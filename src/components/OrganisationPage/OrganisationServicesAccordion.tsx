@@ -790,11 +790,7 @@ export default function OrganisationServicesAccordion({
                                     onLocationClick(coordinates[1], coordinates[0]);
                                   }
                                 }}
-                                className={`w-full px-3 py-3 rounded-lg border text-sm transition-colors ${
-                                  isSelected
-                                    ? 'bg-blue-50 border-blue-200 text-blue-800'
-                                    : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
-                                }`}
+                                className={`location-btn w-full px-3 py-3 rounded-lg border text-sm transition-colors${isSelected ? ' selected' : ''}`}
                               >
                                 <div className="flex items-start gap-2">
                                   <span className="text-xs mt-0.5 flex-shrink-0">📍</span>
@@ -849,7 +845,7 @@ export default function OrganisationServicesAccordion({
                               </button>
 
                               {isSelected && (
-                                <div className="pl-4 border-l-2 border-blue-200 mt-1 mb-2">
+                                <div className="pl-4 border-l-2 mt-1 mb-2" style={{ borderColor: 'var(--color-brand-a)' }}>
                                   {renderLocationDetails(location, accordionKey)}
                                 </div>
                               )}

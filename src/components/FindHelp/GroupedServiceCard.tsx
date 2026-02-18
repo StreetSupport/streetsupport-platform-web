@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useLocation } from '@/contexts/LocationContext';
@@ -90,10 +90,13 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
   const shouldTruncate = decodedDescription.length > 100;
 
 
+  const [isLoading, setIsLoading] = useState(false);
+
   return (
     <Link
       href={destination}
-      className="card card-compact"
+      onClick={() => setIsLoading(true)}
+      className={`card card-compact${isLoading ? ' card-loading' : ''}`}
       aria-label={`View details for ${decodedOrgName}`}
     >
       <div className="flex justify-between items-start mb-2">
