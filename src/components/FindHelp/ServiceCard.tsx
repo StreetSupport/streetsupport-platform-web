@@ -7,9 +7,11 @@ import { useLocation } from '@/contexts/LocationContext';
 
 import type { ServiceWithDistance } from '@/types';
 import LazyMarkdownContent from '@/components/ui/LazyMarkdownContent';
-import { decodeText } from '@/utils/htmlDecode';
+import VerifiedBadge from '@/components/ui/VerifiedBadge';
+import OpeningTimesList from '@/components/ui/OpeningTimesList';
 import { getCategoryName, getSubCategoryName } from '@/utils/categoryLookup';
 import { formatDistance } from '@/utils/openingTimes';
+import { buildOrganisationUrl } from '@/utils/buildServiceUrl';
 import openingTimesCache from '@/utils/openingTimesCache';
 import { trackServiceCardClick } from '@/components/analytics/GoogleAnalytics';
 
@@ -23,53 +25,18 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
   const { location } = useLocation();
   const searchParams = useSearchParams();
   
-  // Memoize expensive computations to prevent recalculation on every render
-  const memoizedData = useMemo(() => {
-    // Build destination URL with location context
-    let destination = '#';
-    
-    if (service.organisation?.slug) {
-      const params = new URLSearchParams();
-      
-      // Add location context if available
-      if (location?.lat && location?.lng) {
-        params.set('lat', location.lat.toString());
-        params.set('lng', location.lng.toString());
-        if (location.radius) {
-          params.set('radius', location.radius.toString());
-        }
-      }
-      
-      // Add current search parameters if available
-      searchParams?.forEach((value, key) => {
-        if (!params.has(key)) {
-          params.set(key, value);
-        }
-      });
-      
-      destination = `/find-help/organisation/${service.organisation.slug}${params.toString() ? `?${params.toString()}` : ''}`;
-    }
-
-    const decodedDescription = decodeText(service.description);
-    const decodedName = decodeText(service.name);
-    const decodedOrgName = decodeText(service.organisation?.name || '');
-
+  const serviceData = useMemo(() => {
+    const decodedDescription = service.description;
+    const decodedName = service.name;
+    const decodedOrgName = service.organisation?.name || '';
     const shouldTruncate = decodedDescription.length > 120;
-
-    const preview = decodedDescription.length > 120
+    const preview = shouldTruncate
       ? decodedDescription.slice(0, 120) + '...'
       : decodedDescription;
-
-    // Get formatted category and subcategory names
     const categoryName = getCategoryName(service.category);
     const subCategoryName = getSubCategoryName(service.category, service.subCategory);
-    const formattedCategory = `${categoryName} > ${subCategoryName}`;
-
-    // Get opening status using cache to avoid expensive recalculations
     const openingStatus = openingTimesCache.getOpeningStatus(service);
-    
     const distanceText = formatDistance(service.distance);
-
     const is24Hour = service.isOpen247 || (service.openTimes && service.openTimes.some((slot) => {
       const startTime = Number(slot.start);
       const endTime = Number(slot.end);
@@ -77,23 +44,25 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
     }));
 
     return {
-      destination,
       decodedDescription,
       decodedName,
       decodedOrgName,
       preview,
       shouldTruncate,
-      formattedCategory,
       categoryName,
       subCategoryName,
       openingStatus,
       distanceText,
       is24Hour
     };
-  }, [service, location, searchParams]);
+  }, [service]);
+
+  const destination = useMemo(
+    () => buildOrganisationUrl(service.organisation?.slug || '', location, searchParams ?? undefined),
+    [service.organisation?.slug, location, searchParams]
+  );
 
   const {
-    destination,
     decodedName,
     decodedOrgName,
     shouldTruncate,
@@ -102,7 +71,7 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
     openingStatus,
     distanceText,
     is24Hour
-  } = memoizedData;
+  } = serviceData;
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -122,25 +91,7 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
     >
       <div className="flex justify-between items-start mb-2">
         <div className="flex items-center gap-2 flex-wrap">
-          {service.organisation?.isVerified && (
-            <span
-              className="service-tag verified"
-              title="Verified Service"
-            >
-              <svg
-                className="w-3 h-3 text-brand-b"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span className="text-xs font-medium">Verified</span>
-            </span>
-          )}
+          {service.organisation?.isVerified && <VerifiedBadge />}
           
           {is24Hour ? (
             <span className="service-tag always-open">
@@ -191,10 +142,15 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
       </div>
 
       <div className="!text-black mb-2">
-        <LazyMarkdownContent
-          content={isOpen ? service.description : memoizedData.preview}
-          className="text-sm !text-black"
-        />
+        {(() => {
+          const content = isOpen ? service.description : serviceData.preview;
+          const hasMarkup = /[#*_[\]<>|`~]/.test(content);
+          return hasMarkup ? (
+            <LazyMarkdownContent content={content} className="text-sm !text-black" />
+          ) : (
+            <p className="text-sm !text-black">{content}</p>
+          );
+        })()}
       </div>
 
       {shouldTruncate && (
@@ -221,52 +177,7 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
       {is24Hour ? null : service.openTimes && service.openTimes.length > 0 ? (
         <div className="mt-3">
           <p className="text-small font-semibold mb-1 !text-black">Opening Times:</p>
-          <ul className="list-disc pl-5 text-sm !text-black">
-            {(() => {
-              // Group opening times by day and consolidate multiple sessions
-              // Database uses Monday-first indexing: 0=Monday, ..., 6=Sunday
-              const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-              const dayGroups = new Map();
-
-              const formatTime = (time: number) => {
-                if (isNaN(time)) return '00:00';
-                const str = time.toString().padStart(4, '0');
-                return `${str.slice(0, 2)}:${str.slice(2)}`;
-              };
-
-              // Group slots by day
-              service.openTimes.forEach((slot) => {
-                const dayIndex = Number(slot.day);
-                const startTime = Number(slot.start);
-                const endTime = Number(slot.end);
-
-                if (dayIndex >= 0 && dayIndex <= 6) {
-                  const dayName = days[dayIndex];
-                  if (!dayGroups.has(dayName)) {
-                    dayGroups.set(dayName, []);
-                  }
-                  dayGroups.get(dayName).push({
-                    start: formatTime(startTime),
-                    end: formatTime(endTime)
-                  });
-                }
-              });
-
-              // Sort days in proper order and format consolidated times
-              const orderedDays = days.filter(day => dayGroups.has(day));
-
-              return orderedDays.map((dayName) => {
-                const slots = dayGroups.get(dayName);
-                const timeRanges = slots.map((slot: { start: string; end: string }) => `${slot.start} – ${slot.end}`).join(', ');
-
-                return (
-                  <li key={dayName}>
-                    {dayName}: {timeRanges}
-                  </li>
-                );
-              });
-            })()}
-          </ul>
+          <OpeningTimesList openTimes={service.openTimes} />
         </div>
       ) : (
         <div className="mt-3">

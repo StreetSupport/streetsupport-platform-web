@@ -2,10 +2,8 @@ import type { ServiceWithDistance } from '@/types';
 import { isServiceOpenNow, type OpeningStatus } from '@/utils/openingTimes';
 
 /**
- * Cache for opening times calculations to avoid expensive recalculations
- * 
- * This cache uses a combination of service ID and current time (rounded to minutes)
- * to cache opening status calculations, significantly reducing CPU usage.
+ * Cache for opening times calculations to avoid expensive recalculations.
+ * Entries expire individually via TTL check rather than batch-invalidating.
  */
 
 interface CacheEntry {
@@ -39,15 +37,11 @@ class OpeningTimesCache {
     return status;
   }
   
-  /**
-   * Generate cache key from service ID and current time (rounded to minutes)
-   */
   private generateCacheKey(service: ServiceWithDistance): string {
-    const serviceId = (service as ServiceWithDistance & { id?: string; _id?: string }).id || 
-                      (service as ServiceWithDistance & { id?: string; _id?: string })._id || 
+    const serviceId = (service as ServiceWithDistance & { id?: string; _id?: string }).id ||
+                      (service as ServiceWithDistance & { id?: string; _id?: string })._id ||
                       'unknown';
-    const currentTimeMinutes = Math.floor(Date.now() / (1000 * 60)); // Round to minutes
-    return `${serviceId}-${currentTimeMinutes}`;
+    return String(serviceId);
   }
   
   /**

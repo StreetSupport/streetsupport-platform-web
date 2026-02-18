@@ -17,6 +17,8 @@ import {
 } from '@/utils/findHelpStateUtils';
 import locations from '@/data/locations.json';
 import type { ServiceWithDistance } from '@/types';
+import { detectAppointmentOnly } from '@/utils/openingTimes';
+import { decodeText } from '@/utils/htmlDecode';
 import { API_TIMEOUT_MS, FALLBACK_TIMEOUT_MS, MAX_SERVICES_FETCH_LIMIT, FALLBACK_SERVICES_LIMIT, DEFAULT_SEARCH_RADIUS_KM } from '@/config/constants';
 
 // Utility function to process raw service data
@@ -31,20 +33,26 @@ function processServiceData(item: unknown): ServiceWithDistance {
     end: slot.EndTime ?? slot.end ?? 0,
   }));
   
+  const name = decodeText(String(serviceItem.ServiceProviderName || serviceItem.name || ''));
+  const description = decodeText(String(serviceItem.Info || serviceItem.description || ''));
+  const orgName = serviceItem.organisation
+    ? decodeText(String((serviceItem.organisation as Record<string, unknown>).name || ''))
+    : name;
+
   return {
     id: serviceItem._id || serviceItem.id,
-    name: String(serviceItem.ServiceProviderName || serviceItem.name || ''),
-    description: String(serviceItem.Info || serviceItem.description || ''),
+    name,
+    description,
     category: serviceItem.ParentCategoryKey || serviceItem.category || '',
     subCategory: serviceItem.SubCategoryKey || serviceItem.subCategory || '',
     latitude: coords[1],
     longitude: coords[0],
     organisation: serviceItem.organisation ? {
-      name: String((serviceItem.organisation as Record<string, unknown>).name || ''),
+      name: orgName,
       slug: (serviceItem.organisation as Record<string, unknown>).slug || '',
       isVerified: (serviceItem.organisation as Record<string, unknown>).isVerified || false,
     } : {
-      name: String(serviceItem.ServiceProviderName || ''),
+      name: orgName,
       slug: serviceItem.ServiceProviderKey || '',
       isVerified: (serviceItem.IsVerified as boolean) || false,
     },
@@ -54,7 +62,12 @@ function processServiceData(item: unknown): ServiceWithDistance {
     openTimes,
     distance: serviceItem.distance,
     isTelephoneService: (serviceItem.IsTelephoneService as boolean) || false,
-    isAppointmentOnly: (serviceItem.IsAppointmentOnly as boolean) || false,
+    isAppointmentOnly: (serviceItem.IsAppointmentOnly as boolean) ||
+      detectAppointmentOnly(
+        String(serviceItem.Info || serviceItem.description || ''),
+        String(serviceItem.ParentCategoryKey || serviceItem.category || ''),
+        String(serviceItem.SubCategoryKey || serviceItem.subCategory || '')
+      ),
     isOpen247: (serviceItem.Address as Record<string, unknown>)?.IsOpen247 as boolean || false,
     sourceType: serviceItem.sourceType
   } as ServiceWithDistance;
