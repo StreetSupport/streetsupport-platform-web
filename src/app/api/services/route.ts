@@ -37,9 +37,8 @@ interface AggregationStage {
   $addFields?: Record<string, unknown>;
   $unwind?: string | { path: string; preserveNullAndEmptyArrays?: boolean };
   $project?: Record<string, number | string>;
-  $skip?: number;
-  $limit?: number;
   $count?: string;
+  $facet?: Record<string, Record<string, unknown>[]>;
 }
 
 // This function is now replaced by loadAccommodationDataFromDatabase() from utils/accommodationData.ts
@@ -314,11 +313,10 @@ export async function GET(req: Request) {
       }
     });
 
-    // Add pagination
-    pipeline.push(
-      { $skip: (page - 1) * limit },
-      { $limit: limit }
-    );
+    // Pagination is applied in JavaScript after combining services with
+    // accommodation results (which come from a separate collection).
+    // Both sources use $geoNear for distance, and must be interleaved
+    // by distance before slicing.
 
     // Load filtered accommodation data from database (only what we need)
     const accommodationData = await loadFilteredAccommodationData({
@@ -342,18 +340,21 @@ export async function GET(req: Request) {
       }
     }
 
-    // Remove pagination from pipeline for accommodation integration
-    const pipelineWithoutPagination = [...pipeline];
-    pipelineWithoutPagination.splice(-2, 2); // Remove skip and limit
+    // Single query: fetch results and count in one round trip using $facet
+    const facetPipeline: AggregationStage[] = [
+      ...pipeline,
+      {
+        $facet: {
+          results: [{ $match: {} }],
+          totalCount: [{ $count: 'count' }]
+        }
+      }
+    ];
 
-    // Use aggregation pipeline for regular services
-    const services = await servicesCol.aggregate(pipelineWithoutPagination).toArray();
-    
-    // Get total count of services using optimized pipeline
-    const countPipeline = [...pipelineWithoutPagination];
-    countPipeline.push({ $count: "total" });
-    const countResult = await servicesCol.aggregate(countPipeline).toArray();
-    const servicesTotal = countResult.length > 0 ? countResult[0].total : 0;
+    const [facetResult] = await servicesCol.aggregate(facetPipeline).toArray();
+    const typedResult = facetResult as { results: Record<string, unknown>[]; totalCount: Array<{ count: number }> };
+    const services = typedResult.results;
+    const servicesTotal = typedResult.totalCount[0]?.count || 0;
 
     // Combine services and accommodation results
     const combinedResults: Array<Record<string, unknown> & { distance?: number }> = [...services, ...accommodationResults];
