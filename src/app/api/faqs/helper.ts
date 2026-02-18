@@ -1,8 +1,9 @@
 import { getClientPromise } from '@/utils/mongodb';
+import { DB_NAME } from '@/config/constants';
 
 export async function getFaqs(locationKey?: string) {
   const client = await getClientPromise();
-  const db = client.db('streetsupport');
+  const db = client.db(DB_NAME);
 
   const query: { LocationKey?: string } = {};
   if (locationKey) {

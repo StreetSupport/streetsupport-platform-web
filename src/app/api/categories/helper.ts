@@ -2,6 +2,7 @@
 
 import { getClientPromise } from '@/utils/mongodb';
 import { formatCategory, type RawCategory } from '@/utils/formatCategories';
+import { DB_NAME } from '@/config/constants';
 
 interface DbSubCategory {
   Key: string;
@@ -16,7 +17,7 @@ interface DbCategory {
 
 export async function getCategories() {
   const client = await getClientPromise();
-  const db = client.db('streetsupport');
+  const db = client.db(DB_NAME);
 
   const categories = await db
     .collection<DbCategory>('NestedServiceCategories')

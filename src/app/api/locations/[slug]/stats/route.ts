@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
+import { DB_NAME, CACHE_HEADERS } from '@/config/constants';
 
 interface LocationStatsParams {
   params: Promise<{ slug: string }>;
@@ -17,7 +18,7 @@ export async function GET(req: Request, context: LocationStatsParams) {
     }
 
     const client = await getClientPromise();
-    const db = client.db('streetsupport');
+    const db = client.db(DB_NAME);
     
     // Get published organisations for this location
     const organisationsCol = db.collection('ServiceProviders');
@@ -66,8 +67,7 @@ export async function GET(req: Request, context: LocationStatsParams) {
       data: stats
     });
 
-    // Add cache headers
-    response.headers.set('Cache-Control', 'public, max-age=3600, s-maxage=7200'); // 1 hour browser, 2 hours CDN
+    response.headers.set('Cache-Control', CACHE_HEADERS.locationStats);
     
     return response;
   } catch (error) {

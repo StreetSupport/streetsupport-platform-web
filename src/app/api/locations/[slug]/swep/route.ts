@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { SwepData } from '@/types';
 import { isSwepActive } from '@/utils/swep';
 import { getClientPromise } from '@/utils/mongodb';
+import { DB_NAME, NO_CACHE_RESPONSE_HEADERS } from '@/config/constants';
 
 // Disable caching for this API route to ensure fresh SWEP data
 export const dynamic = 'force-dynamic';
@@ -24,7 +25,7 @@ export async function GET(req: Request, context: SwepApiParams) {
 
     // Fetch SWEP data from MongoDB
     const client = await getClientPromise();
-    const db = client.db('streetsupport');
+    const db = client.db(DB_NAME);
     const swepCol = db.collection('SwepBanners');
 
     const rawSwepData = await swepCol.findOne({
@@ -79,11 +80,7 @@ export async function GET(req: Request, context: SwepApiParams) {
         location: slug
       }
     }, {
-      headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
-        'Pragma': 'no-cache',
-        'Expires': '0'
-      }
+      headers: NO_CACHE_RESPONSE_HEADERS
     });
   } catch (error) {
     console.error('[API ERROR] /api/locations/[slug]/swep:', error);

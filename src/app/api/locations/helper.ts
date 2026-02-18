@@ -1,6 +1,7 @@
 // src/app/api/locations/helper.ts
 
 import { getClientPromise } from '@/utils/mongodb';
+import { DB_NAME } from '@/config/constants';
 
 export interface RawLocation {
   _id: string;
@@ -18,7 +19,7 @@ export function formatLocation(raw: RawLocation) {
 
 export async function getLocations() {
   const client = await getClientPromise();
-  const db = client.db('streetsupport');
+  const db = client.db(DB_NAME);
 
   const cities = await db
     .collection<RawLocation>('Cities')
