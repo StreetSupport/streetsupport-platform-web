@@ -46,7 +46,6 @@ function processOrganisationData(data: { organisation: unknown; services: unknow
       organisationSlug: (data.organisation as { name?: string; key?: string })?.key || '',
       latitude: coords[1],
       longitude: coords[0],
-      clientGroups: service.ClientGroups || [],
       isAppointmentOnly: service.isAppointmentOnly,
       isTelephoneService: service.isTelephoneService,
       isOpen247: service.isOpen247,

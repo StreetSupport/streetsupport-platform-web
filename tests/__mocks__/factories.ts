@@ -68,7 +68,6 @@ export function createMockService(
       createMockOpeningTime(1, 540, 1020), // Monday 9:00-17:00
       createMockOpeningTime(2, 540, 1020), // Tuesday 9:00-17:00
     ],
-    clientGroups: [],
     latitude: 53.4808,
     longitude: -2.2426,
     ...overrides,

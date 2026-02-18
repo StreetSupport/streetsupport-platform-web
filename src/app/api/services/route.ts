@@ -54,7 +54,6 @@ function transformAccommodationToService(accommodation: AccommodationData) {
     ServiceProviderKey: accommodation.serviceProviderId,
     IsVerified: accommodation.isVerified || false,
     OpeningTimes: [],
-    ClientGroups: [],
     Address: {
       Location: {
         type: 'Point',
@@ -310,8 +309,6 @@ export async function GET(req: Request) {
         ServiceProviderName: 1,
         ServiceProviderKey: 1,
         OpeningTimes: 1,
-        // We don't use ClientGroups, but I leave it because afraid to break something
-        ClientGroups: 1,
         'Address.Location': 1,
         organisation: 1,
         distance: 1,
