@@ -170,19 +170,13 @@ async function fetchOrganisationData(slug: string, searchParams?: { [key: string
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const { slug } = await props.params;
   const searchParams = await props.searchParams;
-  
-  // Always return a fallback title for E2E tests and error cases
-  const fallbackMetadata = {
-    title: 'Organisation Not Found | Street Support',
-    description: 'The organisation you are looking for could not be found.',
-  };
-  
+
   const data = await fetchOrganisationData(slug, searchParams);
-  
+
   if (!data || !data.organisation) {
-    return fallbackMetadata;
+    notFound();
   }
-  
+
   return {
     title: `${data.organisation.name} | Street Support`,
     description: data.organisation.description || `Services provided by ${data.organisation.name}`,
