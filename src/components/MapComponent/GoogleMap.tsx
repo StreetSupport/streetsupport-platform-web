@@ -55,9 +55,16 @@ export default React.memo(function GoogleMap({
 }: Props) {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
-  const markersRef = useRef<google.maps.Marker[]>([]);
+  const markerInstancesRef = useRef<Map<string, google.maps.Marker>>(new Map());
+  const markerDataRef = useRef<Map<string, Marker>>(new Map());
   const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
   const previousMarkersRef = useRef<Marker[]>([]);
+
+  // Refs for latest prop values (accessible from click handlers without re-registration)
+  const onMarkerClickRef = useRef(onMarkerClick);
+  onMarkerClickRef.current = onMarkerClick;
+  const userLocationRef = useRef(userLocation);
+  userLocationRef.current = userLocation;
   const [isLoaded, setIsLoaded] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const effectiveZoom = zoom ?? 12;
@@ -106,158 +113,138 @@ export default React.memo(function GoogleMap({
     const map = mapInstanceRef.current;
     if (!map || !markers || !isLoaded) return;
 
-    // Always clear existing markers first
-    markersRef.current.forEach((marker) => marker.setMap(null));
-    markersRef.current = [];
+    // Update data ref so click handlers always access latest marker data
+    const newDataMap = new Map<string, Marker>();
+    for (const m of markers) {
+      newDataMap.set(m.id, m);
+    }
+    markerDataRef.current = newDataMap;
 
-    // If no new markers, we're done (map will show no markers)
-    if (markers.length === 0) {
-      return;
+    const currentMarkerIds = new Set(markers.map(m => m.id));
+
+    // Remove markers no longer in the list
+    for (const [id, gMarker] of markerInstancesRef.current) {
+      if (!currentMarkerIds.has(id)) {
+        google.maps.event.clearInstanceListeners(gMarker);
+        gMarker.setMap(null);
+        markerInstancesRef.current.delete(id);
+      }
     }
 
-    const newMarkers: google.maps.Marker[] = [];
+    // Add new markers or update existing ones
+    for (const markerData of markers) {
+      const existing = markerInstancesRef.current.get(markerData.id);
 
-    markers.forEach((markerData) => {
-      const {
-        id,
-        lat,
-        lng,
-        title,
-        icon,
-        organisation,
-        serviceName,
-        distanceKm,
-        organisationSlug,
-        link,
-        onMarkerClick: markerClickHandler,
-      } = markerData;
+      let zIndex = 100;
+      let animation: google.maps.Animation | null = null;
 
-      // Determine marker styling based on type and selection
-      const markerIcon = icon;
-      let zIndex = 100; // Default z-index for service markers
-      let animation = null;
-      
-      if (id === 'user-location' || markerData.type === 'user') {
-        zIndex = 1000; // Higher z-index to appear above other markers
+      if (markerData.id === 'user-location' || markerData.type === 'user') {
+        zIndex = 1000;
       }
-      
-      // Add bounce animation for selected service markers
+
       if (markerData.isSelected && markerData.type === 'service') {
         animation = google.maps.Animation.BOUNCE;
-        zIndex = 500; // Higher than normal service markers but lower than user location
+        zIndex = 500;
       }
 
-      const gMarker = new google.maps.Marker({
-        position: { lat, lng },
-        map,
-        title,
-        icon: markerIcon || undefined,
-        zIndex: zIndex,
-        animation: animation,
-      });
-
-      // Determine if we have custom click handlers
-      const hasCustomHandler = markerClickHandler || onMarkerClick;
-      
-      // Use custom link if provided, otherwise default to organisation page with location context
-      let destination = link || `/find-help/organisation/${organisationSlug}`;
-      
-      // Add user location parameters to organisation URLs if available
-      if (!link && userLocation?.lat && userLocation?.lng) {
-        const params = new URLSearchParams();
-        params.set('lat', userLocation.lat.toString());
-        params.set('lng', userLocation.lng.toString());
-        if (userLocation.radius) {
-          params.set('radius', userLocation.radius.toString());
-        }
-        destination = `/find-help/organisation/${organisationSlug}?${params.toString()}`;
-      }
-      
-      const infoId = `info-${id}`;
-
-      // Customize info window content based on marker type and click handlers
-      const htmlContent = hasCustomHandler ?
-        // Custom handler - show address info
-        `<div
-          id="${infoId}"
-          style="font-size:14px;max-width:220px;cursor:pointer;padding:4px;"
-        >
-          <strong style="color:#0b9b75;">${title}</strong><br/>
-          ${serviceName ? `<span style="color:#666;">${serviceName}</span><br/>` : ''}
-          <span style="color:#666;font-size:12px;">Click to select this location</span>
-        </div>` :
-        link ? 
-        // Homepage/location markers - simpler content
-        `<div
-          id="${infoId}"
-          style="font-size:14px;max-width:220px;cursor:pointer;padding:4px;"
-        >
-          <strong style="color:#0b9b75;">${title}</strong><br/>
-          <span style="color:#666;">Click to view services in this area</span>
-        </div>` :
-        // Service markers - detailed content
-        `<div
-          id="${infoId}"
-          style="font-size:14px;max-width:220px;cursor:pointer;padding:4px;"
-        >
-          <strong style="color:#0b9b75;">${organisation ?? 'Unknown Organisation'}</strong><br/>
-          ${serviceName ?? 'Unnamed service'}<br/>
-          ${distanceKm?.toFixed(1) ?? '?'} km away
-        </div>`;
-
-      const infoWindow = new google.maps.InfoWindow({ content: htmlContent });
-
-      gMarker.addListener('click', () => {
-        // For markers with links (like homepage), navigate directly without showing info window
-        if (link) {
-          window.location.href = destination;
-          return;
+      if (existing) {
+        // Update position if changed
+        const pos = existing.getPosition();
+        if (pos?.lat() !== markerData.lat || pos?.lng() !== markerData.lng) {
+          existing.setPosition({ lat: markerData.lat, lng: markerData.lng });
         }
 
-        // For other markers, use custom handlers or show info window
-        if (markerClickHandler) {
-          markerClickHandler(id);
-          return;
-        } else if (onMarkerClick) {
-          onMarkerClick(id);
-          return;
+        // Update animation if selection state changed
+        if (existing.getAnimation() !== animation) {
+          existing.setAnimation(animation);
         }
-
-        // Default behavior: show info window
-        if (infoWindowRef.current) {
-          infoWindowRef.current.close();
-        }
-
-        infoWindowRef.current = infoWindow;
-        infoWindow.open(map, gMarker);
-
-        google.maps.event.addListenerOnce(infoWindow, 'domready', () => {
-          const el = document.getElementById(infoId);
-          if (el) {
-            el.addEventListener('click', () => {
-              window.location.href = destination;
-            });
-          }
+      } else {
+        // Create new marker
+        const gMarker = new google.maps.Marker({
+          position: { lat: markerData.lat, lng: markerData.lng },
+          map,
+          title: markerData.title,
+          icon: markerData.icon || undefined,
+          zIndex,
+          animation,
         });
-      });
 
-      newMarkers.push(gMarker);
-    });
+        // Click handler uses refs so it always accesses latest data and props
+        const markerId = markerData.id;
+        gMarker.addListener('click', () => {
+          const data = markerDataRef.current.get(markerId);
+          if (!data) return;
+          const currentOnMarkerClick = onMarkerClickRef.current;
+          const currentUserLocation = userLocationRef.current;
 
-    markersRef.current = newMarkers;
+          if (data.link) {
+            window.location.href = data.link;
+            return;
+          }
 
-    // Auto-fit bounds if enabled and Google Maps API is loaded
+          if (data.onMarkerClick) {
+            data.onMarkerClick(data.id);
+            return;
+          }
+          if (currentOnMarkerClick) {
+            currentOnMarkerClick(data.id);
+            return;
+          }
+
+          // Build destination URL
+          let destination = `/find-help/organisation/${data.organisationSlug}`;
+          if (currentUserLocation?.lat && currentUserLocation?.lng) {
+            const params = new URLSearchParams();
+            params.set('lat', currentUserLocation.lat.toString());
+            params.set('lng', currentUserLocation.lng.toString());
+            if (currentUserLocation.radius) {
+              params.set('radius', currentUserLocation.radius.toString());
+            }
+            destination = `/find-help/organisation/${data.organisationSlug}?${params.toString()}`;
+          }
+
+          if (infoWindowRef.current) {
+            infoWindowRef.current.close();
+          }
+
+          // Create InfoWindow lazily on click
+          const infoId = `info-${data.id}`;
+          const htmlContent = `<div
+            id="${infoId}"
+            style="font-size:14px;max-width:220px;cursor:pointer;padding:4px;"
+          >
+            <strong style="color:#0b9b75;">${data.organisation ?? 'Unknown Organisation'}</strong><br/>
+            ${data.serviceName ?? 'Unnamed service'}<br/>
+            ${data.distanceKm?.toFixed(1) ?? '?'} km away
+          </div>`;
+
+          const infoWindow = new google.maps.InfoWindow({ content: htmlContent });
+          infoWindowRef.current = infoWindow;
+          infoWindow.open(map, gMarker);
+
+          google.maps.event.addListenerOnce(infoWindow, 'domready', () => {
+            const el = document.getElementById(infoId);
+            if (el) {
+              el.addEventListener('click', () => {
+                window.location.href = destination;
+              });
+            }
+          });
+        });
+
+        markerInstancesRef.current.set(markerData.id, gMarker);
+      }
+    }
+
+    // Auto-fit bounds if enabled
     if (autoFitBounds && typeof google !== 'undefined' && google.maps && google.maps.geometry) {
-      // Check if we should recalculate bounds (markers changed significantly)
       const shouldRecalculate = shouldRecalculateBounds(previousMarkersRef.current, markers);
-      
+
       if (shouldRecalculate) {
-        // Convert user location to the format expected by mapBounds utility
-        const boundsUserLocation = userLocation?.lat !== undefined && userLocation?.lng !== undefined 
+        const boundsUserLocation = userLocation?.lat !== undefined && userLocation?.lng !== undefined
           ? { lat: userLocation.lat, lng: userLocation.lng }
           : null;
 
-        // Update map bounds with the new markers
         updateMapBounds(map, markers, boundsUserLocation, {
           includeUserLocation: includeUserInBounds,
           maxZoom,
@@ -265,11 +252,26 @@ export default React.memo(function GoogleMap({
           paddingPercent: fitPadding
         });
 
-        // Store current markers for next comparison
         previousMarkersRef.current = [...markers];
       }
     }
-  }, [markers, isLoaded, onMarkerClick, userLocation?.lat, userLocation?.lng, userLocation?.radius, autoFitBounds, maxZoom, minZoom, fitPadding, includeUserInBounds]);
+  }, [markers, isLoaded, userLocation?.lat, userLocation?.lng, userLocation?.radius, autoFitBounds, maxZoom, minZoom, fitPadding, includeUserInBounds]);
+
+  // Clean up all markers on unmount
+  useEffect(() => {
+    const instances = markerInstancesRef.current;
+    const data = markerDataRef.current;
+    return () => {
+      if (typeof google !== 'undefined' && google.maps?.event) {
+        instances.forEach((gMarker) => {
+          google.maps.event.clearInstanceListeners(gMarker);
+          gMarker.setMap(null);
+        });
+      }
+      instances.clear();
+      data.clear();
+    };
+  }, []);
 
   if (loadError) {
     return (
