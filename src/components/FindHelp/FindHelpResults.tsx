@@ -1,13 +1,15 @@
 'use client';
 
 import React, { useMemo, useState, useRef, useCallback, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useLocation } from '@/contexts/LocationContext';
 import { useDebounce } from '@/hooks/useDebounce';
 import ProgressiveServiceGrid from './ProgressiveServiceGrid';
 import FilterPanel from './FilterPanel';
 import RadiusFilter from './RadiusFilter';
 import GoogleMap from '@/components/MapComponent/GoogleMap';
-import type { ServiceWithDistance } from '@/types';
+import { buildOrganisationUrl } from '@/utils/buildServiceUrl';
+import type { ServiceWithDistance, ServiceGroup } from '@/types';
 
 interface Props {
   services: ServiceWithDistance[];
@@ -43,19 +45,6 @@ interface MapMarker {
   distanceKm?: number;
   icon?: string | google.maps.Icon;
   type?: string;
-}
-
-// Grouping interfaces
-interface ServiceGroup {
-  orgId: string;
-  orgName: string;
-  orgSlug: string;
-  isVerified: boolean;
-  orgDescription?: string;
-  services: ServiceWithDistance[];
-  categories: string[];
-  subcategories: string[];
-  distance: number; // Minimum distance from any service in the group
 }
 
 // Optimized grouping function moved outside component to prevent recreation
@@ -140,6 +129,7 @@ export default React.memo(function FindHelpResults({
   onRetry
 }: Props) {
   const { location, updateRadius } = useLocation();
+  const searchParams = useSearchParams();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const filtersHeaderRef = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
   
@@ -204,7 +194,15 @@ export default React.memo(function FindHelpResults({
     };
   }, [services, debouncedSelectedCategory, debouncedSelectedSubCategory, sortOrder]);
 
-
+  const groupUrls = useMemo(() => {
+    const urls = new Map<string, string>();
+    for (const group of sortedGroups) {
+      if (!urls.has(group.orgSlug)) {
+        urls.set(group.orgSlug, buildOrganisationUrl(group.orgSlug, location, searchParams ?? undefined));
+      }
+    }
+    return urls;
+  }, [sortedGroups, location, searchParams]);
 
   const combinedMarkers: MapMarker[] = useMemo(() => {
     const markers: MapMarker[] = filteredServices.map((s) => ({
@@ -383,6 +381,7 @@ export default React.memo(function FindHelpResults({
           ) : (
             <ProgressiveServiceGrid
               groups={sortedGroups}
+              groupUrls={groupUrls}
               showMap={showMap}
               openDescriptionId={openDescriptionId}
               onToggleDescription={handleToggleDescription}

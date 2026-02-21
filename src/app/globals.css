@@ -263,6 +263,10 @@
   @apply text-sm text-brand-l leading-relaxed;
 }
 
+.card-loading {
+  @apply opacity-60 pointer-events-none animate-pulse;
+}
+
 /* Card Grid System */
 .card-grid {
   @apply grid gap-6;
@@ -978,6 +982,28 @@ select:disabled {
     right: auto !important;
     transform: translateX(-50%) !important;
   }
+}
+
+/* Location buttons within service listings */
+.location-btn {
+  background-color: var(--color-brand-q);
+  border-color: #e5e7eb;
+  color: var(--color-brand-l);
+  cursor: pointer;
+}
+
+.location-btn:hover {
+  background-color: #e9e9e9;
+  border-color: var(--color-brand-f);
+}
+
+.location-btn.selected {
+  border-color: var(--color-brand-a);
+  color: var(--color-brand-k);
+}
+
+.location-btn.selected:hover {
+  background-color: #e6f5f1;
 }
 
 /* Statistics section */

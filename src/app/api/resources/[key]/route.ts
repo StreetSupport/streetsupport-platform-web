@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Resource, LinkList, Link } from '@/types/resources';
 import { getClientPromise } from '@/utils/mongodb';
+import { DB_NAME, NO_CACHE_RESPONSE_HEADERS } from '@/config/constants';
 
 // Disable caching to ensure fresh resource data
 export const dynamic = 'force-dynamic';
@@ -52,7 +53,7 @@ export async function GET(req: Request, context: ResourceApiParams) {
 
     // Fetch resource data from MongoDB
     const client = await getClientPromise();
-    const db = client.db('streetsupport');
+    const db = client.db(DB_NAME);
     const resourcesCol = db.collection('Resources');
 
     const rawResourceData = await resourcesCol.findOne({
@@ -93,18 +94,13 @@ export async function GET(req: Request, context: ResourceApiParams) {
       updatedAt: rawResourceData.DocumentModifiedDate ? rawResourceData.DocumentModifiedDate.toISOString() : ''
     };
 
-    // Return response without caching headers to ensure fresh data
     return NextResponse.json({
       status: 'success',
       data: {
         resource
       }
     }, {
-      headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
-        'Pragma': 'no-cache',
-        'Expires': '0'
-      }
+      headers: NO_CACHE_RESPONSE_HEADERS
     });
   } catch (error) {
     console.error('[API ERROR] /api/resources/[key]:', error);

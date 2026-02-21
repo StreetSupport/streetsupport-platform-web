@@ -1,6 +1,5 @@
 import type { FlattenedService } from '@/types';
 
-// ✅ Address type based on the MongoDB structure
 export interface Address {
   Key?: {
     $binary?: {
@@ -20,7 +19,6 @@ export interface Address {
   Longitude?: number;
 }
 
-// ✅ Correct type matching your API response shape
 export interface OrganisationDetails {
   key: string;
   name: string;
@@ -40,22 +38,4 @@ export interface OrganisationDetails {
   RegisteredCharity?: number;
   addresses: Address[];
   services: FlattenedService[];
-  groupedServices: Record<string, Record<string, FlattenedService[]>>;
-}
-
-// ✅ Async API fetcher using your real route
-export async function getOrganisationBySlug(
-  slug: string
-): Promise<OrganisationDetails | null> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/service-providers/${slug}`,
-    {
-      cache: 'no-store',
-    }
-  );
-
-  if (!res.ok) return null;
-
-  const data = await res.json();
-  return data.organisation as OrganisationDetails; // ✅ Use .organisation because that’s your API shape
 }

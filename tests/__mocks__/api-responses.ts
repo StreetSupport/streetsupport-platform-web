@@ -51,7 +51,6 @@ export const mockFlattenedService: FlattenedService = {
     { day: 4, start: 9, end: 17 }, // Thursday 9am-5pm
     { day: 5, start: 9, end: 16 }, // Friday 9am-4pm
   ],
-  clientGroups: ['adults', 'young-people'],
   latitude: 52.489471,
   longitude: -1.898575,
 };
@@ -81,7 +80,6 @@ export const mockUIFlattenedService: UIFlattenedService = {
     { day: 4, start: 9, end: 17 }, // Thursday 9am-5pm
     { day: 5, start: 9, end: 16 }, // Friday 9am-4pm
   ],
-  clientGroups: ['adults', 'young-people'],
   latitude: 52.489471,
   longitude: -1.898575,
 };
@@ -144,7 +142,6 @@ export const mock24_7Service: ServiceWithDistance = {
     { day: 5, start: 0, end: 2359 }, // Friday 24 hours
     { day: 6, start: 0, end: 2359 }, // Saturday 24 hours
   ],
-  clientGroups: ['adults', 'young-people', 'families'],
   latitude: 52.489471,
   longitude: -1.898575,
   distance: 0.8,
@@ -232,7 +229,6 @@ export const mockOrganisationDetails: OrganisationDetails = {
   tags: ['health', 'housing', 'food'],
   addresses: mockAddresses as any,
   services: mockServices,
-  groupedServices: mockGroupedServices,
 };
 
 /**
@@ -244,7 +240,6 @@ export const mockMinimalOrganisationDetails: OrganisationDetails = {
   name: 'Minimal Organisation',
   addresses: [],
   services: [],
-  groupedServices: {},
 };
 
 /**

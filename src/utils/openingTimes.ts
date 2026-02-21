@@ -136,12 +136,19 @@ export function isServiceOpenNow(service: ServiceWithDistance): OpeningStatus {
 }
 
 function isAppointmentOnlyService(service: ServiceWithDistance): boolean {
-  // Check for telephone/phone-only services
-  if (service.isAppointmentOnly || service.subCategory === 'telephone') {
-    return true;
-  }
-  
-  // Check for appointment-related keywords in description
+  return Boolean(service.isAppointmentOnly) || service.subCategory === 'telephone';
+}
+
+/**
+ * Detect appointment-only status from keywords and category heuristics.
+ * Used during data processing for services that lack the IsAppointmentOnly
+ * database field (backfill incomplete for ~3% of services).
+ */
+export function detectAppointmentOnly(
+  description: string,
+  category: string,
+  subCategory: string
+): boolean {
   const appointmentKeywords = [
     'appointment',
     'referral',
@@ -151,20 +158,14 @@ function isAppointmentOnlyService(service: ServiceWithDistance): boolean {
     'booking required',
     'pre-arranged'
   ];
-  
-  const description = service.description?.toLowerCase() || '';
-  const hasAppointmentKeyword = appointmentKeywords.some(keyword => 
-    description.includes(keyword)
-  );
-  
-  // Medical services are typically appointment-based
-  const appointmentCategories = ['medical'];
+
+  const lowerDesc = description?.toLowerCase() || '';
+  if (appointmentKeywords.some(kw => lowerDesc.includes(kw))) return true;
+
   const appointmentSubCategories = ['gp', 'counselling', 'mental-health', 'dentist'];
-  
-  const isMedicalAppointment = appointmentCategories.includes(service.category) &&
-    appointmentSubCategories.includes(service.subCategory);
-  
-  return hasAppointmentKeyword || isMedicalAppointment;
+  if (category === 'medical' && appointmentSubCategories.includes(subCategory)) return true;
+
+  return false;
 }
 
 export function formatDistance(distance?: number): string {

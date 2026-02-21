@@ -12,17 +12,16 @@ jest.mock('@/components/OrganisationPage/OrganisationOverview', () => {
 });
 
 jest.mock('@/components/OrganisationPage/OrganisationLocations', () => {
-  return function MockOrganisationLocations({ organisation, userContext, onMarkerClick }: { 
-    organisation: OrganisationDetails; 
-    userContext?: any; 
+  return function MockOrganisationLocations({ organisation, onMarkerClick }: {
+    organisation: OrganisationDetails;
     onMarkerClick?: (markerId: string) => void;
   }) {
     return (
       <div data-testid="organisation-locations">
         Locations: {organisation.addresses.length}
         {onMarkerClick && (
-          <button 
-            data-testid="marker-click-trigger" 
+          <button
+            data-testid="marker-click-trigger"
             onClick={() => onMarkerClick('service-loc-0')}
           >
             Trigger Marker Click
@@ -34,16 +33,12 @@ jest.mock('@/components/OrganisationPage/OrganisationLocations', () => {
 });
 
 jest.mock('@/components/OrganisationPage/OrganisationServicesAccordion', () => {
-  return function MockOrganisationServicesAccordion({ 
-    organisation, 
-    userContext, 
-    selectedLocationForService, 
-    setSelectedLocationForService, 
-    openAccordion, 
-    setOpenAccordion 
-  }: { 
+  return function MockOrganisationServicesAccordion({
+    organisation,
+    selectedLocationForService,
+    openAccordion,
+  }: {
     organisation: OrganisationDetails;
-    userContext?: any;
     selectedLocationForService?: Record<string, number>;
     setSelectedLocationForService?: (value: Record<string, number> | ((prev: Record<string, number>) => Record<string, number>)) => void;
     openAccordion?: string | null;
@@ -80,15 +75,13 @@ describe('OrganisationShell', () => {
 
   it('renders all organisation components with correct data', () => {
     render(<OrganisationShell organisation={mockOrganisationDetails} />);
-    
-    // Check that all components are rendered
+
     expect(screen.getByTestId('organisation-overview')).toBeInTheDocument();
     expect(screen.getByTestId('organisation-locations')).toBeInTheDocument();
     expect(screen.getByTestId('organisation-services')).toBeInTheDocument();
     expect(screen.getByTestId('organisation-contact')).toBeInTheDocument();
     expect(screen.getByTestId('organisation-footer')).toBeInTheDocument();
-    
-    // Check that data is passed correctly to components
+
     expect(screen.getByTestId('organisation-overview')).toHaveTextContent('Test Organisation');
     expect(screen.getByTestId('organisation-locations')).toHaveTextContent('Locations: 2');
     expect(screen.getByTestId('organisation-services')).toHaveTextContent('Services: 3');
@@ -96,17 +89,14 @@ describe('OrganisationShell', () => {
   });
 
   it('renders with minimal organisation data', () => {
-    // Use the predefined minimal organisation mock
     render(<OrganisationShell organisation={mockMinimalOrganisationDetails} />);
-    
-    // Check that all components are still rendered
+
     expect(screen.getByTestId('organisation-overview')).toBeInTheDocument();
     expect(screen.getByTestId('organisation-locations')).toBeInTheDocument();
     expect(screen.getByTestId('organisation-services')).toBeInTheDocument();
     expect(screen.getByTestId('organisation-contact')).toBeInTheDocument();
     expect(screen.getByTestId('organisation-footer')).toBeInTheDocument();
-    
-    // Check that data reflects the minimal organisation
+
     expect(screen.getByTestId('organisation-overview')).toHaveTextContent('Minimal Organisation');
     expect(screen.getByTestId('organisation-locations')).toHaveTextContent('Locations: 0');
     expect(screen.getByTestId('organisation-services')).toHaveTextContent('Services: 0');
@@ -114,7 +104,6 @@ describe('OrganisationShell', () => {
   });
 
   it('renders with custom organisation data', () => {
-    // Create a custom organisation with specific properties to test
     const customOrg: OrganisationDetails = {
       ...mockOrganisationDetails,
       name: 'Custom Organisation',
@@ -122,10 +111,9 @@ describe('OrganisationShell', () => {
       addresses: [mockOrganisationDetails.addresses[0]],
       services: [mockOrganisationDetails.services[0]],
     };
-    
+
     render(<OrganisationShell organisation={customOrg} />);
-    
-    // Check that data reflects the custom organisation
+
     expect(screen.getByTestId('organisation-overview')).toHaveTextContent('Custom Organisation');
     expect(screen.getByTestId('organisation-locations')).toHaveTextContent('Locations: 1');
     expect(screen.getByTestId('organisation-services')).toHaveTextContent('Services: 1');
@@ -133,7 +121,6 @@ describe('OrganisationShell', () => {
   });
 
   it('renders with organisation data missing optional fields', () => {
-    // Create an organisation with missing optional fields
     const orgWithMissingFields: OrganisationDetails = {
       ...mockMinimalOrganisationDetails,
       name: 'Organisation With Missing Fields',
@@ -143,19 +130,16 @@ describe('OrganisationShell', () => {
       telephone: undefined,
       addresses: [],
       services: [],
-      groupedServices: {},
     };
-    
+
     render(<OrganisationShell organisation={orgWithMissingFields} />);
-    
-    // Check that all components are still rendered
+
     expect(screen.getByTestId('organisation-overview')).toBeInTheDocument();
     expect(screen.getByTestId('organisation-locations')).toBeInTheDocument();
     expect(screen.getByTestId('organisation-services')).toBeInTheDocument();
     expect(screen.getByTestId('organisation-contact')).toBeInTheDocument();
     expect(screen.getByTestId('organisation-footer')).toBeInTheDocument();
-    
-    // Check that data reflects the organisation with missing fields
+
     expect(screen.getByTestId('organisation-overview')).toHaveTextContent('Organisation With Missing Fields');
     expect(screen.getByTestId('organisation-locations')).toHaveTextContent('Locations: 0');
     expect(screen.getByTestId('organisation-services')).toHaveTextContent('Services: 0');
@@ -163,25 +147,21 @@ describe('OrganisationShell', () => {
   });
 
   it('renders with organisation having empty arrays for addresses and services', () => {
-    // Create an organisation with empty arrays
     const orgWithEmptyArrays: OrganisationDetails = {
       ...mockOrganisationDetails,
       name: 'Organisation With Empty Arrays',
       addresses: [],
       services: [],
-      groupedServices: {},
     };
-    
+
     render(<OrganisationShell organisation={orgWithEmptyArrays} />);
-    
-    // Check that components handle empty arrays correctly
+
     expect(screen.getByTestId('organisation-overview')).toHaveTextContent('Organisation With Empty Arrays');
     expect(screen.getByTestId('organisation-locations')).toHaveTextContent('Locations: 0');
     expect(screen.getByTestId('organisation-services')).toHaveTextContent('Services: 0');
   });
 
   it('renders with organisation having social media links', () => {
-    // Create an organisation with all social media fields
     const orgWithSocialMedia: OrganisationDetails = {
       ...mockOrganisationDetails,
       name: 'Organisation With Social Media',
@@ -190,17 +170,15 @@ describe('OrganisationShell', () => {
       instagram: 'social-org',
       bluesky: '@social-org.bsky.social',
     };
-    
+
     render(<OrganisationShell organisation={orgWithSocialMedia} />);
-    
-    // Check that the organisation name is rendered correctly
+
     expect(screen.getByTestId('organisation-overview')).toHaveTextContent('Organisation With Social Media');
   });
 
   it('renders the correct CSS classes for layout', () => {
     const { container } = render(<OrganisationShell organisation={mockOrganisationDetails} />);
-    
-    // Check that the main container has the correct CSS classes
+
     const wrapperElement = container.querySelector('.px-4.py-6.max-w-4xl.mx-auto');
     expect(wrapperElement).toHaveClass('px-4');
     expect(wrapperElement).toHaveClass('py-6');
@@ -208,24 +186,7 @@ describe('OrganisationShell', () => {
     expect(wrapperElement).toHaveClass('mx-auto');
   });
 
-  it('renders with user context and passes it to child components', () => {
-    const userContext = {
-      lat: 53.4808,
-      lng: -2.2426,
-      radius: 5,
-      location: 'Manchester'
-    };
-
-    render(<OrganisationShell organisation={mockOrganisationDetails} userContext={userContext} />);
-    
-    // Verify components are rendered (userContext is passed but not directly visible)
-    expect(screen.getByTestId('organisation-overview')).toBeInTheDocument();
-    expect(screen.getByTestId('organisation-locations')).toBeInTheDocument();
-    expect(screen.getByTestId('organisation-services')).toBeInTheDocument();
-  });
-
   it('handles map marker click for service location', () => {
-    // Create organisation with services that have proper structure for testing
     const orgWithServices: OrganisationDetails = {
       ...mockOrganisationDetails,
       services: [
@@ -238,7 +199,6 @@ describe('OrganisationShell', () => {
           organisationSlug: 'test-org',
           description: 'Test service description',
           openTimes: [],
-          clientGroups: ['adults'],
           latitude: 53.4808,
           longitude: -2.2426,
           address: {
@@ -252,23 +212,19 @@ describe('OrganisationShell', () => {
     };
 
     render(<OrganisationShell organisation={orgWithServices} />);
-    
-    // Trigger the map marker click
+
     const markerTrigger = screen.getByTestId('marker-click-trigger');
     fireEvent.click(markerTrigger);
-    
-    // Verify the accordion state is updated
+
     expect(screen.getByTestId('open-accordion')).toHaveTextContent('housing-advice');
   });
 
   it('handles map marker click with no matching service', () => {
     render(<OrganisationShell organisation={mockOrganisationDetails} />);
-    
-    // Mock a marker click that won't match any service
+
     const markerTrigger = screen.getByTestId('marker-click-trigger');
     fireEvent.click(markerTrigger);
-    
-    // Should not crash and no accordion should be opened
+
     expect(screen.queryByTestId('open-accordion')).not.toBeInTheDocument();
   });
 
@@ -285,65 +241,22 @@ describe('OrganisationShell', () => {
           organisationSlug: 'test-org',
           description: 'Test service description',
           openTimes: [],
-          clientGroups: ['adults'],
           latitude: 53.4808,
           longitude: -2.2426,
           address: {
             Street: '123 Test St',
             City: 'Test City',
             Postcode: 'T1 1ES'
-            // No Location coordinates
           }
         }
       ]
     };
 
     render(<OrganisationShell organisation={orgWithServiceNoCoords} />);
-    
+
     const markerTrigger = screen.getByTestId('marker-click-trigger');
     fireEvent.click(markerTrigger);
-    
-    // Should not crash and no accordion should be opened
+
     expect(screen.queryByTestId('open-accordion')).not.toBeInTheDocument();
-  });
-
-  it('passes userContext to components with distance calculation', () => {
-    const userContext = {
-      lat: 53.4808,
-      lng: -2.2426,
-      radius: 10,
-      location: 'Manchester'
-    };
-
-    const orgWithLocationServices: OrganisationDetails = {
-      ...mockOrganisationDetails,
-      services: [
-        {
-          id: 'service-1',
-          name: 'Test Service',
-          category: 'housing',
-          subCategory: 'advice',
-          organisation: 'Test Org',
-          organisationSlug: 'test-org',
-          description: 'Test service description',
-          openTimes: [],
-          clientGroups: ['adults'],
-          latitude: 53.5,
-          longitude: -2.3,
-          address: {
-            Street: '123 Test St',
-            City: 'Test City',
-            Postcode: 'T1 1ES',
-            Location: { coordinates: [-2.3, 53.5] }
-          }
-        }
-      ]
-    };
-
-    render(<OrganisationShell organisation={orgWithLocationServices} userContext={userContext} />);
-    
-    // Components should be rendered with userContext
-    expect(screen.getByTestId('organisation-locations')).toBeInTheDocument();
-    expect(screen.getByTestId('organisation-services')).toBeInTheDocument();
   });
 });

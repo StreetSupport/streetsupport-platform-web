@@ -68,7 +68,6 @@ export function createMockService(
       createMockOpeningTime(1, 540, 1020), // Monday 9:00-17:00
       createMockOpeningTime(2, 540, 1020), // Tuesday 9:00-17:00
     ],
-    clientGroups: [],
     latitude: 53.4808,
     longitude: -2.2426,
     ...overrides,
@@ -90,36 +89,10 @@ export function createMockOrganisation(
     description: 'A test organisation providing various services',
     addresses: [createMockAddress()],
     services,
-    groupedServices: groupServicesByCategoryAndSubcategory(services),
     isVerified: true,
     isPublished: true,
     ...overrides,
   };
-}
-
-/**
- * Groups services by category and subcategory (matches production logic)
- */
-function groupServicesByCategoryAndSubcategory(
-  services: FlattenedService[]
-): Record<string, Record<string, FlattenedService[]>> {
-  return services.reduce(
-    (acc, service) => {
-      const category = service.category || 'uncategorised';
-      const subCategory = service.subCategory || 'general';
-
-      if (!acc[category]) {
-        acc[category] = {};
-      }
-      if (!acc[category][subCategory]) {
-        acc[category][subCategory] = [];
-      }
-      acc[category][subCategory].push(service);
-
-      return acc;
-    },
-    {} as Record<string, Record<string, FlattenedService[]>>
-  );
 }
 
 /**
