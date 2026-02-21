@@ -229,7 +229,6 @@ export const mockOrganisationDetails: OrganisationDetails = {
   tags: ['health', 'housing', 'food'],
   addresses: mockAddresses as any,
   services: mockServices,
-  groupedServices: mockGroupedServices,
 };
 
 /**
@@ -241,7 +240,6 @@ export const mockMinimalOrganisationDetails: OrganisationDetails = {
   name: 'Minimal Organisation',
   addresses: [],
   services: [],
-  groupedServices: {},
 };
 
 /**
