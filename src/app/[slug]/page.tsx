@@ -163,7 +163,7 @@ export default async function LocationPage(props) {
   };
 
   return (
-    <main>
+    <>
       {/* Structured Data */}
       <script
         type="application/ld+json"
@@ -242,6 +242,6 @@ export default async function LocationPage(props) {
 
       {/* WatsonX Chat - handles West Midlands locations internally */}
       <WatsonXChat locationSlug={slug} />
-    </main>
+    </>
   );
 }

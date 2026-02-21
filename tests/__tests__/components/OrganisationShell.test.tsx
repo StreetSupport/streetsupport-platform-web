@@ -201,11 +201,11 @@ describe('OrganisationShell', () => {
     const { container } = render(<OrganisationShell organisation={mockOrganisationDetails} />);
     
     // Check that the main container has the correct CSS classes
-    const mainElement = container.querySelector('main');
-    expect(mainElement).toHaveClass('px-4');
-    expect(mainElement).toHaveClass('py-6');
-    expect(mainElement).toHaveClass('max-w-4xl');
-    expect(mainElement).toHaveClass('mx-auto');
+    const wrapperElement = container.querySelector('.px-4.py-6.max-w-4xl.mx-auto');
+    expect(wrapperElement).toHaveClass('px-4');
+    expect(wrapperElement).toHaveClass('py-6');
+    expect(wrapperElement).toHaveClass('max-w-4xl');
+    expect(wrapperElement).toHaveClass('mx-auto');
   });
 
   it('renders with user context and passes it to child components', () => {

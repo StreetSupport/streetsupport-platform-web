@@ -26,7 +26,7 @@ export default function Breadcrumbs({ items }: BreadcrumbsProps) {
                   {item.href && !item.current ? (
                     <Link 
                       href={item.href} 
-                      className="!text-brand-e hover:!text-brand-e !important"
+                      className="text-white hover:text-white underline"
                     >
                       {item.label}
                     </Link>

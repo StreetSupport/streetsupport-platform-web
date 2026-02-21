@@ -260,7 +260,7 @@ export default function OrganisationShell({ organisation, userContext }: Props) 
   };
 
   return (
-    <main className="px-4 py-6 max-w-4xl mx-auto">
+    <div className="px-4 py-6 max-w-4xl mx-auto">
       {backToSearchURL && (
         <div className="mb-4">
           <Link 
@@ -304,6 +304,6 @@ export default function OrganisationShell({ organisation, userContext }: Props) 
       />
       <OrganisationContactBlock organisation={organisation} />
       <OrganisationFooter />
-    </main>
+    </div>
   );
 }

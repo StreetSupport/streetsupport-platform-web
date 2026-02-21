@@ -139,6 +139,7 @@ export default function NewsGrid({
               placeholder="Search news articles..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              aria-label="Search news articles"
               className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-a focus:border-transparent transition-colors"
             />
             <svg 

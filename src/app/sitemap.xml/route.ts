@@ -15,7 +15,7 @@ export async function GET() {
     locationsData = JSON.parse(fileContents);
   } catch {
     // Fallback to import if fs approach fails
-    locationsData = (await import('../../../data/locations.json')).default;
+    locationsData = (await import('../../data/locations.json')).default;
   }
 
   // Static pages with their priority and change frequency
