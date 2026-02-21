@@ -1,33 +1,25 @@
-'use client';
-
-import React, { useState } from 'react';
+import { memo } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { useLocation } from '@/contexts/LocationContext';
 
 import LazyMarkdownContent from '@/components/ui/LazyMarkdownContent';
 import VerifiedBadge from '@/components/ui/VerifiedBadge';
 import { getCategoryName, getSubCategoryName } from '@/utils/categoryLookup';
 import { formatDistance } from '@/utils/openingTimes';
-import { buildOrganisationUrl } from '@/utils/buildServiceUrl';
 import type { ServiceGroup } from '@/types';
 
 interface GroupedServiceCardProps {
   group: ServiceGroup;
+  destination: string;
   isDescriptionOpen?: boolean;
   onToggleDescription?: () => void;
 }
 
-const GroupedServiceCard = React.memo(function GroupedServiceCard({
+const GroupedServiceCard = memo(function GroupedServiceCard({
   group,
+  destination,
   isDescriptionOpen = false,
   onToggleDescription
 }: GroupedServiceCardProps) {
-  const { location } = useLocation();
-  const searchParams = useSearchParams();
-  
-  const destination = buildOrganisationUrl(group.orgSlug || '', location, searchParams ?? undefined);
-
   const decodedOrgName = group.orgName;
   
   const distanceText = formatDistance(group.distance);
@@ -53,14 +45,10 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
   const decodedDescription = group.orgDescription || '';
   const shouldTruncate = decodedDescription.length > 100;
 
-
-  const [isLoading, setIsLoading] = useState(false);
-
   return (
     <Link
       href={destination}
-      onClick={() => setIsLoading(true)}
-      className={`card card-compact${isLoading ? ' card-loading' : ''}`}
+      className="card card-compact"
       aria-label={`View details for ${decodedOrgName}`}
     >
       <div className="flex justify-between items-start mb-2">
@@ -120,10 +108,15 @@ const GroupedServiceCard = React.memo(function GroupedServiceCard({
       {group.orgDescription && (
         <div className="mb-3">
           <div>
-            <LazyMarkdownContent
-              content={isDescriptionOpen ? group.orgDescription : decodedDescription.slice(0, 100) + '...'}
-              className="text-sm mb-2 !text-black"
-            />
+            {(() => {
+              const content = isDescriptionOpen ? group.orgDescription : decodedDescription.slice(0, 100) + '...';
+              const hasMarkup = /[#*_[\]<>|`~]/.test(content);
+              return hasMarkup ? (
+                <LazyMarkdownContent content={content} className="text-sm mb-2 !text-black" />
+              ) : (
+                <p className="text-sm mb-2 !text-black">{content}</p>
+              );
+            })()}
             {shouldTruncate && (
               <button
                 type="button"
