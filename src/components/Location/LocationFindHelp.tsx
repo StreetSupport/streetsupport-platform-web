@@ -6,6 +6,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 import GoogleMap from '@/components/MapComponent/GoogleMap';
 import rawCategories from '@/data/service-categories.json';
 import { getCategoryName, getSubCategoryName } from '@/utils/categoryLookup';
+import { processServiceData } from '@/utils/processServiceData';
 import type { ServiceWithDistance } from '@/types';
 
 interface Category {
@@ -33,46 +34,6 @@ interface MapMarker {
   distanceKm?: number;
   icon?: string | google.maps.Icon;
   type?: string;
-}
-
-// Process service data from API response
-function processServiceData(item: unknown): ServiceWithDistance {
-  const serviceItem = item as Record<string, unknown>;
-  const coords = ((serviceItem.Address as Record<string, unknown>)?.Location as Record<string, unknown>)?.coordinates as number[] || [0, 0];
-  
-  const openTimes = (serviceItem.OpeningTimes as Array<{ Day?: number; day?: number; StartTime?: number; start?: number; EndTime?: number; end?: number }> || []).map((slot) => ({
-    day: slot.Day ?? slot.day ?? 0,
-    start: slot.StartTime ?? slot.start ?? 0,
-    end: slot.EndTime ?? slot.end ?? 0,
-  }));
-  
-  return {
-    id: String(serviceItem._id || serviceItem.id || ''),
-    name: String(serviceItem.name || serviceItem.ServiceProviderName || ''),
-    description: String(serviceItem.description || serviceItem.Info || ''),
-    category: String(serviceItem.ParentCategoryKey || serviceItem.category || ''),
-    subCategory: String(serviceItem.SubCategoryKey || serviceItem.subCategory || ''),
-    latitude: coords[1] || 0,
-    longitude: coords[0] || 0,
-    organisation: serviceItem.organisation ? {
-      name: String((serviceItem.organisation as Record<string, unknown>).name || ''),
-      slug: String((serviceItem.organisation as Record<string, unknown>).slug || ''),
-      isVerified: Boolean((serviceItem.organisation as Record<string, unknown>).isVerified || false),
-    } : {
-      name: String(serviceItem.ServiceProviderName || serviceItem.name || ''),
-      slug: String(serviceItem.ServiceProviderKey || ''),
-      isVerified: (serviceItem.IsVerified as boolean) || false,
-    },
-    organisationSlug: serviceItem.organisation ? 
-      String((serviceItem.organisation as Record<string, unknown>).slug || '') :
-      String(serviceItem.ServiceProviderKey || ''),
-    address: serviceItem.Address as Record<string, unknown> || {},
-    openTimes,
-    distance: Number(serviceItem.distance || 0),
-    isTelephoneService: (serviceItem.IsTelephoneService as boolean) || false,
-    isAppointmentOnly: (serviceItem.IsAppointmentOnly as boolean) || false,
-    isOpen247: (serviceItem.Address as Record<string, unknown>)?.IsOpen247 as boolean || false
-  };
 }
 
 const categories = (rawCategories as Category[]).sort((a, b) =>
