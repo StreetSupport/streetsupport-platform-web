@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Cloud } from 'lucide-react';
-import { SiFacebook, SiX } from 'react-icons/si';
+import { FacebookIcon, XIcon } from '@/components/ui/icons/SocialIcons';
 
 export default function OrganisationFooter() {
   const [currentUrl, setCurrentUrl] = useState('');
@@ -51,7 +51,7 @@ export default function OrganisationFooter() {
           rel="noopener noreferrer"
           className="flex items-center text-brand-h hover:underline"
         >
-          <SiFacebook className="h-4 w-4 mr-1" />
+          <FacebookIcon className="h-4 w-4 mr-1" />
           <span className="sr-only md:not-sr-only">Share on Facebook</span>
         </a>
         <a
@@ -60,7 +60,7 @@ export default function OrganisationFooter() {
           rel="noopener noreferrer"
           className="flex items-center text-brand-h hover:underline"
         >
-          <SiX className="h-4 w-4 mr-1" />
+          <XIcon className="h-4 w-4 mr-1" />
           <span className="sr-only md:not-sr-only">Share on X</span>
         </a>
       </div>
