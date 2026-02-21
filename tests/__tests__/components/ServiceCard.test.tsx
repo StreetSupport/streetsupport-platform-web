@@ -1,25 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import ServiceCard from '@/components/FindHelp/ServiceCard';
-import { LocationProvider } from '@/contexts/LocationContext';
-
-// Mock Next.js navigation
-jest.mock('next/navigation', () => ({
-  usePathname: jest.fn(() => '/'),
-  useSearchParams: jest.fn(() => new URLSearchParams()),
-}));
-
-// Mock locations data
-jest.mock('@/data/locations.json', () => [
-  {
-    id: '1',
-    key: 'birmingham',
-    name: 'Birmingham',
-    slug: 'birmingham',
-    latitude: 52.4862,
-    longitude: -1.8904,
-    isPublic: true,
-  },
-]);
 
 // Mock service categories data
 jest.mock('@/data/service-categories.json', () => [
@@ -58,17 +38,15 @@ const mockService = {
 describe('ServiceCard', () => {
   const mockOnToggle = jest.fn();
 
-  // Helper function to render ServiceCard with LocationProvider
   const renderServiceCard = (service = mockService, props = {}) => {
     return render(
-      <LocationProvider>
-        <ServiceCard 
-          service={service} 
-          isOpen={false} 
-          onToggle={mockOnToggle} 
-          {...props}
-        />
-      </LocationProvider>
+      <ServiceCard
+        service={service}
+        destination={`/find-help/organisation/${service.organisation?.slug || ''}`}
+        isOpen={false}
+        onToggle={mockOnToggle}
+        {...props}
+      />
     );
   };
 
@@ -114,8 +92,15 @@ describe('ServiceCard', () => {
       },
     };
 
-    renderServiceCard(serviceWithoutSlug);
-    
+    render(
+      <ServiceCard
+        service={serviceWithoutSlug}
+        destination="#"
+        isOpen={false}
+        onToggle={mockOnToggle}
+      />
+    );
+
     const serviceLink = screen.getByRole('link', { name: /View details for Health Help Service/i });
     expect(serviceLink).toHaveAttribute('href', '#');
   });

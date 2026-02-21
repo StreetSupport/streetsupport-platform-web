@@ -1,9 +1,5 @@
-'use client';
-
-import React, { useMemo, useState } from 'react';
+import { memo, useMemo } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { useLocation } from '@/contexts/LocationContext';
 
 import type { ServiceWithDistance } from '@/types';
 import LazyMarkdownContent from '@/components/ui/LazyMarkdownContent';
@@ -11,20 +7,17 @@ import VerifiedBadge from '@/components/ui/VerifiedBadge';
 import OpeningTimesList from '@/components/ui/OpeningTimesList';
 import { getCategoryName, getSubCategoryName } from '@/utils/categoryLookup';
 import { formatDistance } from '@/utils/openingTimes';
-import { buildOrganisationUrl } from '@/utils/buildServiceUrl';
 import openingTimesCache from '@/utils/openingTimesCache';
 import { trackServiceCardClick } from '@/components/analytics/GoogleAnalytics';
 
 interface ServiceCardProps {
   service: ServiceWithDistance;
+  destination: string;
   isOpen: boolean;
   onToggle: () => void;
 }
 
-const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle }: ServiceCardProps) {
-  const { location } = useLocation();
-  const searchParams = useSearchParams();
-  
+const ServiceCard = memo(function ServiceCard({ service, destination, isOpen, onToggle }: ServiceCardProps) {
   const serviceData = useMemo(() => {
     const decodedDescription = service.description;
     const decodedName = service.name;
@@ -57,11 +50,6 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
     };
   }, [service]);
 
-  const destination = useMemo(
-    () => buildOrganisationUrl(service.organisation?.slug || '', location, searchParams ?? undefined),
-    [service.organisation?.slug, location, searchParams]
-  );
-
   const {
     decodedName,
     decodedOrgName,
@@ -73,20 +61,17 @@ const ServiceCard = React.memo(function ServiceCard({ service, isOpen, onToggle 
     is24Hour
   } = serviceData;
 
-  const [isLoading, setIsLoading] = useState(false);
-
   return (
     <Link
       href={destination}
       onClick={() => {
-        setIsLoading(true);
         trackServiceCardClick(
           service.id?.toString() || 'unknown',
           decodedOrgName,
           categoryName
         );
       }}
-      className={`card card-compact${isLoading ? ' card-loading' : ''}`}
+      className="card card-compact"
       aria-label={`View details for ${decodedName}`}
     >
       <div className="flex justify-between items-start mb-2">

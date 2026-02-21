@@ -7,6 +7,7 @@ import type { ServiceGroup } from '@/types';
 
 interface ProgressiveServiceGridProps {
   groups: ServiceGroup[];
+  groupUrls: Map<string, string>;
   showMap: boolean;
   openDescriptionId: string | null;
   onToggleDescription: (id: string) => void;
@@ -22,6 +23,7 @@ interface ProgressiveServiceGridProps {
  */
 export default function ProgressiveServiceGrid({
   groups,
+  groupUrls,
   showMap: _showMap,
   openDescriptionId,
   onToggleDescription,
@@ -106,12 +108,14 @@ export default function ProgressiveServiceGrid({
             {group.services.length === 1 ? (
               <ServiceCard
                 service={group.services[0]}
+                destination={groupUrls.get(group.orgSlug) || '#'}
                 isOpen={openDescriptionId === group.services[0].id}
                 onToggle={() => onToggleDescription(group.services[0].id)}
               />
             ) : (
               <GroupedServiceCard
                 group={group}
+                destination={groupUrls.get(group.orgSlug) || '#'}
                 isDescriptionOpen={openDescriptionId === group.orgId}
                 onToggleDescription={() => onToggleDescription(group.orgId)}
               />
