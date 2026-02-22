@@ -14,7 +14,7 @@ import SupporterLogos from '@/components/Location/SupporterLogos';
 import WatsonXChat from '@/components/ui/WatsonXChat';
 import { generateLocationSEOMetadata } from '@/utils/seo';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 // Helper function to get location background image
 function getLocationBackgroundImage(slug: string): string {

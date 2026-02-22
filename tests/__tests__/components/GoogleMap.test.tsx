@@ -1,8 +1,14 @@
 import { render, waitFor } from '@testing-library/react';
 import GoogleMap from '@/components/MapComponent/GoogleMap';
 
-// Mock the loadGoogleMaps utility
+jest.mock('next/script', () => {
+  return function MockScript() { return null; };
+});
+
 jest.mock('@/utils/loadGoogleMaps', () => ({
+  GOOGLE_MAPS_SCRIPT_URL: 'https://maps.googleapis.com/maps/api/js?key=test&v=weekly&libraries=geometry',
+  isGoogleMapsReady: () => true,
+  waitForGoogleMaps: jest.fn().mockResolvedValue(undefined),
   loadGoogleMaps: jest.fn().mockResolvedValue(undefined),
 }));
 

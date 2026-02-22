@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
-import { loadGoogleMaps } from '@/utils/loadGoogleMaps';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import Script from 'next/script';
+import { GOOGLE_MAPS_SCRIPT_URL, waitForGoogleMaps, isGoogleMapsReady } from '@/utils/loadGoogleMaps';
 import { updateMapBounds, shouldRecalculateBounds } from '@/utils/mapBounds';
 
 interface Marker {
@@ -40,7 +41,16 @@ interface Props {
   includeUserInBounds?: boolean; // Whether to include user location in bounds calculation
 }
 
-export default React.memo(function GoogleMap({ 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+export default React.memo(function GoogleMap({
   center, 
   markers, 
   zoom, 
@@ -65,29 +75,16 @@ export default React.memo(function GoogleMap({
   onMarkerClickRef.current = onMarkerClick;
   const userLocationRef = useRef(userLocation);
   userLocationRef.current = userLocation;
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(isGoogleMapsReady);
   const [loadError, setLoadError] = useState<string | null>(null);
   const effectiveZoom = zoom ?? 12;
 
-  // Load Google Maps API immediately (simplified approach for reliability)
-  useEffect(() => {
-    let isCancelled = false;
-    
-    loadGoogleMaps()
-      .then(() => {
-        if (!isCancelled) {
-          setIsLoaded(true);
-        }
-      })
-      .catch((_error) => {
-        if (!isCancelled) {
-          setLoadError('Failed to load map. Please check your internet connection.');
-        }
-      });
+  const handleScriptLoad = useCallback(() => {
+    waitForGoogleMaps().then(() => setIsLoaded(true));
+  }, []);
 
-    return () => {
-      isCancelled = true;
-    };
+  const handleScriptError = useCallback(() => {
+    setLoadError('Failed to load map. Please check your internet connection.');
   }, []);
 
   useEffect(() => {
@@ -213,8 +210,8 @@ export default React.memo(function GoogleMap({
             id="${infoId}"
             style="font-size:14px;max-width:220px;cursor:pointer;padding:4px;"
           >
-            <strong style="color:#0b9b75;">${data.organisation ?? 'Unknown Organisation'}</strong><br/>
-            ${data.serviceName ?? 'Unnamed service'}<br/>
+            <strong style="color:#0b9b75;">${escapeHtml(data.organisation ?? 'Unknown Organisation')}</strong><br/>
+            ${escapeHtml(data.serviceName ?? 'Unnamed service')}<br/>
             ${data.distanceKm?.toFixed(1) ?? '?'} km away
           </div>`;
 
@@ -286,12 +283,20 @@ export default React.memo(function GoogleMap({
 
   if (!isLoaded) {
     return (
-      <div className="w-full h-full min-h-96 rounded border bg-gray-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-          <p className="text-gray-600">Loading map...</p>
+      <>
+        <Script
+          src={GOOGLE_MAPS_SCRIPT_URL}
+          strategy="afterInteractive"
+          onLoad={handleScriptLoad}
+          onError={handleScriptError}
+        />
+        <div className="w-full h-full min-h-96 rounded border bg-gray-100 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+            <p className="text-gray-600">Loading map...</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
