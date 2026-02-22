@@ -1,5 +1,6 @@
 import { getClientPromise } from '@/utils/mongodb';
 import { decodeText, decodeHtmlEntities } from '@/utils/htmlDecode';
+import { escapeRegExp } from '@/utils/escapeRegExp';
 import { DB_NAME } from '@/config/constants';
 
 // Interface for the database document structure
@@ -260,14 +261,14 @@ export async function loadFilteredAccommodationData({
     // Add location filter
     if (location) {
       baseConditions.push({
-        'Address.City': { $regex: new RegExp(`^${location}`, 'i') }
+        'Address.City': { $regex: new RegExp(`^${escapeRegExp(location)}`, 'i') }
       });
     }
 
     // Add subcategory filter
     if (subcategory) {
       baseConditions.push({
-        'GeneralInfo.AccommodationType': { $regex: new RegExp(`^${subcategory}`, 'i') }
+        'GeneralInfo.AccommodationType': { $regex: new RegExp(`^${escapeRegExp(subcategory)}`, 'i') }
       });
     }
 

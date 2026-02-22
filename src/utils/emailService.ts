@@ -1,18 +1,15 @@
 import sgMail from '@sendgrid/mail';
+import { env } from '@/config/env';
 
-// Environment configuration
-const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || '';
-const FROM_EMAIL = process.env.FROM_EMAIL || 'info@streetsupport.net';
-const PARTNERSHIP_APPLICATION_ADMIN_EMAIL = process.env.PARTNERSHIP_APPLICATION_ADMIN_EMAIL || 'admin@streetsupport.net';
-const ORGANISATION_REQUEST_ADMIN_EMAIL = process.env.ORGANISATION_REQUEST_ADMIN_EMAIL || 'admin@streetsupport.net';
-
-// Template IDs from environment variables
-const PARTNERSHIP_APPLICATION_TEMPLATE_ID = process.env.SENDGRID_PARTNERSHIP_APPLICATION_TEMPLATE_ID || '';
-const ORGANISATION_REQUEST_TEMPLATE_ID = process.env.SENDGRID_ORGANISATION_REQUEST_TEMPLATE_ID || '';
-
-// Initialize SendGrid
-if (SENDGRID_API_KEY) {
-  sgMail.setApiKey(SENDGRID_API_KEY);
+// Initialise SendGrid lazily on first use
+let sgInitialised = false;
+function ensureSgInit() {
+  if (sgInitialised) return;
+  const key = env.sendgrid.apiKey();
+  if (key) {
+    sgMail.setApiKey(key);
+    sgInitialised = true;
+  }
 }
 
 /**
@@ -40,7 +37,7 @@ export async function sendTemplateEmail(
   ccEmail?: string
 ): Promise<EmailResult> {
   try {
-    if (!SENDGRID_API_KEY) {
+    if (!env.sendgrid.apiKey()) {
       console.error('SendGrid API key not configured');
       return {
         success: false,
@@ -48,6 +45,8 @@ export async function sendTemplateEmail(
         error: 'SENDGRID_API_KEY not set',
       };
     }
+
+    ensureSgInit();
 
     if (!templateId) {
       console.error(`SendGrid template ID not configured for: ${subject}`);
@@ -66,7 +65,7 @@ export async function sendTemplateEmail(
       cc?: string;
     } = {
       to: toEmail,
-      from: FROM_EMAIL,
+      from: env.sendgrid.fromEmail(),
       templateId: templateId,
       dynamicTemplateData: dynamicTemplateData,
     };
@@ -116,8 +115,8 @@ export async function sendPartnershipApplicationEmails(
   applicationData: PartnershipApplicationEmailData
 ): Promise<EmailResult> {
   return await sendTemplateEmail(
-    PARTNERSHIP_APPLICATION_TEMPLATE_ID,
-    PARTNERSHIP_APPLICATION_ADMIN_EMAIL,
+    env.sendgrid.partnershipTemplateId(),
+    env.email.partnershipAdmin(),
     {
       ...applicationData,
       is_admin_copy: true,
@@ -152,8 +151,8 @@ export async function sendOrganisationRequestEmails(
   requestData: OrganisationRequestEmailData
 ): Promise<EmailResult> {
   return await sendTemplateEmail(
-    ORGANISATION_REQUEST_TEMPLATE_ID,
-    ORGANISATION_REQUEST_ADMIN_EMAIL,
+    env.sendgrid.organisationRequestTemplateId(),
+    env.email.organisationRequestAdmin(),
     {
       ...requestData,
       is_admin_copy: true,
@@ -167,16 +166,16 @@ export async function sendOrganisationRequestEmails(
  * Get configured admin emails
  */
 export function getPartnershipApplicationAdminEmail(): string {
-  return PARTNERSHIP_APPLICATION_ADMIN_EMAIL;
+  return env.email.partnershipAdmin();
 }
 
 export function getOrganisationRequestAdminEmail(): string {
-  return ORGANISATION_REQUEST_ADMIN_EMAIL;
+  return env.email.organisationRequestAdmin();
 }
 
 /**
  * Check if email service is configured
  */
 export function isEmailServiceConfigured(): boolean {
-  return Boolean(SENDGRID_API_KEY);
+  return Boolean(env.sendgrid.apiKey());
 }

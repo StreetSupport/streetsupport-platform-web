@@ -77,11 +77,6 @@ const nextConfig = {
           },
         ]
         : []),
-      {
-        protocol: 'https' as const,
-        hostname: 'placekitten.com',
-        pathname: '/**',
-      },
     ],
   },
   

@@ -148,4 +148,5 @@ export interface LocationWithSwep {
 // Export types from other modules
 export * from './api';
 export * from './banners';
+export * from './mongodb';
 export * from './supporters';
