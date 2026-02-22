@@ -64,7 +64,7 @@ export default function Hero({
       {/* Optimized background image using next/image */}
       <Image
         src={backgroundImage}
-        alt={`${title} background`}
+        alt=""
         fill
         priority
         className="object-cover"
@@ -82,7 +82,7 @@ export default function Hero({
           >
             <Image
               src={overlayImage}
-              alt={`${title} overlay`}
+              alt=""
               fill
               className="object-contain object-bottom"
               sizes="100vw"

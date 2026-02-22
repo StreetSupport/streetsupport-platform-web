@@ -10,7 +10,7 @@ export default function Nav() {
   const nav = useNavState();
 
   return (
-    <nav className="nav-container">
+    <nav className="nav-container" aria-label="Main navigation">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           <Link href="/" className="flex items-center" onClick={nav.handleMenuClose}>
@@ -82,10 +82,14 @@ export default function Nav() {
               onMouseLeave={nav.handleAboutMouseLeave}
             >
               <button
+                id="about-button"
                 className="nav-link focus:outline-none focus:ring-2 focus:ring-brand-a rounded flex items-center gap-1"
                 onMouseEnter={nav.handleAboutMouseEnter}
                 onMouseLeave={nav.handleAboutMouseLeave}
                 onClick={nav.handleAboutButtonClick}
+                aria-haspopup="menu"
+                aria-expanded={nav.isAboutOpen}
+                aria-controls="about-dropdown"
               >
                 About
                 <svg className={`w-4 h-4 transition-transform duration-200 ${nav.isAboutOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -99,40 +103,40 @@ export default function Nav() {
                   onMouseEnter={nav.handleAboutMouseEnter}
                   onMouseLeave={nav.handleAboutMouseLeave}
                 >
-                  <div className="bg-white border border-brand-f rounded-md shadow-lg">
+                  <div id="about-dropdown" className="bg-white border border-brand-f rounded-md shadow-lg" role="menu" aria-labelledby="about-button">
                     <ul className="py-2">
                       <li>
-                        <Link href="/about/our-team" className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded" onClick={nav.handleAboutClick}>
+                        <Link href="/about/our-team" className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded" onClick={nav.handleAboutClick} role="menuitem">
                           Our Team
                         </Link>
                       </li>
                       <li>
-                        <Link href="/about/our-trustees" className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded" onClick={nav.handleAboutClick}>
+                        <Link href="/about/our-trustees" className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded" onClick={nav.handleAboutClick} role="menuitem">
                           Our Trustees
                         </Link>
                       </li>
                       <li>
-                        <Link href="/about/privacy-and-data" className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded" onClick={nav.handleAboutClick}>
+                        <Link href="/about/privacy-and-data" className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded" onClick={nav.handleAboutClick} role="menuitem">
                           Privacy and Data
                         </Link>
                       </li>
                       <li>
-                        <Link href="/about/accessibility" className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded" onClick={nav.handleAboutClick}>
+                        <Link href="/about/accessibility" className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded" onClick={nav.handleAboutClick} role="menuitem">
                           Accessibility
                         </Link>
                       </li>
                       <li>
-                        <Link href="/about/jobs" className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded" onClick={nav.handleAboutClick}>
+                        <Link href="/about/jobs" className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded" onClick={nav.handleAboutClick} role="menuitem">
                           Jobs
                         </Link>
                       </li>
                       <li>
-                        <Link href="/about/impact" className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded" onClick={nav.handleAboutClick}>
+                        <Link href="/about/impact" className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded" onClick={nav.handleAboutClick} role="menuitem">
                           Impact
                         </Link>
                       </li>
                       <li>
-                        <Link href="/contact" className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded" onClick={nav.handleAboutClick}>
+                        <Link href="/contact" className="block px-2 py-1 text-sm !text-black hover:bg-brand-i hover:text-brand-k transition-colors duration-200 rounded" onClick={nav.handleAboutClick} role="menuitem">
                           Contact
                         </Link>
                       </li>

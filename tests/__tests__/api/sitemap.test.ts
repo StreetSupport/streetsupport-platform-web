@@ -1,4 +1,4 @@
-import { GET } from '@/app/api/sitemap/route';
+import { GET } from '@/app/sitemap.xml/route';
 
 describe('/api/sitemap', () => {
   it('should return a valid XML sitemap', async () => {

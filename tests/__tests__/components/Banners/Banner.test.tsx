@@ -130,7 +130,7 @@ describe('Banner', () => {
 
   it('should have correct ARIA attributes', () => {
     render(<Banner {...baseBanner} />);
-    const section = screen.getByRole('banner');
+    const section = screen.getByRole('region');
     expect(section).toHaveAttribute('aria-labelledby', 'banner-title-test-1');
   });
 });

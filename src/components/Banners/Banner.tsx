@@ -116,7 +116,6 @@ const Banner: React.FC<BannerProps> = ({
 
   return (
     <section
-      role="banner"
       aria-labelledby={`banner-title-${id}`}
       className={`${backgroundClasses} ${textClasses} ${className} ${needsOverlay ? 'relative' : ''}`}
       style={{ ...backgroundStyles, ...borderStyles }}
@@ -140,9 +139,9 @@ const Banner: React.FC<BannerProps> = ({
               {subtitle && (
                 <p className="text-sm uppercase tracking-wide opacity-80">{subtitle}</p>
               )}
-              <h1 id={`banner-title-${id}`} className="text-3xl md:text-4xl font-bold">
+              <h2 id={`banner-title-${id}`} className="text-3xl md:text-4xl font-bold">
                 {title}
-              </h1>
+              </h2>
               {description && (
                 <div
                   className={`text-lg opacity-90 prose prose-sm max-w-none ${textColour === 'white' ? 'prose-invert' : ''}`}
@@ -170,9 +169,9 @@ const Banner: React.FC<BannerProps> = ({
             {subtitle && (
               <p className="text-sm uppercase tracking-wide opacity-80">{subtitle}</p>
             )}
-            <h1 id={`banner-title-${id}`} className="text-3xl md:text-5xl font-bold">
+            <h2 id={`banner-title-${id}`} className="text-3xl md:text-5xl font-bold">
               {title}
-            </h1>
+            </h2>
             {description && (
               <div
                 className={`text-lg md:text-xl opacity-90 max-w-2xl mx-auto prose prose-lg ${textColour === 'white' ? 'prose-invert' : ''}`}

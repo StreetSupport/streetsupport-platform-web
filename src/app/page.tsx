@@ -98,7 +98,7 @@ export default async function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white">
       {/* Structured Data for Homepage */}
       <script
         type="application/ld+json"
@@ -142,23 +142,23 @@ export default async function Home() {
       {/* Statistics Section */}
       <section className="section-spacing px-4 bg-brand-a text-white">
         <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <dl className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
-              <div className="statistics-value text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.organisations}</div>
-              <div className="statistics-title text-xl md:text-2xl font-light">Organisations</div>
-              <div className="statistics-title text-lg md:text-xl font-light text-brand-k">Listed</div>
+              <dd className="statistics-value text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.organisations}</dd>
+              <dt className="statistics-title text-xl md:text-2xl font-light">Organisations</dt>
+              <dd className="statistics-title text-lg md:text-xl font-light text-brand-k">Listed</dd>
             </div>
             <div>
-              <div className="statistics-value text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.services}</div>
-              <div className="statistics-title text-xl md:text-2xl font-light">Services</div>
-              <div className="statistics-title text-lg md:text-xl font-light text-brand-k">Provided</div>
+              <dd className="statistics-value text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.services}</dd>
+              <dt className="statistics-title text-xl md:text-2xl font-light">Services</dt>
+              <dd className="statistics-title text-lg md:text-xl font-light text-brand-k">Provided</dd>
             </div>
             <div>
-              <div className="statistics-value text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.partnerships}</div>
-              <div className="statistics-title text-xl md:text-2xl font-light">Homelessness Partnerships</div>
-              <div className="statistics-title text-lg md:text-xl font-light text-brand-k">Supported</div>
+              <dd className="statistics-value text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.partnerships}</dd>
+              <dt className="statistics-title text-xl md:text-2xl font-light">Homelessness Partnerships</dt>
+              <dd className="statistics-title text-lg md:text-xl font-light text-brand-k">Supported</dd>
             </div>
-          </div>
+          </dl>
         </div>
       </section>
 
@@ -204,6 +204,6 @@ export default async function Home() {
           </p>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
