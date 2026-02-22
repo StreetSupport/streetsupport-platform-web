@@ -1,6 +1,29 @@
 import { NextRequest } from 'next/server';
+import { checkRateLimit } from '@/utils/rateLimit';
+
+const GEOCODE_RATE_LIMIT = {
+  maxRequests: 30,
+  windowMs: 60_000,
+};
 
 export async function GET(req: NextRequest) {
+  const { allowed, remaining, resetTime } = checkRateLimit(req, GEOCODE_RATE_LIMIT);
+
+  if (!allowed) {
+    return new Response(
+      JSON.stringify({ error: 'Too many requests. Please try again later.' }),
+      {
+        status: 429,
+        headers: {
+          'Content-Type': 'application/json',
+          'Retry-After': String(Math.ceil((resetTime - Date.now()) / 1000)),
+          'X-RateLimit-Limit': String(GEOCODE_RATE_LIMIT.maxRequests),
+          'X-RateLimit-Remaining': '0',
+        },
+      }
+    );
+  }
+
   const { searchParams } = new URL(req.url);
   const postcode = searchParams.get('postcode');
 
@@ -31,7 +54,11 @@ export async function GET(req: NextRequest) {
       const location = data.results[0].geometry.location;
       return new Response(JSON.stringify({ location }), {
         status: 200,
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-RateLimit-Limit': String(GEOCODE_RATE_LIMIT.maxRequests),
+          'X-RateLimit-Remaining': String(remaining),
+        },
       });
     } else {
       return new Response(

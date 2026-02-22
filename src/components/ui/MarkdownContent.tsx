@@ -2,6 +2,14 @@
 
 import React from 'react';
 import { decodeHtmlEntities } from '@/utils/htmlDecode';
+import { sanitiseHtml } from '@/utils/sanitiseHtml';
+
+const MARKDOWN_ALLOWED_TAGS = [
+  'p', 'br',
+  'strong', 'em', 'b', 'i',
+  'ul', 'ol', 'li',
+  'a',
+];
 
 interface MarkdownContentProps {
   content: string;
@@ -41,7 +49,7 @@ function processSimpleMarkdown(text: string): string {
       // Output the collected bullet items as a list
       if (currentBulletItems.length > 0) {
         const listItems = currentBulletItems.map(item => `<li>${item}</li>`).join('');
-        result.push(`<ul style="list-style-type: disc; padding-left: 1.5rem; margin: 0.5rem 0;">${listItems}</ul>`);
+        result.push(`<ul>${listItems}</ul>`);
         currentBulletItems = [];
       }
       inBulletSection = false;
@@ -58,7 +66,7 @@ function processSimpleMarkdown(text: string): string {
   // Handle any remaining bullet items at the end
   if (currentBulletItems.length > 0) {
     const listItems = currentBulletItems.map(item => `<li>${item}</li>`).join('');
-    result.push(`<ul style="list-style-type: disc; padding-left: 1.5rem; margin: 0.5rem 0;">${listItems}</ul>`);
+    result.push(`<ul>${listItems}</ul>`);
   }
 
   const finalResult = result.join('\n')
@@ -81,7 +89,7 @@ function processSimpleMarkdown(text: string): string {
       looseLiItems.push(line.trim());
     } else {
       if (looseLiItems.length > 0) {
-        wrappedResult.push(`<ul style="list-style-type: disc; padding-left: 1.5rem; margin: 0.5rem 0;">${looseLiItems.join('')}</ul>`);
+        wrappedResult.push(`<ul>${looseLiItems.join('')}</ul>`);
         looseLiItems = [];
       }
       wrappedResult.push(line);
@@ -90,7 +98,7 @@ function processSimpleMarkdown(text: string): string {
 
   // Handle any remaining loose items
   if (looseLiItems.length > 0) {
-    wrappedResult.push(`<ul style="list-style-type: disc; padding-left: 1.5rem; margin: 0.5rem 0;">${looseLiItems.join('')}</ul>`);
+    wrappedResult.push(`<ul>${looseLiItems.join('')}</ul>`);
   }
 
   return wrappedResult.join('\n')
@@ -110,11 +118,12 @@ function processSimpleMarkdown(text: string): string {
 export default function MarkdownContent({ content, className = '' }: MarkdownContentProps) {
   const decodedContent = decodeHtmlEntities(content);
   const processedContent = processSimpleMarkdown(decodedContent);
+  const sanitisedContent = sanitiseHtml(processedContent, MARKDOWN_ALLOWED_TAGS);
 
   return (
     <div
       className={`prose prose-gray max-w-none leading-relaxed prose-sm prose-p:text-sm prose-p:leading-normal prose-p:text-gray-800 ${className}`}
-      dangerouslySetInnerHTML={{ __html: processedContent }}
+      dangerouslySetInnerHTML={{ __html: sanitisedContent }}
     />
   );
 }
