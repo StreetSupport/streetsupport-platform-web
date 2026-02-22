@@ -6,22 +6,15 @@ import HomepageMap from '@/components/Homepage/HomepageMap';
 import LocationDropdown from '@/components/Homepage/LocationDropdown';
 import Hero from '@/components/ui/Hero';
 import { generateSEOMetadata } from '@/utils/seo';
+import { statsRepository } from '@/repositories/stats';
+
+export const revalidate = 60;
 
 async function getStatistics() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-    const response = await fetch(`${baseUrl}/api/stats`, {
-      next: { revalidate: 60 } // Revalidate every 60 seconds
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch statistics');
-    }
-    
-    return await response.json();
+    return await statsRepository.getStats();
   } catch (error) {
     console.error('Error fetching statistics:', error);
-    // Return default values if fetch fails
     return {
       organisations: 0,
       services: 0,
@@ -140,25 +133,25 @@ export default async function Home() {
       </section>
 
       {/* Statistics Section */}
-      <section className="section-spacing px-4 bg-brand-a text-white">
+      <section className="section-spacing px-4 bg-brand-a text-white" aria-label="Key statistics">
         <div className="max-w-4xl mx-auto">
-          <dl className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
-              <dd className="statistics-value text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.organisations}</dd>
-              <dt className="statistics-title text-xl md:text-2xl font-light">Organisations</dt>
-              <dd className="statistics-title text-lg md:text-xl font-light text-brand-k">Listed</dd>
+              <div className="statistics-value text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.organisations}</div>
+              <div className="statistics-title text-xl md:text-2xl font-medium">Organisations</div>
+              <div className="statistics-subtitle text-lg md:text-xl">Listed</div>
             </div>
             <div>
-              <dd className="statistics-value text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.services}</dd>
-              <dt className="statistics-title text-xl md:text-2xl font-light">Services</dt>
-              <dd className="statistics-title text-lg md:text-xl font-light text-brand-k">Provided</dd>
+              <div className="statistics-value text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.services}</div>
+              <div className="statistics-title text-xl md:text-2xl font-medium">Services</div>
+              <div className="statistics-subtitle text-lg md:text-xl">Provided</div>
             </div>
             <div>
-              <dd className="statistics-value text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.partnerships}</dd>
-              <dt className="statistics-title text-xl md:text-2xl font-light">Homelessness Partnerships</dt>
-              <dd className="statistics-title text-lg md:text-xl font-light text-brand-k">Supported</dd>
+              <div className="statistics-value text-5xl md:text-6xl font-bold mb-2 text-brand-d">{stats.partnerships}</div>
+              <div className="statistics-title text-xl md:text-2xl font-medium">Partnerships</div>
+              <div className="statistics-subtitle text-lg md:text-xl">Supported</div>
             </div>
-          </dl>
+          </div>
         </div>
       </section>
 

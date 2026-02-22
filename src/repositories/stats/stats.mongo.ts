@@ -12,28 +12,26 @@ export const createMongoStatsRepository = (): StatsRepository => ({
     const client = await getClientPromise();
     const db = client.db(DB_NAME);
 
-    // Count published organisations
-    const organisationsCount = await db
-      .collection('ServiceProviders')
-      .countDocuments({ IsPublished: true });
+    const [organisationsCount, uniqueServices, locationsCount] = await Promise.all([
+      db.collection('ServiceProviders').countDocuments({ IsPublished: true }),
 
-    // Get all published organisations to count their services
-    const publishedOrgs = await db
-      .collection('ServiceProviders')
-      .find({ IsPublished: true })
-      .project({ Key: 1 })
-      .toArray();
-
-    const orgKeys = publishedOrgs.map((org) => org.Key);
-
-    // Count unique services grouped by organisation + category + subcategory
-    const uniqueServices = await db
-      .collection('ProvidedServices')
-      .aggregate([
+      db.collection('ProvidedServices').aggregate([
+        {
+          $lookup: {
+            from: 'ServiceProviders',
+            localField: 'ServiceProviderKey',
+            foreignField: 'Key',
+            as: 'provider',
+            pipeline: [
+              { $match: { IsPublished: true } },
+              { $project: { _id: 1 } },
+            ],
+          },
+        },
         {
           $match: {
-            ServiceProviderKey: { $in: orgKeys },
             IsPublished: true,
+            'provider.0': { $exists: true },
           },
         },
         {
@@ -45,22 +43,15 @@ export const createMongoStatsRepository = (): StatsRepository => ({
             },
           },
         },
-        {
-          $count: 'total',
-        },
-      ])
-      .toArray();
+        { $count: 'total' },
+      ]).toArray(),
 
-    const servicesCount = uniqueServices[0]?.total || 0;
-
-    // Count public cities/locations (partnerships)
-    const locationsCount = await db
-      .collection('Cities')
-      .countDocuments({ IsPublic: true });
+      db.collection('Cities').countDocuments({ IsPublic: true }),
+    ]);
 
     return {
       organisations: organisationsCount,
-      services: servicesCount,
+      services: uniqueServices[0]?.total || 0,
       partnerships: locationsCount,
     };
   },
