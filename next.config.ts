@@ -2,12 +2,29 @@ import {withSentryConfig} from '@sentry/nextjs';
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
+const cspDirectives = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com https://www.googletagmanager.com https://www.google-analytics.com https://*.sentry-cdn.com",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "img-src 'self' data: blob: https://streetsupportstorageprod.blob.core.windows.net https://maps.googleapis.com https://maps.gstatic.com https://*.ggpht.com https://www.google-analytics.com https://www.googletagmanager.com",
+  "font-src 'self' https://fonts.gstatic.com",
+  "connect-src 'self' https://maps.googleapis.com https://www.google-analytics.com https://www.googletagmanager.com https://*.ingest.sentry.io https://*.sentry.io",
+  "frame-src https://www.youtube.com https://www.youtube-nocookie.com",
+  "frame-ancestors 'none'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+];
+
+const contentSecurityPolicy = cspDirectives.join('; ');
+
 const nextConfig = {
   async headers() {
     return [
       {
         source: '/(.*)',
         headers: [
+          { key: 'Content-Security-Policy', value: contentSecurityPolicy },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'X-XSS-Protection', value: '1; mode=block' },
@@ -39,7 +56,6 @@ const nextConfig = {
   reactStrictMode: true,
   env: {
     NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-    MONGODB_URI: process.env.MONGODB_URI,
   },
   // Enable response compression for better performance
   compress: true,
