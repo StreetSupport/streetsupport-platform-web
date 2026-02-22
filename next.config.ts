@@ -108,10 +108,7 @@ const nextConfig = {
       // Enable module concatenation for smaller bundles
       config.optimization = {
         ...config.optimization,
-        usedExports: true,
-        sideEffects: false,
-        
-        // Split chunks for better caching
+
         splitChunks: {
           ...config.optimization?.splitChunks,
           chunks: 'all',
