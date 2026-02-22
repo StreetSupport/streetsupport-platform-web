@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Resource, LinkList } from '@/types/resources';
 import FileDownloadLink from '@/components/ui/FileDownloadLink';
+import { sanitiseHtml } from '@/utils/sanitiseHtml';
 
 interface ResourcePageContentProps {
   resource: Resource;
@@ -108,7 +109,7 @@ export default function ResourcePageContent({ resource }: ResourcePageContentPro
           {/* Body Content */}
           {resource.body && (
             <div className="mb-8"
-              dangerouslySetInnerHTML={{ __html: parsedBody }}
+              dangerouslySetInnerHTML={{ __html: sanitiseHtml(parsedBody) }}
             />
           )}
           

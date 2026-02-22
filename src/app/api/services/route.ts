@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
 import { decodeText, decodeHtmlEntities } from '@/utils/htmlDecode';
+import { escapeRegExp } from '@/utils/escapeRegExp';
 import queryCache from '@/utils/queryCache';
 import { loadFilteredAccommodationData, type AccommodationData } from '@/utils/accommodationData';
 import { DB_NAME, CACHE_HEADERS, CACHE_TTL, DEFAULT_SERVICE_LIMIT } from '@/config/constants';
 import { env } from '@/config/env';
+import type { RawProvidedService, RawServiceFacetResult } from '@/types/mongodb';
 
 interface MongoQuery {
   IsPublished: boolean;
@@ -215,7 +217,7 @@ export async function GET(req: Request) {
     } else {
       // Add traditional location filtering if no coordinates provided
       if (location) {
-        query['Address.City'] = { $regex: new RegExp(`^${location}`, 'i') };
+        query['Address.City'] = { $regex: new RegExp(`^${escapeRegExp(location)}`, 'i') };
       }
     }
 
@@ -225,10 +227,10 @@ export async function GET(req: Request) {
         // For geospatial queries, add category filter to the $geoNear query
         const geoNearStage = pipeline[0];
         if (geoNearStage.$geoNear) {
-          geoNearStage.$geoNear.query.ParentCategoryKey = { $regex: new RegExp(`^${category}`, 'i') };
+          geoNearStage.$geoNear.query.ParentCategoryKey = { $regex: new RegExp(`^${escapeRegExp(category)}`, 'i') };
         }
       } else {
-        query.ParentCategoryKey = { $regex: new RegExp(`^${category}`, 'i') };
+        query.ParentCategoryKey = { $regex: new RegExp(`^${escapeRegExp(category)}`, 'i') };
       }
     }
 
@@ -238,10 +240,10 @@ export async function GET(req: Request) {
         // For geospatial queries, add subcategory filter to the $geoNear query
         const geoNearStage = pipeline[0];
         if (geoNearStage.$geoNear) {
-          geoNearStage.$geoNear.query.SubCategoryKey = { $regex: new RegExp(`^${subcategory}`, 'i') };
+          geoNearStage.$geoNear.query.SubCategoryKey = { $regex: new RegExp(`^${escapeRegExp(subcategory)}`, 'i') };
         }
       } else {
-        query.SubCategoryKey = { $regex: new RegExp(`^${subcategory}`, 'i') };
+        query.SubCategoryKey = { $regex: new RegExp(`^${escapeRegExp(subcategory)}`, 'i') };
       }
     }
 
@@ -352,12 +354,12 @@ export async function GET(req: Request) {
     ];
 
     const [facetResult] = await servicesCol.aggregate(facetPipeline).toArray();
-    const typedResult = facetResult as { results: Record<string, unknown>[]; totalCount: Array<{ count: number }> };
+    const typedResult = facetResult as RawServiceFacetResult;
     const services = typedResult.results;
     const servicesTotal = typedResult.totalCount[0]?.count || 0;
 
     // Combine services and accommodation results
-    const combinedResults: Array<Record<string, unknown> & { distance?: number }> = [...services, ...accommodationResults];
+    const combinedResults = [...services, ...accommodationResults] as Array<RawProvidedService & { distance?: number }>;
     const total = servicesTotal + accommodationResults.length;
 
 
@@ -375,21 +377,19 @@ export async function GET(req: Request) {
 
     // Process results with HTML decoding and distance conversion
     const results = paginatedResults.map((service) => {
-      const serviceAny = service as Record<string, unknown>;
       const result: Record<string, unknown> = {
         ...service,
-        name: decodeText((serviceAny.name as string) || (serviceAny.ServiceProviderName as string) || ''),
-        description: decodeHtmlEntities((serviceAny.description as string) || (serviceAny.Info as string) || ''),
-        organisationSlug: (serviceAny.organisation as { slug?: string })?.slug || (serviceAny.ServiceProviderKey as string),
-        // Ensure organisation data is properly decoded
-        organisation: serviceAny.organisation ? {
-          name: decodeText((serviceAny.organisation as { name?: string })?.name || ''),
-          slug: (serviceAny.organisation as { slug?: string })?.slug || '',
-          isVerified: (serviceAny.organisation as { isVerified?: boolean })?.isVerified || false
+        name: decodeText(service.name || service.ServiceProviderName || ''),
+        description: decodeHtmlEntities(service.description || service.Info || ''),
+        organisationSlug: service.organisation?.slug || service.ServiceProviderKey,
+        organisation: service.organisation ? {
+          name: decodeText(service.organisation.name || ''),
+          slug: service.organisation.slug || '',
+          isVerified: service.organisation.isVerified || false
         } : {
-          name: decodeText((serviceAny.ServiceProviderName as string) || ''),
-          slug: (serviceAny.ServiceProviderKey as string) || '',
-          isVerified: Boolean(serviceAny.IsVerified) || false
+          name: decodeText(service.ServiceProviderName || ''),
+          slug: service.ServiceProviderKey || '',
+          isVerified: Boolean(service.IsVerified) || false
         }
       };
 
@@ -418,8 +418,6 @@ export async function GET(req: Request) {
       response.headers.set('Cache-Control', CACHE_HEADERS.test);
     } else {
       response.headers.set('Cache-Control', CACHE_HEADERS.services);
-      response.headers.set('X-RateLimit-Limit', '100');
-      response.headers.set('X-RateLimit-Remaining', '99');
     }
     
     response.headers.set('ETag', `services-${cacheKey.slice(-8)}-${total}-${page}`); // Use cache key for better ETag

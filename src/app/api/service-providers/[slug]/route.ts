@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
 import { decodeText, decodeHtmlEntities } from '@/utils/htmlDecode';
+import { escapeRegExp } from '@/utils/escapeRegExp';
 import { loadAccommodationDataForProvider, type AccommodationData } from '@/utils/accommodationData';
 import { DB_NAME, CACHE_HEADERS } from '@/config/constants';
+import type { RawServiceAddress } from '@/types/mongodb';
 
 // Transform accommodation to service format for organisation pages
 function transformAccommodationToOrganisationService(accommodation: AccommodationData) {
@@ -66,7 +68,7 @@ export async function GET(req: Request) {
 
     const rawProvider = await providersCol.findOne(
       {
-        Key: { $regex: new RegExp(`^${slug}$`, 'i') },
+        Key: { $regex: new RegExp(`^${escapeRegExp(slug)}$`, 'i') },
         IsPublished: true,
       },
       {
@@ -158,7 +160,7 @@ export async function GET(req: Request) {
         ...service,
         isTelephoneService: (service.IsTelephoneService as boolean) || false,
         isAppointmentOnly: (service.IsAppointmentOnly as boolean) || false,
-        isOpen247: (service.Address as Record<string, unknown>)?.IsOpen247 as boolean || false,
+        isOpen247: (service.Address as RawServiceAddress)?.IsOpen247 || false,
         Info: decodeHtmlEntities(service.Info || ''),
         SubCategoryName: decodeText(service.SubCategoryName || ''),
         // Ensure accommodation data is preserved
