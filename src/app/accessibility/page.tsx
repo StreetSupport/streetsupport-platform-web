@@ -3,7 +3,7 @@ import Breadcrumbs from '@/components/ui/Breadcrumbs';
 
 export default function AccessibilityPage() {
   return (
-    <main>
+    <>
       <Breadcrumbs 
         items={[
           { href: "/", label: "Home" },
@@ -16,6 +16,6 @@ export default function AccessibilityPage() {
         <h1>Accessibility Statement</h1>
         <p>Accessibility statement content goes here.</p>
       </div>
-    </main>
+    </>
   );
 }

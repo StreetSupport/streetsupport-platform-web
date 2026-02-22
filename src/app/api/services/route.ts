@@ -3,6 +3,8 @@ import { getClientPromise } from '@/utils/mongodb';
 import { decodeText, decodeHtmlEntities } from '@/utils/htmlDecode';
 import queryCache from '@/utils/queryCache';
 import { loadFilteredAccommodationData, type AccommodationData } from '@/utils/accommodationData';
+import { DB_NAME, CACHE_HEADERS, CACHE_TTL, DEFAULT_SERVICE_LIMIT } from '@/config/constants';
+import { env } from '@/config/env';
 
 interface MongoQuery {
   IsPublished: boolean;
@@ -35,9 +37,8 @@ interface AggregationStage {
   $addFields?: Record<string, unknown>;
   $unwind?: string | { path: string; preserveNullAndEmptyArrays?: boolean };
   $project?: Record<string, number | string>;
-  $skip?: number;
-  $limit?: number;
   $count?: string;
+  $facet?: Record<string, Record<string, unknown>[]>;
 }
 
 // This function is now replaced by loadAccommodationDataFromDatabase() from utils/accommodationData.ts
@@ -54,7 +55,6 @@ function transformAccommodationToService(accommodation: AccommodationData) {
     ServiceProviderKey: accommodation.serviceProviderId,
     IsVerified: accommodation.isVerified || false,
     OpeningTimes: [],
-    ClientGroups: [],
     Address: {
       Location: {
         type: 'Point',
@@ -106,7 +106,7 @@ export async function GET(req: Request) {
   const lng = searchParams.get('lng');
   const radius = searchParams.get('radius');
   const page = parseInt(searchParams.get('page') || '1', 10);
-  const limit = parseInt(searchParams.get('limit') || '20', 10);
+  const limit = parseInt(searchParams.get('limit') || String(DEFAULT_SERVICE_LIMIT), 10);
 
   if (page < 1 || limit < 1) {
     return NextResponse.json(
@@ -170,13 +170,7 @@ export async function GET(req: Request) {
   const cachedResult = queryCache.get(cacheKey);
   if (cachedResult) {
     const response = NextResponse.json(cachedResult);
-    const isTestEnv = process.env.NODE_ENV === 'test' || process.env.PLAYWRIGHT_TEST === '1';
-    
-    if (isTestEnv) {
-      response.headers.set('Cache-Control', 'no-cache');
-    } else {
-      response.headers.set('Cache-Control', 'public, max-age=900, s-maxage=1800, stale-while-revalidate=86400');
-    }
+    response.headers.set('Cache-Control', env.isTest() ? CACHE_HEADERS.test : CACHE_HEADERS.services);
     
     response.headers.set('X-Cache', 'HIT');
     response.headers.set('Vary', 'Accept-Encoding');
@@ -186,7 +180,7 @@ export async function GET(req: Request) {
 
   try {
     const client = await getClientPromise();
-    const db = client.db('streetsupport');
+    const db = client.db(DB_NAME);
     const servicesCol = db.collection('ProvidedServices');
 
     const query: MongoQuery = {
@@ -310,8 +304,6 @@ export async function GET(req: Request) {
         ServiceProviderName: 1,
         ServiceProviderKey: 1,
         OpeningTimes: 1,
-        // We don't use ClientGroups, but I leave it because afraid to break something
-        ClientGroups: 1,
         'Address.Location': 1,
         organisation: 1,
         distance: 1,
@@ -321,11 +313,10 @@ export async function GET(req: Request) {
       }
     });
 
-    // Add pagination
-    pipeline.push(
-      { $skip: (page - 1) * limit },
-      { $limit: limit }
-    );
+    // Pagination is applied in JavaScript after combining services with
+    // accommodation results (which come from a separate collection).
+    // Both sources use $geoNear for distance, and must be interleaved
+    // by distance before slicing.
 
     // Load filtered accommodation data from database (only what we need)
     const accommodationData = await loadFilteredAccommodationData({
@@ -349,18 +340,21 @@ export async function GET(req: Request) {
       }
     }
 
-    // Remove pagination from pipeline for accommodation integration
-    const pipelineWithoutPagination = [...pipeline];
-    pipelineWithoutPagination.splice(-2, 2); // Remove skip and limit
+    // Single query: fetch results and count in one round trip using $facet
+    const facetPipeline: AggregationStage[] = [
+      ...pipeline,
+      {
+        $facet: {
+          results: [{ $match: {} }],
+          totalCount: [{ $count: 'count' }]
+        }
+      }
+    ];
 
-    // Use aggregation pipeline for regular services
-    const services = await servicesCol.aggregate(pipelineWithoutPagination).toArray();
-    
-    // Get total count of services using optimized pipeline
-    const countPipeline = [...pipelineWithoutPagination];
-    countPipeline.push({ $count: "total" });
-    const countResult = await servicesCol.aggregate(countPipeline).toArray();
-    const servicesTotal = countResult.length > 0 ? countResult[0].total : 0;
+    const [facetResult] = await servicesCol.aggregate(facetPipeline).toArray();
+    const typedResult = facetResult as { results: Record<string, unknown>[]; totalCount: Array<{ count: number }> };
+    const services = typedResult.results;
+    const servicesTotal = typedResult.totalCount[0]?.count || 0;
 
     // Combine services and accommodation results
     const combinedResults: Array<Record<string, unknown> & { distance?: number }> = [...services, ...accommodationResults];
@@ -415,22 +409,17 @@ export async function GET(req: Request) {
       results
     };
 
-    // Cache the result (shorter cache in test environments)
-    const cacheTime = process.env.NODE_ENV === 'test' ? 60000 : 900000; // 1min for tests, 15min for production
+    const cacheTime = env.isTest() ? CACHE_TTL.testEnvironment : CACHE_TTL.services;
     queryCache.set(cacheKey, responseData, cacheTime);
 
     const response = NextResponse.json(responseData);
 
-    // Add cache headers (less aggressive in test environments)
-    const isTestEnv = process.env.NODE_ENV === 'test' || process.env.PLAYWRIGHT_TEST === '1';
-    if (isTestEnv) {
-      // Minimal caching for tests
-      response.headers.set('Cache-Control', 'no-cache');
+    if (env.isTest()) {
+      response.headers.set('Cache-Control', CACHE_HEADERS.test);
     } else {
-      // Enhanced cache headers for production
-      response.headers.set('Cache-Control', 'public, max-age=900, s-maxage=1800, stale-while-revalidate=86400'); // 15 min browser, 30 min CDN, 24h stale
-      response.headers.set('X-RateLimit-Limit', '100'); // Rate limiting info
-      response.headers.set('X-RateLimit-Remaining', '99'); // Rate limiting info
+      response.headers.set('Cache-Control', CACHE_HEADERS.services);
+      response.headers.set('X-RateLimit-Limit', '100');
+      response.headers.set('X-RateLimit-Remaining', '99');
     }
     
     response.headers.set('ETag', `services-${cacheKey.slice(-8)}-${total}-${page}`); // Use cache key for better ETag

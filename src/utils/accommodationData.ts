@@ -1,5 +1,6 @@
 import { getClientPromise } from '@/utils/mongodb';
 import { decodeText, decodeHtmlEntities } from '@/utils/htmlDecode';
+import { DB_NAME } from '@/config/constants';
 
 // Interface for the database document structure
 interface TemporaryAccommodationDocument {
@@ -232,7 +233,7 @@ export async function loadFilteredAccommodationData({
     }
 
     const client = await getClientPromise();
-    const db = client.db('streetsupport');
+    const db = client.db(DB_NAME);
     const tempAccomCol = db.collection('TemporaryAccommodation');
 
     // Build base query conditions
@@ -312,7 +313,7 @@ export async function loadFilteredAccommodationData({
 export async function loadAccommodationDataForProvider(serviceProviderId: string): Promise<AccommodationData[]> {
   try {
     const client = await getClientPromise();
-    const db = client.db('streetsupport');
+    const db = client.db(DB_NAME);
     const tempAccomCol = db.collection('TemporaryAccommodation');
     
     const query = {

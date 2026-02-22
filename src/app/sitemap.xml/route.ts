@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://streetsupport.net';
+import { CACHE_HEADERS } from '@/config/constants';
 
 export async function GET() {
-  // Get current date for lastmod
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://streetsupport.net';
   const currentDate = new Date().toISOString();
   
   // Load locations data
@@ -15,7 +15,7 @@ export async function GET() {
     locationsData = JSON.parse(fileContents);
   } catch {
     // Fallback to import if fs approach fails
-    locationsData = (await import('../../../data/locations.json')).default;
+    locationsData = (await import('../../data/locations.json')).default;
   }
 
   // Static pages with their priority and change frequency
@@ -241,7 +241,7 @@ ${allPages
     status: 200,
     headers: {
       'Content-Type': 'application/xml',
-      'Cache-Control': 'public, max-age=3600, s-maxage=3600', // Cache for 1 hour
+      'Cache-Control': CACHE_HEADERS.sitemap,
     },
   });
 }

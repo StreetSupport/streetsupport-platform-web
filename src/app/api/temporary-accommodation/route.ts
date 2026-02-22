@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { loadFilteredAccommodationData } from '@/utils/accommodationData';
 import queryCache from '@/utils/queryCache';
+import { CACHE_HEADERS, CACHE_TTL, DEFAULT_ACCOMMODATION_LIMIT, DEFAULT_SEARCH_RADIUS_KM } from '@/config/constants';
 
 interface TemporaryAccommodation {
   id: string;
@@ -57,7 +58,7 @@ export async function GET(req: Request) {
   const lng = searchParams.get('lng');
   const radius = searchParams.get('radius');
   const page = parseInt(searchParams.get('page') || '1', 10);
-  const limit = parseInt(searchParams.get('limit') || '50', 10);
+  const limit = parseInt(searchParams.get('limit') || String(DEFAULT_ACCOMMODATION_LIMIT), 10);
 
   if (page < 1 || limit < 1) {
     return NextResponse.json(
@@ -89,7 +90,7 @@ export async function GET(req: Request) {
       );
     }
 
-    radiusKm = radius ? parseFloat(radius) : 5; // Default 5km radius
+    radiusKm = radius ? parseFloat(radius) : DEFAULT_SEARCH_RADIUS_KM;
     if (isNaN(radiusKm) || radiusKm <= 0) {
       radiusKm = 5;
     }
@@ -111,7 +112,7 @@ export async function GET(req: Request) {
   const cachedResult = queryCache.get(cacheKey);
   if (cachedResult) {
     const response = NextResponse.json(cachedResult);
-    response.headers.set('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=86400');
+    response.headers.set('Cache-Control', CACHE_HEADERS.accommodation);
     response.headers.set('X-Cache', 'HIT');
     response.headers.set('Vary', 'Accept-Encoding');
     return response;
@@ -203,12 +204,12 @@ export async function GET(req: Request) {
     };
 
     // Cache the result
-    queryCache.set(cacheKey, responseData, 300000); // 5 minutes
+    queryCache.set(cacheKey, responseData, CACHE_TTL.accommodation);
 
     const response = NextResponse.json(responseData);
 
     // Add cache headers for better performance
-    response.headers.set('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=86400');
+    response.headers.set('Cache-Control', CACHE_HEADERS.accommodation);
     response.headers.set('ETag', `temp-acc-${cacheKey.slice(-8)}-${total}-${page}`);
     response.headers.set('X-Cache', 'MISS');
     response.headers.set('Vary', 'Accept-Encoding');

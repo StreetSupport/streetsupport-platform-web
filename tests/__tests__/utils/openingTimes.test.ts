@@ -1,6 +1,7 @@
-import { 
-  isServiceOpenNow, 
+import {
+  isServiceOpenNow,
   formatDistance,
+  detectAppointmentOnly,
   OpeningTimeSlot
 } from '@/utils/openingTimes';
 import type { ServiceWithDistance } from '@/types';
@@ -62,7 +63,6 @@ describe('openingTimes utilities', () => {
       organisationSlug: 'test-org',
       description,
       openTimes,
-      clientGroups: [],
       latitude: 53.4808,
       longitude: -2.2426,
       distance: 1000
@@ -98,13 +98,14 @@ describe('openingTimes utilities', () => {
       expect(status.isAppointmentOnly).toBe(false);
     });
 
-    it('detects appointment only services from description', () => {
+    it('returns isAppointmentOnly when the field is set', () => {
       const service = createMockService(
         [{ day: 0, start: 900, end: 1700 }],
         'Service by appointment only'
       );
+      service.isAppointmentOnly = true;
       const status = isServiceOpenNow(service);
-      
+
       expect(status.isAppointmentOnly).toBe(true);
     });
 
@@ -214,7 +215,7 @@ describe('openingTimes utilities', () => {
       expect(status.isOpen).toBe(false);
     });
 
-    it('handles appointment detection with various keywords', () => {
+    it('handles appointment detection with various keywords via detectAppointmentOnly', () => {
       const appointmentKeywords = [
         'appointment',
         'referral',
@@ -226,13 +227,7 @@ describe('openingTimes utilities', () => {
       ];
 
       appointmentKeywords.forEach(keyword => {
-        const service = createMockService(
-          [{ day: 0, start: 900, end: 1700 }],
-          `Test service ${keyword}`
-        );
-        const status = isServiceOpenNow(service);
-        
-        expect(status.isAppointmentOnly).toBe(true);
+        expect(detectAppointmentOnly(`Test service ${keyword}`, 'test', 'test')).toBe(true);
       });
     });
 
@@ -247,16 +242,10 @@ describe('openingTimes utilities', () => {
       expect(status.isAppointmentOnly).toBe(true);
     });
 
-    it('detects medical services as appointment only', () => {
-      const service = createMockService(
-        [{ day: 0, start: 900, end: 1700 }],
-        'Medical service'
-      );
-      service.category = 'medical';
-      service.subCategory = 'gp';
-      const status = isServiceOpenNow(service);
-      
-      expect(status.isAppointmentOnly).toBe(true);
+    it('detects medical services as appointment only via detectAppointmentOnly', () => {
+      expect(detectAppointmentOnly('Medical service', 'medical', 'gp')).toBe(true);
+      expect(detectAppointmentOnly('Counselling service', 'medical', 'counselling')).toBe(true);
+      expect(detectAppointmentOnly('Regular service', 'food', 'meals')).toBe(false);
     });
   });
 });

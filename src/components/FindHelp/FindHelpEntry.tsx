@@ -8,6 +8,7 @@ export default function FindHelpEntry() {
   const [fallbackVisible, setFallbackVisible] = useState(false);
   const [postcodeInput, setPostcodeInput] = useState('');
   const [isGeocoding, setIsGeocoding] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'geolocation' in navigator) {
@@ -41,13 +42,14 @@ export default function FindHelpEntry() {
 
       if (data.location?.lat && data.location?.lng) {
         const { lat, lng } = data.location;
+        setError(null);
         setLocation({ lat, lng, postcode: postcodeInput.trim(), source: 'postcode' });
       } else {
-        alert(data.error || 'Sorry, we couldn’t find that postcode.');
+        setError(data.error || "Sorry, we couldn't find that postcode.");
       }
 
     } catch {
-      alert('Something went wrong when trying to find your location.');
+      setError('Something went wrong when trying to find your location.');
     } finally {
       setIsGeocoding(false);
     }
@@ -81,6 +83,9 @@ export default function FindHelpEntry() {
           >
             {isGeocoding ? 'Locating...' : 'Continue'}
           </button>
+          {error && (
+            <p role="alert" className="text-red-600 mt-2">{error}</p>
+          )}
         </form>
       )}
     </section>

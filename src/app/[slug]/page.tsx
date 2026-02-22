@@ -14,7 +14,7 @@ import SupporterLogos from '@/components/Location/SupporterLogos';
 import WatsonXChat from '@/components/ui/WatsonXChat';
 import { generateLocationSEOMetadata } from '@/utils/seo';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 // Helper function to get location background image
 function getLocationBackgroundImage(slug: string): string {
@@ -163,7 +163,7 @@ export default async function LocationPage(props) {
   };
 
   return (
-    <main>
+    <>
       {/* Structured Data */}
       <script
         type="application/ld+json"
@@ -242,6 +242,6 @@ export default async function LocationPage(props) {
 
       {/* WatsonX Chat - handles West Midlands locations internally */}
       <WatsonXChat locationSlug={slug} />
-    </main>
+    </>
   );
 }

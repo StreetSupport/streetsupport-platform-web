@@ -2,10 +2,9 @@ import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
 import { decodeText, decodeHtmlEntities } from '@/utils/htmlDecode';
 import { loadAccommodationDataForProvider, type AccommodationData } from '@/utils/accommodationData';
+import { DB_NAME, CACHE_HEADERS } from '@/config/constants';
 
-// This function is now replaced by loadAccommodationDataForProvider() from utils/accommodationData.ts
-
-// Function to transform accommodation to service format for organisation pages
+// Transform accommodation to service format for organisation pages
 function transformAccommodationToOrganisationService(accommodation: AccommodationData) {
   return {
     _id: accommodation.id,
@@ -14,7 +13,6 @@ function transformAccommodationToOrganisationService(accommodation: Accommodatio
     SubCategoryName: accommodation.accommodation?.type || 'Other',
     Info: accommodation.synopsis || accommodation.description || '',
     OpeningTimes: [],
-    ClientGroups: [],
     Address: {
       Location: {
         type: 'Point',
@@ -48,17 +46,9 @@ function transformAccommodationToOrganisationService(accommodation: Accommodatio
 }
 
 export async function GET(req: Request) {
-  // ✅ App Router API routes do not receive `context.params`
-  // So parse slug manually:
   const url = new URL(req.url);
   const parts = url.pathname.split('/');
   const slug = parts[parts.length - 1];
-
-  // Extract search parameters for location-based filtering
-  const searchParams = url.searchParams;
-  const lat = searchParams.get('lat');
-  const lng = searchParams.get('lng');
-  const radius = searchParams.get('radius');
 
   if (!slug) {
     return NextResponse.json(
@@ -69,7 +59,7 @@ export async function GET(req: Request) {
 
   try {
     const client = await getClientPromise();
-    const db = client.db('streetsupport');
+    const db = client.db(DB_NAME);
 
     const providersCol = db.collection('ServiceProviders');
     const servicesCol = db.collection('ProvidedServices');
@@ -110,21 +100,12 @@ export async function GET(req: Request) {
       );
     }
 
-    // Build query for services with location filtering if provided
     const servicesQuery = {
       ServiceProviderKey: rawProvider.Key,
       IsPublished: true,
     };
 
-    // Add user context for distance calculations (but don't filter)
-    const userContext = lat && lng ? {
-      lat: parseFloat(lat) || null,
-      lng: parseFloat(lng) || null,
-      radius: radius ? parseFloat(radius) : null,
-      location: null // Could add location name if needed
-    } : null;
-
-    // Fetch services and accommodation in parallel for better performance
+    // Fetch services and accommodation in parallel
     const [servicesResult, organisationAccommodation] = await Promise.all([
       // Always return all services for this organisation (no geospatial filtering)
       // Organisation pages should show ALL services, not filter by user location
@@ -137,8 +118,6 @@ export async function GET(req: Request) {
           SubCategoryName: 1,
           Info: 1,
           OpeningTimes: 1,
-          // We don't use ClientGroups, but I leave it because afraid to break something
-          ClientGroups: 1,
           Address: 1,
           IsAppointmentOnly: 1,
           IsTelephoneService: 1
@@ -196,11 +175,9 @@ export async function GET(req: Request) {
       organisation: provider,
       addresses: provider.addresses,
       services: decodedServices,
-      userContext: userContext,
     });
 
-    // Enhanced cache headers for better performance  
-    response.headers.set('Cache-Control', 'public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400'); // 30 min browser, 60 min CDN, 24h stale
+    response.headers.set('Cache-Control', CACHE_HEADERS.serviceProviders);
     response.headers.set('ETag', `org-${slug}-${services.length}-${Date.now().toString(36)}`);
     response.headers.set('Vary', 'Accept-Encoding, Accept');
     response.headers.set('Last-Modified', new Date().toUTCString());

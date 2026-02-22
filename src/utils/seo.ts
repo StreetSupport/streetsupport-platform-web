@@ -37,7 +37,6 @@ export function generateSEOMetadata(config: SEOConfig): Metadata {
   const {
     title,
     description = defaultDescription,
-    keywords = [],
     path = '',
     image,
     imageAlt,
@@ -59,7 +58,6 @@ export function generateSEOMetadata(config: SEOConfig): Metadata {
   const metadata: Metadata = {
     title: fullTitle,
     description,
-    keywords: [...new Set([...keywords, 'homelessness support', 'street support', 'homeless help', 'charity', 'volunteering'])],
     alternates: {
       canonical,
     },
@@ -136,9 +134,19 @@ export function generateLocationSEOMetadata(locationName: string, locationSlug: 
 
   const path = pageType === 'main' ? locationSlug : `${locationSlug}/${pageType}`;
 
-  // Check if location-specific OG image exists, fallback to default
-  const locationOGImage = `/assets/img/og/street-support-${locationSlug}.jpg`;
-  
+  const locationsWithOGImages = [
+    'birmingham', 'bolton', 'bournemouth', 'bradford', 'brighton-and-hove',
+    'bury', 'cambridgeshire', 'chelmsford', 'coventry', 'derbyshire',
+    'dudley', 'edinburgh', 'glasgow', 'leeds', 'liverpool', 'luton',
+    'manchester', 'nottingham', 'oldham', 'portsmouth', 'reading',
+    'rochdale', 'salford', 'sandwell', 'solihull', 'southampton',
+    'stockport', 'tameside', 'trafford', 'wakefield', 'walsall',
+    'wigan-and-leigh', 'wolverhampton',
+  ];
+  const locationOGImage = locationsWithOGImages.includes(locationSlug)
+    ? `/assets/img/og/street-support-${locationSlug}.jpg`
+    : '/assets/img/og/street-support.jpg';
+
   return generateSEOMetadata({
     title: pageTitles[pageType],
     description: pageDescriptions[pageType],

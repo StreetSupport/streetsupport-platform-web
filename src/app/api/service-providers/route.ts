@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
+import { DB_NAME, DEFAULT_SERVICE_PROVIDER_LIMIT } from '@/config/constants';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const location = searchParams.get('location');
   const page = parseInt(searchParams.get('page') || '1', 10);
-  const limit = parseInt(searchParams.get('limit') || '20', 10);
+  const limit = parseInt(searchParams.get('limit') || String(DEFAULT_SERVICE_PROVIDER_LIMIT), 10);
 
   if (page < 1 || limit < 1) {
     return NextResponse.json(
@@ -16,7 +17,7 @@ export async function GET(req: Request) {
 
   try {
     const client = await getClientPromise();
-    const db = client.db('streetsupport');
+    const db = client.db(DB_NAME);
     const collection = db.collection('ServiceProviders');
 
     // Build query

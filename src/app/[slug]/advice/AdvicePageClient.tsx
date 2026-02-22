@@ -119,7 +119,7 @@ export default function AdvicePageClient({ locationKey, locationName }: AdvicePa
   }
 
   return (
-    <main className="max-w-4xl mx-auto px-6 py-12">
+    <div className="max-w-4xl mx-auto px-6 py-12">
       <div className="space-y-6">
         <div className="mb-8">
           <h2 className="heading-3 text-brand-k mb-4">Frequently Asked Questions</h2>
@@ -168,6 +168,6 @@ export default function AdvicePageClient({ locationKey, locationName }: AdvicePa
           />
         </div>
       </div>
-    </main>
+    </div>
   );
 }

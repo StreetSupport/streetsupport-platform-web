@@ -1,5 +1,6 @@
-export const dynamic = 'force-dynamic';
+export const revalidate = 1800;
 
+import { cache } from 'react';
 import OrganisationShell from './OrganisationShell';
 import { notFound } from 'next/navigation';
 import { getCategoryName, getSubCategoryName } from '@/utils/categoryLookup';
@@ -7,16 +8,10 @@ import { getCategoryName, getSubCategoryName } from '@/utils/categoryLookup';
 import type { RawService } from '@/types/api';
 import type { Metadata } from 'next';
 import type { Address } from '@/utils/organisation';
-import type { FlattenedService } from '@/types';
 
 interface Props {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
-
-// Enhanced shared cache for organisation data to eliminate double API calls
-const organisationCache = new Map<string, { data: unknown; timestamp: number; etag: string }>();
-const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes (extended from 5 minutes)
 
 function processOrganisationData(data: { organisation: unknown; services: unknown[] }) {
   const rawServices = (data.services || []) as RawService[];
@@ -46,28 +41,14 @@ function processOrganisationData(data: { organisation: unknown; services: unknow
       organisationSlug: (data.organisation as { name?: string; key?: string })?.key || '',
       latitude: coords[1],
       longitude: coords[0],
-      clientGroups: service.ClientGroups || [],
       isAppointmentOnly: service.isAppointmentOnly,
       isTelephoneService: service.isTelephoneService,
       isOpen247: service.isOpen247,
-      // Preserve accommodation-specific data
       ...(service.accommodationData && { accommodationData: service.accommodationData }),
       ...(service.sourceType && { sourceType: service.sourceType }),
     };
   });
 
-  const groupedServices = services.reduce((acc, s) => {
-    const parent = s.categoryName || 'Other';
-    const sub = s.subCategoryName || 'Other';
-
-    if (!acc[parent]) acc[parent] = {};
-    if (!acc[parent][sub]) acc[parent][sub] = [];
-    acc[parent][sub].push(s);
-
-    return acc;
-  }, {} as Record<string, Record<string, FlattenedService[]>>);
-
-  // Extract organisation properties with proper typing
   const orgData = data.organisation as {
     key?: string;
     name?: string;
@@ -107,83 +88,46 @@ function processOrganisationData(data: { organisation: unknown; services: unknow
     RegisteredCharity: orgData.RegisteredCharity,
     addresses: orgData.addresses || [],
     services,
-    groupedServices,
   };
 }
 
-async function fetchOrganisationData(slug: string, searchParams?: { [key: string]: string | string[] | undefined }) {
-  // Include location parameters in cache key to avoid stale location data
-  const locationKey = searchParams?.lat && searchParams?.lng ? 
-    `-${searchParams.lat}-${searchParams.lng}-${searchParams.radius || ''}` : '';
-  const cacheKey = `org-${slug}${locationKey}`;
-  const cached = organisationCache.get(cacheKey);
-  
-  // Return cached data if it's fresh
-  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-    return cached.data;
-  }
-
-  // Skip API call if MONGODB_URI is missing (e.g., in CI tests)
+const getOrganisationData = cache(async (slug: string) => {
   if (!process.env.MONGODB_URI) {
     return null;
   }
-  
+
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  
-  // Build URL with search parameters for location context
-  const url = new URL(`${baseUrl}/api/service-providers/${slug}`);
-  
-  // Add location parameters if available
-  if (searchParams) {
-    const { lat, lng, radius } = searchParams;
-    if (lat && typeof lat === 'string') url.searchParams.set('lat', lat);
-    if (lng && typeof lng === 'string') url.searchParams.set('lng', lng);
-    if (radius && typeof radius === 'string') url.searchParams.set('radius', radius);
-  }
-  
+
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10000);
 
-    const res = await fetch(url.toString(), {
-      cache: 'no-store',
+    const res = await fetch(`${baseUrl}/api/service-providers/${slug}`, {
+      next: { revalidate: 1800 },
       signal: controller.signal,
     });
 
     clearTimeout(timeout);
-    
+
     if (!res.ok) {
       return null;
     }
-    
-    const data = await res.json();
-    const etag = res.headers.get('etag') || '';
-    
-    // Cache the result with ETag for better cache validation
-    organisationCache.set(cacheKey, { data, timestamp: Date.now(), etag });
-    
-    return data;
+
+    return res.json();
   } catch {
     return null;
   }
-}
+});
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const { slug } = await props.params;
-  const searchParams = await props.searchParams;
-  
-  // Always return a fallback title for E2E tests and error cases
-  const fallbackMetadata = {
-    title: 'Organisation Not Found | Street Support',
-    description: 'The organisation you are looking for could not be found.',
-  };
-  
-  const data = await fetchOrganisationData(slug, searchParams);
-  
+
+  const data = await getOrganisationData(slug);
+
   if (!data || !data.organisation) {
-    return fallbackMetadata;
+    notFound();
   }
-  
+
   return {
     title: `${data.organisation.name} | Street Support`,
     description: data.organisation.description || `Services provided by ${data.organisation.name}`,
@@ -192,9 +136,8 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
 export default async function OrganisationPage(props: Props) {
   const { slug } = await props.params;
-  const searchParams = await props.searchParams;
 
-  const data = await fetchOrganisationData(slug, searchParams);
+  const data = await getOrganisationData(slug);
 
   if (!data || !data.organisation) {
     return notFound();
@@ -202,8 +145,5 @@ export default async function OrganisationPage(props: Props) {
 
   const organisation = processOrganisationData(data);
 
-  return <OrganisationShell 
-    organisation={organisation} 
-    userContext={data.userContext} 
-  />;
+  return <OrganisationShell organisation={organisation} />;
 }

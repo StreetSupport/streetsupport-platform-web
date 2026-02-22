@@ -161,7 +161,6 @@ describe('OrganisationOverview', () => {
       name: 'Minimal Organisation',
       addresses: [],
       services: [],
-      groupedServices: {},
     };
 
     render(<OrganisationOverview organisation={minimalOrg} />);

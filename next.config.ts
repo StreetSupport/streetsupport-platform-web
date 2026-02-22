@@ -3,6 +3,20 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
 const nextConfig = {
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'X-XSS-Protection', value: '1; mode=block' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(self)' },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       {
@@ -94,10 +108,7 @@ const nextConfig = {
       // Enable module concatenation for smaller bundles
       config.optimization = {
         ...config.optimization,
-        usedExports: true,
-        sideEffects: false,
-        
-        // Split chunks for better caching
+
         splitChunks: {
           ...config.optimization?.splitChunks,
           chunks: 'all',
@@ -109,13 +120,6 @@ const nextConfig = {
               name: 'vendors',
               chunks: 'all',
               priority: 10,
-            },
-            // Separate Google Maps chunk
-            maps: {
-              test: /[\\/]node_modules[\\/]@googlemaps[\\/]/,
-              name: 'maps',
-              chunks: 'all',
-              priority: 20,
             },
           },
         },

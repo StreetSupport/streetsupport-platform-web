@@ -21,18 +21,6 @@ export const metadata: Metadata = {
     template: '%s | Street Support Network'
   },
   description: 'Street Support Network connects people experiencing homelessness with local support services. Find help, donate, volunteer, and access resources in your area.',
-  keywords: [
-    'homelessness support',
-    'street support',
-    'homeless help',
-    'charity',
-    'volunteering',
-    'donations',
-    'social support',
-    'community help',
-    'housing support',
-    'crisis support'
-  ],
   authors: [{ name: 'Street Support Network' }],
   creator: 'Street Support Network',
   publisher: 'Street Support Network',
@@ -79,10 +67,6 @@ export const metadata: Metadata = {
   other: {
     'theme-color': '#1f2937',
     'msapplication-TileColor': '#1f2937',
-    'X-Content-Type-Options': 'nosniff',
-    'X-Frame-Options': 'DENY',
-    'X-XSS-Protection': '1; mode=block',
-    'Referrer-Policy': 'strict-origin-when-cross-origin',
     'Content-Language': 'en-GB',
     copyright: 'Street Support Network',
   }
@@ -120,15 +104,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   };
 
   return (
-    <html lang="en">
+    <html lang="en-GB">
       <head>
         <meta charSet="utf-8" />
         <meta httpEquiv="x-ua-compatible" content="ie=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         
-        {/* Preload LCP hero image for faster discovery */}
-        <link rel="preload" as="image" href="/assets/img/home-header-background.png" />
-
         {/* Preconnect to external domains for performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -162,8 +143,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <LocationProvider>
             <FindHelpStateCleanup />
             <Nav />
-            <div id="main-content" />
-            {children}
+            <main id="main-content" tabIndex={-1}>
+              {children}
+            </main>
             <SiteFooter />
           </LocationProvider>
           <CookieConsentBanner />

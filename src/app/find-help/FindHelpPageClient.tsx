@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-// import Link from 'next/link'; // Unused import
 import { useLocation } from '@/contexts/LocationContext';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import LocationPrompt from '@/components/Location/LocationPrompt';
@@ -18,48 +17,8 @@ import {
 } from '@/utils/findHelpStateUtils';
 import locations from '@/data/locations.json';
 import type { ServiceWithDistance } from '@/types';
-
-// Utility function to process raw service data
-function processServiceData(item: unknown): ServiceWithDistance {
-  const serviceItem = item as Record<string, unknown>;
-  const coords = ((serviceItem.Address as Record<string, unknown>)?.Location as Record<string, unknown>)?.coordinates as number[] || [0, 0];
-  
-  // Process opening times to normalize the data structure
-  const openTimes = (serviceItem.OpeningTimes as Array<{ Day?: number; day?: number; StartTime?: number; start?: number; EndTime?: number; end?: number }> || []).map((slot) => ({
-    day: slot.Day ?? slot.day ?? 0,
-    start: slot.StartTime ?? slot.start ?? 0,
-    end: slot.EndTime ?? slot.end ?? 0,
-  }));
-  
-  return {
-    id: serviceItem._id || serviceItem.id,
-    name: String(serviceItem.ServiceProviderName || serviceItem.name || ''),
-    description: String(serviceItem.Info || serviceItem.description || ''),
-    category: serviceItem.ParentCategoryKey || serviceItem.category || '',
-    subCategory: serviceItem.SubCategoryKey || serviceItem.subCategory || '',
-    latitude: coords[1],
-    longitude: coords[0],
-    organisation: serviceItem.organisation ? {
-      name: String((serviceItem.organisation as Record<string, unknown>).name || ''),
-      slug: (serviceItem.organisation as Record<string, unknown>).slug || '',
-      isVerified: (serviceItem.organisation as Record<string, unknown>).isVerified || false,
-    } : {
-      name: String(serviceItem.ServiceProviderName || ''),
-      slug: serviceItem.ServiceProviderKey || '',
-      isVerified: (serviceItem.IsVerified as boolean) || false,
-    },
-    organisationSlug: serviceItem.organisation ? 
-      (serviceItem.organisation as Record<string, unknown>).slug || serviceItem.ServiceProviderKey || '' : 
-      serviceItem.ServiceProviderKey || '',
-    clientGroups: serviceItem.ClientGroups || [],
-    openTimes,
-    distance: serviceItem.distance,
-    isTelephoneService: (serviceItem.IsTelephoneService as boolean) || false,
-    isAppointmentOnly: (serviceItem.IsAppointmentOnly as boolean) || false,
-    isOpen247: (serviceItem.Address as Record<string, unknown>)?.IsOpen247 as boolean || false,
-    sourceType: serviceItem.sourceType
-  } as ServiceWithDistance;
-}
+import { processServiceData } from '@/utils/processServiceData';
+import { API_TIMEOUT_MS, FALLBACK_TIMEOUT_MS, MAX_SERVICES_FETCH_LIMIT, FALLBACK_SERVICES_LIMIT, DEFAULT_SEARCH_RADIUS_KM } from '@/config/constants';
 
 interface FindHelpPageClientProps {
   searchParams: { [key: string]: string | string[] | undefined };
@@ -173,14 +132,14 @@ export default function FindHelpPageClient({ searchParams: _searchParams }: Find
 
     // Create AbortController for timeout handling
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
 
     try {
       const params = new URLSearchParams({
         lat: locationData.lat.toString(),
         lng: locationData.lng.toString(),
-        radius: (locationData.radius || 5).toString(),
-        limit: '500',
+        radius: (locationData.radius || DEFAULT_SEARCH_RADIUS_KM).toString(),
+        limit: MAX_SERVICES_FETCH_LIMIT.toString(),
       });
 
       // Don't apply category/subcategory filters in the API call
@@ -246,9 +205,9 @@ export default function FindHelpPageClient({ searchParams: _searchParams }: Find
       if (!isRetry && !isNetworkIssue) {
         try {
           const fallbackController = new AbortController();
-          const fallbackTimeoutId = setTimeout(() => fallbackController.abort(), 10000);
+          const fallbackTimeoutId = setTimeout(() => fallbackController.abort(), FALLBACK_TIMEOUT_MS);
 
-          const fallbackResponse = await fetch('/api/services?limit=50', {
+          const fallbackResponse = await fetch(`/api/services?limit=${FALLBACK_SERVICES_LIMIT}`, {
             cache: 'no-store',
             signal: fallbackController.signal,
           });

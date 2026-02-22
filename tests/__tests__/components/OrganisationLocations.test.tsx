@@ -40,7 +40,6 @@ const baseOrg: Partial<OrganisationDetails> = {
   key: 'org-key',
   name: 'Test Organization',
   services: [],
-  groupedServices: {},
 };
 
 describe('OrganisationLocations', () => {

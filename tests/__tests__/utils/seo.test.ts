@@ -53,9 +53,6 @@ describe('SEO Utilities', () => {
       expect(metadata.title).toBe('Test Page | Street Support Network');
       expect(metadata.description).toBe('Test description');
       expect(metadata.alternates?.canonical).toBe('https://streetsupport.net/test');
-      expect(metadata.keywords).toContain('test');
-      expect(metadata.keywords).toContain('seo');
-      expect(metadata.keywords).toContain('homelessness support');
     });
 
     it('should generate OpenGraph metadata', () => {
@@ -139,8 +136,6 @@ describe('SEO Utilities', () => {
       expect(metadata.description).toContain('Test Charity');
       expect(metadata.description).toContain('Helping people in need');
       expect(metadata.alternates?.canonical).toBe('https://streetsupport.net/find-help/organisation/test-charity');
-      expect(metadata.keywords).toContain('test charity');
-      expect(metadata.keywords).toContain('manchester homeless services');
     });
 
     it('should handle organisation without description', () => {

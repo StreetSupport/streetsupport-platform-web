@@ -41,7 +41,7 @@ export default function ContactPage() {
         <h2 className="heading-4">Join the conversation</h2>
         <p>You can join the conversation on{' '}
           <a href="https://x.com/streetsupportuk" className="text-brand-a hover:text-brand-b underline">X</a>,{' '}
-          <a href="https://www.facebook.com/streetsupport/" className="text-brand-a hover:text-brand-b underline">Facebook</a> or subscribe to our <a href="http://eepurl.com/gvtAjT" className="text-brand-a hover:text-brand-b underline">UK Network mailing list</a>.</p>
+          <a href="https://www.facebook.com/streetsupport/" className="text-brand-a hover:text-brand-b underline">Facebook</a> or subscribe to our <a href="https://eepurl.com/gvtAjT" className="text-brand-a hover:text-brand-b underline">UK Network mailing list</a>.</p>
       </div>
       </div>
     </>

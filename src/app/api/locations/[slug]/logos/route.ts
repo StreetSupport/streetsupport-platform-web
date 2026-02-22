@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getClientPromise } from '@/utils/mongodb';
+import { DB_NAME, NO_CACHE_RESPONSE_HEADERS } from '@/config/constants';
 
 // Disable caching for this API route to ensure fresh data
 export const dynamic = 'force-dynamic';
@@ -47,7 +48,7 @@ export async function GET(
 
     // Connect to database
     const client = await getClientPromise();
-    const db = client.db('streetsupport');
+    const db = client.db(DB_NAME);
     const logosCol = db.collection('LocationLogos');
     
     // Fetch location logos for this location
@@ -70,11 +71,7 @@ export async function GET(
       data: supporters,
       location: slug
     }, {
-      headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
-        'Pragma': 'no-cache',
-        'Expires': '0'
-      }
+      headers: NO_CACHE_RESPONSE_HEADERS
     });
 
   } catch (error) {
