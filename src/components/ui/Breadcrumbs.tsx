@@ -15,7 +15,7 @@ interface BreadcrumbsProps {
 
 export default function Breadcrumbs({ items }: BreadcrumbsProps) {
   return (
-    <div className="bg-brand-n py-4">
+    <div className="bg-brand-h py-4">
       <div className="content-container px-6">
         <nav className="flex" aria-label="Breadcrumb">
           <ol className="inline-flex items-center space-x-1 md:space-x-3">
@@ -26,7 +26,7 @@ export default function Breadcrumbs({ items }: BreadcrumbsProps) {
                   {item.href && !item.current ? (
                     <Link 
                       href={item.href} 
-                      className="text-white hover:text-white underline"
+                      className="!text-brand-e hover:!text-white underline"
                     >
                       {item.label}
                     </Link>

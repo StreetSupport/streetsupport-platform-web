@@ -1010,10 +1010,15 @@ select:disabled {
 .statistics-value {
   font-family: 'Museo Sans', Arial, sans-serif;
   font-weight: 700;
-  text-shadow: 0 4px 16px rgba(0,0,0,0.22);
 }
 
 .statistics-title {
-    font-family: 'Museo Sans', Arial, sans-serif;
-    font-weight: 500;
+  font-family: 'Museo Sans', Arial, sans-serif;
+  font-weight: 500;
+}
+
+.statistics-subtitle {
+  font-family: 'Museo Sans', Arial, sans-serif;
+  font-weight: 300;
+  opacity: 0.7;
 }
