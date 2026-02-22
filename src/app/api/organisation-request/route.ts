@@ -4,6 +4,7 @@ import {
   sendOrganisationRequestEmails,
   type OrganisationRequestEmailData,
 } from '@/utils/emailService';
+import { escapeHtml } from '@/utils/escapeHtml';
 import { getCategories } from '@/app/api/categories/helper';
 
 interface CategoryLookup {
@@ -64,23 +65,23 @@ function formatServicesHtml(
       return `
       <div style="margin-bottom: 20px; padding: 15px; background-color: #ffffff; border-radius: 6px; border-left: 4px solid #38ae8e;">
         <h4 style="margin: 0 0 10px 0; color: #48484a; font-size: 16px;">
-          ${index + 1}. ${service.ServiceTitle}
+          ${index + 1}. ${escapeHtml(service.ServiceTitle)}
         </h4>
         <p style="margin: 0 0 10px 0; font-size: 14px; color: #29272a;">
-          ${service.ServiceDescription}
+          ${escapeHtml(service.ServiceDescription)}
         </p>
         <table style="width: 100%; font-size: 13px;">
           <tr>
             <td style="padding: 4px 0; color: #8d8d8d; width: 35%;">Category:</td>
-            <td style="padding: 4px 0; color: #29272a;">${categoryName}</td>
+            <td style="padding: 4px 0; color: #29272a;">${escapeHtml(categoryName)}</td>
           </tr>
           <tr>
             <td style="padding: 4px 0; color: #8d8d8d;">Subcategory:</td>
-            <td style="padding: 4px 0; color: #29272a;">${subcategoryName}</td>
+            <td style="padding: 4px 0; color: #29272a;">${escapeHtml(subcategoryName)}</td>
           </tr>
           <tr>
             <td style="padding: 4px 0; color: #8d8d8d;">Address:</td>
-            <td style="padding: 4px 0; color: #29272a;">${service.Address}</td>
+            <td style="padding: 4px 0; color: #29272a;">${escapeHtml(service.Address)}</td>
           </tr>
           <tr>
             <td style="padding: 4px 0; color: #8d8d8d; vertical-align: top;">Availability:</td>
@@ -90,12 +91,12 @@ function formatServicesHtml(
           </tr>
           ${
             service.ContactEmail
-              ? `<tr><td style="padding: 4px 0; color: #8d8d8d;">Contact Email:</td><td style="padding: 4px 0; color: #29272a;"><a href="mailto:${service.ContactEmail}" style="color: #38ae8e;">${service.ContactEmail}</a></td></tr>`
+              ? `<tr><td style="padding: 4px 0; color: #8d8d8d;">Contact Email:</td><td style="padding: 4px 0; color: #29272a;"><a href="mailto:${escapeHtml(service.ContactEmail)}" style="color: #38ae8e;">${escapeHtml(service.ContactEmail)}</a></td></tr>`
               : ''
           }
           ${
             service.ContactPhone
-              ? `<tr><td style="padding: 4px 0; color: #8d8d8d;">Contact Phone:</td><td style="padding: 4px 0; color: #29272a;">${service.ContactPhone}</td></tr>`
+              ? `<tr><td style="padding: 4px 0; color: #8d8d8d;">Contact Phone:</td><td style="padding: 4px 0; color: #29272a;">${escapeHtml(service.ContactPhone)}</td></tr>`
               : ''
           }
         </table>

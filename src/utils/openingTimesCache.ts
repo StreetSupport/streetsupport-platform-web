@@ -4,6 +4,11 @@ import { isServiceOpenNow, type OpeningStatus } from '@/utils/openingTimes';
 /**
  * Cache for opening times calculations to avoid expensive recalculations.
  * Entries expire individually via TTL check rather than batch-invalidating.
+ *
+ * Note: In serverless / Vercel deployments each function invocation may
+ * receive a fresh module instance, so this cache only benefits requests
+ * handled within the same warm invocation. It does not provide
+ * cross-invocation or cross-instance caching.
  */
 
 interface CacheEntry {

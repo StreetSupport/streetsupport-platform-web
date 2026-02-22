@@ -1,8 +1,13 @@
 /**
- * Simple in-memory cache for API query results
- * 
+ * Simple in-memory cache for API query results.
+ *
  * This provides a lightweight caching layer to reduce database queries
  * for frequently accessed data like services and organisation information.
+ *
+ * Note: In serverless / Vercel deployments each function invocation may
+ * receive a fresh module instance, so this cache only benefits requests
+ * handled within the same warm invocation. It does not provide
+ * cross-invocation or cross-instance caching.
  */
 
 interface CacheEntry<T = unknown> {
