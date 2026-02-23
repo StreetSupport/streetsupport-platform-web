@@ -1,37 +1,31 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended
-});
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
 
 const config = [
   js.configs.recommended,
-  ...compat.extends(
-    "next/core-web-vitals",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:react/recommended",
-    "plugin:react-hooks/recommended"
-  ),
+  ...nextVitals,
+  ...nextTs,
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
     rules: {
-      "react/react-in-jsx-scope": "off",
-      "react/prop-types": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off",
       "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
       "no-console": ["warn", { "allow": ["warn", "error"] }],
-      "@next/next/no-img-element": "off"
-    },
-    settings: {
-      react: {
-        version: "detect"
+      "@next/next/no-img-element": "off",
+      "react-hooks/refs": "warn",
+      "react-hooks/set-state-in-effect": "warn",
+      "react-hooks/error-boundaries": "warn"
+    }
+  },
+  {
+    files: ["**/*.cjs"],
+    languageOptions: {
+      globals: {
+        module: "readonly",
+        require: "readonly",
+        __dirname: "readonly",
+        __filename: "readonly"
       }
     }
   },
@@ -61,7 +55,9 @@ const config = [
   {
     files: ["scripts/**/*"],
     rules: {
-      "no-console": "off"
+      "no-console": "off",
+      "@typescript-eslint/no-require-imports": "off",
+      "no-undef": "off"
     }
   },
   {

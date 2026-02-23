@@ -780,14 +780,6 @@ nav .mobile-menu #mobile-about-menu li a:hover {
     background-color: white;
   }
 
-  /* Improve filter panel layout on mobile */
-  .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-4 {
-    gap: 1rem;
-  }
-
-  .grid.grid-cols-1.md\\:grid-cols-3 {
-    gap: 1rem;
-  }
 }
 
 /* Ensure proper select styling across all devices */

@@ -1,16 +1,15 @@
+import { useId } from 'react';
 import Script from 'next/script';
 
 interface StructuredDataProps {
   data: object;
 }
 
-/**
- * Component to render structured data as JSON-LD
- */
 export default function StructuredData({ data }: StructuredDataProps) {
+  const id = useId();
   return (
     <Script
-      id={`structured-data-${Math.random().toString(36).substring(2, 9)}`}
+      id={`structured-data-${id}`}
       type="application/ld+json"
       dangerouslySetInnerHTML={{
         __html: JSON.stringify(data)
