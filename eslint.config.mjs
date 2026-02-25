@@ -1,13 +1,19 @@
 import js from "@eslint/js";
+import { fixupConfigRules } from "@eslint/compat";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 
 const config = [
   js.configs.recommended,
-  ...nextVitals,
-  ...nextTs,
+  ...fixupConfigRules(nextVitals),
+  ...fixupConfigRules(nextTs),
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
+    settings: {
+      react: {
+        version: "19"
+      }
+    },
     rules: {
       "@typescript-eslint/explicit-module-boundary-types": "off",
       "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
@@ -34,6 +40,7 @@ const config = [
     rules: {
       "@typescript-eslint/no-require-imports": "off",
       "no-undef": "off",
+      "no-unassigned-vars": "off",
       "@typescript-eslint/no-explicit-any": "off",
       "react/display-name": "off",
       "prefer-rest-params": "off",
