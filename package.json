@@ -26,7 +26,7 @@
     "@sentry/nextjs": "^10.39.0",
     "clsx": "^2.1.1",
     "dompurify": "^3.3.1",
-    "google-auth-library": "^10.5.0",
+    "google-auth-library": "^10.6.1",
     "lucide-react": "^0.575.0",
     "mongodb": "^6.21.0",
     "next": "^16.0.0",
