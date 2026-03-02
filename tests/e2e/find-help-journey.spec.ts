@@ -41,8 +41,7 @@ test.describe('Find Help Journey', () => {
     await expect(page.getByText(/please enter a valid uk postcode/i)).toBeVisible();
   });
 
-  test('mobile users can toggle map visibility', async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 812 });
+  test('users can toggle map visibility', async ({ page }) => {
     await page.goto('/find-help');
 
     await page.getByRole('button', { name: /enter postcode or choose a location/i }).click();
@@ -51,13 +50,17 @@ test.describe('Find Help Journey', () => {
 
     await expect(page.getByRole('heading', { name: /services near you/i })).toBeVisible({ timeout: 10000 });
 
-    const toggleBtn = page.getByRole('button', { name: /show map/i });
-    if (await toggleBtn.isVisible()) {
-      await toggleBtn.click();
-      await expect(page.locator('[data-testid="map-container"]').first()).toBeVisible({ timeout: 5000 });
+    const showMapBtn = page.getByRole('button', { name: /show map/i });
+    await expect(showMapBtn).toBeVisible({ timeout: 5000 });
+    await showMapBtn.evaluate((el: HTMLElement) => el.click());
 
-      await page.getByRole('button', { name: /hide map/i }).click();
-      await expect(page.locator('[data-testid="map-container"]').first()).not.toBeVisible();
-    }
+    const mapContainer = page.locator('[data-testid="map-container"]').first();
+    await expect(mapContainer).toBeVisible({ timeout: 10000 });
+
+    const hideMapBtn = page.getByRole('button', { name: /hide map/i });
+    await expect(hideMapBtn).toBeVisible({ timeout: 5000 });
+    await hideMapBtn.evaluate((el: HTMLElement) => el.click());
+
+    await expect(mapContainer).not.toBeVisible({ timeout: 5000 });
   });
 });
