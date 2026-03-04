@@ -194,12 +194,25 @@ export default function OrganisationServicesAccordion({
                   title={getSubCategoryName(category, subcategory)}
                   className="mb-4"
                   isOpen={openAccordion === accordionKey}
-                  onToggle={() => setOpenAccordion(openAccordion === accordionKey ? null : accordionKey)}
+                  onToggle={() => {
+                    if (openAccordion === accordionKey) {
+                      setOpenAccordion(null);
+                    } else {
+                      setOpenAccordion(accordionKey);
+                    }
+                    if (openAccordion) {
+                      setSelectedLocationForService(prev => {
+                        const next = { ...prev };
+                        delete next[openAccordion];
+                        return next;
+                      });
+                    }
+                  }}
                 >
                   {isMultiLocation && (
                     <ServiceLocationPicker
                       locations={serviceData.locations}
-                      selectedIndex={selectedLocationForService[accordionKey] || 0}
+                      selectedIndex={selectedLocationForService[accordionKey] ?? -1}
                       onSelectLocation={(index) => setSelectedLocation(category, subcategory, index)}
                       onLocationClick={onLocationClick}
                       renderDetails={(location) => (
