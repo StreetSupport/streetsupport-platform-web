@@ -52,10 +52,14 @@ export default function ServiceLocationPicker({
               <button
                 type="button"
                 onClick={() => {
-                  onSelectLocation(locationIndex);
-                  const coordinates = location.address.Location?.coordinates;
-                  if (onLocationClick && coordinates) {
-                    onLocationClick(coordinates[1], coordinates[0]);
+                  if (isSelected) {
+                    onSelectLocation(-1);
+                  } else {
+                    onSelectLocation(locationIndex);
+                    const coordinates = location.address.Location?.coordinates;
+                    if (onLocationClick && coordinates) {
+                      onLocationClick(coordinates[1], coordinates[0]);
+                    }
                   }
                 }}
                 className={`location-btn w-full px-3 py-3 rounded-lg border text-sm transition-colors${isSelected ? ' selected' : ''}`}
